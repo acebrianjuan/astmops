@@ -1,0 +1,31 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends build-essential cmake qtbase5-dev
+    - name: configure
+      run: cd build && cmake ..
+    - name: build
+      run: cd build && make -j $(nproc)
+#    - name: install
+#      run: cd build && sudo make install
+      
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      run: brew install cmake qt
+    - name: configure
+      run: cd build && cmake .. -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5
+    - name: build
+      run: cd build && make -j $(nproc)
+#    - name: install
+#      run: cd build && sudo make install
