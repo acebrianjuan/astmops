@@ -3,6 +3,7 @@
 
 #include "asterix.h"
 #include <QObject>
+#include <QQueue>
 #include <QXmlStreamReader>
 
 class AsterixXmlReader : public QObject
@@ -13,14 +14,16 @@ public:
     explicit AsterixXmlReader(QObject* parent = nullptr);
 
     void addData(const QByteArray& data);
-    AsterixRecord record() const { return m_record; }
+    AsterixRecord record();
+    bool hasPendingRecords();
+
     // TODO: Add function for reading excluded addresses from file.
     //void loadExcludedAddresses();
 
 public slots:
 
 signals:
-    void newRecord(AsterixRecord record);
+    void readyRead();
 
 private:
     void readRecord();
@@ -28,10 +31,11 @@ private:
     AsterixDataElement readDataField();
     bool isValidDataItem(const QString& di);
 
+    QXmlStreamReader m_xml;
+    QQueue<AsterixRecord> m_recordsQueue;
+
     // TODO: Add container of excluded addresses.
     //QVector<uint> m_excludedAddresses;
-    QXmlStreamReader m_xml;
-    AsterixRecord m_record;
 };
 
 #endif  // ASTMOPS_ASTERIXXMLREADER_H
