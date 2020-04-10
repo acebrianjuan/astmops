@@ -48,9 +48,7 @@ void MopsProcessorTest::ed116TargetReportsTest()
     QFETCH(bool, passed);
 
     MopsProcessor mp;
-    mp.addRecord(record);
-
-    QCOMPARE(mp.ed116TargetReports(), passed);
+    QCOMPARE(mp.ed116TargetReports(record), passed);
 }
 
 void MopsProcessorTest::ed117TargetReportsTest_data()
@@ -87,9 +85,7 @@ void MopsProcessorTest::ed117TargetReportsTest()
     QFETCH(bool, passed);
 
     MopsProcessor mp;
-    mp.addRecord(record);
-
-    QCOMPARE(mp.ed117TargetReports(), passed);
+    QCOMPARE(mp.ed117TargetReports(record), passed);
 }
 
 AsterixRecord MopsProcessorTest::makeRecord(const quint8& cat, const QStringList& itemsList)

@@ -4,61 +4,57 @@ MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
 }
 
-void MopsProcessor::addRecord(const AsterixRecord &record)
-{
-    m_recordMap[record.cat].enqueue(record);
-}
-
 void MopsProcessor::addTarget(const MopsProcessor::TargetData &target)
 {
     m_targetStatusHash[target.address] = target;
 }
 
-bool MopsProcessor::ed116TargetReports()
+bool MopsProcessor::ed116TargetReports(const AsterixRecord &record)
 {
-    return targetReports(ed116TargetReportsHash());
+    // TODO: Add assertion that checks if record is a CAT010 SMR target report.
+    return targetReports(record, ed116TargetReportsHash());
 }
 
-bool MopsProcessor::ed117TargetReports()
+bool MopsProcessor::ed117TargetReports(const AsterixRecord &record)
 {
-    return targetReports(ed117TargetReportsHash());
+    // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
+    return targetReports(record, ed117TargetReportsHash());
 }
 
-bool MopsProcessor::targetReports(QHash<QString, bool> hash)
+void MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
 {
-    const quint8 cat = 10;
+    // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
+}
 
-    Q_ASSERT(!m_recordMap[cat].isEmpty());
-
-    AsterixRecord rcat10 = m_recordMap[cat].dequeue();
-    QVariantList items = rcat10.dataItems;
-
-    QVariantList::const_iterator it = items.constBegin();
-    while (hash.values().contains(false) && it != items.constEnd())
-    {
-        const auto &diVariant = *it;
-        AsterixDataItem di = diVariant.value<AsterixDataItem>();
-        if (hash.contains(di.name))
-        {
-            hash[di.name] = true;
-        }
-        it++;
-    }
-
-    // TODO: Remove range-based for loop alternative (for discussion).
+bool MopsProcessor::targetReports(const AsterixRecord &record,
+    QHash<QString, bool> hash)
+{
     /*
-    for (const QVariant &it : items)
+     * Count how many false there are at the start,
+     * decrement that number when you flip one.
+     * Stop when there's none left.
+     */
+
+    int count = hash.values().size();
+    for (const QVariant &it : record.dataItems)
     {
-        AsterixDataItem di = it.value<AsterixDataItem>();
-        if (hash.contains(di.name))
+        if (count == 0) break;
+
+        QString diName = it.value<AsterixDataItem>().name;
+        QHash<QString, bool>::iterator hit = hash.find(diName);
+        if (hit != hash.end())
         {
-            hash[di.name] = true;
+            *hit = true;
+            --count;
         }
     }
-    */
 
-    bool passed = !hash.values().contains(false);
-    return passed;
+    if (count == 0)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 QHash<QString, bool> MopsProcessor::ed116TargetReportsHash()
