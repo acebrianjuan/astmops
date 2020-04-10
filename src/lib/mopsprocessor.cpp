@@ -33,11 +33,11 @@ double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
         AsterixDataItem di = var.value<AsterixDataItem>();
         AsterixDataElement el = di.fields.value(0).value<AsterixDataElement>();
 
-        if (di.name == "I140")
+        if (di.name == QLatin1String("I140"))
         {
             tod = el.value.toUInt();
         }
-        if (di.name == "I220")
+        if (di.name == QLatin1String("I220"))
         {
             address = el.value.toUInt();
         }
@@ -123,10 +123,10 @@ QHash<QString, bool> MopsProcessor::ed117TargetReportsHash()
 QHash<QString, bool> MopsProcessor::ed117ServiceMessagesHash()
 {
     static QStringList list = QStringList()
-            << QLatin1String("I000")   // Message Type
-            << QLatin1String("I010")   // Data Source Identifier
-            << QLatin1String("I140")   // Time of Day
-            << QLatin1String("I550");  // System Status
+                              << QLatin1String("I000")   // Message Type
+                              << QLatin1String("I010")   // Data Source Identifier
+                              << QLatin1String("I140")   // Time of Day
+                              << QLatin1String("I550");  // System Status
     static QHash<QString, bool> hash = makeHash(list);
     return hash;
 }

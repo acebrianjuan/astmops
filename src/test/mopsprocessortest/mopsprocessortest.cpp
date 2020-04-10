@@ -103,20 +103,20 @@ void MopsProcessorTest::ed117UpdateRateTest_data()
     record.cat = 10;
 
     AsterixDataItem di1;  // Time of Day.
-    di1.name = "I140";
+    di1.name = QLatin1String("I140");
 
     AsterixDataElement el1;
-    el1.name = "ToD";
-    el1.value = "256";
+    el1.name = QLatin1String("ToD");
+    el1.value = QLatin1String("256");
 
     di1.fields.append(QVariant::fromValue(el1));
 
     AsterixDataItem di2;  // Target Address.
-    di2.name = "I220";
+    di2.name = QLatin1String("I220");
 
     AsterixDataElement el2;
-    el2.name = "TAddr";
-    el2.value = "1234";
+    el2.name = QLatin1String("TAddr");
+    el2.value = QLatin1String("1234");
 
     di2.fields.append(QVariant::fromValue(el2));
 
