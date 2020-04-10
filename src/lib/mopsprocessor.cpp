@@ -21,9 +21,38 @@ bool MopsProcessor::ed117TargetReports(const AsterixRecord &record)
     return targetReports(record, ed117TargetReportsHash());
 }
 
-void MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
+double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
 {
     // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
+
+    uint address = 0;
+    uint tod = 0;
+
+    for (const QVariant &var : record.dataItems)
+    {
+        AsterixDataItem di = var.value<AsterixDataItem>();
+        AsterixDataElement el = di.fields.value(0).value<AsterixDataElement>();
+
+        if (di.name == "I140")
+        {
+            tod = el.value.toUInt();
+        }
+        if (di.name == "I220")
+        {
+            address = el.value.toUInt();
+        }
+    }
+
+    TargetData oldStatus = m_targetStatusHash.value(address);
+
+    QDateTime newToD = QDateTime::fromSecsSinceEpoch(tod / 128);
+    QDateTime firstToD = oldStatus.firstToD;
+    qint64 diffToD = firstToD.secsTo(newToD);
+
+    uint nRecords = oldStatus.nRecords + 1;
+
+    double ur = (double)(nRecords / diffToD);
+    return ur;
 }
 
 bool MopsProcessor::targetReports(const AsterixRecord &record,
@@ -36,15 +65,15 @@ bool MopsProcessor::targetReports(const AsterixRecord &record,
      */
 
     int count = hash.values().size();
-    for (const QVariant &it : record.dataItems)
+    for (const QVariant &di : record.dataItems)
     {
         if (count == 0) break;
 
-        QString diName = it.value<AsterixDataItem>().name;
-        QHash<QString, bool>::iterator hit = hash.find(diName);
-        if (hit != hash.end())
+        QString diName = di.value<AsterixDataItem>().name;
+        QHash<QString, bool>::iterator it = hash.find(diName);
+        if (it != hash.end())
         {
-            *hit = true;
+            *it = true;
             --count;
         }
     }
@@ -106,7 +135,7 @@ QHash<QString, bool> MopsProcessor::makeHash(const QStringList &list, bool state
 {
     QHash<QString, bool> hash;
 
-    for (QString key : list)
+    for (const QString &key : list)
     {
         hash[key] = state;
     }

@@ -14,6 +14,9 @@ private slots:
     void ed117TargetReportsTest_data();
     void ed117TargetReportsTest();
 
+    void ed117UpdateRateTest_data();
+    void ed117UpdateRateTest();
+
 private:
     AsterixRecord makeRecord(const quint8& cat, const QStringList& di);
 };
@@ -86,6 +89,56 @@ void MopsProcessorTest::ed117TargetReportsTest()
 
     MopsProcessor mp;
     QCOMPARE(mp.ed117TargetReports(record), passed);
+}
+
+void MopsProcessorTest::ed117UpdateRateTest_data()
+{
+    MopsProcessor::TargetData target;
+    target.address = 1234;
+    target.firstToD = QDateTime::fromSecsSinceEpoch(0);
+    target.lastToD = QDateTime();
+    target.nRecords = 1;
+
+    AsterixRecord record;
+    record.cat = 10;
+
+    AsterixDataItem di1;  // Time of Day.
+    di1.name = "I140";
+
+    AsterixDataElement el1;
+    el1.name = "ToD";
+    el1.value = "256";
+
+    di1.fields.append(QVariant::fromValue(el1));
+
+    AsterixDataItem di2;  // Target Address.
+    di2.name = "I220";
+
+    AsterixDataElement el2;
+    el2.name = "TAddr";
+    el2.value = "1234";
+
+    di2.fields.append(QVariant::fromValue(el2));
+
+    record.dataItems.append(QVariant::fromValue(di1));
+    record.dataItems.append(QVariant::fromValue(di2));
+
+    QTest::addColumn<MopsProcessor::TargetData>("target");
+    QTest::addColumn<AsterixRecord>("record");
+    QTest::addColumn<double>("UR");
+
+    QTest::newRow("CAT010") << target << record << 1.0;
+}
+
+void MopsProcessorTest::ed117UpdateRateTest()
+{
+    QFETCH(MopsProcessor::TargetData, target);
+    QFETCH(AsterixRecord, record);
+    QFETCH(double, UR);
+
+    MopsProcessor mp;
+    mp.addTarget(target);
+    QCOMPARE(mp.ed117UpdateRate(record), UR);
 }
 
 AsterixRecord MopsProcessorTest::makeRecord(const quint8& cat, const QStringList& itemsList)

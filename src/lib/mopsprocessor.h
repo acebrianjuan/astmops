@@ -22,22 +22,24 @@ public:
 
     void addTarget(const TargetData& target);
 
-    bool ed116TargetReports(const AsterixRecord& record);
-    bool ed117TargetReports(const AsterixRecord& record);
-    void ed117UpdateRate(const AsterixRecord& record);
+    static bool ed116TargetReports(const AsterixRecord& record);
+    static bool ed117TargetReports(const AsterixRecord& record);
+    double ed117UpdateRate(const AsterixRecord& record);
 
 public slots:
 
 signals:
 
 private:
-    bool targetReports(const AsterixRecord& record, QHash<QString, bool> hash);
-    QHash<QString, bool> ed116TargetReportsHash();
-    QHash<QString, bool> ed117TargetReportsHash();
-    QHash<QString, bool> ed117ServiceMessagesHash();
-    QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
+    static bool targetReports(const AsterixRecord& record, QHash<QString, bool> hash);
+    static QHash<QString, bool> ed116TargetReportsHash();
+    static QHash<QString, bool> ed117TargetReportsHash();
+    static QHash<QString, bool> ed117ServiceMessagesHash();
+    static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
 
     QHash<uint, TargetData> m_targetStatusHash;
 };
+
+Q_DECLARE_METATYPE(MopsProcessor::TargetData);
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H
