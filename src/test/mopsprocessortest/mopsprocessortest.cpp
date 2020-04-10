@@ -120,8 +120,8 @@ void MopsProcessorTest::ed117UpdateRateTest_data()
 
     di2.fields.append(QVariant::fromValue(el2));
 
-    record.dataItems.append(QVariant::fromValue(di1));
-    record.dataItems.append(QVariant::fromValue(di2));
+    record.dataItems.append(di1);
+    record.dataItems.append(di2);
 
     QTest::addColumn<MopsProcessor::TargetData>("target");
     QTest::addColumn<AsterixRecord>("record");
@@ -151,7 +151,7 @@ AsterixRecord MopsProcessorTest::makeRecord(const quint8& cat, const QStringList
         AsterixDataItem di;
         di.name = it;
 
-        record.dataItems.append(QVariant::fromValue(di));
+        record.dataItems.append(di);
     }
 
     return record;

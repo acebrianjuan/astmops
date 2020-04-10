@@ -4,12 +4,12 @@
 #include <QDateTime>
 #include <QString>
 #include <QVariantList>
+#include <QVector>
 
-struct AsterixRecord
+struct AsterixDataElement
 {
-    QDateTime date;
-    quint8 cat;
-    QVariantList dataItems;
+    QString name;
+    QString value;
 };
 
 struct AsterixDataItem
@@ -18,10 +18,11 @@ struct AsterixDataItem
     QVariantList fields;
 };
 
-struct AsterixDataElement
+struct AsterixRecord
 {
-    QString name;
-    QString value;
+    QDateTime date;
+    quint8 cat;
+    QVector<AsterixDataItem> dataItems;
 };
 
 Q_DECLARE_METATYPE(AsterixRecord);

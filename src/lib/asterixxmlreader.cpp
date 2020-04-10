@@ -49,7 +49,7 @@ void AsterixXmlReader::readRecord()
         if (isValidDataItem(m_xml.name().toString()))
         {
             //qDebug() << m_xml.name().toString();
-            record.dataItems.append(QVariant::fromValue(readDataItem()));
+            record.dataItems.append(readDataItem());
         }
         else
         {

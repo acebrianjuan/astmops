@@ -28,9 +28,8 @@ double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
     uint address = 0;
     uint tod = 0;
 
-    for (const QVariant &var : record.dataItems)
+    for (const AsterixDataItem &di : record.dataItems)
     {
-        AsterixDataItem di = var.value<AsterixDataItem>();
         AsterixDataElement el = di.fields.value(0).value<AsterixDataElement>();
 
         if (di.name == QLatin1String("I140"))
@@ -65,11 +64,11 @@ bool MopsProcessor::targetReports(const AsterixRecord &record,
      */
 
     int count = hash.values().size();
-    for (const QVariant &di : record.dataItems)
+    for (const AsterixDataItem &di : record.dataItems)
     {
         if (count == 0) break;
 
-        QString diName = di.value<AsterixDataItem>().name;
+        QString diName = di.name;
         QHash<QString, bool>::iterator it = hash.find(diName);
         if (it != hash.end())
         {
