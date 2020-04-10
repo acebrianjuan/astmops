@@ -28,11 +28,13 @@ void AsterixXmlReaderTest::test()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
+    QFETCH(int, nItems);
+
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
     AsterixRecord record = reader.record();
-    QCOMPARE(record.dataItems.size(), 2);
+    QCOMPARE(record.dataItems.size(), nItems);
 }
 
 QTEST_APPLESS_MAIN(AsterixXmlReaderTest)
