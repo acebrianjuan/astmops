@@ -12,13 +12,15 @@ void MopsProcessor::addTarget(const MopsProcessor::TargetData &target)
 bool MopsProcessor::ed116TargetReports(const AsterixRecord &record)
 {
     // TODO: Add assertion that checks if record is a CAT010 SMR target report.
-    return targetReports(record, ed116TargetReportsHash());
+
+    return checkDataItems(record, ed116TargetReportsHash());
 }
 
 bool MopsProcessor::ed117TargetReports(const AsterixRecord &record)
 {
     // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
-    return targetReports(record, ed117TargetReportsHash());
+
+    return checkDataItems(record, ed117TargetReportsHash());
 }
 
 double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
@@ -54,7 +56,7 @@ double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
     return ur;
 }
 
-bool MopsProcessor::targetReports(const AsterixRecord &record,
+bool MopsProcessor::checkDataItems(const AsterixRecord &record,
     QHash<QString, bool> hash)
 {
     /*

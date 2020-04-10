@@ -31,13 +31,14 @@ public slots:
 signals:
 
 private:
-    static bool targetReports(const AsterixRecord& record, QHash<QString, bool> hash);
+    static bool checkDataItems(const AsterixRecord& record, QHash<QString, bool> hash);
     static QHash<QString, bool> ed116TargetReportsHash();
     static QHash<QString, bool> ed117TargetReportsHash();
     static QHash<QString, bool> ed117ServiceMessagesHash();
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
 
     QHash<uint, TargetData> m_targetStatusHash;
+    QDateTime m_lastServiceMessage;
 };
 
 Q_DECLARE_METATYPE(MopsProcessor::TargetData);
