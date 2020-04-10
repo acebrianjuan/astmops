@@ -21,14 +21,14 @@ private:
 void MopsProcessorTest::ed116TargetReportsTest_data()
 {
     QStringList itemsList;
-    itemsList << "I000"
-              << "I010"
-              << "I020"
-              << "I140"
-              << "I041"
-              << "I042"
-              << "I270"
-              << "I550";
+    itemsList << QLatin1String("I000")
+              << QLatin1String("I010")
+              << QLatin1String("I020")
+              << QLatin1String("I140")
+              << QLatin1String("I041")
+              << QLatin1String("I042")
+              << QLatin1String("I270")
+              << QLatin1String("I550");
 
     AsterixRecord recordPass = makeRecord(10, itemsList);
 
@@ -54,18 +54,18 @@ void MopsProcessorTest::ed116TargetReportsTest()
 void MopsProcessorTest::ed117TargetReportsTest_data()
 {
     QStringList itemsList;
-    itemsList << "I000"
-              << "I010"
-              << "I020"
-              << "I041"
-              << "I042"
-              << "I060"
-              << "I091"
-              << "I140"
-              << "I161"
-              << "I170"
-              << "I220"
-              << "I500";
+    itemsList << QLatin1String("I000")
+              << QLatin1String("I010")
+              << QLatin1String("I020")
+              << QLatin1String("I041")
+              << QLatin1String("I042")
+              << QLatin1String("I060")
+              << QLatin1String("I091")
+              << QLatin1String("I140")
+              << QLatin1String("I161")
+              << QLatin1String("I170")
+              << QLatin1String("I220")
+              << QLatin1String("I500");
 
     AsterixRecord recordPass = makeRecord(10, itemsList);
 

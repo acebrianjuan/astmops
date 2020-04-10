@@ -12,7 +12,7 @@ void AsterixXmlReader::addData(const QByteArray& data)
     if (m_xml.readNextStartElement())
     {
         if (m_xml.name() == QLatin1String("ASTERIX") &&
-            m_xml.attributes().hasAttribute("cat"))
+            m_xml.attributes().hasAttribute(QLatin1String("cat")))
         {
             // TODO: Handle case when excluded target is read.
             readRecord();
@@ -20,7 +20,7 @@ void AsterixXmlReader::addData(const QByteArray& data)
         }
         else
         {
-            m_xml.raiseError("Invalid ASTERIX file.");
+            m_xml.raiseError(QLatin1String("Invalid ASTERIX file."));
         }
     }
 }
@@ -39,10 +39,10 @@ void AsterixXmlReader::readRecord()
 {
     Q_ASSERT(m_xml.isStartElement() &&
              m_xml.name() == QLatin1String("ASTERIX") &&
-             m_xml.attributes().hasAttribute("cat"));
+             m_xml.attributes().hasAttribute(QLatin1String("cat")));
 
     AsterixRecord record;
-    record.cat = m_xml.attributes().value("cat").toUInt();
+    record.cat = m_xml.attributes().value(QLatin1String("cat")).toUInt();
 
     while (m_xml.readNextStartElement())
     {
@@ -88,7 +88,7 @@ AsterixDataElement AsterixXmlReader::readDataField()
 
 bool AsterixXmlReader::isValidDataItem(const QString& di)
 {
-    QRegularExpression re("I(\\d{3}|RE|SP)\\b");
+    QRegularExpression re(QLatin1String("I(\\d{3}|RE|SP)\\b"));
     QRegularExpressionMatch match = re.match(di);
     return match.hasMatch();
 }
