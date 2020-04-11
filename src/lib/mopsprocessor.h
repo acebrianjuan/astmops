@@ -31,10 +31,10 @@ public slots:
 signals:
 
 private:
-    static bool checkDataItems(const AsterixRecord& record, QHash<QString, bool> hash);
-    static QHash<QString, bool> ed116TargetReportsHash();
-    static QHash<QString, bool> ed117TargetReportsHash();
-    static QHash<QString, bool> ed117ServiceMessagesHash();
+    static bool checkDataItems(const AsterixRecord& record, const QStringList& list);
+    static QStringList ed116TargetReportsList();
+    static QStringList ed117TargetReportsList();
+    static QStringList ed117ServiceMessagesList();
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
 
     QHash<uint, TargetData> m_targetStatusHash;

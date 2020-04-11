@@ -13,14 +13,14 @@ bool MopsProcessor::ed116TargetReports(const AsterixRecord &record)
 {
     // TODO: Add assertion that checks if record is a CAT010 SMR target report.
 
-    return checkDataItems(record, ed116TargetReportsHash());
+    return checkDataItems(record, ed116TargetReportsList());
 }
 
 bool MopsProcessor::ed117TargetReports(const AsterixRecord &record)
 {
     // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
 
-    return checkDataItems(record, ed117TargetReportsHash());
+    return checkDataItems(record, ed117TargetReportsList());
 }
 
 double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
@@ -56,8 +56,7 @@ double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
     return ur;
 }
 
-bool MopsProcessor::checkDataItems(const AsterixRecord &record,
-    QHash<QString, bool> hash)
+bool MopsProcessor::checkDataItems(const AsterixRecord &record, const QStringList &list)
 {
     /*
      * Count how many false there are at the start,
@@ -65,6 +64,7 @@ bool MopsProcessor::checkDataItems(const AsterixRecord &record,
      * Stop when there's none left.
      */
 
+    QHash<QString, bool> hash = makeHash(list);
     int count = hash.values().size();
     if (record.dataItems.size() >= count)
     {
@@ -90,7 +90,7 @@ bool MopsProcessor::checkDataItems(const AsterixRecord &record,
     return false;
 }
 
-QHash<QString, bool> MopsProcessor::ed116TargetReportsHash()
+QStringList MopsProcessor::ed116TargetReportsList()
 {
     QStringList list;
     list << QLatin1String("I000")   // Message Type
@@ -102,10 +102,10 @@ QHash<QString, bool> MopsProcessor::ed116TargetReportsHash()
          << QLatin1String("I270")   // Target Size & Orientation
          << QLatin1String("I550");  // System Status
 
-    return makeHash(list);
+    return list;
 }
 
-QHash<QString, bool> MopsProcessor::ed117TargetReportsHash()
+QStringList MopsProcessor::ed117TargetReportsList()
 {
     QStringList list;
     list << QLatin1String("I000")   // Message Type
@@ -121,18 +121,18 @@ QHash<QString, bool> MopsProcessor::ed117TargetReportsHash()
          << QLatin1String("I220")   // Target Address
          << QLatin1String("I500");  // Standard Deviation of Position
 
-    return makeHash(list);
+    return list;
 }
 
-QHash<QString, bool> MopsProcessor::ed117ServiceMessagesHash()
+QStringList MopsProcessor::ed117ServiceMessagesList()
 {
     static QStringList list = QStringList()
                               << QLatin1String("I000")   // Message Type
                               << QLatin1String("I010")   // Data Source Identifier
                               << QLatin1String("I140")   // Time of Day
                               << QLatin1String("I550");  // System Status
-    static QHash<QString, bool> hash = makeHash(list);
-    return hash;
+
+    return list;
 }
 
 QHash<QString, bool> MopsProcessor::makeHash(const QStringList &list, bool state)
