@@ -66,22 +66,25 @@ bool MopsProcessor::checkDataItems(const AsterixRecord &record,
      */
 
     int count = hash.values().size();
-    for (const AsterixDataItem &di : record.dataItems)
+    if (record.dataItems.size() >= count)
     {
-        if (count == 0) break;
-
-        QString diName = di.name;
-        QHash<QString, bool>::iterator it = hash.find(diName);
-        if (it != hash.end())
+        for (const AsterixDataItem &di : record.dataItems)
         {
-            *it = true;
-            --count;
-        }
-    }
+            if (count == 0) break;
 
-    if (count == 0)
-    {
-        return true;
+            QString diName = di.name;
+            QHash<QString, bool>::iterator it = hash.find(diName);
+            if (it != hash.end())
+            {
+                *it = true;
+                --count;
+            }
+        }
+
+        if (count == 0)
+        {
+            return true;
+        }
     }
 
     return false;
