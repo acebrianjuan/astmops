@@ -4,56 +4,29 @@ MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
 }
 
-void MopsProcessor::addTarget(const MopsProcessor::TargetData &target)
+void MopsProcessor::processRecord(const AsterixRecord &record)
 {
-    m_targetStatusHash[target.address] = target;
-}
-
-bool MopsProcessor::ed116TargetReports(const AsterixRecord &record)
-{
-    // TODO: Add assertion that checks if record is a CAT010 SMR target report.
-
-    return checkDataItems(record, ed116TargetReportsList());
-}
-
-bool MopsProcessor::ed117TargetReports(const AsterixRecord &record)
-{
-    // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
-
-    return checkDataItems(record, ed117TargetReportsList());
-}
-
-double MopsProcessor::ed117UpdateRate(const AsterixRecord &record)
-{
-    // TODO: Add assertion that checks if record is a CAT010 MLAT target report.
-
-    uint address = 0;
-    uint tod = 0;
-
-    for (const AsterixDataItem &di : record.dataItems)
+    if (record.cat == 10)
     {
-        AsterixDataElement el = di.fields.value(0).value<AsterixDataElement>();
-
-        if (di.name == QLatin1String("I140"))
-        {
-            tod = el.value.toUInt();
-        }
-        if (di.name == QLatin1String("I220"))
-        {
-            address = el.value.toUInt();
-        }
     }
+}
 
-    TargetData oldStatus = m_targetStatusHash.value(address);
+double MopsProcessor::ed117TargetReportsMinimumFields()
+{
+    double num = static_cast<double>(tgtRepCounter.n);
+    double den = static_cast<double>(tgtRepCounter.total);
 
-    QDateTime newToD = QDateTime::fromSecsSinceEpoch(tod / 128);
-    QDateTime firstToD = oldStatus.firstToD;
-    qint64 diffToD = firstToD.secsTo(newToD);
+    double p = num / den;
+    return p;
+}
 
-    uint nRecords = oldStatus.nRecords + 1;
+double MopsProcessor::ed117ServiceMessagesMinimumFields()
+{
+    double num = static_cast<double>(srvMsgCounter.n);
+    double den = static_cast<double>(srvMsgCounter.total);
 
-    double ur = (double)(nRecords / diffToD);
-    return ur;
+    double p = num / den;
+    return p;
 }
 
 bool MopsProcessor::checkDataItems(const AsterixRecord &record, const QStringList &list)

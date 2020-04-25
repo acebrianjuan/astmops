@@ -10,23 +10,18 @@ class MopsProcessor : public QObject
     Q_OBJECT
 
 public:
-    struct TargetData
+    struct Counter
     {
-        uint address;
-        QDateTime firstToD;
-        QDateTime lastToD;
-        uint nRecords;
+        uint n;
+        uint total;
     };
 
     explicit MopsProcessor(QObject* parent = nullptr);
-
-    void addTarget(const TargetData& target);
-
-    static bool ed116TargetReports(const AsterixRecord& record);
-    static bool ed117TargetReports(const AsterixRecord& record);
-    double ed117UpdateRate(const AsterixRecord& record);
+    void processRecord(const AsterixRecord& record);
 
 public slots:
+    double ed117TargetReportsMinimumFields();
+    double ed117ServiceMessagesMinimumFields();
 
 signals:
 
@@ -37,10 +32,8 @@ private:
     static QStringList ed117ServiceMessagesList();
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
 
-    QHash<uint, TargetData> m_targetStatusHash;
-    QDateTime m_lastServiceMessage;
+    Counter tgtRepCounter;
+    Counter srvMsgCounter;
 };
-
-Q_DECLARE_METATYPE(MopsProcessor::TargetData);
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

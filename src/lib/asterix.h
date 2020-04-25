@@ -22,7 +22,7 @@ struct AsterixRecord
 {
     QDateTime date;
     quint8 cat;
-    QVector<AsterixDataItem> dataItems;
+    QHash<QString, AsterixDataItem> dataItems;
 };
 
 Q_DECLARE_METATYPE(AsterixRecord);

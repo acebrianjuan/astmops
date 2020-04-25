@@ -1,0 +1,947 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1/message" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:smXML="http://www.isotc211.org/smXML" xmlns:aixm="http://www.aixm.aero/schema/5.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:amxm="http://www.eurocontrol.int/amxs/v1.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:ns1="http://www.faa.gov/aixm5.0" xmlns:gsr="http://www.isotc211.org/2005/gsr" xmlns:scXML="http://www.isotc211.org/scXML" xmlns:iso19115="http://www.isotc211.org/2005/gmd" xsi:schemaLocation="http://www.isotc211.org/2005/gts iso/19139/gts/gts.xsd http://www.isotc211.org/2005/gco iso/19139/gco/gco.xsd http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd http://www.isotc211.org/2005/gss iso/19139/gss/gss.xsd http://www.isotc211.org/2005/gsr iso/19139/gsr/gsr.xsd http://www.isotc211.org/2005/gmd iso/19139/gmd/gmd.xsd " gml:id="M001">
+  <gml:identifier codeSpace="http://www.faa.gov/NASR">KORD</gml:identifier>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="9R-27L RE0">
+      <gml:identifier>9R-27L RE0</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="9R-27L TS0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="9R-27L TSP0">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9688085725254 -87.9210282558244 41.9688078811297 -87.9209779598909 41.9688081484426 -87.9206589062165 41.9688084727018 -87.9202719041201 41.9688214202925 -87.9122329624919 41.9688201607731 -87.9106036836571 41.9688288447569 -87.9092959893878 41.9692389147705 -87.9097563677978 41.9692357934405 -87.9121456008444 41.9692317542692 -87.9133610961531 41.969225293873 -87.9192603214462 41.9692231928876 -87.9209717402962 41.9692208942648 -87.9210385625558 41.9690141656065 -87.9210333950485 41.9688085725254 -87.9210282558244</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">756.965940184319</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="9L-27R RE2">
+      <gml:identifier>9L-27R RE2</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="9L-27R TS2">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="9L-27R TSP2">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9841087905251 -87.888987613544 41.9836928778157 -87.8889863170095 41.983692920023 -87.8890601350786 41.9836930968917 -87.8893709118973 41.9836933206573 -87.8897644209092 41.9836938177655 -87.8906375220034 41.9836941909316 -87.8912928645524 41.9836942679766 -87.8914278082999 41.9836944086676 -87.891674787358 41.9836956889556 -87.8939221055392 41.984108339644 -87.894387651232 41.9841087235294 -87.8897882972574 41.9841087737762 -87.8891874450748 41.9841087905251 -87.888987613544</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">738.325131125176</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="4L-22R RE3">
+      <gml:identifier>4L-22R RE3</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="4L-22R TS3">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="4L-22R TSP3">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9815025609828 -87.9137256095704 41.9815521126839 -87.9138067026889 41.9817667347766 -87.9141510183604 41.9818222176078 -87.9140898985183 41.9818978624624 -87.914006568339 41.9820288317034 -87.9138622925058 41.9827867256828 -87.9130273969806 41.982988491634 -87.9128051315411 41.9830805618266 -87.9127037073422 41.9832038962366 -87.9125678419239 41.983694902426 -87.9120269499751 41.9836923170616 -87.911309354912 41.9829921723782 -87.9120819193589 41.9828736325161 -87.9122127203013 41.9827052833544 -87.9123984825466 41.981925175273 -87.9132592818266 41.9816801699564 -87.9135296294834 41.981557310211 -87.9136651972555 41.9815025609828 -87.9137256095704</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">747.759143418992</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="9L-27R RE4">
+      <gml:identifier>9L-27R RE4</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="9L-27R TS4">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="9L-27R TSP4">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.98368953205 -87.9183837370096 41.9841021304817 -87.9183803435392 41.984102375016 -87.9179970616282 41.9841026657774 -87.9175422575761 41.9841034978641 -87.9162397501184 41.9841035782589 -87.9161137714495 41.9841036700431 -87.9159698294021 41.9841047299152 -87.91431086877 41.9841050159869 -87.9138633165346 41.9841063451817 -87.9115733626586 41.9836948106419 -87.9120315179249 41.9836937367007 -87.9133236299858 41.9836935779209 -87.9135149846588 41.9836934137814 -87.9137121104369 41.9836916129367 -87.9158795290027 41.9836914193191 -87.9161125391131 41.9836912464702 -87.9163205278575 41.983690047247 -87.9177638135804 41.98368953205 -87.9183837370096</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">748.099116034234</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="14L-32R RE5">
+      <gml:identifier>14L-32R RE5</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="14L-32R TS5">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="14L-32R TSP5">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>42.0023297058743 -87.9156104500462 42.00258705783 -87.9151901481567 41.9969237122663 -87.9088078495153 41.9967225683703 -87.9085811705608 41.9965607750737 -87.9083988377571 41.991816116205 -87.9030518511385 41.9914848251053 -87.9034192139688 41.9926793197339 -87.9047620008673 41.99381140518 -87.9060346312395 41.9949226817591 -87.9072838683213 41.9952723872992 -87.9076769885524 41.9957016033465 -87.9081594906545 41.9963797848267 -87.9089218655429 41.9968671290307 -87.9094697124479 42.0015112487792 -87.914690384816 42.0022730301846 -87.9155467380329 42.0023297058743 -87.9156104500462</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.868164248193</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="9L-27R RE6">
+      <gml:identifier>9L-27R RE6</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="9L-27R TS6">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="9L-27R TSP6">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9841108955303 -87.9108400300544 41.9841107159818 -87.9100864220382 41.9841103923925 -87.908730013446 41.9841103133375 -87.9083970626541 41.9841084689457 -87.900659191793 41.9841084073096 -87.9004015441589 41.9841083436637 -87.900133520657 41.9841077487418 -87.8976352009282 41.9841076314993 -87.8971445182677 41.9841075470847 -87.8967897364915 41.9841073320285 -87.8958883953662 41.9841071498002 -87.8951233914936 41.9836904961182 -87.8946513505578 41.9836906307796 -87.895880249825 41.9836906642775 -87.896187210666 41.983690718544 -87.8966839575886 41.9836907359629 -87.8968456149759 41.983690843156 -87.8978235881173 41.9836910843406 -87.9000332798601 41.9836912236916 -87.901308389271 41.9836915593401 -87.9043794639138 41.9836916142766 -87.9048845009358 41.983691686632 -87.9055447243447 41.9836917703766 -87.9063092595255 41.9836919351861 -87.9078174677122 41.9836920658277 -87.9090125241952 41.9836921824002 -87.9100781660581 41.9836923170616 -87.911309354912 41.9841108955303 -87.9108400300544</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">749.650152868951</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="14L-32R RE8">
+      <gml:identifier>14L-32R RE8</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="14L-32R TS8">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="14L-32R TSP8">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9836956889556 -87.8939221055392 41.9829923649909 -87.893137319638 41.9828924864484 -87.8930258733347 41.982794793641 -87.8929168656656 41.9823824447683 -87.8924567575166 41.9816569559433 -87.8916472404881 41.981585988729 -87.8915680531138 41.9815116857984 -87.8914851449367 41.9812578330285 -87.89190100211 41.9813289576827 -87.8919814141886 41.9814012614614 -87.8920631605127 41.9816349036358 -87.8923273141643 41.9827975525243 -87.8936417954867 41.9830001642963 -87.8938708672837 41.9836904961182 -87.8946513505578 41.9836950926938 -87.8939157342031 41.9836956889556 -87.8939221055392</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">743.689991898263</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="14R-32L RE9">
+      <gml:identifier>14R-32L RE9</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="14R-32L TS9">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="14R-32L TSP9">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.962916490883 -87.9026586492007 41.9632724538224 -87.9020819552997 41.9633034125394 -87.9021197200112 41.9634130510167 -87.9022436988833 41.9637417507223 -87.9026153930728 41.9660321504346 -87.9051864408479 41.9663562502149 -87.9055522799807 41.9665148370969 -87.905731290639 41.9668205244466 -87.9060763466102 41.9688278224024 -87.9083316657744 41.9688288447569 -87.9092959893878 41.9662747405559 -87.9064291162437 41.9659999241588 -87.9061211264356 41.9657396284116 -87.9058294088544 41.9633759796112 -87.9031711736199 41.9630193480547 -87.9027741323595 41.9629474938172 -87.9026941351 41.962916490883 -87.9026586492007</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">737.521292395318</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="4R-22L RE10">
+      <gml:identifier>4R-22L RE10</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="4R-22L TS10">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="4R-22L TSP10">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9698003501987 -87.8795265782254 41.9700663191425 -87.8799474850595 41.9700278314478 -87.8799963654897 41.9693016267736 -87.8808430492435 41.9684371241979 -87.8818698291891 41.9678557515168 -87.8825629867306 41.9675218871119 -87.8829610479795 41.9650751488937 -87.8858638846935 41.9609151950727 -87.8907980031718 41.9600681415294 -87.8918048484497 41.9578188584235 -87.8944680255998 41.9567396339314 -87.8957452683668 41.9567309338687 -87.8957540962946 41.9542318492235 -87.8987167388075 41.9534827648448 -87.8995991580705 41.9534373712324 -87.8996523608811 41.9531694661127 -87.8992428139882 41.9698003501987 -87.8795265782254</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">741.27344150039</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="4L-22R RE12">
+      <gml:identifier>4L-22R RE12</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="4L-22R TS12">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="4L-22R TSP12">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9911582237052 -87.9030463938414 41.9898955395044 -87.9044434933266 41.9869787031176 -87.9076835026508 41.9863849710681 -87.9083405089661 41.9858628313029 -87.9089182937877 41.9841108955303 -87.9108400300544 41.9841063907388 -87.9115710798061 41.9848008970633 -87.9107991568924 41.9853039115636 -87.9102400721575 41.985737058919 -87.9097598282163 41.9862140851139 -87.9092309337014 41.9903073768648 -87.9047199012051 41.9905741859348 -87.9044251658589 41.9907886378584 -87.9041882681651 41.9914848251053 -87.9034192139688 41.9911582237052 -87.9030463938414</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.618477053368</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="9R-27L RE14">
+      <gml:identifier>9R-27L RE14</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="9R-27L TS14">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="9R-27L TSP14">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9688278224024 -87.9083316657744 41.968828125223 -87.9076703828704 41.9688288206385 -87.9061510921865 41.9688290812518 -87.9059385000261 41.9688301451436 -87.9050703166048 41.9688394582171 -87.9017322088185 41.968839677293 -87.9013867272535 41.9688397576879 -87.9012600278138 41.9688399566652 -87.9009461730723 41.9688599883821 -87.8866721824049 41.9688614984653 -87.8855960443585 41.9688602000885 -87.8846454223498 41.9688651631306 -87.8837224441818 41.9690722562456 -87.8837206663851 41.9692743541605 -87.883718928095 41.9692738362837 -87.8837363828262 41.9692740426305 -87.8841753190328 41.9692742757755 -87.8846714320541 41.9692747293365 -87.8856375693793 41.9692741806416 -87.8866734717564 41.9692722431258 -87.8903286702333 41.9692674696815 -87.8918343383256 41.9692587213819 -87.8962009086793 41.9692576802685 -87.8974059172322 41.9692573084424 -87.8978367707491 41.9692571416231 -87.8983678381265 41.9692568642608 -87.8992536531608 41.9692499268552 -87.9009098826751 41.9692500266788 -87.9017507805087 41.96924672982 -87.9033937789059 41.9692435716423 -87.905242262766 41.9692419423066 -87.9070238520874 41.9692410639929 -87.9076738540633 41.9692395498899 -87.9087943885416 41.9688278224024 -87.9083316657744</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">743.092003054345</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="9R-27LRE14TD2">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="9R-27LRE14TD2">
+              <gml:beginPosition>2010-01-23T14:00:00</gml:beginPosition>
+	      <gml:endPosition>2010-12-23T14:00:00</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>2</aixm:sequenceNumber>
+           <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability>
+              <aixm:operationalStatus>CLOSED</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="14R-32L RE16">
+      <gml:identifier>14R-32L RE16</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="14R-32L TS16">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="14R-32L TSP16">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9878869049842 -87.9307564421329 41.971998715561 -87.9128742020851 41.9718361266904 -87.9126921188912 41.9717985759306 -87.9126500659186 41.9715686181852 -87.9123925359065 41.9709212621005 -87.9116602897337 41.9702277292237 -87.910885773302 41.9696378219592 -87.9102119928464 41.9692389147705 -87.9097563677978 41.9692392390298 -87.9092651742452 41.9692395498899 -87.9087943885416 41.9699942639179 -87.9096450193631 41.9702269098661 -87.9099072327023 41.9706185185423 -87.9103532343039 41.9719379059011 -87.9118356702749 41.9720849320036 -87.912002655665 41.9721554017748 -87.9120826919822 41.9724345296807 -87.9123997121894 41.9731281084496 -87.9131719453195 41.9735891628675 -87.9136939912767 41.9738514292935 -87.9139909520112 41.9743319787927 -87.9145264068652 41.9747267245429 -87.9149662544171 41.9756083738328 -87.9159646367542 41.9758382168481 -87.9162223501578 41.9759182328378 -87.9163120687328 41.9761684855933 -87.9165926667793 41.9774162394654 -87.9179906052184 41.978014957838 -87.9186631279445 41.9782863786414 -87.9189680069732 41.9795331182823 -87.9203748736778 41.980226513483 -87.9211562401263 41.9804938045871 -87.9214587708416 41.9808549365804 -87.9218675145834 41.9816200145095 -87.9227291587656 41.9822152529575 -87.9234025744586 41.9824983486843 -87.9237228512661 41.983730263431 -87.9251040480008 41.9845888007088 -87.9260650360007 41.9902765333805 -87.9324755131686 41.9905831379014 -87.9328202324359 41.9906359224804 -87.9328827947176 41.9904607005639 -87.9331657903204 41.9903730889357 -87.9333072885708 41.9902854786475 -87.9334487868212 41.9878869049842 -87.9307564421329</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">752.893980211938</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+       
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="18-36 RE17">
+      <gml:identifier>18-36 RE17</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="18-36 TS17">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="18-36 TSP17">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9974171570995 -87.9001347166293 41.9974164710635 -87.9006762460709 41.9973502310664 -87.9006734859966 41.9970396818381 -87.9006741863408 41.9968079798594 -87.9006747089053 41.9939730135685 -87.9006776808785 41.9944612019184 -87.9001377460667 41.9966156740372 -87.9001343880063 41.9969022548808 -87.9001342371629 41.9972131980438 -87.9001340719535 41.9974171570995 -87.9001347166293</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">736.740938849175</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="18-36 RE18">
+      <gml:identifier>18-36 RE18</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="18-36 TS18">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="18-36 TSP18">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9933149843975 -87.9006790743838 41.989696165635 -87.900669610759 41.9892210883453 -87.9001360508747 41.9895586891008 -87.9001322366927 41.9922382307072 -87.9001343933935 41.9924172606597 -87.9001344221256 41.9925656574944 -87.9001344454704 41.9938083742942 -87.9001347561359 41.9933149843975 -87.9006790743838</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">739.166916556085</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="18-36 RE20">
+      <gml:identifier>18-36 RE20</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="18-36 TS20">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="18-36 TSP20">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9885687598391 -87.9001375090271 41.989053466422 -87.9006715573566 41.9877357961632 -87.9006719326692 41.9869687060179 -87.9006692390379 41.9841084722955 -87.9006736045164 41.9841083436637 -87.900133520657 41.9870690789887 -87.900137342022 41.9885687598391 -87.9001375090271</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.136681742394</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="14L-32R RE21">
+      <gml:identifier>14L-32R RE21</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="14L-32R TS21">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="14L-32R TSP21">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9885687598391 -87.9001375090271 41.9877157878948 -87.8991782709897 41.9841071498002 -87.8951233914936 41.984108339644 -87.894387651232 41.9845952838836 -87.89493582676 41.9848469747019 -87.8952191662498 41.9891093971194 -87.9000109137411 41.9892210883453 -87.9001360508747 41.9885687598391 -87.9001375090271</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.136681742394</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="14L-32R RE23">
+      <gml:identifier>14L-32R RE23</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="14L-32R TS23">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="14L-32R TSP23">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9911582237052 -87.9030463938414 41.989053466422 -87.9006715573566 41.989696165635 -87.900669610759 41.9914926448444 -87.9026928529315 41.9911582237052 -87.9030463938414</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.618477053368</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="4L-22R RE25">
+      <gml:identifier>4L-22R RE25</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="4L-22R TS25">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="4L-22R TSP25">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9914926448444 -87.9026928529315 41.9933149843975 -87.9006790743838 41.9939730135685 -87.9006776808785 41.991816116205 -87.9030518511385 41.9914926448444 -87.9026928529315</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">741.575111574853</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id="4L-22R RE27">
+      <gml:identifier>4L-22R RE27</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id="4L-22R TS27">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="4L-22R TSP27">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>NORMAL</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9938083742942 -87.9001347561359 41.9952650351902 -87.898519974425 41.9953389971127 -87.8984383915145 41.9970574973369 -87.8965428472211 41.9973971602204 -87.8961683893659 41.9974235525099 -87.8961390808611 41.9976848692717 -87.8965592945341 41.9956257387459 -87.8988421866066 41.9944612019184 -87.9001377460667 41.9938083742942 -87.9001347561359</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">739.166916556085</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id=" RE29">
+      <gml:identifier> RE29</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id=" TS29">
+          <gml:validTime>
+            <gml:TimePeriod gml:id=" TSP29">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>INTERSECTION</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9692389147705 -87.9097563677978 41.9688288447569 -87.9092959893878 41.9688278224024 -87.9083316657744 41.9692395498899 -87.9087943885416 41.9692392785572 -87.9092056081795 41.969239188113 -87.909343298533 41.9692390969989 -87.9094809879887 41.9692389147705 -87.9097563677978</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">743.092003054345</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id=" RE30">
+      <gml:identifier> RE30</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id=" TS30">
+          <gml:validTime>
+            <gml:TimePeriod gml:id=" TSP30">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>INTERSECTION</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9911582237052 -87.9030463938414 41.9914848251053 -87.9034192139688 41.991816116205 -87.9030518511385 41.9914926448444 -87.9026928529315 41.9911582237052 -87.9030463938414</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.618477053368</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id=" RE31">
+      <gml:identifier> RE31</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id=" TS31">
+          <gml:validTime>
+            <gml:TimePeriod gml:id=" TSP31">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>INTERSECTION</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9836904961182 -87.8946513505578 41.9841071498002 -87.8951233914936 41.984108339644 -87.894387651232 41.9836950926938 -87.8939157342031 41.9836904961182 -87.8946513505578</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">743.255217976296</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id=" RE32">
+      <gml:identifier> RE32</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id=" TS32">
+          <gml:validTime>
+            <gml:TimePeriod gml:id=" TSP32">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>INTERSECTION</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9841063451817 -87.9115733626586 41.9836948106419 -87.9120315179249 41.9836923170616 -87.911309354912 41.9841108955303 -87.9108400300544 41.9841063907388 -87.9115710798061 41.9841063451817 -87.9115733626586</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">747.602233118737</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id=" RE33">
+      <gml:identifier> RE33</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id=" TS33">
+          <gml:validTime>
+            <gml:TimePeriod gml:id=" TSP33">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>INTERSECTION</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9939730135685 -87.9006776808785 41.9933149843975 -87.9006790743838 41.9935627479274 -87.9004057354493 41.9938083742942 -87.9001347561359 41.9944612019184 -87.9001377460667 41.9939730135685 -87.9006776808785</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">739.166916556085</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayElement gml:id=" RE34">
+      <gml:identifier> RE34</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayElementTimeSlice gml:id=" TS34">
+          <gml:validTime>
+            <gml:TimePeriod gml:id=" TSP34">
+              <gml:beginPosition>2008-03-23T14:00:00</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:type>INTERSECTION</aixm:type>
+          <aixm:surfaceProperties>
+            <aixm:SurfaceCharacteristics>
+              <aixm:composition>CONC</aixm:composition>
+            </aixm:SurfaceCharacteristics>
+          </aixm:surfaceProperties>
+          <aixm:extent>
+            <aixm:ElevatedSurface srsName="urn:ogc:def:crs:EPSG::4269" gml:id="b9826ec1">
+              <gml:patches>
+                <gml:PolygonPatch>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:posList>41.9885687598391 -87.9001375090271 41.9892210883453 -87.9001360508747 41.989459737779 -87.9004040779681 41.989696165635 -87.900669610759 41.989053466422 -87.9006715573566 41.9888091987282 -87.9004024240785 41.9885687598391 -87.9001375090271</gml:posList>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:PolygonPatch>
+              </gml:patches>
+              <aixm:elevation uom="FT">742.136681742394</aixm:elevation>
+            </aixm:ElevatedSurface>
+          </aixm:extent>
+        </aixm:RunwayElementTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayElement>
+  </message:hasMember>
+</message:AIXMBasicMessage>

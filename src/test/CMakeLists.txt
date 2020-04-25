@@ -1,2 +1,3 @@
+add_subdirectory(aixmreadertest)
 add_subdirectory(asterixxmlreadertest)
 add_subdirectory(mopsprocessortest)

@@ -46,10 +46,11 @@ void AsterixXmlReader::readRecord()
 
     while (m_xml.readNextStartElement())
     {
-        if (isValidDataItem(m_xml.name().toString()))
+        QString diName = m_xml.name().toString();
+        if (isValidDataItem(diName))
         {
-            //qDebug() << m_xml.name().toString();
-            record.dataItems.append(readDataItem());
+            //qDebug() << diName;
+            record.dataItems[diName] = readDataItem();
         }
         else
         {
