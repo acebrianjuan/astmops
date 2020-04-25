@@ -1,6 +1,5 @@
 #include "aixmreader.h"
 #include <QDebug>
-#include <QRegularExpression>
 
 AixmReader::AixmReader(QObject *parent) : QObject(parent)
 {
