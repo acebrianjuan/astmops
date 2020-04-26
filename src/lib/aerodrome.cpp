@@ -7,7 +7,8 @@ Aerodrome::Aerodrome()
 bool Aerodrome::hasAnyElements()
 {
     if (!runwayElements.isEmpty() || !taxiwayElements.isEmpty() ||
-        !apronElements.isEmpty() || !standElements.isEmpty())
+        !apronElements.isEmpty() || !standElements.isEmpty() ||
+        !approach1Elements.isEmpty() || !approach2Elements.isEmpty())
     {
         return true;
     }
@@ -54,6 +55,16 @@ Aerodrome::Area Aerodrome::locatePoint(const QPointF &point)
     {
         return Area::Stand;
     }
+    else if (collectionContainsPoint(approach1Elements, point))
+    {
+        return Area::Approach1;
+    }
+    else if (collectionContainsPoint(approach2Elements, point))
+    {
+        return Area::Approach2;
+    }
+
+    // TODO: Handle Area::Airborne case.
 
     return Area::None;
 }
@@ -88,4 +99,14 @@ QVector<QPolygonF> Aerodrome::getApronElements() const
 QVector<QPolygonF> Aerodrome::getStandElements() const
 {
     return standElements;
+}
+
+QVector<QPolygonF> Aerodrome::getApproach1Elements() const
+{
+    return approach1Elements;
+}
+
+QVector<QPolygonF> Aerodrome::getApproach2Elements() const
+{
+    return approach2Elements;
 }

@@ -14,6 +14,9 @@ public:
         Taxiway,
         Apron,
         Stand,
+        Approach1,
+        Approach2,
+        Airborne,
         None
     };
 
@@ -30,6 +33,8 @@ public:
     QVector<QPolygonF> getTaxiwayElements() const;
     QVector<QPolygonF> getApronElements() const;
     QVector<QPolygonF> getStandElements() const;
+    QVector<QPolygonF> getApproach1Elements() const;
+    QVector<QPolygonF> getApproach2Elements() const;
 
 private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point);
@@ -38,6 +43,8 @@ private:
     QVector<QPolygonF> taxiwayElements;
     QVector<QPolygonF> apronElements;
     QVector<QPolygonF> standElements;
+    QVector<QPolygonF> approach1Elements;
+    QVector<QPolygonF> approach2Elements;
 };
 
 #endif  // ASTMOPS_AERODROME_H
