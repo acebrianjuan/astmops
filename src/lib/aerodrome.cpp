@@ -82,6 +82,8 @@ Aerodrome::Area Aerodrome::locatePoint(const QPointF &point)
 
 bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point)
 {
+    Q_ASSERT(!collection.isEmpty());
+
     for (QPolygonF element : collection)
     {
         if (element.containsPoint(point, Qt::FillRule::OddEvenFill))
