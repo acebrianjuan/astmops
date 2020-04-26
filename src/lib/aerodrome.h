@@ -23,6 +23,7 @@ public:
     Aerodrome();
 
     bool hasAnyElements();
+    bool hasAllElements();
     void addRunwayElement(const QPolygonF &polygon);
     void addTaxiwayElement(const QPolygonF &polygon);
     void addApronElement(const QPolygonF &polygon);

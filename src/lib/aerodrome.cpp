@@ -15,6 +15,17 @@ bool Aerodrome::hasAnyElements()
     return false;
 }
 
+bool Aerodrome::hasAllElements()
+{
+    if (!runwayElements.isEmpty() && !taxiwayElements.isEmpty() &&
+        !apronElements.isEmpty() && !standElements.isEmpty() &&
+        !approach1Elements.isEmpty() && !approach2Elements.isEmpty())
+    {
+        return true;
+    }
+    return false;
+}
+
 void Aerodrome::addRunwayElement(const QPolygonF &polygon)
 {
     runwayElements.append(polygon);
