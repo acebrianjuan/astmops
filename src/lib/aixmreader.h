@@ -1,7 +1,7 @@
 #ifndef ASTMOPS_AIXMREADER_H
 #define ASTMOPS_AIXMREADER_H
 
-#include "airport.h"
+#include "aerodrome.h"
 #include <QObject>
 #include <QXmlStreamReader>
 
@@ -13,7 +13,7 @@ public:
     explicit AixmReader(QObject *parent = nullptr);
 
     bool read(QIODevice *device);
-    Airport airport() const { return m_airport; }
+    Aerodrome aerodrome() const { return m_aerodrome; }
 
 public slots:
 
@@ -26,9 +26,10 @@ private:
     static QStringList runwayPosListXmlPath();
     static QStringList taxiwayPosListXmlPath();
     static QStringList apronPosListXmlPath();
+    // TODO: Add standPosListXmlPath() function;
 
     QXmlStreamReader m_xml;
-    Airport m_airport;
+    Aerodrome m_aerodrome;
 };
 
 #endif  // ASTMOPS_AIXMREADER_H

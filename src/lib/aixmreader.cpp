@@ -45,15 +45,19 @@ void AixmReader::readAixm()
             {
                 if (m_xml.name() == QLatin1String("RunwayElement"))
                 {
-                    m_airport.runways.append(getPosList(runwayPosListXmlPath()));
+                    m_aerodrome.addRunwayElement(getPosList(runwayPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("TaxiwayElement"))
                 {
-                    m_airport.taxiways.append(getPosList(taxiwayPosListXmlPath()));
+                    m_aerodrome.addTaxiwayElement(getPosList(taxiwayPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("ApronElement"))
                 {
-                    m_airport.aprons.append(getPosList(apronPosListXmlPath()));
+                    m_aerodrome.addApronElement(getPosList(apronPosListXmlPath()));
+                }
+                else if (m_xml.name() == QLatin1String("StandElement"))
+                {
+                    //m_aerodrome.addStandElement(getPosList(standPosListXmlPath()));
                 }
                 else
                 {

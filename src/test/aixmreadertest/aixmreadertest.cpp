@@ -35,11 +35,11 @@ void AixmReaderTest::test()
     QFETCH(int, apronElements);
 
     reader.read(&file);
-    Airport airport = reader.airport();
+    Aerodrome aerodrome = reader.aerodrome();
 
-    QCOMPARE(airport.runways.size(), runwayElements);
-    QCOMPARE(airport.taxiways.size(), taxiwayElements);
-    QCOMPARE(airport.aprons.size(), apronElements);
+    QCOMPARE(aerodrome.getRunwayElements().size(), runwayElements);
+    QCOMPARE(aerodrome.getTaxiwayElements().size(), taxiwayElements);
+    QCOMPARE(aerodrome.getApronElements().size(), apronElements);
 }
 
 QTEST_APPLESS_MAIN(AixmReaderTest)
