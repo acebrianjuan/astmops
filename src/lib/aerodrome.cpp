@@ -28,21 +28,25 @@ bool Aerodrome::hasAllElements()
 
 void Aerodrome::addRunwayElement(const QPolygonF &polygon)
 {
+    Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
     runwayElements.append(polygon);
 }
 
 void Aerodrome::addTaxiwayElement(const QPolygonF &polygon)
 {
+    Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
     taxiwayElements.append(polygon);
 }
 
 void Aerodrome::addApronElement(const QPolygonF &polygon)
 {
+    Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
     apronElements.append(polygon);
 }
 
 void Aerodrome::addStandElement(const QPolygonF &polygon)
 {
+    Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
     standElements.append(polygon);
 }
 
