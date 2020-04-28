@@ -28,6 +28,9 @@ public:
     void addTaxiwayElement(const QPolygonF &polygon);
     void addApronElement(const QPolygonF &polygon);
     void addStandElement(const QPolygonF &polygon);
+    void addApproach1Element(const QPolygonF &polygon);
+    void addApproach2Element(const QPolygonF &polygon);
+
     Aerodrome::Area locatePoint(const QPointF &point);
 
     QVector<QPolygonF> getRunwayElements() const;

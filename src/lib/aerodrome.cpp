@@ -50,6 +50,18 @@ void Aerodrome::addStandElement(const QPolygonF &polygon)
     standElements.append(polygon);
 }
 
+void Aerodrome::addApproach1Element(const QPolygonF &polygon)
+{
+    Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
+    approach1Elements.append(polygon);
+}
+
+void Aerodrome::addApproach2Element(const QPolygonF &polygon)
+{
+    Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
+    approach2Elements.append(polygon);
+}
+
 Aerodrome::Area Aerodrome::locatePoint(const QPointF &point)
 {
     Q_ASSERT(hasAnyElements());
