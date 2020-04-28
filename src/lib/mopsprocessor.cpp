@@ -1,5 +1,10 @@
 #include "mopsprocessor.h"
 
+void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const QPointF &)> callback)
+{
+    m_locatePoint = callback;
+}
+
 MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
 }

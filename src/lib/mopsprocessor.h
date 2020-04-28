@@ -1,6 +1,7 @@
 #ifndef ASTMOPS_MOPSPROCESSOR_H
 #define ASTMOPS_MOPSPROCESSOR_H
 
+#include "aerodrome.h"
 #include "asterix.h"
 #include <QObject>
 #include <QQueue>
@@ -15,6 +16,8 @@ public:
         uint n;
         uint total;
     };
+
+    void setLocatePointCallback(std::function<Aerodrome::Area(const QPointF&)> callback);
 
     explicit MopsProcessor(QObject* parent = nullptr);
     void processRecord(const AsterixRecord& record);
@@ -31,6 +34,8 @@ private:
     static QStringList ed117TargetReportsList();
     static QStringList ed117ServiceMessagesList();
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
+
+    std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
 
     Counter tgtRepCounter;
     Counter srvMsgCounter;
