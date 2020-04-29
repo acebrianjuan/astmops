@@ -33,7 +33,12 @@ void AsterixXmlReaderTest::test()
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
+    QVERIFY(reader.hasPendingRecords() == true);
+
     AsterixRecord record = reader.record();
+
+    QVERIFY(reader.hasPendingRecords() == false);
+
     QCOMPARE(record.dataItems.size(), nItems);
 }
 
