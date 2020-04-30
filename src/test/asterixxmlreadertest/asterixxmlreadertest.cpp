@@ -16,8 +16,9 @@ void AsterixXmlReaderTest::test_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<int>("nItems");
 
-    QTest::newRow("CAT010") << "cat010.xml" << 2;
-    QTest::newRow("CAT010 (Empty Data Items)") << "cat010-empty.xml" << 2;
+    QTest::newRow("CAT010") << "cat010.xml" << 12;
+    QTest::newRow("CAT010 (Empty Data Items)") << "cat010-empty.xml" << 12;
+    QTest::newRow("CAT010 (Incomplete Chunk)") << "cat010-incomplete.xml" << 12;
 }
 
 void AsterixXmlReaderTest::test()
