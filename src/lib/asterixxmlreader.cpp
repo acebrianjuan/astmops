@@ -9,18 +9,34 @@ void AsterixXmlReader::addData(const QByteArray& data)
 {
     m_xml.addData(data);
 
-    if (m_xml.readNextStartElement())
+    while (!m_xml.atEnd())
     {
-        if (m_xml.name() == QLatin1String("ASTERIX") &&
-            m_xml.attributes().hasAttribute(QLatin1String("cat")))
+        if (m_xml.readNextStartElement())
         {
-            // TODO: Handle case when excluded target is read.
-            readRecord();
-            emit readyRead();
-        }
-        else
-        {
-            m_xml.raiseError(QLatin1String("Invalid ASTERIX file."));
+            // If the element is the root element, go down one level.
+            if (m_xml.name() == QLatin1String("ASTERIXSTART"))
+            {
+                m_xml.readNextStartElement();
+            }
+
+            // If the element start that we are in right now is not the one we want,
+            // skip it entirely. Otherwise, "drill down" till the end.
+            if (m_xml.name() != QLatin1String("ASTERIX"))
+            {
+                m_xml.skipCurrentElement();
+                continue;
+            }
+
+            if (m_xml.attributes().hasAttribute(QLatin1String("cat")))
+            {
+                // TODO: Handle case when excluded target is read.
+                readRecord();
+                emit readyRead();
+            }
+            else
+            {
+                m_xml.raiseError(QLatin1String("Invalid ASTERIX file."));
+            }
         }
     }
 }
