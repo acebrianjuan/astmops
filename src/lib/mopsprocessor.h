@@ -13,8 +13,8 @@ class MopsProcessor : public QObject
 public:
     struct Counter
     {
-        uint n;
-        uint total;
+        uint n = 0;
+        uint total = 0;
     };
 
     void setLocatePointCallback(std::function<Aerodrome::Area(const QPointF&)> callback);
@@ -23,6 +23,7 @@ public:
     void processRecord(const AsterixRecord& record);
 
 public slots:
+    double ed116TargetReportsMinimumFields();
     double ed117TargetReportsMinimumFields();
     double ed117ServiceMessagesMinimumFields();
 
@@ -37,7 +38,8 @@ private:
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
 
-    Counter tgtRepCounter;
+    Counter ed116TgtRepCounter;
+    Counter ed117TgtRepCounter;
     Counter srvMsgCounter;
 };
 
