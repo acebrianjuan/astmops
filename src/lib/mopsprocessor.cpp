@@ -13,6 +13,10 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 {
     if (record.cat == 10)
     {
+        // TODO: Handle case when none of the following Data Items are present:
+        // * I010/I000 Message Type
+        // * I010/I020 Target Report Descriptor
+
         AsterixDataItem di010_000 = record.dataItems[QLatin1String("I000")];
         int msgType = di010_000.fields[0].value<AsterixDataElement>().value.toInt();
 
@@ -32,7 +36,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
             if (sysType == 1)  // Mode S Multilateration.
             {
                 ++ed117TgtRepCounter.total;
-                if (checkDataItems(record, ed117TargetReportsList()))
+                if (checkDataItems(record, ed117TargetReportsMinimumFieldsCollection()))
                 {
                     // Target Report is valid. Update surveillance state.
                     ++ed117TgtRepCounter.n;
@@ -41,7 +45,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
                 ++ed116TgtRepCounter.total;
-                if (checkDataItems(record, ed116TargetReportsList()))
+                if (checkDataItems(record, ed116TargetReportsMinimumFieldsCollection()))
                 {
                     // Target Report is valid. Update surveillance state.
                     ++ed116TgtRepCounter.n;
@@ -51,7 +55,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         else if (msgType == 3)  // Periodic Status Message.
         {
             ++srvMsgCounter.total;
-            if (checkDataItems(record, ed117ServiceMessagesList()))
+            if (checkDataItems(record, ed117ServiceMessagesMinimumFieldsCollection()))
             {
                 // Status Message is valid. Update surveillance state.
                 ++srvMsgCounter.n;
@@ -93,63 +97,119 @@ double MopsProcessor::ed117ServiceMessagesMinimumFields()
     return p;
 }
 
-bool MopsProcessor::checkDataItems(const AsterixRecord &record, const QStringList &list)
+bool MopsProcessor::checkDataItems(const AsterixRecord &record,
+    const QVector<DataItemList> &collections)
 {
-    /*
-     * Count how many false there are at the start,
-     * decrement that number when you flip one.
-     * Stop when there's none left.
-     */
+    Q_ASSERT(!record.dataItems.isEmpty() && !collections.isEmpty());
 
-    QHash<QString, bool> hash = makeHash(list);
-    int count = hash.values().size();
-    if (record.dataItems.size() >= count)
+    int count = collections.size();
+    for (DataItemList diList : collections)
+    {
+        if (checkDataItemsList(record, diList.items, diList.type))
+        {
+            // Check succeeded. Decrease counter.
+            --count;
+        }
+        else
+        {
+            // Check failed. Exit the loop.
+            break;
+        }
+    }
+
+    if (count == 0)
+    {
+        // All checks succeeded.
+        return true;
+    }
+
+    return false;
+}
+
+bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
+    const QStringList &list, DataItemListType type)
+{
+    Q_ASSERT(!record.dataItems.isEmpty() && !list.isEmpty());
+
+    if (type == MopsProcessor::Disjunctive)
     {
         for (const AsterixDataItem &di : record.dataItems)
         {
-            if (count == 0) break;
-
             QString diName = di.name;
-            QHash<QString, bool>::iterator it = hash.find(diName);
-            if (it != hash.end())
+            if (list.contains(diName))
             {
-                *it = true;
-                --count;
+                // One match is enough. Return true.
+                return true;
             }
         }
-
-        if (count == 0)
+    }
+    else  // Assume type is MopsProcessor::Mandatory.
+    {
+        /*
+         * Count how many false there are at the start,
+         * decrement that number when you flip one.
+         * Stop when there's none left.
+         */
+        QHash<QString, bool> hash = makeHash(list);
+        int count = hash.values().size();
+        if (record.dataItems.size() >= count)
         {
-            return true;
+            for (const AsterixDataItem &di : record.dataItems)
+            {
+                if (count == 0) break;
+
+                QString diName = di.name;
+                QHash<QString, bool>::iterator it = hash.find(diName);
+                if (it != hash.end())
+                {
+                    *it = true;
+                    --count;
+                }
+            }
+
+            if (count == 0)
+            {
+                // All items found.
+                return true;
+            }
         }
     }
 
     return false;
 }
 
-QStringList MopsProcessor::ed116TargetReportsList()
+QVector<MopsProcessor::DataItemList> MopsProcessor::ed116TargetReportsMinimumFieldsCollection()
 {
-    static const QStringList list = QStringList()
-                                    << QLatin1String("I000")   // Message Type
+    QVector<DataItemList> minFields;
+
+    DataItemList mandatory;
+    mandatory.type = DataItemListType::Mandatory;
+    mandatory.items = QStringList() << QLatin1String("I000")   // Message Type
                                     << QLatin1String("I010")   // Data Source Identifier
                                     << QLatin1String("I020")   // Target Report Descriptor
                                     << QLatin1String("I140")   // Time of Day
-                                    << QLatin1String("I041")   // Position in WGS-84 Coordinates
-                                    << QLatin1String("I042")   // Position in Cartesian Coordinates
-                                    << QLatin1String("I270")   // Target Size & Orientation
-                                    << QLatin1String("I550");  // System Status
+                                    << QLatin1String("I270");  // Target Size & Orientation
+    //<< QLatin1String("I550");  // System Status
 
-    return list;
+    DataItemList disjunctive;
+    disjunctive.type = DataItemListType::Disjunctive;
+    disjunctive.items = QStringList() << QLatin1String("I040")   // Position in Polar Co-ordinates
+                                      << QLatin1String("I041")   // Position in WGS-84 Coordinates
+                                      << QLatin1String("I042");  // Position in Cartesian Coordinates
+
+    minFields << mandatory << disjunctive;
+    return minFields;
 }
 
-QStringList MopsProcessor::ed117TargetReportsList()
+QVector<MopsProcessor::DataItemList> MopsProcessor::ed117TargetReportsMinimumFieldsCollection()
 {
-    static const QStringList list = QStringList()
-                                    << QLatin1String("I000")   // Message Type
+    QVector<DataItemList> minFields;
+
+    DataItemList mandatory;
+    mandatory.type = DataItemListType::Mandatory;
+    mandatory.items = QStringList() << QLatin1String("I000")   // Message Type
                                     << QLatin1String("I010")   // Data Source Identifier
                                     << QLatin1String("I020")   // Target Report Descriptor
-                                    << QLatin1String("I041")   // Position in WGS-84 Coordinates
-                                    << QLatin1String("I042")   // Position in Cartesian Coordinates
                                     << QLatin1String("I060")   // Mode 3/A Code in Octal
                                     << QLatin1String("I091")   // Measured Height
                                     << QLatin1String("I140")   // Time of Day
@@ -158,22 +218,35 @@ QStringList MopsProcessor::ed117TargetReportsList()
                                     << QLatin1String("I220")   // Target Address
                                     << QLatin1String("I500");  // Standard Deviation of Position
 
-    return list;
+    DataItemList disjunctive;
+    disjunctive.type = DataItemListType::Disjunctive;
+    disjunctive.items = QStringList() << QLatin1String("I040")   // Position in Polar Co-ordinates
+                                      << QLatin1String("I041")   // Position in WGS-84 Coordinates
+                                      << QLatin1String("I042");  // Position in Cartesian Coordinates
+
+    minFields << mandatory << disjunctive;
+    return minFields;
 }
 
-QStringList MopsProcessor::ed117ServiceMessagesList()
+QVector<MopsProcessor::DataItemList> MopsProcessor::ed117ServiceMessagesMinimumFieldsCollection()
 {
-    static const QStringList list = QStringList()
-                                    << QLatin1String("I000")   // Message Type
+    QVector<DataItemList> minFields;
+
+    DataItemList mandatory;
+    mandatory.type = DataItemListType::Mandatory;
+    mandatory.items = QStringList() << QLatin1String("I000")   // Message Type
                                     << QLatin1String("I010")   // Data Source Identifier
                                     << QLatin1String("I140")   // Time of Day
                                     << QLatin1String("I550");  // System Status
 
-    return list;
+    minFields << mandatory;
+    return minFields;
 }
 
 QHash<QString, bool> MopsProcessor::makeHash(const QStringList &list, bool state)
 {
+    Q_ASSERT(!list.isEmpty());
+
     QHash<QString, bool> hash;
 
     for (const QString &key : list)

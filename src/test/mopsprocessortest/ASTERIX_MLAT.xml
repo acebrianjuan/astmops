@@ -1,0 +1,47 @@
+<!--
+This ASTERIX XML file has been designed for unit testing purposes.
+Validity ratio must yield 0.5 for both Target Reports and Service Messages.
+-->
+<ASTERIXSTART>
+<!-- MLAT Target Report -->
+<ASTERIX ver="1" cat="10">
+<I000>
+<MsgTyp>1</MsgTyp>
+</I000>
+<I020>
+<TYP>1</TYP>
+</I020>
+<I010/>
+<I041/>
+<I060/>
+<I091/>
+<I140/>
+<I161/>
+<I170/>
+<I220/>
+<I500/>
+</ASTERIX>
+<!-- MLAT Target Report (missing items) -->
+<ASTERIX ver="1" cat="10">
+<I000>
+<MsgTyp>1</MsgTyp>
+</I000>
+<I020>
+<TYP>1</TYP>
+</I020>
+</ASTERIX>
+<!-- Service Message -->
+<ASTERIX ver="1" cat="10">
+<I000>
+<MsgTyp>3</MsgTyp>
+</I000>
+<I010/>
+<I140/>
+<I550/>
+</ASTERIX>
+<!-- Service Message (missing items) -->
+<ASTERIX ver="1" cat="10">
+<I000>
+<MsgTyp>3</MsgTyp>
+</I000>
+</ASTERIX>

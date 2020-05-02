@@ -48,13 +48,11 @@ void MopsProcessorTest::test()
 void MopsProcessorTest::testMinimumFields_data()
 {
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<double>("ed116TgtRepResult");
-    QTest::addColumn<double>("ed117TgtRepResult");
+    QTest::addColumn<double>("tgtRepResult");
     QTest::addColumn<double>("srvMsgResult");
 
-    QTest::newRow("SMR") << "ASTERIX_LEBL_SMR.xml" << 0.0 << 0.0 << 1.0;
-    QTest::newRow("MLAT") << "ASTERIX_LEBL_MLAT.xml" << 0.0 << 0.0 << 1.0;
-    //QTest::newRow("ADSB") << "ASTERIX_LEBL_ADSB.xml" << 0.0 << 0.0 << 0.0;
+    QTest::newRow("SMR") << "ASTERIX_SMR.xml" << 0.5 << 0.5;
+    QTest::newRow("MLAT") << "ASTERIX_MLAT.xml" << 0.5 << 0.5;
 }
 
 void MopsProcessorTest::testMinimumFields()
@@ -66,8 +64,7 @@ void MopsProcessorTest::testMinimumFields()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
-    QFETCH(double, ed116TgtRepResult);
-    QFETCH(double, ed117TgtRepResult);
+    QFETCH(double, tgtRepResult);
     QFETCH(double, srvMsgResult);
 
     const QByteArray contents = file.readAll();
@@ -78,13 +75,13 @@ void MopsProcessorTest::testMinimumFields()
         processor.processRecord(reader.record());
     }
 
-    if (fileName == QLatin1String("ASTERIX_LEBL_SMR.xml"))
+    if (fileName == QLatin1String("ASTERIX_SMR.xml"))
     {
-        QCOMPARE(processor.ed116TargetReportsMinimumFields(), ed116TgtRepResult);
+        QCOMPARE(processor.ed116TargetReportsMinimumFields(), tgtRepResult);
     }
-    else if (fileName == QLatin1String("ASTERIX_LEBL_MLAT.xml"))
+    else if (fileName == QLatin1String("ASTERIX_MLAT.xml"))
     {
-        QCOMPARE(processor.ed117TargetReportsMinimumFields(), ed117TgtRepResult);
+        QCOMPARE(processor.ed117TargetReportsMinimumFields(), tgtRepResult);
     }
 
     QCOMPARE(processor.ed117ServiceMessagesMinimumFields(), srvMsgResult);

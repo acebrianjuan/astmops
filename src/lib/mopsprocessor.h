@@ -11,6 +11,18 @@ class MopsProcessor : public QObject
     Q_OBJECT
 
 public:
+    enum DataItemListType
+    {
+        Mandatory,
+        Disjunctive
+    };
+
+    struct DataItemList
+    {
+        QStringList items;
+        DataItemListType type;
+    };
+
     struct Counter
     {
         uint n = 0;
@@ -30,10 +42,11 @@ public slots:
 signals:
 
 private:
-    static bool checkDataItems(const AsterixRecord& record, const QStringList& list);
-    static QStringList ed116TargetReportsList();
-    static QStringList ed117TargetReportsList();
-    static QStringList ed117ServiceMessagesList();
+    static bool checkDataItems(const AsterixRecord& record, const QVector<DataItemList>& collections);
+    static bool checkDataItemsList(const AsterixRecord& record, const QStringList& list, DataItemListType type = Mandatory);
+    static QVector<DataItemList> ed116TargetReportsMinimumFieldsCollection();
+    static QVector<DataItemList> ed117TargetReportsMinimumFieldsCollection();
+    static QVector<DataItemList> ed117ServiceMessagesMinimumFieldsCollection();
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
