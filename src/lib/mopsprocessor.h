@@ -51,9 +51,9 @@ private:
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
 
-    Counter ed116TgtRepCounter;
-    Counter ed117TgtRepCounter;
-    Counter srvMsgCounter;
+    Counter m_ed116TgtRepCounter;
+    Counter m_ed117TgtRepCounter;
+    Counter m_srvMsgCounter;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

@@ -35,30 +35,30 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
             if (sysType == 1)  // Mode S Multilateration.
             {
-                ++ed117TgtRepCounter.total;
+                ++m_ed117TgtRepCounter.total;
                 if (checkDataItems(record, ed117TargetReportsMinimumFieldsCollection()))
                 {
                     // Target Report is valid. Update surveillance state.
-                    ++ed117TgtRepCounter.n;
+                    ++m_ed117TgtRepCounter.n;
                 }
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                ++ed116TgtRepCounter.total;
+                ++m_ed116TgtRepCounter.total;
                 if (checkDataItems(record, ed116TargetReportsMinimumFieldsCollection()))
                 {
                     // Target Report is valid. Update surveillance state.
-                    ++ed116TgtRepCounter.n;
+                    ++m_ed116TgtRepCounter.n;
                 }
             }
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
-            ++srvMsgCounter.total;
+            ++m_srvMsgCounter.total;
             if (checkDataItems(record, ed117ServiceMessagesMinimumFieldsCollection()))
             {
                 // Status Message is valid. Update surveillance state.
-                ++srvMsgCounter.n;
+                ++m_srvMsgCounter.n;
             }
         }
     }
@@ -66,8 +66,8 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
 double MopsProcessor::ed116TargetReportsMinimumFields()
 {
-    double num = static_cast<double>(ed116TgtRepCounter.n);
-    double den = static_cast<double>(ed116TgtRepCounter.total);
+    double num = static_cast<double>(m_ed116TgtRepCounter.n);
+    double den = static_cast<double>(m_ed116TgtRepCounter.total);
 
     Q_ASSERT(den > 0);
 
@@ -77,8 +77,8 @@ double MopsProcessor::ed116TargetReportsMinimumFields()
 
 double MopsProcessor::ed117TargetReportsMinimumFields()
 {
-    double num = static_cast<double>(ed117TgtRepCounter.n);
-    double den = static_cast<double>(ed117TgtRepCounter.total);
+    double num = static_cast<double>(m_ed117TgtRepCounter.n);
+    double den = static_cast<double>(m_ed117TgtRepCounter.total);
 
     Q_ASSERT(den > 0);
 
@@ -88,8 +88,8 @@ double MopsProcessor::ed117TargetReportsMinimumFields()
 
 double MopsProcessor::ed117ServiceMessagesMinimumFields()
 {
-    double num = static_cast<double>(srvMsgCounter.n);
-    double den = static_cast<double>(srvMsgCounter.total);
+    double num = static_cast<double>(m_srvMsgCounter.n);
+    double den = static_cast<double>(m_srvMsgCounter.total);
 
     Q_ASSERT(den > 0);
 
