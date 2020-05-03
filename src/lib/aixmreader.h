@@ -21,8 +21,10 @@ signals:
 
 private:
     void readAixm();
-    QPolygonF getPosList(const QStringList &tokens);
+    QStringList getPosList(const QStringList &tokens);
+    QPointF posListToPoint(QStringList list);
     QPolygonF posListToPolygon(QStringList list);
+    static QStringList arpPosXmlPath();
     static QStringList runwayPosListXmlPath();
     static QStringList taxiwayPosListXmlPath();
     static QStringList apronPosListXmlPath();

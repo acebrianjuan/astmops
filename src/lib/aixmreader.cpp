@@ -43,17 +43,21 @@ void AixmReader::readAixm()
 
             if (m_xml.readNextStartElement())
             {
-                if (m_xml.name() == QLatin1String("RunwayElement"))
+                if (m_xml.name() == QLatin1String("AirportHeliport"))
                 {
-                    m_aerodrome.addRunwayElement(getPosList(runwayPosListXmlPath()));
+                    m_aerodrome.setArp(posListToPoint(getPosList(arpPosXmlPath())));
+                }
+                else if (m_xml.name() == QLatin1String("RunwayElement"))
+                {
+                    m_aerodrome.addRunwayElement(posListToPolygon(getPosList(runwayPosListXmlPath())));
                 }
                 else if (m_xml.name() == QLatin1String("TaxiwayElement"))
                 {
-                    m_aerodrome.addTaxiwayElement(getPosList(taxiwayPosListXmlPath()));
+                    m_aerodrome.addTaxiwayElement(posListToPolygon(getPosList(taxiwayPosListXmlPath())));
                 }
                 else if (m_xml.name() == QLatin1String("ApronElement"))
                 {
-                    m_aerodrome.addApronElement(getPosList(apronPosListXmlPath()));
+                    m_aerodrome.addApronElement(posListToPolygon(getPosList(apronPosListXmlPath())));
                 }
                 else if (m_xml.name() == QLatin1String("StandElement"))
                 {
@@ -68,7 +72,7 @@ void AixmReader::readAixm()
     }
 }
 
-QPolygonF AixmReader::getPosList(const QStringList &tokens)
+QStringList AixmReader::getPosList(const QStringList &tokens)
 {
     int level = 0;
     while (!m_xml.atEnd())
@@ -88,7 +92,7 @@ QPolygonF AixmReader::getPosList(const QStringList &tokens)
             if (level >= tokens.size())
             {
                 QStringList list = m_xml.readElementText().split(QLatin1String(" "));
-                return posListToPolygon(list);
+                return list;
             }
         }
         if (m_xml.hasError())
@@ -96,7 +100,20 @@ QPolygonF AixmReader::getPosList(const QStringList &tokens)
             break;
         }
     }
-    return QPolygonF();
+
+    // Something went wrong. Return empty list.
+    return QStringList();
+}
+
+QPointF AixmReader::posListToPoint(QStringList list)
+{
+    Q_ASSERT(list.size() == 2);
+
+    double lon = list.takeFirst().toDouble();
+    double lat = list.takeFirst().toDouble();
+    QPointF point(lon, lat);
+
+    return point;
 }
 
 QPolygonF AixmReader::posListToPolygon(QStringList list)
@@ -105,14 +122,12 @@ QPolygonF AixmReader::posListToPolygon(QStringList list)
     Q_ASSERT(sizeIn % 2 == 0);
 
     QPolygonF polygon;
-    double lat;
-    double lon;
+    double lon, lat;
 
     while (list.size() > 0)
     {
-        lat = list.takeFirst().toDouble();
         lon = list.takeFirst().toDouble();
-
+        lat = list.takeFirst().toDouble();
         polygon << QPointF(lon, lat);
     }
 
@@ -120,6 +135,16 @@ QPolygonF AixmReader::posListToPolygon(QStringList list)
     Q_ASSERT(sizeOut == sizeIn / 2);
 
     return polygon;
+}
+
+QStringList AixmReader::arpPosXmlPath()
+{
+    static const QStringList tokens = QStringList() << QLatin1String("timeSlice")
+                                                    << QLatin1String("AirportHeliportTimeSlice")
+                                                    << QLatin1String("ARP")
+                                                    << QLatin1String("ElevatedPoint")
+                                                    << QLatin1String("pos");
+    return tokens;
 }
 
 QStringList AixmReader::runwayPosListXmlPath()

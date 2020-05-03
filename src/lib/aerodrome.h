@@ -24,6 +24,8 @@ public:
 
     bool hasAnyElements();
     bool hasAllElements();
+
+    void setArp(const QPointF &point);
     void addRunwayElement(const QPolygonF &polygon);
     void addTaxiwayElement(const QPolygonF &polygon);
     void addApronElement(const QPolygonF &polygon);
@@ -43,12 +45,13 @@ public:
 private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point);
 
-    QVector<QPolygonF> runwayElements;
-    QVector<QPolygonF> taxiwayElements;
-    QVector<QPolygonF> apronElements;
-    QVector<QPolygonF> standElements;
-    QVector<QPolygonF> approach1Elements;
-    QVector<QPolygonF> approach2Elements;
+    QPointF m_arp;
+    QVector<QPolygonF> m_runwayElements;
+    QVector<QPolygonF> m_taxiwayElements;
+    QVector<QPolygonF> m_apronElements;
+    QVector<QPolygonF> m_standElements;
+    QVector<QPolygonF> m_approach1Elements;
+    QVector<QPolygonF> m_approach2Elements;
 };
 
 #endif  // ASTMOPS_AERODROME_H
