@@ -7,7 +7,6 @@ void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const Q
 
 MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
-    m_srvMsgUpdateRateCounterInitialized = false;
 }
 
 void MopsProcessor::processRecord(const AsterixRecord &record)
@@ -21,35 +20,58 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         AsterixDataItem di010_000 = record.dataItems[QLatin1String("I000")];
         int msgType = di010_000.fields[0].value<AsterixDataElement>().value.toInt();
 
-        /*
-        QVariantList varlist = di010_000.fields;
-        QVariant var = varlist[0];
-        AsterixDataElement dele = var.value<AsterixDataElement>();
-        QString str = dele.value;
-        int msgType = str.toInt();
-        */
-
         if (msgType == 1)  // Target Report.
         {
             AsterixDataItem di010_020 = record.dataItems[QLatin1String("I020")];
             int sysType = di010_020.fields[0].value<AsterixDataElement>().value.toInt();
 
-            if (sysType == 1)  // Mode S Multilateration.
+            if (sysType == 1)  // Mode S Multilateration. ED-117 Norm.
             {
+                // Minimum Data Items.
                 ++m_ed117TgtRepCounter.total;
                 if (checkDataItems(record, ed117TargetReportsMinimumFieldsCollection()))
                 {
                     // Target Report is valid. Update surveillance state.
                     ++m_ed117TgtRepCounter.n;
                 }
+
+                // Update Rate.
             }
-            else if (sysType == 3)  // Primary Surveillance Radar.
+            else if (sysType == 3)  // Primary Surveillance Radar. ED-116 Norm.
             {
+                // Minimum Data Items.
                 ++m_ed116TgtRepCounter.total;
                 if (checkDataItems(record, ed116TargetReportsMinimumFieldsCollection()))
                 {
                     // Target Report is valid. Update surveillance state.
                     ++m_ed116TgtRepCounter.n;
+                }
+
+                // Update Rate.
+                AsterixDataItem di010_161 = record.dataItems[QLatin1String("I161")];
+                uint trkNum = di010_161.fields[1].value<AsterixDataElement>().value.toUInt();
+
+                AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
+                double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+                QDateTime todDateTime = getDateTimefromTod(tod);
+
+                QHash<uint, UpdateRateCounter>::iterator it = m_ed116TgtRepUpdateRateCounters.find(trkNum);
+                if (it == m_ed116TgtRepUpdateRateCounters.end())
+                {
+                    // Unknown track number. Create a new counter for it.
+                    UpdateRateCounter urCounter;
+                    ++urCounter.n;
+                    urCounter.firstTod = todDateTime;
+                    urCounter.isInitialized = true;
+
+                    // Add it to the hash map.
+                    m_ed116TgtRepUpdateRateCounters[trkNum] = urCounter;
+                }
+                else
+                {
+                    // Known track number. Update counter.
+                    ++it->n;
+                    it->lastTod = todDateTime;
                 }
             }
         }
@@ -68,18 +90,18 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
             AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
             double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+            QDateTime todDateTime = getDateTimefromTod(tod);
 
-            QDateTime todDateTime = QDateTime(QDate::currentDate(),
-                QTime::fromMSecsSinceStartOfDay(tod * 1000), Qt::UTC);
-
-            if (!m_srvMsgUpdateRateCounterInitialized)
+            if (!m_srvMsgUpdateRateCounter.isInitialized)
             {
-                m_srvMsgUpdateRateCounter.firstToD = todDateTime;
-                m_srvMsgUpdateRateCounterInitialized = true;
+                // First-time counter initialization.
+                m_srvMsgUpdateRateCounter.firstTod = todDateTime;
+                m_srvMsgUpdateRateCounter.isInitialized = true;
             }
             else
             {
-                m_srvMsgUpdateRateCounter.lastToD = todDateTime;
+                // Update counter.
+                m_srvMsgUpdateRateCounter.lastTod = todDateTime;
             }
         }
     }
@@ -89,6 +111,32 @@ double MopsProcessor::ed116TargetReportsMinimumFields()
 {
     double num = static_cast<double>(m_ed116TgtRepCounter.n);
     double den = static_cast<double>(m_ed116TgtRepCounter.total);
+
+    Q_ASSERT(den > 0);
+
+    double p = num / den;
+    return p;
+}
+
+double MopsProcessor::ed116DataRenewalRate()
+{
+    double num = 0.0;
+    double den = 0.0;
+
+    for (UpdateRateCounter urCounter : m_ed116TgtRepUpdateRateCounters)
+    {
+        if (urCounter.isInitialized)
+        {
+            QDateTime firstTod = urCounter.firstTod;
+            QDateTime lastTod = urCounter.lastTod;
+
+            if (!firstTod.isNull() && !lastTod.isNull())
+            {
+                num += static_cast<double>(urCounter.n);
+                den += static_cast<double>(firstTod.secsTo(lastTod) + 1);
+            }
+        }
+    }
 
     Q_ASSERT(den > 0);
 
@@ -121,7 +169,7 @@ double MopsProcessor::ed117ServiceMessagesMinimumFields()
 double MopsProcessor::serviceMessagesUpdateRate()
 {
     double num = static_cast<double>(m_srvMsgUpdateRateCounter.n);
-    double den = static_cast<double>(m_srvMsgUpdateRateCounter.firstToD.secsTo(m_srvMsgUpdateRateCounter.lastToD) + 1);
+    double den = static_cast<double>(m_srvMsgUpdateRateCounter.firstTod.secsTo(m_srvMsgUpdateRateCounter.lastTod) + 1);
 
     Q_ASSERT(den > 0);
 
@@ -287,4 +335,10 @@ QHash<QString, bool> MopsProcessor::makeHash(const QStringList &list, bool state
     }
 
     return hash;
+}
+
+QDateTime MopsProcessor::getDateTimefromTod(const double &tod)
+{
+    QDateTime todDateTime = QDateTime::fromMSecsSinceEpoch(tod * 1000, Qt::UTC);
+    return todDateTime;
 }

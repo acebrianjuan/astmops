@@ -6,6 +6,8 @@
 #include <QVariantList>
 #include <QVector>
 
+// TODO: Consider giving default values to the struct members.
+
 struct AsterixDataElement
 {
     QString name;

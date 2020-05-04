@@ -93,10 +93,11 @@ void MopsProcessorTest::testMinimumFields()
 void MopsProcessorTest::testUpdateRate_data()
 {
     QTest::addColumn<QString>("fileName");
+    QTest::addColumn<double>("tgtRepResult");
     QTest::addColumn<double>("srvMsgResult");
 
-    QTest::newRow("SMR") << "ASTERIX_SMR.xml" << 1.0;
-    QTest::newRow("MLAT") << "ASTERIX_MLAT.xml" << 1.0;
+    QTest::newRow("SMR") << "ASTERIX_SMR.xml" << 1.0 << 1.0;
+    QTest::newRow("MLAT") << "ASTERIX_MLAT.xml" << 1.0 << 1.0;
 }
 
 void MopsProcessorTest::testUpdateRate()
@@ -108,6 +109,7 @@ void MopsProcessorTest::testUpdateRate()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
+    QFETCH(double, tgtRepResult);
     QFETCH(double, srvMsgResult);
 
     const QByteArray contents = file.readAll();
@@ -116,6 +118,15 @@ void MopsProcessorTest::testUpdateRate()
     while (reader.hasPendingRecords())
     {
         processor.processRecord(reader.record());
+    }
+
+    if (fileName == QLatin1String("ASTERIX_SMR.xml"))
+    {
+        QCOMPARE(processor.ed116DataRenewalRate(), tgtRepResult);
+    }
+    else if (fileName == QLatin1String("ASTERIX_MLAT.xml"))
+    {
+        //QCOMPARE(processor.ed117TargetReportsUpdateRate(), tgtRepResult);
     }
 
     QCOMPARE(processor.serviceMessagesUpdateRate(), srvMsgResult);

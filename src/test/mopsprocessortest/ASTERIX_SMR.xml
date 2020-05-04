@@ -11,8 +11,14 @@ Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 <I020>
 <TYP>3</TYP>
 </I020>
+<I140>
+<ToD>0.0078125</ToD>
+</I140>
+<I161>
+<spare>0</spare>
+<TrkNb>1111</TrkNb>
+</I161>
 <I010/>
-<I140/>
 <I040/>
 <I270/>
 </ASTERIX>
@@ -24,6 +30,13 @@ Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 <I020>
 <TYP>3</TYP>
 </I020>
+<I140>
+<ToD>1.0078125</ToD>
+</I140>
+<I161>
+<spare>0</spare>
+<TrkNb>1111</TrkNb>
+</I161>
 </ASTERIX>
 <!-- Service Message -->
 <ASTERIX ver="1" cat="10">

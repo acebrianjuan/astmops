@@ -31,16 +31,17 @@ public:
 
     struct UpdateRateCounter
     {
+        bool isInitialized = false;
         uint n = 0;
-        QDateTime firstToD;
-        QDateTime lastToD;
+        QDateTime firstTod;
+        QDateTime lastTod;
     };
 
     struct TargetData
     {
         uint address;
-        QDateTime firstToD;
-        QDateTime lastToD;
+        QDateTime firstTod;
+        QDateTime lastTod;
         QPointF position;
         Aerodrome::Area area;
     };
@@ -52,7 +53,7 @@ public:
 
 public slots:
     double ed116TargetReportsMinimumFields();
-    //double ed116DataRenewalRate();
+    double ed116DataRenewalRate();
 
     double ed117TargetReportsMinimumFields();
     double ed117ServiceMessagesMinimumFields();
@@ -68,6 +69,7 @@ private:
     static QVector<DataItemList> ed117TargetReportsMinimumFieldsCollection();
     static QVector<DataItemList> ed117ServiceMessagesMinimumFieldsCollection();
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
+    static QDateTime getDateTimefromTod(const double& tod);
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
 
@@ -75,11 +77,12 @@ private:
     Counter m_ed117TgtRepCounter;
     Counter m_srvMsgCounter;
 
-    UpdateRateCounter m_srvMsgUpdateRateCounter;
-    bool m_srvMsgUpdateRateCounterInitialized;
+    QDateTime m_asterixDateTime;
 
-    //QHash<uint, TargetData> m_ed116TgtData;
-    //QHash<uint, TargetData> m_ed117TgtData;
+    UpdateRateCounter m_srvMsgUpdateRateCounter;
+
+    QHash<uint, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
+    QHash<uint, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H
