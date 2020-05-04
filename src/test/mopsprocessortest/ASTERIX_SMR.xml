@@ -31,7 +31,9 @@ Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 <MsgTyp>3</MsgTyp>
 </I000>
 <I010/>
-<I140/>
+<I140>
+<ToD>0.0078125</ToD>
+</I140>
 <I550/>
 </ASTERIX>
 <!-- Service Message (missing items) -->
@@ -39,4 +41,7 @@ Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 <I000>
 <MsgTyp>3</MsgTyp>
 </I000>
+<I140>
+<ToD>1.0078125</ToD>
+</I140>
 </ASTERIX>

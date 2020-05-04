@@ -14,6 +14,9 @@ private slots:
     void testMinimumFields_data();
     void testMinimumFields();
 
+    void testUpdateRate_data();
+    void testUpdateRate();
+
 private:
 };
 
@@ -85,6 +88,37 @@ void MopsProcessorTest::testMinimumFields()
     }
 
     QCOMPARE(processor.ed117ServiceMessagesMinimumFields(), srvMsgResult);
+}
+
+void MopsProcessorTest::testUpdateRate_data()
+{
+    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<double>("srvMsgResult");
+
+    QTest::newRow("SMR") << "ASTERIX_SMR.xml" << 1.0;
+    QTest::newRow("MLAT") << "ASTERIX_MLAT.xml" << 1.0;
+}
+
+void MopsProcessorTest::testUpdateRate()
+{
+    AsterixXmlReader reader;
+    MopsProcessor processor;
+
+    QFETCH(QString, fileName);
+    QFile file(QFINDTESTDATA(fileName));
+    QVERIFY(file.open(QIODevice::ReadOnly));
+
+    QFETCH(double, srvMsgResult);
+
+    const QByteArray contents = file.readAll();
+    reader.addData(contents);
+
+    while (reader.hasPendingRecords())
+    {
+        processor.processRecord(reader.record());
+    }
+
+    QCOMPARE(processor.serviceMessagesUpdateRate(), srvMsgResult);
 }
 
 QTEST_APPLESS_MAIN(MopsProcessorTest)

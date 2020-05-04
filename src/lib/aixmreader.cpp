@@ -33,7 +33,7 @@ void AixmReader::readAixm()
     {
         if (m_xml.readNextStartElement())
         {
-            // If the element start that we are it right now is not the one we want,
+            // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
             if (m_xml.name() != QLatin1String("hasMember"))
             {

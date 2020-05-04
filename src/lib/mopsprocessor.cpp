@@ -7,6 +7,7 @@ void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const Q
 
 MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
+    m_srvMsgUpdateRateCounterInitialized = false;
 }
 
 void MopsProcessor::processRecord(const AsterixRecord &record)
@@ -54,11 +55,31 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
+            // Minimum Data Items.
             ++m_srvMsgCounter.total;
             if (checkDataItems(record, ed117ServiceMessagesMinimumFieldsCollection()))
             {
                 // Status Message is valid. Update surveillance state.
                 ++m_srvMsgCounter.n;
+            }
+
+            // Update Rate.
+            ++m_srvMsgUpdateRateCounter.n;
+
+            AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
+            double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+
+            QDateTime todDateTime = QDateTime(QDate::currentDate(),
+                QTime::fromMSecsSinceStartOfDay(tod * 1000), Qt::UTC);
+
+            if (!m_srvMsgUpdateRateCounterInitialized)
+            {
+                m_srvMsgUpdateRateCounter.firstToD = todDateTime;
+                m_srvMsgUpdateRateCounterInitialized = true;
+            }
+            else
+            {
+                m_srvMsgUpdateRateCounter.lastToD = todDateTime;
             }
         }
     }
@@ -90,6 +111,17 @@ double MopsProcessor::ed117ServiceMessagesMinimumFields()
 {
     double num = static_cast<double>(m_srvMsgCounter.n);
     double den = static_cast<double>(m_srvMsgCounter.total);
+
+    Q_ASSERT(den > 0);
+
+    double p = num / den;
+    return p;
+}
+
+double MopsProcessor::serviceMessagesUpdateRate()
+{
+    double num = static_cast<double>(m_srvMsgUpdateRateCounter.n);
+    double den = static_cast<double>(m_srvMsgUpdateRateCounter.firstToD.secsTo(m_srvMsgUpdateRateCounter.lastToD) + 1);
 
     Q_ASSERT(den > 0);
 

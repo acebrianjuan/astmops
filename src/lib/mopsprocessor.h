@@ -29,6 +29,22 @@ public:
         uint total = 0;
     };
 
+    struct UpdateRateCounter
+    {
+        uint n = 0;
+        QDateTime firstToD;
+        QDateTime lastToD;
+    };
+
+    struct TargetData
+    {
+        uint address;
+        QDateTime firstToD;
+        QDateTime lastToD;
+        QPointF position;
+        Aerodrome::Area area;
+    };
+
     void setLocatePointCallback(std::function<Aerodrome::Area(const QPointF&)> callback);
 
     explicit MopsProcessor(QObject* parent = nullptr);
@@ -36,8 +52,12 @@ public:
 
 public slots:
     double ed116TargetReportsMinimumFields();
+    //double ed116DataRenewalRate();
+
     double ed117TargetReportsMinimumFields();
     double ed117ServiceMessagesMinimumFields();
+
+    double serviceMessagesUpdateRate();
 
 signals:
 
@@ -54,6 +74,12 @@ private:
     Counter m_ed116TgtRepCounter;
     Counter m_ed117TgtRepCounter;
     Counter m_srvMsgCounter;
+
+    UpdateRateCounter m_srvMsgUpdateRateCounter;
+    bool m_srvMsgUpdateRateCounterInitialized;
+
+    //QHash<uint, TargetData> m_ed116TgtData;
+    //QHash<uint, TargetData> m_ed117TgtData;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H
