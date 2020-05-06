@@ -78,11 +78,12 @@ void MopsProcessorTest::testMinimumFields()
         processor.processRecord(reader.record());
     }
 
-    if (fileName == QLatin1String("ASTERIX_SMR.xml"))
+    QString currentDataTag = QString::fromLatin1(QTest::currentDataTag());
+    if (currentDataTag == QLatin1String("SMR"))
     {
         QCOMPARE(processor.ed116TargetReportsMinimumFields(), tgtRepResult);
     }
-    else if (fileName == QLatin1String("ASTERIX_MLAT.xml"))
+    else if (currentDataTag == QLatin1String("MLAT"))
     {
         QCOMPARE(processor.ed117TargetReportsMinimumFields(), tgtRepResult);
     }
@@ -120,11 +121,12 @@ void MopsProcessorTest::testUpdateRate()
         processor.processRecord(reader.record());
     }
 
-    if (fileName == QLatin1String("ASTERIX_SMR.xml"))
+    QString currentDataTag = QString::fromLatin1(QTest::currentDataTag());
+    if (currentDataTag == QLatin1String("SMR"))
     {
         QCOMPARE(processor.ed116DataRenewalRate(), tgtRepResult);
     }
-    else if (fileName == QLatin1String("ASTERIX_MLAT.xml"))
+    else if (currentDataTag == QLatin1String("MLAT"))
     {
         //QCOMPARE(processor.ed117TargetReportsUpdateRate(), tgtRepResult);
     }
