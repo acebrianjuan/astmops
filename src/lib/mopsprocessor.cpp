@@ -7,6 +7,9 @@ void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const Q
 
 MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
+    m_ed116TgtRepMinDataItems = ed116TargetReportsMinimumDataItems();
+    m_ed117TgtRepMinDataItems = ed117TargetReportsMinimumDataItems();
+    m_srvMsgMinDataItems = serviceMessagesMinimumDataItems();
 }
 
 void MopsProcessor::processRecord(const AsterixRecord &record)
@@ -29,7 +32,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
             {
                 // Minimum Data Items.
                 ++m_ed117TgtRepCounter.total;
-                if (checkDataItems(record, ed117TargetReportsMinimumFieldsCollection()))
+                if (checkDataItems(record, m_ed117TgtRepMinDataItems))
                 {
                     // Target Report is valid. Update surveillance state.
                     ++m_ed117TgtRepCounter.n;
@@ -41,7 +44,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
             {
                 // Minimum Data Items.
                 ++m_ed116TgtRepCounter.total;
-                if (checkDataItems(record, ed116TargetReportsMinimumFieldsCollection()))
+                if (checkDataItems(record, m_ed116TgtRepMinDataItems))
                 {
                     // Target Report is valid. Update surveillance state.
                     ++m_ed116TgtRepCounter.n;
@@ -79,7 +82,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         {
             // Minimum Data Items.
             ++m_srvMsgCounter.total;
-            if (checkDataItems(record, ed117ServiceMessagesMinimumFieldsCollection()))
+            if (checkDataItems(record, m_srvMsgMinDataItems))
             {
                 // Status Message is valid. Update surveillance state.
                 ++m_srvMsgCounter.n;
@@ -258,7 +261,7 @@ bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
     return false;
 }
 
-QVector<MopsProcessor::DataItemList> MopsProcessor::ed116TargetReportsMinimumFieldsCollection()
+QVector<MopsProcessor::DataItemList> MopsProcessor::ed116TargetReportsMinimumDataItems()
 {
     static QVector<DataItemList> minFields;
 
@@ -287,7 +290,7 @@ QVector<MopsProcessor::DataItemList> MopsProcessor::ed116TargetReportsMinimumFie
     return minFields;
 }
 
-QVector<MopsProcessor::DataItemList> MopsProcessor::ed117TargetReportsMinimumFieldsCollection()
+QVector<MopsProcessor::DataItemList> MopsProcessor::ed117TargetReportsMinimumDataItems()
 {
     static QVector<DataItemList> minFields;
 
@@ -320,7 +323,7 @@ QVector<MopsProcessor::DataItemList> MopsProcessor::ed117TargetReportsMinimumFie
     return minFields;
 }
 
-QVector<MopsProcessor::DataItemList> MopsProcessor::ed117ServiceMessagesMinimumFieldsCollection()
+QVector<MopsProcessor::DataItemList> MopsProcessor::serviceMessagesMinimumDataItems()
 {
     static QVector<DataItemList> minFields;
 

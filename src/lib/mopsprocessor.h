@@ -65,13 +65,19 @@ signals:
 private:
     static bool checkDataItems(const AsterixRecord& record, const QVector<DataItemList>& collections);
     static bool checkDataItemsList(const AsterixRecord& record, const QStringList& list, DataItemListType type = Mandatory);
-    static QVector<DataItemList> ed116TargetReportsMinimumFieldsCollection();
-    static QVector<DataItemList> ed117TargetReportsMinimumFieldsCollection();
-    static QVector<DataItemList> ed117ServiceMessagesMinimumFieldsCollection();
+
+    static QVector<DataItemList> ed116TargetReportsMinimumDataItems();
+    static QVector<DataItemList> ed117TargetReportsMinimumDataItems();
+    static QVector<DataItemList> serviceMessagesMinimumDataItems();
+
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
     static QDateTime getDateTimefromTod(const double& tod);
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
+
+    QVector<DataItemList> m_ed116TgtRepMinDataItems;
+    QVector<DataItemList> m_ed117TgtRepMinDataItems;
+    QVector<DataItemList> m_srvMsgMinDataItems;
 
     Counter m_ed116TgtRepCounter;
     Counter m_ed117TgtRepCounter;
