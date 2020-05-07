@@ -17,6 +17,7 @@ public:
         Approach1,
         Approach2,
         Airborne,
+        All,
         None
     };
 
