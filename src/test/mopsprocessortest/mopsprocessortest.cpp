@@ -88,7 +88,7 @@ void MopsProcessorTest::testMinimumFields()
         QCOMPARE(processor.ed117TargetReportsMinimumFields(), tgtRepResult);
     }
 
-    QCOMPARE(processor.ed117ServiceMessagesMinimumFields(), srvMsgResult);
+    QCOMPARE(processor.serviceMessagesMinimumFields(), srvMsgResult);
 }
 
 void MopsProcessorTest::testUpdateRate_data()
@@ -124,7 +124,7 @@ void MopsProcessorTest::testUpdateRate()
     QString currentDataTag = QString::fromLatin1(QTest::currentDataTag());
     if (currentDataTag == QLatin1String("SMR"))
     {
-        QCOMPARE(processor.ed116DataRenewalRate(), tgtRepResult);
+        QCOMPARE(processor.ed116TargetReportsUpdateRate(), tgtRepResult);
     }
     else if (currentDataTag == QLatin1String("MLAT"))
     {

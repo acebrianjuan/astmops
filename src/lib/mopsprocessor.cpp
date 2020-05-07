@@ -121,7 +121,7 @@ double MopsProcessor::ed116TargetReportsMinimumFields()
     return p;
 }
 
-double MopsProcessor::ed116DataRenewalRate()
+double MopsProcessor::ed116TargetReportsUpdateRate()
 {
     double num = 0.0;
     double den = 0.0;
@@ -158,7 +158,7 @@ double MopsProcessor::ed117TargetReportsMinimumFields()
     return p;
 }
 
-double MopsProcessor::ed117ServiceMessagesMinimumFields()
+double MopsProcessor::serviceMessagesMinimumFields()
 {
     double num = static_cast<double>(m_srvMsgCounter.n);
     double den = static_cast<double>(m_srvMsgCounter.total);

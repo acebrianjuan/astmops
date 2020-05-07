@@ -53,11 +53,12 @@ public:
 
 public slots:
     double ed116TargetReportsMinimumFields();
-    double ed116DataRenewalRate();
+    double ed116TargetReportsUpdateRate();
 
     double ed117TargetReportsMinimumFields();
-    double ed117ServiceMessagesMinimumFields();
 
+
+    double serviceMessagesMinimumFields();
     double serviceMessagesUpdateRate();
 
 signals:
@@ -85,10 +86,9 @@ private:
 
     QDateTime m_asterixDateTime;
 
-    UpdateRateCounter m_srvMsgUpdateRateCounter;
-
     QHash<uint, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
     QHash<uint, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
+    UpdateRateCounter m_srvMsgUpdateRateCounter;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H
