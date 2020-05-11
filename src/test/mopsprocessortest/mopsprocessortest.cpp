@@ -9,8 +9,6 @@ class MopsProcessorTest : public QObject
     Q_OBJECT
 
 private slots:
-    //void test();
-
     void testMinimumFields_data();
     void testMinimumFields();
 
@@ -19,34 +17,6 @@ private slots:
 
 private:
 };
-
-/*
-void MopsProcessorTest::test()
-{
-    Aerodrome charlotte;
-
-    auto runwayCallback = [](const QPointF& point) {
-        Q_UNUSED(point);
-        return Aerodrome::Runway;
-    };
-
-    auto airborneCallback = [](const QPointF& point) {
-        Q_UNUSED(point);
-        return Aerodrome::Airborne;
-    };
-
-    Aerodrome barcelona;
-    auto barcelonaCallback = [&barcelona](const QPointF& point) {
-        return barcelona.locatePoint(point);
-    };
-
-    MopsProcessor processor;
-    processor.setLocatePointCallback(barcelonaCallback);
-
-    processor.setLocatePointCallback(runwayCallback);
-    // QCOMPARE
-}
-*/
 
 void MopsProcessorTest::testMinimumFields_data()
 {
