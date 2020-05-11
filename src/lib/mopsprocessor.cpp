@@ -270,12 +270,10 @@ QVector<MopsProcessor::DataItemList> MopsProcessor::ed116TargetReportsMinimumDat
     {
         DataItemList mandatory;
         mandatory.type = DataItemListType::Mandatory;
-        mandatory.items = QStringList() << QLatin1String("I000")   // Message Type
-                                        << QLatin1String("I010")   // Data Source Identifier
+        mandatory.items = QStringList() << QLatin1String("I010")   // Data Source Identifier
                                         << QLatin1String("I020")   // Target Report Descriptor
                                         << QLatin1String("I140")   // Time of Day
                                         << QLatin1String("I270");  // Target Size & Orientation
-        //<< QLatin1String("I550");  // System Status
 
         DataItemList disjunctive;
         disjunctive.type = DataItemListType::Disjunctive;
@@ -299,24 +297,22 @@ QVector<MopsProcessor::DataItemList> MopsProcessor::ed117TargetReportsMinimumDat
     {
         DataItemList mandatory;
         mandatory.type = DataItemListType::Mandatory;
-        mandatory.items = QStringList() << QLatin1String("I000")   // Message Type
-                                        << QLatin1String("I010")   // Data Source Identifier
+        mandatory.items = QStringList() << QLatin1String("I010")   // Data Source Identifier
                                         << QLatin1String("I020")   // Target Report Descriptor
-                                        << QLatin1String("I060")   // Mode 3/A Code in Octal
-                                        << QLatin1String("I091")   // Measured Height
                                         << QLatin1String("I140")   // Time of Day
-                                        << QLatin1String("I161")   // Track Number
-                                        << QLatin1String("I170")   // Track Status
-                                        << QLatin1String("I220")   // Target Address
-                                        << QLatin1String("I500");  // Standard Deviation of Position
+                                        << QLatin1String("I220");  // Target Address (ICAO)
 
-        DataItemList disjunctive;
-        disjunctive.type = DataItemListType::Disjunctive;
-        disjunctive.items = QStringList() << QLatin1String("I040")   // Position in Polar Co-ordinates
-                                          << QLatin1String("I041")   // Position in WGS-84 Coordinates
-                                          << QLatin1String("I042");  // Position in Cartesian Coordinates
+        DataItemList disjunctive1;
+        disjunctive1.type = DataItemListType::Disjunctive;
+        disjunctive1.items = QStringList() << QLatin1String("I041")   // Position in WGS-84 Coordinates
+                                           << QLatin1String("I042");  // Position in Cartesian Coordinates
 
-        minFields << mandatory << disjunctive;
+        DataItemList disjunctive2;
+        disjunctive2.type = DataItemListType::Disjunctive;
+        disjunctive2.items = QStringList() << QLatin1String("I060")   // Mode 3/A Code in Octal (SQUAWK)
+                                           << QLatin1String("I245");  // Target Identification (CALLSIGN)
+
+        minFields << mandatory << disjunctive1 << disjunctive2;
         initialized = true;
     }
 
