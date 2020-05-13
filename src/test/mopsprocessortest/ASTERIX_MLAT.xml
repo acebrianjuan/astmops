@@ -11,14 +11,22 @@ Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 <I020>
 <TYP>1</TYP>
 </I020>
+<I140>
+<ToD>0.0078125</ToD>
+</I140>
+<I220>
+<TAddr>1234</TAddr>
+</I220>
+<I042>
+<X>0.0000000</X>
+<Y>0.0000000</Y>
+</I042>
 <I010/>
 <I041/>
 <I060/>
 <I091/>
-<I140/>
 <I161/>
 <I170/>
-<I220/>
 <I500/>
 </ASTERIX>
 <!-- MLAT Target Report (missing items) -->
@@ -29,6 +37,16 @@ Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 <I020>
 <TYP>1</TYP>
 </I020>
+<I140>
+<ToD>1.0078125</ToD>
+</I140>
+<I220>
+<TAddr>1234</TAddr>
+</I220>
+<I042>
+<X>0.0000000</X>
+<Y>0.0000000</Y>
+</I042>
 </ASTERIX>
 <!-- Service Message -->
 <ASTERIX ver="1" cat="10">

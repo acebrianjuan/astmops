@@ -5,6 +5,10 @@
 #include "asterix.h"
 #include <QObject>
 #include <QQueue>
+#include <optional>
+
+using TrackNum = uint;
+using IcaoAddr = uint;
 
 class MopsProcessor : public QObject
 {
@@ -35,6 +39,14 @@ public:
         uint n = 0;
         QDateTime firstTod;
         QDateTime lastTod;
+
+        void reset()
+        {
+            isInitialized = false;
+            n = 0;
+            firstTod = QDateTime();
+            lastTod = QDateTime();
+        }
     };
 
     struct TargetData
@@ -56,7 +68,7 @@ public slots:
     double ed116TargetReportsUpdateRate();
 
     double ed117TargetReportsMinimumFields();
-
+    double ed117TargetReportsUpdateRate(Aerodrome::Area area = Aerodrome::All);
 
     double serviceMessagesMinimumFields();
     double serviceMessagesUpdateRate();
@@ -86,9 +98,12 @@ private:
 
     QDateTime m_asterixDateTime;
 
-    QHash<uint, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
-    QHash<uint, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
+    QHash<TrackNum, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
+    QHash<IcaoAddr, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
     UpdateRateCounter m_srvMsgUpdateRateCounter;
+
+    QHash<TrackNum, Aerodrome::Area> m_ed116TgtRepAreas;
+    QHash<IcaoAddr, Aerodrome::Area> m_ed117TgtRepAreas;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

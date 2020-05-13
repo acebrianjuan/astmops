@@ -39,6 +39,53 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                 }
 
                 // Update Rate.
+                AsterixDataItem di010_220 = record.dataItems[QLatin1String("I220")];
+                IcaoAddr icaoAddr = di010_220.fields[0].value<AsterixDataElement>().value.toUInt();
+
+                AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
+                double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+                QDateTime todDateTime = getDateTimefromTod(tod);
+
+                AsterixDataItem di010_042 = record.dataItems[QLatin1String("I042")];
+                double x = di010_042.fields[0].value<AsterixDataElement>().value.toDouble();
+                double y = di010_042.fields[1].value<AsterixDataElement>().value.toDouble();
+
+                Aerodrome::Area area = m_locatePoint(QPointF(x, y));
+
+                QHash<uint, Aerodrome::Area>::iterator itArea = m_ed117TgtRepAreas.find(icaoAddr);
+                QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed117TgtRepUpdateRateCounters.find(icaoAddr);
+
+                if (itCounter == m_ed117TgtRepUpdateRateCounters.end())
+                {
+                    // Unknown target. Create a new counter for it.
+                    UpdateRateCounter urCounter;
+                    ++urCounter.n;
+                    urCounter.firstTod = todDateTime;
+                    urCounter.isInitialized = true;
+
+                    // Add it to the hash maps.
+                    m_ed117TgtRepUpdateRateCounters[icaoAddr] = urCounter;
+                    m_ed117TgtRepAreas[icaoAddr] = area;
+                }
+                else
+                {
+                    // Known target. Check area.
+                    Aerodrome::Area oldArea = itArea.value();
+                    if (area != oldArea)
+                    {
+                        // Area changed. Reset counter.
+                        *itArea = area;
+                        itCounter->reset();
+                        ++itCounter->n;
+                        itCounter->firstTod = todDateTime;
+                    }
+                    else
+                    {
+                        // Update counter.
+                        ++itCounter->n;
+                        itCounter->lastTod = todDateTime;
+                    }
+                }
             }
             else if (sysType == 3)  // Primary Surveillance Radar. ED-116 Norm.
             {
@@ -52,7 +99,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
                 // Update Rate.
                 AsterixDataItem di010_161 = record.dataItems[QLatin1String("I161")];
-                uint trkNum = di010_161.fields[1].value<AsterixDataElement>().value.toUInt();
+                TrackNum trkNum = di010_161.fields[1].value<AsterixDataElement>().value.toUInt();
 
                 AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
                 double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
@@ -61,7 +108,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                 QHash<uint, UpdateRateCounter>::iterator it = m_ed116TgtRepUpdateRateCounters.find(trkNum);
                 if (it == m_ed116TgtRepUpdateRateCounters.end())
                 {
-                    // Unknown track number. Create a new counter for it.
+                    // Unknown target. Create a new counter for it.
                     UpdateRateCounter urCounter;
                     ++urCounter.n;
                     urCounter.firstTod = todDateTime;
@@ -72,7 +119,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                 }
                 else
                 {
-                    // Known track number. Update counter.
+                    // Known target. Update counter.
                     ++it->n;
                     it->lastTod = todDateTime;
                 }
@@ -151,6 +198,42 @@ double MopsProcessor::ed117TargetReportsMinimumFields()
 {
     double num = static_cast<double>(m_ed117TgtRepCounter.n);
     double den = static_cast<double>(m_ed117TgtRepCounter.total);
+
+    Q_ASSERT(den > 0);
+
+    double p = num / den;
+    return p;
+}
+
+double MopsProcessor::ed117TargetReportsUpdateRate(Aerodrome::Area area)
+{
+    double num = 0.0;
+    double den = 0.0;
+
+    QList<uint> addressList = m_ed117TgtRepAreas.keys(area);
+
+    if (addressList.isEmpty())
+    {
+        // Cannot perform calculation.
+        // TODO: Handle this case. Consider using std::optional.
+    }
+
+    for (uint addr : addressList)
+    {
+        UpdateRateCounter urCounter = m_ed117TgtRepUpdateRateCounters.value(addr);
+
+        if (urCounter.isInitialized)
+        {
+            QDateTime firstTod = urCounter.firstTod;
+            QDateTime lastTod = urCounter.lastTod;
+
+            if (!firstTod.isNull() && !lastTod.isNull())
+            {
+                num += static_cast<double>(urCounter.n);
+                den += static_cast<double>(firstTod.secsTo(lastTod) + 1);
+            }
+        }
+    }
 
     Q_ASSERT(den > 0);
 

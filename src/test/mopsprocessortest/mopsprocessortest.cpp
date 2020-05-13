@@ -33,6 +33,13 @@ void MopsProcessorTest::testMinimumFields()
     AsterixXmlReader reader;
     MopsProcessor processor;
 
+    auto runwayCallback = [](const QPointF& point) {
+        Q_UNUSED(point);
+        return Aerodrome::Runway;
+    };
+
+    processor.setLocatePointCallback(runwayCallback);
+
     QFETCH(QString, fileName);
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
@@ -76,6 +83,13 @@ void MopsProcessorTest::testUpdateRate()
     AsterixXmlReader reader;
     MopsProcessor processor;
 
+    auto runwayCallback = [](const QPointF& point) {
+        Q_UNUSED(point);
+        return Aerodrome::Runway;
+    };
+
+    processor.setLocatePointCallback(runwayCallback);
+
     QFETCH(QString, fileName);
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
@@ -98,7 +112,7 @@ void MopsProcessorTest::testUpdateRate()
     }
     else if (currentDataTag == QLatin1String("MLAT"))
     {
-        //QCOMPARE(processor.ed117TargetReportsUpdateRate(), tgtRepResult);
+        QCOMPARE(processor.ed117TargetReportsUpdateRate(), tgtRepResult);
     }
 
     QCOMPARE(processor.serviceMessagesUpdateRate(), srvMsgResult);
