@@ -7,37 +7,40 @@ AsterixXmlReader::AsterixXmlReader(QObject* parent) : QObject(parent)
 
 void AsterixXmlReader::addData(const QByteArray& data)
 {
-    m_xml.addData(data);
-
-    while (!m_xml.atEnd())
+    for (auto line : data.split('\n'))
     {
-        if (m_xml.readNextStartElement())
+        if (line.isEmpty())
         {
-            // If the element is the root element, go down one level.
-            if (m_xml.name() == QLatin1String("ASTERIXSTART"))
-            {
-                m_xml.readNextStartElement();
-            }
+            continue;
+        }
 
-            // If the element start that we are in right now is not the one we want,
-            // skip it entirely. Otherwise, "drill down" till the end.
-            if (m_xml.name() != QLatin1String("ASTERIX"))
-            {
-                m_xml.skipCurrentElement();
-                continue;
-            }
+        m_xml.addData(line);
 
-            if (m_xml.attributes().hasAttribute(QLatin1String("cat")))
+        while (!m_xml.atEnd())
+        {
+            if (m_xml.readNextStartElement())
             {
-                // TODO: Handle case when excluded target is read.
-                readRecord();
-                emit readyRead();
-            }
-            else
-            {
-                m_xml.raiseError(QLatin1String("Invalid ASTERIX file."));
+                // If the element start that we are in right now is not the one we want,
+                // skip it entirely. Otherwise, "drill down" till the end.
+                if (m_xml.name() != QLatin1String("ASTERIX"))
+                {
+                    m_xml.skipCurrentElement();
+                    continue;
+                }
+
+                if (m_xml.attributes().hasAttribute(QLatin1String("cat")))
+                {
+                    readRecord();
+                    emit readyRead();
+                }
+                else
+                {
+                    m_xml.raiseError(QLatin1String("Invalid ASTERIX file."));
+                }
             }
         }
+
+        m_xml.clear();
     }
 }
 

@@ -14,11 +14,11 @@ private slots:
 void AsterixXmlReaderTest::test_data()
 {
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<int>("nItems");
+    QTest::addColumn<QVector<int>>("items");
 
-    QTest::newRow("CAT010") << "cat010.xml" << 12;
-    QTest::newRow("CAT010 (Empty Data Items)") << "cat010-empty.xml" << 12;
-    QTest::newRow("CAT010 (Incomplete Chunk)") << "cat010-incomplete.xml" << 12;
+    QTest::newRow("CAT010") << "cat010.xml" << (QVector<int>() << 12 << 12);
+    QTest::newRow("CAT010 (Empty Data Items)") << "cat010-empty.xml" << (QVector<int>() << 12 << 12);
+    QTest::newRow("CAT010 (Incomplete Chunk)") << "cat010-incomplete.xml" << (QVector<int>() << 12 << 2);
 }
 
 void AsterixXmlReaderTest::test()
@@ -29,18 +29,23 @@ void AsterixXmlReaderTest::test()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
-    QFETCH(int, nItems);
+    QFETCH(QVector<int>, items);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
-    QVERIFY(reader.hasPendingRecords() == true);
+    QVector<AsterixRecord> records;
+    while (reader.hasPendingRecords())
+    {
+        records.append(reader.record());
+    }
 
-    AsterixRecord record = reader.record();
+    QCOMPARE(records.size(), items.size());
 
-    QVERIFY(reader.hasPendingRecords() == false);
-
-    QCOMPARE(record.dataItems.size(), nItems);
+    for (int i = 0; i < records.size(); ++i)
+    {
+        QCOMPARE(records.at(i).dataItems.size(), items.at(i));
+    }
 }
 
 QTEST_APPLESS_MAIN(AsterixXmlReaderTest)
