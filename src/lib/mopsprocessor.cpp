@@ -14,19 +14,19 @@ MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 
 void MopsProcessor::processRecord(const AsterixRecord &record)
 {
-    if (record.cat == 10)
+    if (record.m_cat == 10)
     {
         // TODO: Handle case when none of the following Data Items are present:
         // * I010/I000 Message Type
         // * I010/I020 Target Report Descriptor
 
-        AsterixDataItem di010_000 = record.dataItems[QLatin1String("I000")];
-        int msgType = di010_000.fields[0].value<AsterixDataElement>().value.toInt();
+        AsterixDataItem di010_000 = record.m_dataItems[QLatin1String("I000")];
+        int msgType = di010_000.m_fields[0].value<AsterixDataElement>().m_value.toInt();
 
         if (msgType == 1)  // Target Report.
         {
-            AsterixDataItem di010_020 = record.dataItems[QLatin1String("I020")];
-            int sysType = di010_020.fields[0].value<AsterixDataElement>().value.toInt();
+            AsterixDataItem di010_020 = record.m_dataItems[QLatin1String("I020")];
+            int sysType = di010_020.m_fields[0].value<AsterixDataElement>().m_value.toInt();
 
             if (sysType == 1)  // Mode S Multilateration. ED-117 Norm.
             {
@@ -39,16 +39,16 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                 }
 
                 // Update Rate.
-                AsterixDataItem di010_220 = record.dataItems[QLatin1String("I220")];
-                IcaoAddr icaoAddr = di010_220.fields[0].value<AsterixDataElement>().value.toUInt();
+                AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
+                IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
 
-                AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
-                double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
                 QDateTime todDateTime = getDateTimefromTod(tod);
 
-                AsterixDataItem di010_042 = record.dataItems[QLatin1String("I042")];
-                double x = di010_042.fields[0].value<AsterixDataElement>().value.toDouble();
-                double y = di010_042.fields[1].value<AsterixDataElement>().value.toDouble();
+                AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
+                double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+                double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
 
                 Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -98,11 +98,11 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                 }
 
                 // Update Rate.
-                AsterixDataItem di010_161 = record.dataItems[QLatin1String("I161")];
-                TrackNum trkNum = di010_161.fields[1].value<AsterixDataElement>().value.toUInt();
+                AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
+                TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
 
-                AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
-                double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
                 QDateTime todDateTime = getDateTimefromTod(tod);
 
                 QHash<uint, UpdateRateCounter>::iterator it = m_ed116TgtRepUpdateRateCounters.find(trkNum);
@@ -138,8 +138,8 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
             // Update Rate.
             ++m_srvMsgUpdateRateCounter.n;
 
-            AsterixDataItem di010_140 = record.dataItems[QLatin1String("I140")];
-            double tod = di010_140.fields[0].value<AsterixDataElement>().value.toDouble();
+            AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+            double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
             QDateTime todDateTime = getDateTimefromTod(tod);
 
             if (!m_srvMsgUpdateRateCounter.isInitialized)
@@ -266,7 +266,7 @@ double MopsProcessor::serviceMessagesUpdateRate()
 bool MopsProcessor::checkDataItems(const AsterixRecord &record,
     const QVector<DataItemList> &collections)
 {
-    Q_ASSERT(!record.dataItems.isEmpty() && !collections.isEmpty());
+    Q_ASSERT(!record.m_dataItems.isEmpty() && !collections.isEmpty());
 
     int count = collections.size();
     for (DataItemList diList : collections)
@@ -295,13 +295,13 @@ bool MopsProcessor::checkDataItems(const AsterixRecord &record,
 bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
     const QStringList &list, DataItemListType type)
 {
-    Q_ASSERT(!record.dataItems.isEmpty() && !list.isEmpty());
+    Q_ASSERT(!record.m_dataItems.isEmpty() && !list.isEmpty());
 
     if (type == MopsProcessor::Disjunctive)
     {
-        for (const AsterixDataItem &di : record.dataItems)
+        for (const AsterixDataItem &di : record.m_dataItems)
         {
-            QString diName = di.name;
+            QString diName = di.m_name;
             if (list.contains(diName))
             {
                 // One match is enough. Return true.
@@ -318,13 +318,13 @@ bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
          */
         QHash<QString, bool> hash = makeHash(list);
         int count = hash.values().size();
-        if (record.dataItems.size() >= count)
+        if (record.m_dataItems.size() >= count)
         {
-            for (const AsterixDataItem &di : record.dataItems)
+            for (const AsterixDataItem &di : record.m_dataItems)
             {
                 if (count == 0) break;
 
-                QString diName = di.name;
+                QString diName = di.m_name;
                 QHash<QString, bool>::iterator it = hash.find(diName);
                 if (it != hash.end())
                 {

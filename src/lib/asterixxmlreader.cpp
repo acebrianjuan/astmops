@@ -61,7 +61,7 @@ void AsterixXmlReader::readRecord()
              m_xml.attributes().hasAttribute(QLatin1String("cat")));
 
     AsterixRecord record;
-    record.cat = m_xml.attributes().value(QLatin1String("cat")).toUInt();
+    record.m_cat = m_xml.attributes().value(QLatin1String("cat")).toUInt();
 
     while (m_xml.readNextStartElement())
     {
@@ -69,7 +69,7 @@ void AsterixXmlReader::readRecord()
         if (isValidDataItem(diName))
         {
             //qDebug() << diName;
-            record.dataItems[diName] = readDataItem();
+            record.m_dataItems[diName] = readDataItem();
         }
         else
         {
@@ -85,11 +85,11 @@ AsterixDataItem AsterixXmlReader::readDataItem()
     Q_ASSERT(m_xml.isStartElement() && isValidDataItem(m_xml.name().toString()));
 
     AsterixDataItem di;
-    di.name = m_xml.name().toString();
+    di.m_name = m_xml.name().toString();
 
     while (m_xml.readNextStartElement())
     {
-        di.fields.append(QVariant::fromValue(readDataField()));
+        di.m_fields.append(QVariant::fromValue(readDataField()));
     }
 
     return di;
@@ -100,8 +100,8 @@ AsterixDataElement AsterixXmlReader::readDataField()
     Q_ASSERT(m_xml.isStartElement());
 
     AsterixDataElement df;
-    df.name = m_xml.name().toString();
-    df.value = m_xml.readElementText();
+    df.m_name = m_xml.name().toString();
+    df.m_value = m_xml.readElementText();
 
     return df;
 }

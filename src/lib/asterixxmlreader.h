@@ -17,9 +17,6 @@ public:
     AsterixRecord record();
     bool hasPendingRecords();
 
-    // TODO: Add function for reading excluded addresses from file.
-    //void loadExcludedAddresses();
-
 public slots:
 
 signals:
@@ -33,9 +30,6 @@ private:
 
     QXmlStreamReader m_xml;
     QQueue<AsterixRecord> m_recordsQueue;
-
-    // TODO: Add container of excluded addresses.
-    //QVector<uint> m_excludedAddresses;
 };
 
 #endif  // ASTMOPS_ASTERIXXMLREADER_H

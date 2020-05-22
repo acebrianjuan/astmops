@@ -44,7 +44,7 @@ void AsterixXmlReaderTest::test()
 
     for (int i = 0; i < records.size(); ++i)
     {
-        QCOMPARE(records.at(i).dataItems.size(), items.at(i));
+        QCOMPARE(records.at(i).m_dataItems.size(), items.at(i));
     }
 }
 

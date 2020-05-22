@@ -3,12 +3,10 @@
 
 #include "aerodrome.h"
 #include "asterix.h"
+#include "astmops.h"
 #include <QObject>
 #include <QQueue>
 #include <optional>
-
-using TrackNum = uint;
-using IcaoAddr = uint;
 
 class MopsProcessor : public QObject
 {
@@ -96,11 +94,17 @@ private:
     Counter m_ed117TgtRepCounter;
     Counter m_srvMsgCounter;
 
+    //Counter m_ed116SrvMsgCounter;
+    //Counter m_ed117SrvMsgCounter;
+
     QDateTime m_asterixDateTime;
 
     QHash<TrackNum, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
     QHash<IcaoAddr, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
     UpdateRateCounter m_srvMsgUpdateRateCounter;
+
+    //UpdateRateCounter m_ed116SrvMsgUpdateRateCounter;
+    //UpdateRateCounter m_ed117SrvMsgUpdateRateCounter;
 
     QHash<TrackNum, Aerodrome::Area> m_ed116TgtRepAreas;
     QHash<IcaoAddr, Aerodrome::Area> m_ed117TgtRepAreas;
