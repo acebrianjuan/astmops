@@ -11,6 +11,8 @@ void RecordCollator::processRecord(const AsterixRecord &record)
     // Filter out if record is an excluded address.
     // Sort records by Time of Day.
 
+    // TODO: Handle cases with no Target Address information.
+
     auto sorter = [](const AsterixRecord &lhs, const AsterixRecord &rhs) {
         return lhs.m_dateTime < rhs.m_dateTime;
     };
@@ -25,11 +27,18 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             AsterixDataItem di010_020 = record.m_dataItems[QLatin1String("I020")];
             quint8 sysType = di010_020.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
 
+            bool ok;
             AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
-            IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+            IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt(&ok, 16);
 
-            if (!m_excludedAddresses.contains(tgtAddr))
+            if (ok)  // Valid Target Address.
             {
+                // Do not continue if Target Address is an Excluded Address.
+                if (m_excludedAddresses.contains(tgtAddr))
+                {
+                    return;
+                }
+
                 if (sysType == 1)  // Mode S Multilateration.
                 {
                     m_mlatQueue.enqueue(record);
@@ -41,9 +50,17 @@ void RecordCollator::processRecord(const AsterixRecord &record)
                     std::sort(m_smrQueue.begin(), m_smrQueue.end(), sorter);
                 }
             }
+            else  // Invalid Target Address.
+            {
+                // Add Record to the queue anyway.
+                m_mlatQueue.enqueue(record);
+                std::sort(m_mlatQueue.begin(), m_mlatQueue.end(), sorter);
+            }
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
+            // TODO: Determine if there System Type concept applies to Service Messages.
+
             /*
             if (sysType == 1)  // Mode S Multilateration.
             {
@@ -53,17 +70,31 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             }
             */
 
+            // Service Messages are always enqueued.
             m_srvMsgQueue.enqueue(record);
             std::sort(m_srvMsgQueue.begin(), m_srvMsgQueue.end(), sorter);
         }
     }
     else if (record.m_cat == 21)  // ADS-B Reports.
     {
+        bool ok;
         AsterixDataItem di021_080 = record.m_dataItems[QLatin1String("I080")];
-        IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+        IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt(&ok, 16);
 
-        if (!m_excludedAddresses.contains(tgtAddr))
+        if (ok)  // Valid Target Address.
         {
+            // Do not continue if Target Address is an Excluded Address.
+            if (m_excludedAddresses.contains(tgtAddr))
+            {
+                return;
+            }
+
+            m_adsbQueue.enqueue(record);
+            std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
+        }
+        else  // Invalid Target Address.
+        {
+            // Add Record to the queue anyway.
             m_adsbQueue.enqueue(record);
             std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
         }
