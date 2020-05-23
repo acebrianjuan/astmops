@@ -18,7 +18,7 @@ struct AsterixDataElement
 struct AsterixDataItem
 {
     AsterixDataItem();
-    AsterixDataItem(const QString name, const QVariantList fields);
+    AsterixDataItem(const QString name, const QVariantList fields = QVariantList());
 
     QString m_name;
     QVariantList m_fields;
@@ -28,7 +28,7 @@ struct AsterixRecord
 {
     AsterixRecord();
     AsterixRecord(const quint8 cat, const QDateTime dateTime, const SystemType sysType,
-        const QHash<QString, AsterixDataItem> dataItems);
+        const QHash<QString, AsterixDataItem> dataItems = QHash<QString, AsterixDataItem>());
 
     quint8 m_cat;
     QDateTime m_dateTime;

@@ -25,7 +25,8 @@ AsterixRecord::AsterixRecord()
 {
 }
 
-AsterixRecord::AsterixRecord(const quint8 cat, const QDateTime dateTime, const SystemType sysType, const QHash<QString, AsterixDataItem> dataItems)
+AsterixRecord::AsterixRecord(const quint8 cat, const QDateTime dateTime, const SystemType sysType,
+    const QHash<QString, AsterixDataItem> dataItems)
     : m_cat(cat), m_dateTime(dateTime), m_sysType(sysType), m_dataItems(dataItems)
 {
 }
