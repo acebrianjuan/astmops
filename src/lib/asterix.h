@@ -5,25 +5,31 @@
 #include <QDateTime>
 #include <QString>
 #include <QVariantList>
-#include <QVector>
-#include <tuple>
-
-// TODO: Consider giving default values to the struct members.
 
 struct AsterixDataElement
 {
+    AsterixDataElement();
+    AsterixDataElement(const QString name, const QString value);
+
     QString m_name;
     QString m_value;
 };
 
 struct AsterixDataItem
 {
+    AsterixDataItem();
+    AsterixDataItem(const QString name, const QVariantList fields);
+
     QString m_name;
     QVariantList m_fields;
 };
 
 struct AsterixRecord
 {
+    AsterixRecord();
+    AsterixRecord(const quint8 cat, const QDateTime dateTime, const SystemType sysType,
+        const QHash<QString, AsterixDataItem> dataItems);
+
     quint8 m_cat;
     QDateTime m_dateTime;
     SystemType m_sysType;

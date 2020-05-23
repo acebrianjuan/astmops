@@ -8,7 +8,8 @@ enum SystemType
 {
     Smr,
     Mlat,
-    Adsb
+    Adsb,
+    Unknown
 };
 
 #endif  // ASTMOPS_ASTMOPS_H
