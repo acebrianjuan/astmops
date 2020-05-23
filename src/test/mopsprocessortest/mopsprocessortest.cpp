@@ -8,6 +8,15 @@ class MopsProcessorTest : public QObject
 {
     Q_OBJECT
 
+public:
+    enum TestType
+    {
+        Smr,
+        Mlat,
+        Adsb,
+        SrvMsg
+    };
+
 private slots:
     void testMinimumFields_data();
     void testMinimumFields();
@@ -18,14 +27,17 @@ private slots:
 private:
 };
 
+Q_DECLARE_METATYPE(MopsProcessorTest::TestType);
+
 void MopsProcessorTest::testMinimumFields_data()
 {
+    QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<double>("tgtRepResult");
     QTest::addColumn<double>("srvMsgResult");
 
-    QTest::newRow("SMR") << "ASTERIX_SMR.xml" << 0.5 << 0.5;
-    QTest::newRow("MLAT") << "ASTERIX_MLAT.xml" << 0.5 << 0.5;
+    QTest::newRow("SMR") << Smr << "ASTERIX_SMR.xml" << 0.5 << 0.5;
+    QTest::newRow("MLAT") << Mlat << "ASTERIX_MLAT.xml" << 0.5 << 0.5;
 }
 
 void MopsProcessorTest::testMinimumFields()
@@ -44,6 +56,7 @@ void MopsProcessorTest::testMinimumFields()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
+    QFETCH(TestType, testType);
     QFETCH(double, tgtRepResult);
     QFETCH(double, srvMsgResult);
 
@@ -55,12 +68,11 @@ void MopsProcessorTest::testMinimumFields()
         processor.processRecord(reader.record());
     }
 
-    QString currentDataTag = QString::fromLatin1(QTest::currentDataTag());
-    if (currentDataTag == QLatin1String("SMR"))
+    if (testType == Smr)
     {
         QCOMPARE(processor.ed116TargetReportsMinimumFields(), tgtRepResult);
     }
-    else if (currentDataTag == QLatin1String("MLAT"))
+    else if (testType == Mlat)
     {
         QCOMPARE(processor.ed117TargetReportsMinimumFields(), tgtRepResult);
     }
@@ -94,6 +106,7 @@ void MopsProcessorTest::testUpdateRate()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
+    QFETCH(TestType, testType);
     QFETCH(double, tgtRepResult);
     QFETCH(double, srvMsgResult);
 
@@ -105,12 +118,11 @@ void MopsProcessorTest::testUpdateRate()
         processor.processRecord(reader.record());
     }
 
-    QString currentDataTag = QString::fromLatin1(QTest::currentDataTag());
-    if (currentDataTag == QLatin1String("SMR"))
+    if (testType == Smr)
     {
         QCOMPARE(processor.ed116TargetReportsUpdateRate(), tgtRepResult);
     }
-    else if (currentDataTag == QLatin1String("MLAT"))
+    else if (testType == Mlat)
     {
         QCOMPARE(processor.ed117TargetReportsUpdateRate(), tgtRepResult);
     }
