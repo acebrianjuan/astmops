@@ -6,6 +6,7 @@
 #include <QIODevice>
 #include <QObject>
 #include <QQueue>
+#include <QVector>
 
 class RecordCollator : public QObject
 {
