@@ -33,33 +33,30 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
             if (ok)  // Valid Target Address.
             {
-                // Do not continue if Target Address is an Excluded Address.
+                // Do not continue if Target Address is an excluded address.
                 if (m_excludedAddresses.contains(tgtAddr))
                 {
                     return;
                 }
-
-                if (sysType == 1)  // Mode S Multilateration.
-                {
-                    m_mlatQueue.enqueue(record);
-                    std::sort(m_mlatQueue.begin(), m_mlatQueue.end(), sorter);
-                }
-                else if (sysType == 3)  // Primary Surveillance Radar.
-                {
-                    m_smrQueue.enqueue(record);
-                    std::sort(m_smrQueue.begin(), m_smrQueue.end(), sorter);
-                }
             }
-            else  // Invalid Target Address.
+
+            /* Continue if address is a valid non-excluded address
+             * or if there is no address information at all.
+             */
+            if (sysType == 1)  // Mode S Multilateration.
             {
-                // Add Record to the queue anyway.
                 m_mlatQueue.enqueue(record);
                 std::sort(m_mlatQueue.begin(), m_mlatQueue.end(), sorter);
+            }
+            else if (sysType == 3)  // Primary Surveillance Radar.
+            {
+                m_smrQueue.enqueue(record);
+                std::sort(m_smrQueue.begin(), m_smrQueue.end(), sorter);
             }
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
-            // TODO: Determine if there System Type concept applies to Service Messages.
+            // TODO: Determine if the System Type concept applies to Service Messages.
 
             /*
             if (sysType == 1)  // Mode S Multilateration.
@@ -83,7 +80,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
         if (ok)  // Valid Target Address.
         {
-            // Do not continue if Target Address is an Excluded Address.
+            // Do not continue if Target Address is an excluded address.
             if (m_excludedAddresses.contains(tgtAddr))
             {
                 return;
