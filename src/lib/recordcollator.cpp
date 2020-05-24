@@ -85,16 +85,13 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             {
                 return;
             }
+        }
 
-            m_adsbQueue.enqueue(record);
-            std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
-        }
-        else  // Invalid Target Address.
-        {
-            // Add Record to the queue anyway.
-            m_adsbQueue.enqueue(record);
-            std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
-        }
+        /* Continue if address is a valid non-excluded address
+         * or if there is no address information at all.
+         */
+        m_adsbQueue.enqueue(record);
+        std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
     }
 }
 
