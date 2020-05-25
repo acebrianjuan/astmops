@@ -40,4 +40,7 @@ Q_DECLARE_METATYPE(AsterixRecord);
 Q_DECLARE_METATYPE(AsterixDataItem);
 Q_DECLARE_METATYPE(AsterixDataElement);
 
+// TODO: Implement streaming operator for debugging.
+//QDebug operator<<(QDebug dbg, const AsterixRecord &record);
+
 #endif  // ASTMOPS_ASTERIX_H

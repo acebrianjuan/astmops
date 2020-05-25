@@ -11,6 +11,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
     // Filter out if record is an excluded address.
     // Sort records by Time of Day.
 
+    // TODO: Classify Records based on System Identification Code (SIC).
     // TODO: Handle cases with no Target Address information.
 
     auto sorter = [](const AsterixRecord &lhs, const AsterixRecord &rhs) {
@@ -26,6 +27,15 @@ void RecordCollator::processRecord(const AsterixRecord &record)
         {
             AsterixDataItem di010_020 = record.m_dataItems[QLatin1String("I020")];
             quint8 sysType = di010_020.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+
+            if (sysType == 1)  // Mode S Multilateration.
+            {
+                ++m_mlatCounter.in;
+            }
+            else if (sysType == 3)  // Primary Surveillance Radar.
+            {
+                ++m_smrCounter.in;
+            }
 
             bool ok;
             AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
@@ -47,16 +57,20 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             {
                 m_mlatQueue.enqueue(record);
                 std::sort(m_mlatQueue.begin(), m_mlatQueue.end(), sorter);
+                ++m_mlatCounter.out;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
                 m_smrQueue.enqueue(record);
                 std::sort(m_smrQueue.begin(), m_smrQueue.end(), sorter);
+                ++m_smrCounter.out;
             }
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
-            // TODO: Determine if the System Type concept applies to Service Messages.
+            ++m_srvMsgCounter.in;
+
+            // TODO: Use the SIC to determine which system is the service message informing about.
 
             /*
             if (sysType == 1)  // Mode S Multilateration.
@@ -67,13 +81,17 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             }
             */
 
+            // TODO: We need 2 queues, one for SMR and one for MLAT.
+
             // Service Messages are always enqueued.
             m_srvMsgQueue.enqueue(record);
             std::sort(m_srvMsgQueue.begin(), m_srvMsgQueue.end(), sorter);
+            ++m_srvMsgCounter.out;
         }
     }
     else if (record.m_cat == 21)  // ADS-B Reports.
     {
+        ++m_adsbCounter.in;
         bool ok;
         AsterixDataItem di021_080 = record.m_dataItems[QLatin1String("I080")];
         IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt(&ok, 16);
@@ -92,6 +110,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
          */
         m_adsbQueue.enqueue(record);
         std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
+        ++m_adsbCounter.out;
     }
 }
 
@@ -152,4 +171,24 @@ QQueue<AsterixRecord> RecordCollator::adsbQueue() const
 QQueue<AsterixRecord> RecordCollator::srvMsgQueue() const
 {
     return m_srvMsgQueue;
+}
+
+RecordCollator::Counter RecordCollator::smrCounter() const
+{
+    return m_smrCounter;
+}
+
+RecordCollator::Counter RecordCollator::mlatCounter() const
+{
+    return m_mlatCounter;
+}
+
+RecordCollator::Counter RecordCollator::adsbCounter() const
+{
+    return m_adsbCounter;
+}
+
+RecordCollator::Counter RecordCollator::srvMsgCounter() const
+{
+    return m_srvMsgCounter;
 }

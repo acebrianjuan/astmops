@@ -13,6 +13,12 @@ class RecordCollator : public QObject
     Q_OBJECT
 
 public:
+    struct Counter
+    {
+        uint in = 0;
+        uint out = 0;
+    };
+
     explicit RecordCollator(QObject* parent = nullptr);
 
     void processRecord(const AsterixRecord& record);
@@ -32,6 +38,11 @@ public:
     QQueue<AsterixRecord> adsbQueue() const;
     QQueue<AsterixRecord> srvMsgQueue() const;
 
+    Counter smrCounter() const;
+    Counter mlatCounter() const;
+    Counter adsbCounter() const;
+    Counter srvMsgCounter() const;
+
 public slots:
 
 signals:
@@ -45,6 +56,15 @@ private:
     QQueue<AsterixRecord> m_mlatQueue;
     QQueue<AsterixRecord> m_adsbQueue;
     QQueue<AsterixRecord> m_srvMsgQueue;
+    //QQueue<AsterixRecord> m_smrSrvMsgQueue;
+    //QQueue<AsterixRecord> m_mlatSrvMsgQueue;
+
+    Counter m_smrCounter;
+    Counter m_mlatCounter;
+    Counter m_adsbCounter;
+    Counter m_srvMsgCounter;
+    //Counter m_smrSrvMsgCounter;
+    //Counter m_mlatSrvMsgCounter;
 };
 
 #endif  // ASTMOPS_RECORDCOLLATOR_H

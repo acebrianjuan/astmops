@@ -232,6 +232,7 @@ void RecordCollatorTest::test()
 {
     // Check that excluded addresses are filtered out correctly.
     // Check that records are sorted in chronological order.
+    // Check that counters are correctly initialized and updated.
 
     RecordCollator collator;
 
@@ -243,8 +244,33 @@ void RecordCollatorTest::test()
     //QFETCH(QVector<AsterixRecord>, recordsOut);
     QFETCH(int, sizeOut);
 
+    // Load list of excluded addresses from text file.
     collator.loadExcludedAddresses(&file);
+    QCOMPARE(collator.excludedAddresses().size(), 5);
 
+    // Check that counters are initialized to zero.
+    RecordCollator::Counter counter;
+    if (testType == Smr)
+    {
+        counter = collator.smrCounter();
+    }
+    else if (testType == Mlat)
+    {
+        counter = collator.mlatCounter();
+    }
+    else if (testType == Adsb)
+    {
+        counter = collator.adsbCounter();
+    }
+    else if (testType == SrvMsg)
+    {
+        counter = collator.srvMsgCounter();
+    }
+
+    QCOMPARE(counter.in, 0u);
+    QCOMPARE(counter.out, 0u);
+
+    // Feed Records to the RecordCollator.
     for (AsterixRecord rin : recordsIn)
     {
         collator.processRecord(rin);
@@ -254,6 +280,11 @@ void RecordCollatorTest::test()
     msecs.clear();
     if (testType == Smr)
     {
+        // Check that counter is correctly updated.
+        counter = collator.smrCounter();
+        QCOMPARE(counter.in, 3u);
+        QCOMPARE(counter.out, 2u);
+
         // Check that number of Records at the other end matches the expected value.
         QCOMPARE(collator.smrQueue().size(), sizeOut);
 
@@ -269,6 +300,11 @@ void RecordCollatorTest::test()
     }
     else if (testType == Mlat)
     {
+        // Check that counter is correctly updated.
+        counter = collator.mlatCounter();
+        QCOMPARE(counter.in, 3u);
+        QCOMPARE(counter.out, 2u);
+
         // Check that number of Records at the other end matches the expected value.
         QCOMPARE(collator.mlatQueue().size(), sizeOut);
 
@@ -284,6 +320,11 @@ void RecordCollatorTest::test()
     }
     else if (testType == Adsb)
     {
+        // Check that counter is correctly updated.
+        counter = collator.adsbCounter();
+        QCOMPARE(counter.in, 3u);
+        QCOMPARE(counter.out, 2u);
+
         // Check that number of Records at the other end matches the expected value.
         QCOMPARE(collator.adsbQueue().size(), sizeOut);
 
@@ -299,6 +340,11 @@ void RecordCollatorTest::test()
     }
     else if (testType == SrvMsg)
     {
+        // Check that counter is correctly updated.
+        counter = collator.srvMsgCounter();
+        QCOMPARE(counter.in, 2u);
+        QCOMPARE(counter.out, 2u);
+
         // Check that number of Records at the other end matches the expected value.
         QCOMPARE(collator.srvMsgQueue().size(), sizeOut);
 
@@ -311,7 +357,6 @@ void RecordCollatorTest::test()
     // Check that Records are sorted in chronological order.
     auto it = std::adjacent_find(msecs.begin(), msecs.end(), std::greater<int>());
     QVERIFY2(it == msecs.end(), "Records are not sorted in chronological order.");
-
 
     /*
     // Check that the Records at the other end are the ones expected.
