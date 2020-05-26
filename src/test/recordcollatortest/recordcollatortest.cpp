@@ -20,6 +20,7 @@ private slots:
     void test();
 
 private:
+    QVector<IcaoAddr> excludedAddresses();
 };
 
 Q_DECLARE_METATYPE(RecordCollatorTest::TestType);
@@ -294,7 +295,7 @@ void RecordCollatorTest::test()
             IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
 
             // Check that excluded addresses have been filtered out.
-            QVERIFY2(!collator.excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
+            QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
     }
@@ -314,7 +315,7 @@ void RecordCollatorTest::test()
             IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
 
             // Check that excluded addresses have been filtered out.
-            QVERIFY2(!collator.excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
+            QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
     }
@@ -334,7 +335,7 @@ void RecordCollatorTest::test()
             IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
 
             // Check that excluded addresses have been filtered out.
-            QVERIFY2(!collator.excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
+            QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
     }
@@ -380,6 +381,11 @@ void RecordCollatorTest::test()
         }
     }
     */
+}
+
+QVector<IcaoAddr> RecordCollatorTest::excludedAddresses()
+{
+    return QVector<IcaoAddr>({0x3443C3, 0x3443C4, 0x3443C5, 0x3443C2, 0x3443C6});
 }
 
 QTEST_APPLESS_MAIN(RecordCollatorTest)
