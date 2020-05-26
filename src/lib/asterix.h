@@ -8,7 +8,7 @@
 
 struct AsterixDataElement
 {
-    AsterixDataElement();
+    AsterixDataElement() = default;
     AsterixDataElement(const QString name, const QString value);
 
     QString m_name;
@@ -17,7 +17,7 @@ struct AsterixDataElement
 
 struct AsterixDataItem
 {
-    AsterixDataItem();
+    AsterixDataItem() = default;
     AsterixDataItem(const QString name, const QVariantList fields = QVariantList());
 
     QString m_name;
@@ -26,13 +26,13 @@ struct AsterixDataItem
 
 struct AsterixRecord
 {
-    AsterixRecord();
+    AsterixRecord() = default;
     AsterixRecord(const quint8 cat, const QDateTime dateTime, const SystemType sysType,
         const QHash<QString, AsterixDataItem> dataItems = QHash<QString, AsterixDataItem>());
 
-    quint8 m_cat;
+    quint8 m_cat = 0;
     QDateTime m_dateTime;
-    SystemType m_sysType;
+    SystemType m_sysType = Unknown;
     QHash<QString, AsterixDataItem> m_dataItems;
 };
 
