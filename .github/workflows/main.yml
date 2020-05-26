@@ -9,23 +9,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install dependencies
-      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends build-essential cmake qtbase5-dev
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ninja-build cmake qtbase5-dev
     - name: configure
-      run: cd build && cmake ..
+      run: cd build && cmake -GNinja ..
     - name: build
-      run: cd build && make -j $(nproc)
-#    - name: install
-#      run: cd build && sudo make install
+      run: cd build && ninja
       
   build-macos:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
     - name: install dependencies
-      run: brew install cmake qt
+      run: brew install ninja cmake qt
     - name: configure
-      run: cd build && cmake .. -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5
+      run: cd build && cmake -GNinja -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5 .. 
     - name: build
-      run: cd build && make -j $(nproc)
-#    - name: install
-#      run: cd build && sudo make install
+      run: cd build && ninja
