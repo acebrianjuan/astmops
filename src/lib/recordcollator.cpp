@@ -1,8 +1,11 @@
 #include "recordcollator.h"
+#include <QDebug>
+#include <QSettings>
 #include <algorithm>
 
 RecordCollator::RecordCollator(QObject *parent) : QObject(parent)
 {
+    readSettings();
 }
 
 void RecordCollator::processRecord(const AsterixRecord &record)
@@ -146,6 +149,26 @@ void RecordCollator::addExcludedAddress(const IcaoAddr addr)
 void RecordCollator::removeExcludedAddress(const IcaoAddr addr)
 {
     m_excludedAddresses.removeOne(addr);
+}
+
+void RecordCollator::readSettings()
+{
+    QSettings settings;
+
+    auto initIfSet = [&settings](QString key, quint8 &var) {
+        if (settings.contains(key))
+        {
+            var = settings.value(key).toUInt();
+        }
+        else
+        {
+            qCritical() << key << "is not set in the configuration file!";
+        }
+    };
+
+    initIfSet(m_smrSicKey, m_smrSic);
+    initIfSet(m_mlatSicKey, m_mlatSic);
+    initIfSet(m_adsbSicKey, m_adsbSic);
 }
 
 QVector<IcaoAddr> RecordCollator::excludedAddresses() const

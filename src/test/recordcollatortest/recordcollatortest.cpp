@@ -16,6 +16,7 @@ public:
     };
 
 private slots:
+    void initTestCase();
     void test_data();
     void test();
 
@@ -24,6 +25,17 @@ private:
 };
 
 Q_DECLARE_METATYPE(RecordCollatorTest::TestType);
+
+void RecordCollatorTest::initTestCase()
+{
+    QCoreApplication::setOrganizationName(QLatin1String("astmops"));
+    QCoreApplication::setApplicationName(QLatin1String("astmops-recordcollatortest"));
+
+    QSettings settings;
+    settings.setValue(QLatin1String("SMR.SIC"), 7);
+    settings.setValue(QLatin1String("MLAT.SIC"), 107);
+    settings.setValue(QLatin1String("ADS-B.SIC"), 109);
+}
 
 void RecordCollatorTest::test_data()
 {
@@ -388,5 +400,5 @@ QVector<IcaoAddr> RecordCollatorTest::excludedAddresses()
     return QVector<IcaoAddr>({0x3443C3, 0x3443C4, 0x3443C5, 0x3443C2, 0x3443C6});
 }
 
-QTEST_APPLESS_MAIN(RecordCollatorTest)
+QTEST_GUILESS_MAIN(RecordCollatorTest)
 #include "recordcollatortest.moc"

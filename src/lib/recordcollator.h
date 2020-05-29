@@ -31,6 +31,8 @@ public:
 
     bool hasPendingBatches();
 
+    void readSettings();
+
     QVector<IcaoAddr> excludedAddresses() const;
 
     QQueue<AsterixRecord> smrQueue() const;
@@ -49,7 +51,15 @@ signals:
     void readyRead();
 
 private:
+    const QString m_smrSicKey = QLatin1String("SMR.SIC");
+    const QString m_mlatSicKey = QLatin1String("MLAT.SIC");
+    const QString m_adsbSicKey = QLatin1String("ADS-B.SIC");
+
     QVector<IcaoAddr> m_excludedAddresses;
+
+    quint8 m_smrSic;
+    quint8 m_mlatSic;
+    quint8 m_adsbSic;
 
     QHash<SystemType, QQueue<AsterixRecord>> m_catMap;
     QQueue<AsterixRecord> m_smrQueue;
