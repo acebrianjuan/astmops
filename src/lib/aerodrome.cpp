@@ -26,7 +26,7 @@ bool Aerodrome::hasAllElements()
     return false;
 }
 
-void Aerodrome::setArp(const QPointF &point)
+void Aerodrome::setArp(const QVector3D &point)
 {
     m_arp = point;
 }

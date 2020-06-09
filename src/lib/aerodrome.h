@@ -2,6 +2,7 @@
 #define ASTMOPS_AERODROME_H
 
 #include <QPolygonF>
+#include <QVector3D>
 #include <QVector>
 
 class Aerodrome
@@ -26,7 +27,7 @@ public:
     bool hasAnyElements();
     bool hasAllElements();
 
-    void setArp(const QPointF &point);
+    void setArp(const QVector3D &point);
     void addRunwayElement(const QPolygonF &polygon);
     void addTaxiwayElement(const QPolygonF &polygon);
     void addApronElement(const QPolygonF &polygon);
@@ -46,7 +47,7 @@ public:
 private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point);
 
-    QPointF m_arp;
+    QVector3D m_arp;
     QVector<QPolygonF> m_runwayElements;
     QVector<QPolygonF> m_taxiwayElements;
     QVector<QPolygonF> m_apronElements;

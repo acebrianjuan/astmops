@@ -16,7 +16,7 @@ public:
     explicit AixmReader(QObject *parent = nullptr);
 
     bool read(QIODevice *device);
-    //Aerodrome aerodrome() const { return m_aerodrome; }
+    Aerodrome makeAerodrome() const;
 
 public slots:
 
@@ -34,7 +34,6 @@ private:
     // TODO: Add standPosListXmlPath() function;
 
     QXmlStreamReader m_xml;
-    //Aerodrome m_aerodrome;
 
     QGeoCoordinate m_arp;
     QVector<QVector<QGeoCoordinate>> m_runwayElements;

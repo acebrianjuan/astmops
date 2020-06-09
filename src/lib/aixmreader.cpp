@@ -1,4 +1,5 @@
 #include "aixmreader.h"
+#include "geofunctions.h"
 #include <QDebug>
 
 AixmReader::AixmReader(QObject *parent) : QObject(parent)
@@ -22,6 +23,100 @@ bool AixmReader::read(QIODevice *device)
     }
 
     return !m_xml.error();
+}
+
+/*!
+ * Generates an Aerodrome projected in local tangent plane coordinates.
+ */
+Aerodrome AixmReader::makeAerodrome() const
+{
+    Aerodrome aerodrome;
+
+    // Coordinates of the local tangent plane origin.
+    QGeoCoordinate geoOrigin = m_arp;
+
+    // Airport Reference Point.
+    aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
+
+    // Runway elements.
+    for (QVector<QGeoCoordinate> rwyEleGeo : m_runwayElements)
+    {
+        QPolygonF polygon;
+
+        for (QGeoCoordinate coord : rwyEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addRunwayElement(polygon);
+    }
+
+    // Taxiway elements.
+    for (QVector<QGeoCoordinate> twyEleGeo : m_taxiwayElements)
+    {
+        QPolygonF polygon;
+
+        for (QGeoCoordinate coord : twyEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addTaxiwayElement(polygon);
+    }
+
+    // Apron elements.
+    for (QVector<QGeoCoordinate> apronEleGeo : m_apronElements)
+    {
+        QPolygonF polygon;
+
+        for (QGeoCoordinate coord : apronEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addApronElement(polygon);
+    }
+
+    // Stand elements.
+    for (QVector<QGeoCoordinate> standEleGeo : m_standElements)
+    {
+        QPolygonF polygon;
+
+        for (QGeoCoordinate coord : standEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addStandElement(polygon);
+    }
+
+    // Approach 1 elements.
+    for (QVector<QGeoCoordinate> app1EleGeo : m_approach1Elements)
+    {
+        QPolygonF polygon;
+
+        for (QGeoCoordinate coord : app1EleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addApproach1Element(polygon);
+    }
+
+    // Approach 2 elements.
+    for (QVector<QGeoCoordinate> app2EleGeo : m_approach2Elements)
+    {
+        QPolygonF polygon;
+
+        for (QGeoCoordinate coord : app2EleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addApproach2Element(polygon);
+    }
+
+    return aerodrome;
 }
 
 void AixmReader::readAixm()
