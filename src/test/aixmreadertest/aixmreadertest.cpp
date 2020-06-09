@@ -2,6 +2,8 @@
 #include <QObject>
 #include <QtTest>
 
+// TODO: Verify coordinates.
+
 class AixmReaderTest : public QObject
 {
     Q_OBJECT
@@ -35,11 +37,11 @@ void AixmReaderTest::test()
     QFETCH(int, apronElements);
 
     reader.read(&file);
-    Aerodrome aerodrome = reader.aerodrome();
+    //Aerodrome aerodrome = reader.aerodrome();
 
-    QCOMPARE(aerodrome.getRunwayElements().size(), runwayElements);
-    QCOMPARE(aerodrome.getTaxiwayElements().size(), taxiwayElements);
-    QCOMPARE(aerodrome.getApronElements().size(), apronElements);
+    QCOMPARE(reader.m_runwayElements.size(), runwayElements);
+    QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
+    QCOMPARE(reader.m_apronElements.size(), apronElements);
 }
 
 QTEST_APPLESS_MAIN(AixmReaderTest)

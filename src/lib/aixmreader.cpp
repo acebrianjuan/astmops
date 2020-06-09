@@ -45,19 +45,19 @@ void AixmReader::readAixm()
             {
                 if (m_xml.name() == QLatin1String("AirportHeliport"))
                 {
-                    m_aerodrome.setArp(posListToPoint(getPosList(arpPosXmlPath())));
+                    m_arp = posListToCoord(getPosList(arpPosXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("RunwayElement"))
                 {
-                    m_aerodrome.addRunwayElement(posListToPolygon(getPosList(runwayPosListXmlPath())));
+                    m_runwayElements << posListToCoordVector(getPosList(runwayPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("TaxiwayElement"))
                 {
-                    m_aerodrome.addTaxiwayElement(posListToPolygon(getPosList(taxiwayPosListXmlPath())));
+                    m_taxiwayElements << posListToCoordVector(getPosList(taxiwayPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("ApronElement"))
                 {
-                    m_aerodrome.addApronElement(posListToPolygon(getPosList(apronPosListXmlPath())));
+                    m_apronElements << posListToCoordVector(getPosList(apronPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("StandElement"))
                 {
@@ -105,36 +105,36 @@ QStringList AixmReader::getPosList(const QStringList &tokens)
     return QStringList();
 }
 
-QPointF AixmReader::posListToPoint(QStringList list)
+QGeoCoordinate AixmReader::posListToCoord(QStringList list)
 {
     Q_ASSERT(list.size() == 2);
 
     double lon = list.takeFirst().toDouble();
     double lat = list.takeFirst().toDouble();
-    QPointF point(lon, lat);
+    QGeoCoordinate coord(lat, lon);
 
-    return point;
+    return coord;
 }
 
-QPolygonF AixmReader::posListToPolygon(QStringList list)
+QVector<QGeoCoordinate> AixmReader::posListToCoordVector(QStringList list)
 {
     int sizeIn = list.size();
     Q_ASSERT(sizeIn % 2 == 0);
 
-    QPolygonF polygon;
+    QVector<QGeoCoordinate> coordVector;
     double lon, lat;
 
     while (list.size() > 0)
     {
         lon = list.takeFirst().toDouble();
         lat = list.takeFirst().toDouble();
-        polygon << QPointF(lon, lat);
+        coordVector << QGeoCoordinate(lat, lon);
     }
 
-    int sizeOut = polygon.size();
+    int sizeOut = coordVector.size();
     Q_ASSERT(sizeOut == sizeIn / 2);
 
-    return polygon;
+    return coordVector;
 }
 
 QStringList AixmReader::arpPosXmlPath()
