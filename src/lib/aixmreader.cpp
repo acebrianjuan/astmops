@@ -42,6 +42,7 @@ Aerodrome AixmReader::makeAerodrome() const
     for (QVector<QGeoCoordinate> rwyEleGeo : m_runwayElements)
     {
         QPolygonF polygon;
+        polygon.reserve(rwyEleGeo.size());
 
         for (QGeoCoordinate coord : rwyEleGeo)
         {
@@ -55,6 +56,7 @@ Aerodrome AixmReader::makeAerodrome() const
     for (QVector<QGeoCoordinate> twyEleGeo : m_taxiwayElements)
     {
         QPolygonF polygon;
+        polygon.reserve(twyEleGeo.size());
 
         for (QGeoCoordinate coord : twyEleGeo)
         {
@@ -68,6 +70,7 @@ Aerodrome AixmReader::makeAerodrome() const
     for (QVector<QGeoCoordinate> apronEleGeo : m_apronElements)
     {
         QPolygonF polygon;
+        polygon.reserve(apronEleGeo.size());
 
         for (QGeoCoordinate coord : apronEleGeo)
         {
@@ -81,6 +84,7 @@ Aerodrome AixmReader::makeAerodrome() const
     for (QVector<QGeoCoordinate> standEleGeo : m_standElements)
     {
         QPolygonF polygon;
+        polygon.reserve(standEleGeo.size());
 
         for (QGeoCoordinate coord : standEleGeo)
         {
@@ -94,6 +98,7 @@ Aerodrome AixmReader::makeAerodrome() const
     for (QVector<QGeoCoordinate> app1EleGeo : m_approach1Elements)
     {
         QPolygonF polygon;
+        polygon.reserve(app1EleGeo.size());
 
         for (QGeoCoordinate coord : app1EleGeo)
         {
@@ -107,6 +112,7 @@ Aerodrome AixmReader::makeAerodrome() const
     for (QVector<QGeoCoordinate> app2EleGeo : m_approach2Elements)
     {
         QPolygonF polygon;
+        polygon.reserve(app2EleGeo.size());
 
         for (QGeoCoordinate coord : app2EleGeo)
         {
