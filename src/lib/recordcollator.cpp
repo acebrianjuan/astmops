@@ -26,6 +26,10 @@ void RecordCollator::processRecord(const AsterixRecord &record)
         AsterixDataItem di010_000 = record.m_dataItems[QLatin1String("I000")];
         quint8 msgType = di010_000.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
 
+        AsterixDataItem di010_010 = record.m_dataItems[QLatin1String("I010")];
+        //quint8 sac = di010_010.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+        quint8 sic = di010_010.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+
         if (msgType == 1)  // Target Report.
         {
             AsterixDataItem di010_020 = record.m_dataItems[QLatin1String("I020")];
@@ -33,11 +37,11 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
             if (sysType == 1)  // Mode S Multilateration.
             {
-                ++m_mlatCounter.in;
+                ++m_mlatTgtRepCounter.in;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                ++m_smrCounter.in;
+                ++m_smrTgtRepCounter.in;
             }
 
             bool ok;
@@ -58,38 +62,38 @@ void RecordCollator::processRecord(const AsterixRecord &record)
              */
             if (sysType == 1)  // Mode S Multilateration.
             {
-                m_mlatQueue.enqueue(record);
-                std::sort(m_mlatQueue.begin(), m_mlatQueue.end(), sorter);
-                ++m_mlatCounter.out;
+                m_mlatTgtRepQueue.enqueue(record);
+                std::sort(m_mlatTgtRepQueue.begin(), m_mlatTgtRepQueue.end(), sorter);
+                ++m_mlatTgtRepCounter.out;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                m_smrQueue.enqueue(record);
-                std::sort(m_smrQueue.begin(), m_smrQueue.end(), sorter);
-                ++m_smrCounter.out;
+                m_smrTgtRepQueue.enqueue(record);
+                std::sort(m_smrTgtRepQueue.begin(), m_smrTgtRepQueue.end(), sorter);
+                ++m_smrTgtRepCounter.out;
             }
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
-            ++m_srvMsgCounter.in;
-
-            // TODO: Use the SIC to determine which system is the service message informing about.
-
-            /*
-            if (sysType == 1)  // Mode S Multilateration.
-            {
-            }
-            else if (sysType == 3)  // Primary Surveillance Radar.
-            {
-            }
-            */
-
-            // TODO: We need 2 queues, one for SMR and one for MLAT.
-
+            // Check the SIC to determine which system is the service message informing about.
             // Service Messages are always enqueued.
-            m_srvMsgQueue.enqueue(record);
-            std::sort(m_srvMsgQueue.begin(), m_srvMsgQueue.end(), sorter);
-            ++m_srvMsgCounter.out;
+
+            if (sic == m_mlatSic)  // Mode S Multilateration.
+            {
+                ++m_mlatSrvMsgCounter.in;
+
+                m_mlatSrvMsgQueue.enqueue(record);
+                std::sort(m_mlatSrvMsgQueue.begin(), m_mlatSrvMsgQueue.end(), sorter);
+                ++m_mlatSrvMsgCounter.out;
+            }
+            else if (sic == m_smrSic)  // Primary Surveillance Radar.
+            {
+                ++m_smrSrvMsgCounter.in;
+
+                m_smrSrvMsgQueue.enqueue(record);
+                std::sort(m_smrSrvMsgQueue.begin(), m_smrSrvMsgQueue.end(), sorter);
+                ++m_smrSrvMsgCounter.out;
+            }
         }
     }
     else if (record.m_cat == 21)  // ADS-B Reports.
@@ -176,42 +180,52 @@ QVector<IcaoAddr> RecordCollator::excludedAddresses() const
     return m_excludedAddresses;
 }
 
-QQueue<AsterixRecord> RecordCollator::smrQueue() const
+QQueue<AsterixRecord> RecordCollator::smrTgtRepQueue() const
 {
-    return m_smrQueue;
+    return m_smrTgtRepQueue;
 }
 
-QQueue<AsterixRecord> RecordCollator::mlatQueue() const
+QQueue<AsterixRecord> RecordCollator::smrSrvMsgQueue() const
 {
-    return m_mlatQueue;
+    return m_smrSrvMsgQueue;
 }
 
-QQueue<AsterixRecord> RecordCollator::adsbQueue() const
+QQueue<AsterixRecord> RecordCollator::mlatTgtRepQueue() const
+{
+    return m_mlatTgtRepQueue;
+}
+
+QQueue<AsterixRecord> RecordCollator::mlatSrvMsgQueue() const
+{
+    return m_mlatSrvMsgQueue;
+}
+
+QQueue<AsterixRecord> RecordCollator::adsbTgtRepQueue() const
 {
     return m_adsbQueue;
 }
 
-QQueue<AsterixRecord> RecordCollator::srvMsgQueue() const
+RecordCollator::Counter RecordCollator::smrTgtRepCounter() const
 {
-    return m_srvMsgQueue;
+    return m_smrTgtRepCounter;
 }
 
-RecordCollator::Counter RecordCollator::smrCounter() const
+RecordCollator::Counter RecordCollator::smrSrvMsgCounter() const
 {
-    return m_smrCounter;
+    return m_smrSrvMsgCounter;
 }
 
-RecordCollator::Counter RecordCollator::mlatCounter() const
+RecordCollator::Counter RecordCollator::mlatTgtRepCounter() const
 {
-    return m_mlatCounter;
+    return m_mlatTgtRepCounter;
+}
+
+RecordCollator::Counter RecordCollator::mlatSrvMsgCounter() const
+{
+    return m_mlatSrvMsgCounter;
 }
 
 RecordCollator::Counter RecordCollator::adsbCounter() const
 {
     return m_adsbCounter;
-}
-
-RecordCollator::Counter RecordCollator::srvMsgCounter() const
-{
-    return m_srvMsgCounter;
 }

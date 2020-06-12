@@ -9,10 +9,11 @@ class RecordCollatorTest : public QObject
 public:
     enum TestType
     {
-        Smr,
-        Mlat,
-        Adsb,
-        SrvMsg
+        cat010SmrTgtRep,
+        cat010SmrSrvMsg,
+        cat010MlatTgtRep,
+        cat010MlatSrvMsg,
+        cat021Adsb
     };
 
 private slots:
@@ -45,6 +46,8 @@ void RecordCollatorTest::test_data()
     QTest::addColumn<int>("sizeOut");
 
 
+    // TARGET REPORTS.
+
     // SMR:
 
     // Record 1: [ToD: 00:00:00], CAT010 SMR Target Report (Excluded Vehicle).
@@ -53,6 +56,11 @@ void RecordCollatorTest::test_data()
     cat010Smr1.m_dataItems[QLatin1String("I000")] =
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("1"))));
+
+    cat010Smr1.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("7"))));
 
     cat010Smr1.m_dataItems[QLatin1String("I020")] =
         AsterixDataItem(QLatin1String("I020"),
@@ -73,6 +81,11 @@ void RecordCollatorTest::test_data()
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("1"))));
 
+    cat010Smr2.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("7"))));
+
     cat010Smr2.m_dataItems[QLatin1String("I020")] =
         AsterixDataItem(QLatin1String("I020"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("TYP"), QLatin1String("3"))));
@@ -91,6 +104,11 @@ void RecordCollatorTest::test_data()
     cat010Smr3.m_dataItems[QLatin1String("I000")] =
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("1"))));
+
+    cat010Smr3.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("7"))));
 
     cat010Smr3.m_dataItems[QLatin1String("I020")] =
         AsterixDataItem(QLatin1String("I020"),
@@ -114,6 +132,11 @@ void RecordCollatorTest::test_data()
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("1"))));
 
+    cat010Mlat1.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("107"))));
+
     cat010Mlat1.m_dataItems[QLatin1String("I020")] =
         AsterixDataItem(QLatin1String("I020"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("TYP"), QLatin1String("1"))));
@@ -132,6 +155,11 @@ void RecordCollatorTest::test_data()
     cat010Mlat2.m_dataItems[QLatin1String("I000")] =
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("1"))));
+
+    cat010Mlat2.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("107"))));
 
     cat010Mlat2.m_dataItems[QLatin1String("I020")] =
         AsterixDataItem(QLatin1String("I020"),
@@ -152,6 +180,11 @@ void RecordCollatorTest::test_data()
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("1"))));
 
+    cat010Mlat3.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("107"))));
+
     cat010Mlat3.m_dataItems[QLatin1String("I020")] =
         AsterixDataItem(QLatin1String("I020"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("TYP"), QLatin1String("1"))));
@@ -170,6 +203,11 @@ void RecordCollatorTest::test_data()
     // Record 1: [ToD: 00:00:00], CAT021 ADS-B Target Report (Excluded Vehicle).
     AsterixRecord cat021Adsb1(quint8(21), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC), SystemType::Adsb);
 
+    cat021Adsb1.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("14")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("219"))));
+
     cat021Adsb1.m_dataItems[QLatin1String("I073")] =
         AsterixDataItem(QLatin1String("I073"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("time_reception_position"), QLatin1String("0.0"))));
@@ -180,6 +218,11 @@ void RecordCollatorTest::test_data()
 
     // Record 2: [ToD: 00:00:05], CAT021 ADS-B Target Report.
     AsterixRecord cat021Adsb2(quint8(21), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC), SystemType::Adsb);
+
+    cat021Adsb2.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("14")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("219"))));
 
     cat021Adsb2.m_dataItems[QLatin1String("I073")] =
         AsterixDataItem(QLatin1String("I073"),
@@ -192,6 +235,11 @@ void RecordCollatorTest::test_data()
     // Record 3: [ToD: 00:00:10], CAT021 ADS-B Target Report.
     AsterixRecord cat021Adsb3(quint8(21), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC), SystemType::Adsb);
 
+    cat021Adsb3.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("14")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("219"))));
+
     cat021Adsb3.m_dataItems[QLatin1String("I073")] =
         AsterixDataItem(QLatin1String("I073"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("time_reception_position"), QLatin1String("10.0"))));
@@ -201,44 +249,92 @@ void RecordCollatorTest::test_data()
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1"))));
 
 
-    // Service Message:
+    // SERVICE MESSAGES:
 
-    // Record 1: [ToD: 00:00:00], CAT010 Service Message.
-    AsterixRecord cat010SrvMsg1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC), SystemType::Unknown);
+    // SMR:
 
-    cat010SrvMsg1.m_dataItems[QLatin1String("I000")] =
+    // Record 1: [ToD: 00:00:00], CAT010 SMR Service Message.
+    AsterixRecord cat010SmrSrvMsg1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC), SystemType::Unknown);
+
+    cat010SmrSrvMsg1.m_dataItems[QLatin1String("I000")] =
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("3"))));
 
-    cat010SrvMsg1.m_dataItems[QLatin1String("I140")] =
+    cat010SmrSrvMsg1.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("7"))));
+
+    cat010SmrSrvMsg1.m_dataItems[QLatin1String("I140")] =
         AsterixDataItem(QLatin1String("I140"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("ToD"), QLatin1String("0.0"))));
 
-    // Record 2: [ToD: 00:00:05], CAT010 Service Message.
-    AsterixRecord cat010SrvMsg2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC), SystemType::Unknown);
+    // Record 2: [ToD: 00:00:05], CAT010 SMR Service Message.
+    AsterixRecord cat010SmrSrvMsg2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC), SystemType::Unknown);
 
-    cat010SrvMsg2.m_dataItems[QLatin1String("I000")] =
+    cat010SmrSrvMsg2.m_dataItems[QLatin1String("I000")] =
         AsterixDataItem(QLatin1String("I000"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("3"))));
 
-    cat010SrvMsg2.m_dataItems[QLatin1String("I140")] =
+    cat010SmrSrvMsg2.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("7"))));
+
+    cat010SmrSrvMsg2.m_dataItems[QLatin1String("I140")] =
+        AsterixDataItem(QLatin1String("I140"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("ToD"), QLatin1String("5.0"))));
+
+    // MLAT:
+
+    // Record 1: [ToD: 00:00:00], CAT010 MLAT Service Message.
+    AsterixRecord cat010MlatSrvMsg1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC), SystemType::Unknown);
+
+    cat010MlatSrvMsg1.m_dataItems[QLatin1String("I000")] =
+        AsterixDataItem(QLatin1String("I000"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("3"))));
+
+    cat010MlatSrvMsg1.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("107"))));
+
+    cat010MlatSrvMsg1.m_dataItems[QLatin1String("I140")] =
+        AsterixDataItem(QLatin1String("I140"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("ToD"), QLatin1String("0.0"))));
+
+    // Record 2: [ToD: 00:00:05], CAT010 MLAT Service Message.
+    AsterixRecord cat010MlatSrvMsg2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC), SystemType::Unknown);
+
+    cat010MlatSrvMsg2.m_dataItems[QLatin1String("I000")] =
+        AsterixDataItem(QLatin1String("I000"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("MsgTyp"), QLatin1String("3"))));
+
+    cat010MlatSrvMsg2.m_dataItems[QLatin1String("I010")] =
+        AsterixDataItem(QLatin1String("I010"),
+            QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("SAC"), QLatin1String("0")))
+                           << QVariant::fromValue(AsterixDataElement(QLatin1String("SIC"), QLatin1String("107"))));
+
+    cat010MlatSrvMsg2.m_dataItems[QLatin1String("I140")] =
         AsterixDataItem(QLatin1String("I140"),
             QVariantList() << QVariant::fromValue(AsterixDataElement(QLatin1String("ToD"), QLatin1String("5.0"))));
 
 
-    QVector<AsterixRecord> smrRecordsIn({cat010Smr1, cat010Smr3, cat010Smr2});
-    QVector<AsterixRecord> mlatRecordsIn({cat010Mlat1, cat010Mlat3, cat010Mlat2});
+    QVector<AsterixRecord> smrTgtRepRecordsIn({cat010Smr1, cat010Smr3, cat010Smr2});
+    QVector<AsterixRecord> smrSrvMsgRecordsIn({cat010SmrSrvMsg2, cat010SmrSrvMsg1});
+    QVector<AsterixRecord> mlatTgtRepRecordsIn({cat010Mlat1, cat010Mlat3, cat010Mlat2});
+    QVector<AsterixRecord> mlatSrvMsgRecordsIn({cat010MlatSrvMsg2, cat010MlatSrvMsg1});
     QVector<AsterixRecord> adsbRecordsIn({cat021Adsb1, cat021Adsb3, cat021Adsb2});
-    QVector<AsterixRecord> srvMsgRecordsIn({cat010SrvMsg2, cat010SrvMsg1});
 
     //QVector<AsterixRecord> smrRecordsOut({cat010Smr2, cat010Smr3});
     //QVector<AsterixRecord> mlatRecordsOut({cat010Mlat2, cat010Mlat3});
     //QVector<AsterixRecord> adsbRecordsOut({cat010Adsb2, cat010Adsb3});
 
-    QTest::newRow("SMR") << Smr << smrRecordsIn << 2;
-    QTest::newRow("MLAT") << Mlat << mlatRecordsIn << 2;
-    QTest::newRow("ADS-B") << Adsb << adsbRecordsIn << 2;
-    QTest::newRow("SrvMsg") << SrvMsg << srvMsgRecordsIn << 2;
+    QTest::newRow("CAT010 SMR TgtRep") << cat010SmrTgtRep << smrTgtRepRecordsIn << 2;
+    QTest::newRow("CAT010 SMR SrvMsg") << cat010SmrSrvMsg << smrSrvMsgRecordsIn << 2;
+    QTest::newRow("CAT010 MLAT TgtRep") << cat010MlatTgtRep << mlatTgtRepRecordsIn << 2;
+    QTest::newRow("CAT010 MLAT SrvMsg") << cat010MlatSrvMsg << mlatSrvMsgRecordsIn << 2;
+    QTest::newRow("CAT021 ADS-B") << cat021Adsb << adsbRecordsIn << 2;
 }
 
 void RecordCollatorTest::test()
@@ -263,21 +359,26 @@ void RecordCollatorTest::test()
 
     // Check that counters are initialized to zero.
     RecordCollator::Counter counter;
-    if (testType == Smr)
+
+    switch (testType)
     {
-        counter = collator.smrCounter();
-    }
-    else if (testType == Mlat)
-    {
-        counter = collator.mlatCounter();
-    }
-    else if (testType == Adsb)
-    {
+    case cat010SmrTgtRep:
+        counter = collator.smrTgtRepCounter();
+        break;
+    case cat010SmrSrvMsg:
+        counter = collator.smrSrvMsgCounter();
+        break;
+    case cat010MlatTgtRep:
+        counter = collator.mlatTgtRepCounter();
+        break;
+    case cat010MlatSrvMsg:
+        counter = collator.mlatSrvMsgCounter();
+        break;
+    case cat021Adsb:
         counter = collator.adsbCounter();
-    }
-    else if (testType == SrvMsg)
-    {
-        counter = collator.srvMsgCounter();
+        break;
+    default:
+        QSKIP("Test not implemented for this testType");
     }
 
     QCOMPARE(counter.in, 0u);
@@ -291,17 +392,17 @@ void RecordCollatorTest::test()
 
     QVector<quint64> msecs;
     msecs.clear();
-    if (testType == Smr)
+    if (testType == cat010SmrTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = collator.smrCounter();
+        counter = collator.smrTgtRepCounter();
         QCOMPARE(counter.in, 3u);
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.smrQueue().size(), sizeOut);
+        QCOMPARE(collator.smrTgtRepQueue().size(), sizeOut);
 
-        for (AsterixRecord rout : collator.smrQueue())
+        for (AsterixRecord rout : collator.smrTgtRepQueue())
         {
             AsterixDataItem di010_220 = rout.m_dataItems[QLatin1String("I220")];
             IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -311,17 +412,17 @@ void RecordCollatorTest::test()
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
     }
-    else if (testType == Mlat)
+    else if (testType == cat010MlatTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = collator.mlatCounter();
+        counter = collator.mlatTgtRepCounter();
         QCOMPARE(counter.in, 3u);
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.mlatQueue().size(), sizeOut);
+        QCOMPARE(collator.mlatTgtRepQueue().size(), sizeOut);
 
-        for (AsterixRecord rout : collator.mlatQueue())
+        for (AsterixRecord rout : collator.mlatTgtRepQueue())
         {
             AsterixDataItem di010_220 = rout.m_dataItems[QLatin1String("I220")];
             IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -331,7 +432,7 @@ void RecordCollatorTest::test()
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
     }
-    else if (testType == Adsb)
+    else if (testType == cat021Adsb)
     {
         // Check that counter is correctly updated.
         counter = collator.adsbCounter();
@@ -339,9 +440,9 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.adsbQueue().size(), sizeOut);
+        QCOMPARE(collator.adsbTgtRepQueue().size(), sizeOut);
 
-        for (AsterixRecord rout : collator.adsbQueue())
+        for (AsterixRecord rout : collator.adsbTgtRepQueue())
         {
             AsterixDataItem di021_080 = rout.m_dataItems[QLatin1String("I080")];
             IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -351,17 +452,32 @@ void RecordCollatorTest::test()
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
     }
-    else if (testType == SrvMsg)
+    else if (testType == cat010SmrSrvMsg)
     {
         // Check that counter is correctly updated.
-        counter = collator.srvMsgCounter();
+        counter = collator.smrSrvMsgCounter();
         QCOMPARE(counter.in, 2u);
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.srvMsgQueue().size(), sizeOut);
+        QCOMPARE(collator.smrSrvMsgQueue().size(), sizeOut);
 
-        for (AsterixRecord rout : collator.srvMsgQueue())
+        for (AsterixRecord rout : collator.smrSrvMsgQueue())
+        {
+            msecs << rout.m_dateTime.toMSecsSinceEpoch();
+        }
+    }
+    else if (testType == cat010MlatSrvMsg)
+    {
+        // Check that counter is correctly updated.
+        counter = collator.mlatSrvMsgCounter();
+        QCOMPARE(counter.in, 2u);
+        QCOMPARE(counter.out, 2u);
+
+        // Check that number of Records at the other end matches the expected value.
+        QCOMPARE(collator.mlatSrvMsgQueue().size(), sizeOut);
+
+        for (AsterixRecord rout : collator.mlatSrvMsgQueue())
         {
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }

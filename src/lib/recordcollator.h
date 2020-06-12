@@ -35,15 +35,17 @@ public:
 
     QVector<IcaoAddr> excludedAddresses() const;
 
-    QQueue<AsterixRecord> smrQueue() const;
-    QQueue<AsterixRecord> mlatQueue() const;
-    QQueue<AsterixRecord> adsbQueue() const;
-    QQueue<AsterixRecord> srvMsgQueue() const;
+    QQueue<AsterixRecord> smrTgtRepQueue() const;
+    QQueue<AsterixRecord> mlatTgtRepQueue() const;
+    QQueue<AsterixRecord> adsbTgtRepQueue() const;
+    QQueue<AsterixRecord> smrSrvMsgQueue() const;
+    QQueue<AsterixRecord> mlatSrvMsgQueue() const;
 
-    Counter smrCounter() const;
-    Counter mlatCounter() const;
+    Counter smrTgtRepCounter() const;
+    Counter smrSrvMsgCounter() const;
+    Counter mlatTgtRepCounter() const;
+    Counter mlatSrvMsgCounter() const;
     Counter adsbCounter() const;
-    Counter srvMsgCounter() const;
 
 public slots:
 
@@ -62,19 +64,17 @@ private:
     quint8 m_adsbSic;
 
     QHash<SystemType, QQueue<AsterixRecord>> m_catMap;
-    QQueue<AsterixRecord> m_smrQueue;
-    QQueue<AsterixRecord> m_mlatQueue;
+    QQueue<AsterixRecord> m_smrTgtRepQueue;
+    QQueue<AsterixRecord> m_smrSrvMsgQueue;
+    QQueue<AsterixRecord> m_mlatTgtRepQueue;
+    QQueue<AsterixRecord> m_mlatSrvMsgQueue;
     QQueue<AsterixRecord> m_adsbQueue;
-    QQueue<AsterixRecord> m_srvMsgQueue;
-    //QQueue<AsterixRecord> m_smrSrvMsgQueue;
-    //QQueue<AsterixRecord> m_mlatSrvMsgQueue;
 
-    Counter m_smrCounter;
-    Counter m_mlatCounter;
+    Counter m_smrTgtRepCounter;
+    Counter m_smrSrvMsgCounter;
+    Counter m_mlatTgtRepCounter;
+    Counter m_mlatSrvMsgCounter;
     Counter m_adsbCounter;
-    Counter m_srvMsgCounter;
-    //Counter m_smrSrvMsgCounter;
-    //Counter m_mlatSrvMsgCounter;
 };
 
 #endif  // ASTMOPS_RECORDCOLLATOR_H
