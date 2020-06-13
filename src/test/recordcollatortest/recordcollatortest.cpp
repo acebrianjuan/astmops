@@ -21,6 +21,10 @@ private slots:
     void test_data();
     void test();
 
+    /* TODO: Consider adding a test that takes as input a sequence of
+     * records of different nature (resembling a real stream of data).
+     */
+
 private:
     QVector<IcaoAddr> excludedAddresses();
 };
@@ -375,7 +379,7 @@ void RecordCollatorTest::test()
         counter = collator.mlatSrvMsgCounter();
         break;
     case cat021Adsb:
-        counter = collator.adsbCounter();
+        counter = collator.adsbTgtRepCounter();
         break;
     default:
         QSKIP("Test not implemented for this testType");
@@ -435,7 +439,7 @@ void RecordCollatorTest::test()
     else if (testType == cat021Adsb)
     {
         // Check that counter is correctly updated.
-        counter = collator.adsbCounter();
+        counter = collator.adsbTgtRepCounter();
         QCOMPARE(counter.in, 3u);
         QCOMPARE(counter.out, 2u);
 

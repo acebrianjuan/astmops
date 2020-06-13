@@ -29,23 +29,27 @@ public:
     void addExcludedAddress(const IcaoAddr addr);
     void removeExcludedAddress(const IcaoAddr addr);
 
+    // TODO: Implement hasPendingBatches() for each queue.
+
     bool hasPendingBatches();
 
     void readSettings();
 
     QVector<IcaoAddr> excludedAddresses() const;
 
+    // TODO: Implement getters that return the first n elements of the queue.
+
     QQueue<AsterixRecord> smrTgtRepQueue() const;
-    QQueue<AsterixRecord> mlatTgtRepQueue() const;
-    QQueue<AsterixRecord> adsbTgtRepQueue() const;
     QQueue<AsterixRecord> smrSrvMsgQueue() const;
+    QQueue<AsterixRecord> mlatTgtRepQueue() const;
     QQueue<AsterixRecord> mlatSrvMsgQueue() const;
+    QQueue<AsterixRecord> adsbTgtRepQueue() const;
 
     Counter smrTgtRepCounter() const;
     Counter smrSrvMsgCounter() const;
     Counter mlatTgtRepCounter() const;
     Counter mlatSrvMsgCounter() const;
-    Counter adsbCounter() const;
+    Counter adsbTgtRepCounter() const;
 
 public slots:
 
@@ -68,13 +72,13 @@ private:
     QQueue<AsterixRecord> m_smrSrvMsgQueue;
     QQueue<AsterixRecord> m_mlatTgtRepQueue;
     QQueue<AsterixRecord> m_mlatSrvMsgQueue;
-    QQueue<AsterixRecord> m_adsbQueue;
+    QQueue<AsterixRecord> m_adsbTgtRepQueue;
 
     Counter m_smrTgtRepCounter;
     Counter m_smrSrvMsgCounter;
     Counter m_mlatTgtRepCounter;
     Counter m_mlatSrvMsgCounter;
-    Counter m_adsbCounter;
+    Counter m_adsbTgtRepCounter;
 };
 
 #endif  // ASTMOPS_RECORDCOLLATOR_H

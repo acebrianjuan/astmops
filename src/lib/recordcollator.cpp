@@ -98,7 +98,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
     }
     else if (record.m_cat == 21)  // ADS-B Reports.
     {
-        ++m_adsbCounter.in;
+        ++m_adsbTgtRepCounter.in;
         bool ok;
         AsterixDataItem di021_080 = record.m_dataItems[QLatin1String("I080")];
         IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt(&ok, 16);
@@ -115,9 +115,9 @@ void RecordCollator::processRecord(const AsterixRecord &record)
         /* Continue if address is a valid non-excluded address
          * or if there is no address information at all.
          */
-        m_adsbQueue.enqueue(record);
-        std::sort(m_adsbQueue.begin(), m_adsbQueue.end(), sorter);
-        ++m_adsbCounter.out;
+        m_adsbTgtRepQueue.enqueue(record);
+        std::sort(m_adsbTgtRepQueue.begin(), m_adsbTgtRepQueue.end(), sorter);
+        ++m_adsbTgtRepCounter.out;
     }
 }
 
@@ -202,7 +202,7 @@ QQueue<AsterixRecord> RecordCollator::mlatSrvMsgQueue() const
 
 QQueue<AsterixRecord> RecordCollator::adsbTgtRepQueue() const
 {
-    return m_adsbQueue;
+    return m_adsbTgtRepQueue;
 }
 
 RecordCollator::Counter RecordCollator::smrTgtRepCounter() const
@@ -225,7 +225,7 @@ RecordCollator::Counter RecordCollator::mlatSrvMsgCounter() const
     return m_mlatSrvMsgCounter;
 }
 
-RecordCollator::Counter RecordCollator::adsbCounter() const
+RecordCollator::Counter RecordCollator::adsbTgtRepCounter() const
 {
-    return m_adsbCounter;
+    return m_adsbTgtRepCounter;
 }
