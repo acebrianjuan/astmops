@@ -155,6 +155,31 @@ void RecordCollator::removeExcludedAddress(const IcaoAddr addr)
     m_excludedAddresses.removeOne(addr);
 }
 
+bool RecordCollator::hasPendingSmrTgtRepBatches()
+{
+    return m_smrTgtRepQueue.size() >= m_minBatchSize;
+}
+
+bool RecordCollator::hasPendingSmrSrvMsgBatches()
+{
+    return m_smrSrvMsgQueue.size() >= m_minBatchSize;
+}
+
+bool RecordCollator::hasPendingMlatTgtRepBatches()
+{
+    return m_mlatTgtRepQueue.size() >= m_minBatchSize;
+}
+
+bool RecordCollator::hasPendingMlatSrvMsgBatches()
+{
+    return m_mlatSrvMsgQueue.size() >= m_minBatchSize;
+}
+
+bool RecordCollator::hasPendingAdsbTgtRepBatches()
+{
+    return m_adsbTgtRepQueue.size() >= m_minBatchSize;
+}
+
 void RecordCollator::readSettings()
 {
     QSettings settings;
@@ -205,6 +230,31 @@ QQueue<AsterixRecord> RecordCollator::adsbTgtRepQueue() const
     return m_adsbTgtRepQueue;
 }
 
+QVector<AsterixRecord> RecordCollator::smrTgtRepBatch(int size)
+{
+    return extractBatch(m_smrTgtRepQueue, size);
+}
+
+QVector<AsterixRecord> RecordCollator::smrSrvMsgBatch(int size)
+{
+    return extractBatch(m_smrSrvMsgQueue, size);
+}
+
+QVector<AsterixRecord> RecordCollator::mlatTgtRepBatch(int size)
+{
+    return extractBatch(m_mlatTgtRepQueue, size);
+}
+
+QVector<AsterixRecord> RecordCollator::mlatSrvMsgBatch(int size)
+{
+    return extractBatch(m_mlatSrvMsgQueue, size);
+}
+
+QVector<AsterixRecord> RecordCollator::adsbTgtRepBatch(int size)
+{
+    return extractBatch(m_adsbTgtRepQueue, size);
+}
+
 RecordCollator::Counter RecordCollator::smrTgtRepCounter() const
 {
     return m_smrTgtRepCounter;
@@ -228,4 +278,23 @@ RecordCollator::Counter RecordCollator::mlatSrvMsgCounter() const
 RecordCollator::Counter RecordCollator::adsbTgtRepCounter() const
 {
     return m_adsbTgtRepCounter;
+}
+
+QVector<AsterixRecord> RecordCollator::extractBatch(QQueue<AsterixRecord> queue, int batchSize)
+{
+    Q_ASSERT(queue.size() >= batchSize);
+
+    QVector<AsterixRecord> batch;
+    batch.reserve(batchSize);
+
+    int sz = batchSize;
+    while (sz > 0)
+    {
+        batch << queue.dequeue();
+        --sz;
+    }
+
+    Q_ASSERT(batch.size() == batchSize);
+
+    return batch;
 }

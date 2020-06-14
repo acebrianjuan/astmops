@@ -29,21 +29,27 @@ public:
     void addExcludedAddress(const IcaoAddr addr);
     void removeExcludedAddress(const IcaoAddr addr);
 
-    // TODO: Implement hasPendingBatches() for each queue.
-
-    bool hasPendingBatches();
+    bool hasPendingSmrTgtRepBatches();
+    bool hasPendingSmrSrvMsgBatches();
+    bool hasPendingMlatTgtRepBatches();
+    bool hasPendingMlatSrvMsgBatches();
+    bool hasPendingAdsbTgtRepBatches();
 
     void readSettings();
 
     QVector<IcaoAddr> excludedAddresses() const;
-
-    // TODO: Implement getters that return the first n elements of the queue.
 
     QQueue<AsterixRecord> smrTgtRepQueue() const;
     QQueue<AsterixRecord> smrSrvMsgQueue() const;
     QQueue<AsterixRecord> mlatTgtRepQueue() const;
     QQueue<AsterixRecord> mlatSrvMsgQueue() const;
     QQueue<AsterixRecord> adsbTgtRepQueue() const;
+
+    QVector<AsterixRecord> smrTgtRepBatch(int size);
+    QVector<AsterixRecord> smrSrvMsgBatch(int size);
+    QVector<AsterixRecord> mlatTgtRepBatch(int size);
+    QVector<AsterixRecord> mlatSrvMsgBatch(int size);
+    QVector<AsterixRecord> adsbTgtRepBatch(int size);
 
     Counter smrTgtRepCounter() const;
     Counter smrSrvMsgCounter() const;
@@ -57,6 +63,10 @@ signals:
     void readyRead();
 
 private:
+    QVector<AsterixRecord> extractBatch(QQueue<AsterixRecord> queue, int batchSize);
+
+    int m_minBatchSize;
+
     const QString m_smrSicKey = QLatin1String("SMR.SIC");
     const QString m_mlatSicKey = QLatin1String("MLAT.SIC");
     const QString m_adsbSicKey = QLatin1String("ADS-B.SIC");
