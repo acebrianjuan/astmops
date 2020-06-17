@@ -25,3 +25,13 @@ jobs:
       run: cd build && cmake -GNinja -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5 .. 
     - name: build
       run: cd build && ninja
+
+  REUSE-compliance:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check REUSE compliance
+      uses: docker://fsfe/reuse
+      with:
+        args: lint
+
