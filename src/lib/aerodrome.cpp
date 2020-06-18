@@ -1,3 +1,27 @@
+/*!
+ * \file aerodrome.cpp
+ * \brief Implementation of a class that contains the assets of an aerodrome.
+ * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
+ *
+ * Contains all the assets related to an aerodrome, among which are the
+ * coordinates of the different physical elements that form it such as
+ * runways, taxiways, aprons, stands as well as non-physical elements
+ * like approach areas.
+ *
+ * -----------------------------------------------------------------------
+ *
+ * Copyright (C) 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
+ *
+ * ASTMOPS is a surveillance performance analyzer
+ *      for Air Traffic Control
+ *
+ * This file is part of ASTMOPS.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * -----------------------------------------------------------------------
+ */
+
 #include "aerodrome.h"
 
 Aerodrome::Aerodrome()

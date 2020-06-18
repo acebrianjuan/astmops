@@ -1,3 +1,24 @@
+/*!
+ * \file asterix.cpp
+ * \brief Implementation of ASTERIX protocol abstractions.
+ * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
+ *
+ * Contains a set of abstractions for handling ASTERIX protocol data.
+ *
+ * -----------------------------------------------------------------------
+ *
+ * Copyright (C) 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
+ *
+ * ASTMOPS is a surveillance performance analyzer
+ *      for Air Traffic Control
+ *
+ * This file is part of ASTMOPS.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * -----------------------------------------------------------------------
+ */
+
 #include "asterix.h"
 
 AsterixDataElement::AsterixDataElement(const QString name, const QString value)

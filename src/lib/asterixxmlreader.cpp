@@ -1,3 +1,26 @@
+/*!
+ * \file asterixxmlreader.cpp
+ * \brief Implementation of a class that reads ASTERIX data in XML format.
+ * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
+ *
+ * Reads ASTERIX data in XML format and generates AsterixRecord objects
+ * from the data stream. These objects are placed in a queue to be
+ * consumed upstream in the processing chain.
+ *
+ * -----------------------------------------------------------------------
+ *
+ * Copyright (C) 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
+ *
+ * ASTMOPS is a surveillance performance analyzer
+ *      for Air Traffic Control
+ *
+ * This file is part of ASTMOPS.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * -----------------------------------------------------------------------
+ */
+
 #include "asterixxmlreader.h"
 #include <QRegularExpression>
 

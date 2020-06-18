@@ -1,3 +1,23 @@
+/*!
+ * \file mopsprocessor.h
+ * \brief Interface of a class that calculates the performance
+ * indicators of the surveillance systems.
+ * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
+ *
+ * -----------------------------------------------------------------------
+ *
+ * Copyright (C) 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
+ *
+ * ASTMOPS is a surveillance performance analyzer
+ *      for Air Traffic Control
+ *
+ * This file is part of ASTMOPS.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * -----------------------------------------------------------------------
+ */
+
 #ifndef ASTMOPS_MOPSPROCESSOR_H
 #define ASTMOPS_MOPSPROCESSOR_H
 
