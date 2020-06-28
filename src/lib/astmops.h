@@ -1,7 +1,7 @@
 /*!
  * \file astmops.h
  * \brief Header file with essential definitions to be used in the scope
- * of the project.
+ * of the ASTMOPS program.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
  *
  * -----------------------------------------------------------------------

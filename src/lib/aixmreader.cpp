@@ -1,12 +1,7 @@
 /*!
  * \file aixmreader.cpp
- * \brief Implementation of a class that reads the description of an
- * aerodrome in AIXM format.
+ * \brief Implementation of the AixmReader class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
- *
- * Reads the aerodrome description in AIXM format from a file and
- * extracts the elements of interest to generate a digital representation
- * of the aerodrome expressed in local east, north, up (ENU) coordinates.
  *
  * -----------------------------------------------------------------------
  *

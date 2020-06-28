@@ -1,11 +1,7 @@
 /*!
  * \file asterixxmlreader.cpp
- * \brief Implementation of a class that reads ASTERIX data in XML format.
+ * \brief Implementation of the AsterixXmlReader class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
- *
- * Reads ASTERIX data in XML format and generates AsterixRecord objects
- * from the data stream. These objects are placed in a queue to be
- * consumed upstream in the processing chain.
  *
  * -----------------------------------------------------------------------
  *

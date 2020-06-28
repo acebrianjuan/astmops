@@ -1,7 +1,6 @@
 /*!
  * \file mopsprocessor.cpp
- * \brief Implementation of a class that calculates the performance
- * indicators of the surveillance systems.
+ * \brief Implementation of the MopsProcessor class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
  *
  * -----------------------------------------------------------------------

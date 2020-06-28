@@ -27,6 +27,13 @@
 #include <QString>
 #include <QVariantList>
 
+/*!
+ * \brief The AsterixDataElement struct is an abstraction of the unit of
+ * information being transmitted.
+ *
+ * An AsterixDataElement object contains the name and value of a unit of
+ * information.
+ */
 struct AsterixDataElement
 {
     AsterixDataElement() = default;
@@ -36,6 +43,12 @@ struct AsterixDataElement
     QString m_value;
 };
 
+/*!
+ * \brief The AsterixDataItem struct is an abstraction of the Data Item
+ * concept in the ASTERIX protocol.
+ *
+ * An AsterixDataItem object contains a collection of AsterixDataElement objects.
+ */
 struct AsterixDataItem
 {
     AsterixDataItem() = default;
@@ -45,6 +58,13 @@ struct AsterixDataItem
     QVariantList m_fields;
 };
 
+/*!
+ * \brief The AsterixRecord struct is an abstraction of the Record concept
+ * in the ASTERIX protocol.
+ *
+ * An AsterixRecord object contains a collection of AsterixDataItem objects
+ * of the same category.
+ */
 struct AsterixRecord
 {
     AsterixRecord() = default;

@@ -1,12 +1,7 @@
 /*!
  * \file aerodrome.h
- * \brief Interface of a class that contains the assets of an aerodrome.
+ * \brief Interface of the Aerodrome class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
- *
- * Contains all the assets related to an aerodrome, among which are the
- * coordinates of the different physical elements that form it such as
- * runways, taxiways, aprons, stands as well as non-physical elements
- * like approach areas.
  *
  * -----------------------------------------------------------------------
  *
@@ -29,6 +24,14 @@
 #include <QVector3D>
 #include <QVector>
 
+/*!
+ * \brief The Aerodrome class contains the assets of an aerodrome.
+ *
+ * Contains all the assets related to an aerodrome, among which are the
+ * coordinates of the different physical elements that form it such as
+ * runways, taxiways, aprons, stands as well as non-physical elements
+ * like approach areas.
+ */
 class Aerodrome
 {
 public:

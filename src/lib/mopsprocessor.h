@@ -1,7 +1,6 @@
 /*!
  * \file mopsprocessor.h
- * \brief Interface of a class that calculates the performance
- * indicators of the surveillance systems.
+ * \brief Interface of the MopsProcessor class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
  *
  * -----------------------------------------------------------------------
@@ -28,6 +27,10 @@
 #include <QQueue>
 #include <optional>
 
+/*!
+ * \brief The MopsProcessor class calculates the performance indicators of
+ * the surveillance systems.
+ */
 class MopsProcessor : public QObject
 {
     Q_OBJECT

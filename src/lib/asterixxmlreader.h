@@ -1,11 +1,7 @@
 /*!
  * \file asterixxmlreader.h
- * \brief Interface of a class that reads ASTERIX data in XML format.
+ * \brief Interface of the AsterixXmlReader class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
- *
- * Reads ASTERIX data in XML format and generates AsterixRecord objects
- * from the data stream. These objects are placed in a queue to be
- * consumed upstream in the processing chain.
  *
  * -----------------------------------------------------------------------
  *
@@ -29,6 +25,13 @@
 #include <QQueue>
 #include <QXmlStreamReader>
 
+/*!
+ * \brief The AsterixXmlReader class reads ASTERIX protocol data in XML format.
+ *
+ * Reads ASTERIX data in XML format and generates AsterixRecord objects from
+ * the data stream. These objects are placed in a queue to be consumed
+ * upstream in the processing chain.
+ */
 class AsterixXmlReader : public QObject
 {
     Q_OBJECT

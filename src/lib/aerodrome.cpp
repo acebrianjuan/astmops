@@ -1,12 +1,7 @@
 /*!
  * \file aerodrome.cpp
- * \brief Implementation of a class that contains the assets of an aerodrome.
+ * \brief Implementation of the Aerodrome class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
- *
- * Contains all the assets related to an aerodrome, among which are the
- * coordinates of the different physical elements that form it such as
- * runways, taxiways, aprons, stands as well as non-physical elements
- * like approach areas.
  *
  * -----------------------------------------------------------------------
  *
