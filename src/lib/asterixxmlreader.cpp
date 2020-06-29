@@ -77,10 +77,24 @@ void AsterixXmlReader::readRecord()
 {
     Q_ASSERT(m_xml.isStartElement() &&
              m_xml.name() == QLatin1String("ASTERIX") &&
-             m_xml.attributes().hasAttribute(QLatin1String("cat")));
+             m_xml.attributes().hasAttribute(QLatin1String("cat")) &&
+             m_xml.attributes().hasAttribute(QLatin1String("timestamp")));
 
     AsterixRecord record;
-    record.m_cat = m_xml.attributes().value(QLatin1String("cat")).toUInt();
+    bool catOk, timeStampOk;
+    quint8 cat = m_xml.attributes().value(QLatin1String("cat")).toUInt(&catOk);
+    quint64 timeStamp = m_xml.attributes().value(QLatin1String("timestamp")).toUInt(&timeStampOk);
+
+    if (!catOk || !timeStampOk)
+    {
+        /* Missing ASTERIX Category and/or date and time information is not
+         * allowed. Do not continue parsing this record.
+         */
+        return;
+    }
+
+    record.m_cat = cat;
+    record.m_dateTime = QDateTime::fromSecsSinceEpoch(timeStamp, Qt::UTC);
 
     while (m_xml.readNextStartElement())
     {

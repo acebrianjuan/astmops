@@ -37,7 +37,8 @@ void AsterixXmlReaderTest::test_data()
 
     QTest::newRow("CAT010") << "cat010.xml" << (QVector<int>() << 12 << 12);
     QTest::newRow("CAT010 (Empty Data Items)") << "cat010-empty.xml" << (QVector<int>() << 12 << 12);
-    QTest::newRow("CAT010 (Incomplete Chunk)") << "cat010-incomplete.xml" << (QVector<int>() << 12 << 2);
+    QTest::newRow("CAT010 (Incomplete chunk)") << "cat010-incomplete.xml" << (QVector<int>() << 12 << 2);
+    QTest::newRow("CAT010 (Missing attributes)") << "cat010-missing-attributes.xml" << QVector<int>();
 }
 
 void AsterixXmlReaderTest::test()
