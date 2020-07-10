@@ -22,8 +22,7 @@
 
 double wgs84TransverseRadius(double latGeoRad)
 {
-    // Transverse radius of curvature.
-    double N = WGS84_A / sqrt(1 - WGS84_E * WGS84_E * sin(latGeoRad) * sin(latGeoRad));
+    double N = WGS84_A / sqrt(1 - WGS84_E2 * sin(latGeoRad) * sin(latGeoRad));
     return N;
 }
 
@@ -43,7 +42,7 @@ QVector3D geoToEcef(QGeoCoordinate llh)
 
     double x = (h + N) * cosPhi * cosLambda;
     double y = (h + N) * cosPhi * sinLambda;
-    double z = (h + (1 - WGS84_E * WGS84_E) * N) * sinPhi;
+    double z = (h + (1 - WGS84_E2) * N) * sinPhi;
 
     QVector3D ecef(x, y, z);
     return ecef;
