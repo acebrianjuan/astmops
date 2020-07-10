@@ -44,18 +44,29 @@ private slots:
 
 void GeoFunctionsTest::wgs84TransverseRadiusTest_data()
 {
-    QTest::addColumn<double>("latIn");
+    QTest::addColumn<double>("latRadIn");
     QTest::addColumn<double>("radiusOut");
 
-    QTest::newRow("LAT_0") << 0.0 << WGS84_A;
+    QTest::newRow("Equator (Lat: 0º)") << 0.0 << WGS84_A;
+    double M_90 = WGS84_A / sqrt(1 - WGS84_E2);
+    QTest::newRow("Poles (Lat: 90º)") << M_PI_2 << M_90;
+
+    /* Reference:
+     *
+     * Krakiwsky, E. J., & Thomson, D. B. (1974).
+     * Geodetic position computations (No. NB-DSE-TR-39).
+     * Department of Surveying Engineering, University of New Brunswick.
+     *
+     * https://www2.unb.ca/gge/Pubs/LN39.pdf
+     */
 }
 
 void GeoFunctionsTest::wgs84TransverseRadiusTest()
 {
-    QFETCH(double, latIn);
+    QFETCH(double, latRadIn);
     QFETCH(double, radiusOut);
 
-    QCOMPARE(wgs84TransverseRadius(latIn), radiusOut);
+    QCOMPARE(wgs84TransverseRadius(latRadIn), radiusOut);
 }
 
 void GeoFunctionsTest::geoToEcefTest_data()
