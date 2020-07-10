@@ -94,7 +94,7 @@ void AsterixXmlReader::readRecord()
     }
 
     record.m_cat = cat;
-    record.m_dateTime = QDateTime::fromSecsSinceEpoch(timeStamp, Qt::UTC);
+    record.m_dateTime = QDateTime::fromMSecsSinceEpoch(timeStamp, Qt::UTC);
 
     while (m_xml.readNextStartElement())
     {
