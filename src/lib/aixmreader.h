@@ -26,8 +26,8 @@
 #include <QXmlStreamReader>
 
 /*!
- * \brief The AixmReader class reads the description of an aerodrome in AIXM
- * format.
+ * \brief The AixmReader class reads the description of an aerodrome in
+ * Aeronautical Information Exchange Model (AIXM) format.
  *
  * Reads the aerodrome description in AIXM format from a file and extracts
  * the elements of interest to generate a digital representation of the
@@ -51,9 +51,11 @@ signals:
 
 private:
     void readAixm();
+
     QStringList getPosList(const QStringList &tokens);
     QGeoCoordinate posListToCoord(QStringList list);
     QVector<QGeoCoordinate> posListToCoordVector(QStringList list);
+
     static QStringList arpPosXmlPath();
     static QStringList runwayPosListXmlPath();
     static QStringList taxiwayPosListXmlPath();

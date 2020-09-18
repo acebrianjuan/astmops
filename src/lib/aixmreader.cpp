@@ -37,7 +37,7 @@ bool AixmReader::read(QIODevice *device)
         }
         else
         {
-            m_xml.raiseError(QObject::tr("The file is not an AIXM file."));
+            m_xml.raiseError(QLatin1String("The file is not an AIXM file."));
         }
     }
 
@@ -199,7 +199,7 @@ QStringList AixmReader::getPosList(const QStringList &tokens)
     {
         if (m_xml.readNextStartElement())
         {
-            // If the element start that we are it right now is not the one we want,
+            // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
             if (m_xml.name() != tokens[level])
             {
@@ -212,9 +212,11 @@ QStringList AixmReader::getPosList(const QStringList &tokens)
             if (level >= tokens.size())
             {
                 QStringList list = m_xml.readElementText().split(QLatin1String(" "));
+                list.removeAll(QLatin1String(""));
                 return list;
             }
         }
+
         if (m_xml.hasError())
         {
             break;
