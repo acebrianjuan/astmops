@@ -18,6 +18,7 @@
  */
 
 #include "kmlreader.h"
+#include "geofunctions.h"
 #include <QRegularExpression>
 
 KmlReader::KmlReader(QObject *parent) : QObject(parent)
@@ -41,6 +42,106 @@ bool KmlReader::read(QIODevice *device)
     }
 
     return !m_xml.error();
+}
+
+/*!
+ * Generates an Aerodrome projected in local tangent plane coordinates.
+ */
+Aerodrome KmlReader::makeAerodrome() const
+{
+    Aerodrome aerodrome;
+
+    // Coordinates of the local tangent plane origin.
+    QGeoCoordinate geoOrigin = m_arp;
+
+    // Airport Reference Point.
+    aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
+
+    // Runway elements.
+    for (QVector<QGeoCoordinate> rwyEleGeo : m_runwayElements)
+    {
+        QPolygonF polygon;
+        polygon.reserve(rwyEleGeo.size());
+
+        for (QGeoCoordinate coord : rwyEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addRunwayElement(polygon);
+    }
+
+    // Taxiway elements.
+    for (QVector<QGeoCoordinate> twyEleGeo : m_taxiwayElements)
+    {
+        QPolygonF polygon;
+        polygon.reserve(twyEleGeo.size());
+
+        for (QGeoCoordinate coord : twyEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addTaxiwayElement(polygon);
+    }
+
+    // Apron elements.
+    for (QVector<QGeoCoordinate> apronEleGeo : m_apronElements)
+    {
+        QPolygonF polygon;
+        polygon.reserve(apronEleGeo.size());
+
+        for (QGeoCoordinate coord : apronEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addApronElement(polygon);
+    }
+
+    // Stand elements.
+    for (QVector<QGeoCoordinate> standEleGeo : m_standElements)
+    {
+        QPolygonF polygon;
+        polygon.reserve(standEleGeo.size());
+
+        for (QGeoCoordinate coord : standEleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addStandElement(polygon);
+    }
+
+    // Approach 1 elements.
+    for (QVector<QGeoCoordinate> app1EleGeo : m_approach1Elements)
+    {
+        QPolygonF polygon;
+        polygon.reserve(app1EleGeo.size());
+
+        for (QGeoCoordinate coord : app1EleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addApproach1Element(polygon);
+    }
+
+    // Approach 2 elements.
+    for (QVector<QGeoCoordinate> app2EleGeo : m_approach2Elements)
+    {
+        QPolygonF polygon;
+        polygon.reserve(app2EleGeo.size());
+
+        for (QGeoCoordinate coord : app2EleGeo)
+        {
+            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+        }
+
+        aerodrome.addApproach2Element(polygon);
+    }
+
+    return aerodrome;
 }
 
 void KmlReader::readKml()
