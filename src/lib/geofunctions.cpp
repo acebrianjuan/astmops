@@ -20,12 +20,34 @@
 
 #include "geofunctions.h"
 
+/*!
+ * \brief Computes the prime vertical radius of curvature for the given
+ * latitude.
+ *
+ * \param latGeoRad Latitude in radians.
+ *
+ * \return Prime vertical radius of curvature in meters.
+ *
+ * The prime vertical radius of curvature (also called transverse radius of
+ * curvature or normal earth radius level) equals to the distance between the
+ * surface of the earth ellipsoid at latitude of reference point and the
+ * intersection between the perpendicular to the earth ellipsoid tangent and
+ * the vertical joining the poles.
+ */
 double wgs84TransverseRadius(double latGeoRad)
 {
     double N = WGS84_A / sqrt(1 - WGS84_E2 * sin(latGeoRad) * sin(latGeoRad));
     return N;
 }
 
+/*!
+ * \brief Converts from geographic to ECEF coordinates.
+ *
+ * \param llh QGeoCoordinate object with the geographic coordinates to be
+ * converted. Latitude in degrees, longitude in degrees and height in meters.
+ *
+ * \return QVector3D object with the converted XYZ ECEF coordinates in meters.
+ */
 QVector3D geoToEcef(QGeoCoordinate llh)
 {
     double phi = qDegreesToRadians(llh.latitude());
@@ -48,6 +70,19 @@ QVector3D geoToEcef(QGeoCoordinate llh)
     return ecef;
 }
 
+/*!
+ * \brief Converts from ECEF to local ENU coordinates.
+ *
+ * \param ecef QVector3D object with the XYZ ECEF coordinates to be converted
+ * in meters.
+ *
+ * \param llhRef QGeoCoordinate object with the geographic coordinates of the
+ * local tangent plane origin. Latitude in degrees, longitude in degrees and
+ * height in meters.
+ *
+ * \return QVector3D object with the converted XYZ local ENU coordinates in
+ * meters.
+ */
 QVector3D ecefToLocalEnu(QVector3D ecef, QGeoCoordinate llhRef)
 {
     QVector3D ecefRef = geoToEcef(llhRef);
@@ -74,9 +109,22 @@ QVector3D ecefToLocalEnu(QVector3D ecef, QGeoCoordinate llhRef)
     return enu;
 }
 
-QVector3D geoToLocalEnu(QGeoCoordinate geo, QGeoCoordinate geoRef)
+/*!
+ * \brief Converts from geographic to local ENU coordinates.
+ *
+ * \param llh QGeoCoordinate object with the geographic coordinates to be
+ * converted. Latitude in degrees, longitude in degrees and height in meters.
+ *
+ * \param llhRef QGeoCoordinate object with the geographic coordinates of the
+ * local tangent plane origin. Latitude in degrees, longitude in degrees and
+ * height in meters.
+ *
+ * \return QVector3D object with the converted XYZ local ENU coordinates in
+ * meters.
+ */
+QVector3D geoToLocalEnu(QGeoCoordinate llh, QGeoCoordinate llhRef)
 {
-    QVector3D ecef = geoToEcef(geo);
-    QVector3D enu = ecefToLocalEnu(ecef, geoRef);
+    QVector3D ecef = geoToEcef(llh);
+    QVector3D enu = ecefToLocalEnu(ecef, llhRef);
     return enu;
 }
