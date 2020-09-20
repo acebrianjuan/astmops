@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com> -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <kml xmlns="http://www.opengis.net/kml/2.2">
    <Document>
       <name>lebl-insignia</name>
