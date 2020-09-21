@@ -35,6 +35,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
     // TODO: Classify Records based on System Identification Code (SIC).
     // TODO: Handle cases with no Target Address information.
+    // TODO: Consider sorting only the last n elements of the queues for performance.
 
     auto sorter = [](const AsterixRecord &lhs, const AsterixRecord &rhs) {
         return lhs.m_dateTime < rhs.m_dateTime;
@@ -145,6 +146,7 @@ void RecordCollator::loadExcludedAddresses(QIODevice *device)
     QByteArray data = device->readAll();
     for (auto line : data.split('\n'))
     {
+        // TODO: Consider ignoring comment lines explicitly.
         bool ok;
         IcaoAddr addr = line.trimmed().toUInt(&ok, 16);
         if (ok)
