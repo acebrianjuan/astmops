@@ -75,6 +75,7 @@ private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point);
 
     QVector3D m_arp;
+    QVector3D m_smr;
     QVector<QPolygonF> m_runwayElements;
     QVector<QPolygonF> m_taxiwayElements;
     QVector<QPolygonF> m_apronElements;
