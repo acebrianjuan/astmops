@@ -60,7 +60,7 @@ private:
     static QStringList runwayPosListXmlPath();
     static QStringList taxiwayPosListXmlPath();
     static QStringList apronPosListXmlPath();
-    // TODO: Add standPosListXmlPath() function;
+    static QStringList standPosListXmlPath();
 
     QXmlStreamReader m_xml;
 

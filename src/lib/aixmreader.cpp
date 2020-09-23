@@ -179,9 +179,9 @@ void AixmReader::readAixm()
                 {
                     m_apronElements << posListToCoordVector(getPosList(apronPosListXmlPath()));
                 }
-                else if (m_xml.name() == QLatin1String("StandElement"))
+                else if (m_xml.name() == QLatin1String("AircraftStand"))
                 {
-                    //m_aerodrome.addStandElement(getPosList(standPosListXmlPath()));
+                    m_standElements << posListToCoordVector(getPosList(standPosListXmlPath()));
                 }
                 else
                 {
@@ -301,6 +301,20 @@ QStringList AixmReader::apronPosListXmlPath()
 {
     static const QStringList tokens = QStringList() << QLatin1String("timeSlice")
                                                     << QLatin1String("ApronElementTimeSlice")
+                                                    << QLatin1String("extent")
+                                                    << QLatin1String("ElevatedSurface")
+                                                    << QLatin1String("patches")
+                                                    << QLatin1String("PolygonPatch")
+                                                    << QLatin1String("exterior")
+                                                    << QLatin1String("LinearRing")
+                                                    << QLatin1String("posList");
+    return tokens;
+}
+
+QStringList AixmReader::standPosListXmlPath()
+{
+    static const QStringList tokens = QStringList() << QLatin1String("timeSlice")
+                                                    << QLatin1String("AircraftStandTimeSlice")
                                                     << QLatin1String("extent")
                                                     << QLatin1String("ElevatedSurface")
                                                     << QLatin1String("patches")
