@@ -75,6 +75,7 @@
 		<open>1</open>
 		<Placemark>
 			<name>LEBL_ARP</name>
+			<Snippet maxLines="0"></Snippet>
 			<description>ARP</description>
 			<LookAt>
 				<longitude>2.090781858596769</longitude>
@@ -93,6 +94,7 @@
 		</Placemark>
 		<Placemark>
 			<name>LEBL_SMR</name>
+			<Snippet maxLines="0"></Snippet>
 			<description>SMR</description>
 			<LookAt>
 				<longitude>2.093883126562301</longitude>
@@ -183,6 +185,7 @@
 		</Placemark>
 		<Placemark>
 			<name>Stand410</name>
+			<Snippet maxLines="0"></Snippet>
 			<description>AircraftStand</description>
 			<styleUrl>#msn_ylw-pushpin</styleUrl>
 			<Polygon>
