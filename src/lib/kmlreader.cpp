@@ -161,6 +161,11 @@ void KmlReader::readKml()
     {
         if (m_xml.readNextStartElement())
         {
+            if (m_xml.name() == QLatin1String("Folder"))
+            {
+                continue;
+            }
+
             // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
             if (m_xml.name() != QLatin1String("Placemark"))
@@ -214,8 +219,11 @@ void KmlReader::readPlacemark()
     // Found description and coordinates?
     if (!desc.isNull() && !coords.isEmpty())
     {
-        // TODO: Implement ARP case.
-        if (desc == QLatin1String("RunwayElement"))
+        if (desc == QLatin1String("ARP"))
+        {
+            m_arp = coords.first();
+        }
+        else if (desc == QLatin1String("RunwayElement"))
         {
             m_runwayElements << coords;
         }
