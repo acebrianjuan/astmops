@@ -21,8 +21,6 @@
 #include <QObject>
 #include <QtTest>
 
-// TODO: Verify coordinates.
-
 class KmlReaderTest : public QObject
 {
     Q_OBJECT
@@ -38,8 +36,21 @@ void KmlReaderTest::test_data()
     QTest::addColumn<int>("runwayElements");
     QTest::addColumn<int>("taxiwayElements");
     QTest::addColumn<int>("apronElements");
+    QTest::addColumn<int>("aircraftStands");
 
-    QTest::newRow("LEBL") << "lebl-insignia.kml" << 48 << 480 << 17;
+    QTest::addColumn<QGeoCoordinate>("arpCoordinates");
+    QTest::addColumn<QGeoCoordinate>("runwayCoordinates");
+    QTest::addColumn<QGeoCoordinate>("taxiwayCoordinates");
+    QTest::addColumn<QGeoCoordinate>("apronCoordinates");
+    QTest::addColumn<QGeoCoordinate>("standCoordinates");
+
+    QTest::newRow("LEBL") << "lebl-test.kml"
+                          << 1 << 1 << 1 << 1
+                          << QGeoCoordinate(41.29707777777777, 2.078462920115866)
+                          << QGeoCoordinate(41.2827740402838, 2.07656517967082)
+                          << QGeoCoordinate(41.2868783930656, 2.07892935775076)
+                          << QGeoCoordinate(41.2994286800839, 2.07137880758195)
+                          << QGeoCoordinate(41.28896414516679, 2.080953038858968);
 }
 
 void KmlReaderTest::test()
@@ -53,13 +64,29 @@ void KmlReaderTest::test()
     QFETCH(int, runwayElements);
     QFETCH(int, taxiwayElements);
     QFETCH(int, apronElements);
+    QFETCH(int, aircraftStands);
+
+    QFETCH(QGeoCoordinate, arpCoordinates);
+    QFETCH(QGeoCoordinate, runwayCoordinates);
+    QFETCH(QGeoCoordinate, taxiwayCoordinates);
+    QFETCH(QGeoCoordinate, apronCoordinates);
+    QFETCH(QGeoCoordinate, standCoordinates);
 
     reader.read(&file);
     //Aerodrome aerodrome = reader.aerodrome();
 
+    // Check number of elements of each collection.
     QCOMPARE(reader.m_runwayElements.size(), runwayElements);
     QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
     QCOMPARE(reader.m_apronElements.size(), apronElements);
+    QCOMPARE(reader.m_standElements.size(), aircraftStands);
+
+    // Check first coordinates of each collection.
+    QCOMPARE(reader.m_arp, arpCoordinates);
+    QCOMPARE(reader.m_runwayElements.first().first(), runwayCoordinates);
+    QCOMPARE(reader.m_taxiwayElements.first().first(), taxiwayCoordinates);
+    QCOMPARE(reader.m_apronElements.first().first(), apronCoordinates);
+    QCOMPARE(reader.m_standElements.first().first(), standCoordinates);
 }
 
 QTEST_APPLESS_MAIN(KmlReaderTest)
