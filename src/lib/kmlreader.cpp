@@ -227,6 +227,11 @@ void KmlReader::readPlacemark()
         {
             m_apronElements << coords;
         }
+        else if (desc == QLatin1String("AircraftStand"))
+        {
+            m_standElements << coords;
+        }
+        // TODO: Implement Approach 1 and 2 cases.
     }
 }
 
