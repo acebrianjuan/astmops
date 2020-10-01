@@ -101,16 +101,19 @@ void MopsProcessorTest::testMinimumFields()
 
 void MopsProcessorTest::testUpdateRate_data()
 {
+    QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<double>("tgtRepResult");
     QTest::addColumn<double>("srvMsgResult");
 
-    QTest::newRow("SMR") << "ASTERIX_SMR.xml" << 1.0 << 1.0;
-    QTest::newRow("MLAT") << "ASTERIX_MLAT.xml" << 1.0 << 1.0;
+    QTest::newRow("SMR") << Smr << "ASTERIX_SMR.xml" << 1.0 << 1.0;
+    QTest::newRow("MLAT") << Mlat << "ASTERIX_MLAT.xml" << 1.0 << 1.0;
 }
 
 void MopsProcessorTest::testUpdateRate()
 {
+    QSKIP("Test not implemented yet!");
+
     AsterixXmlReader reader;
     MopsProcessor processor;
 

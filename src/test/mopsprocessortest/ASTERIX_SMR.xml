@@ -5,59 +5,12 @@
 This ASTERIX XML file has been designed for unit testing purposes.
 Validity ratio must yield 0.5 for both Target Reports and Service Messages.
 -->
-<ASTERIXSTART>
+
 <!-- SMR Target Report -->
-<ASTERIX ver="1" cat="10">
-<I000>
-<MsgTyp>1</MsgTyp>
-</I000>
-<I020>
-<TYP>3</TYP>
-</I020>
-<I140>
-<ToD>0.0078125</ToD>
-</I140>
-<I161>
-<spare>0</spare>
-<TrkNb>1111</TrkNb>
-</I161>
-<I010/>
-<I040/>
-<I270/>
-</ASTERIX>
+<ASTERIX ver="1" cat="10" timestamp="0"><I000><MsgTyp>1</MsgTyp></I000><I020><TYP>3</TYP></I020><I140><ToD>0</ToD></I140><I161><spare>0</spare><TrkNb>1111</TrkNb></I161><I010/><I040/><I270/></ASTERIX>
 <!-- SMR Target Report (missing items) -->
-<ASTERIX ver="1" cat="10">
-<I000>
-<MsgTyp>1</MsgTyp>
-</I000>
-<I020>
-<TYP>3</TYP>
-</I020>
-<I140>
-<ToD>1.0078125</ToD>
-</I140>
-<I161>
-<spare>0</spare>
-<TrkNb>1111</TrkNb>
-</I161>
-</ASTERIX>
+<ASTERIX ver="1" cat="10" timestamp="1"><I000><MsgTyp>1</MsgTyp></I000><I020><TYP>3</TYP></I020><I140><ToD>1</ToD></I140><I161><spare>0</spare><TrkNb>1111</TrkNb></I161></ASTERIX>
 <!-- Service Message -->
-<ASTERIX ver="1" cat="10">
-<I000>
-<MsgTyp>3</MsgTyp>
-</I000>
-<I010/>
-<I140>
-<ToD>0.0078125</ToD>
-</I140>
-<I550/>
-</ASTERIX>
+<ASTERIX ver="1" cat="10" timestamp="0"><I000><MsgTyp>3</MsgTyp></I000><I010/><I140><ToD>0</ToD></I140><I550/></ASTERIX>
 <!-- Service Message (missing items) -->
-<ASTERIX ver="1" cat="10">
-<I000>
-<MsgTyp>3</MsgTyp>
-</I000>
-<I140>
-<ToD>1.0078125</ToD>
-</I140>
-</ASTERIX>
+<ASTERIX ver="1" cat="10" timestamp="1"><I000><MsgTyp>3</MsgTyp></I000><I140><ToD>1</ToD></I140></ASTERIX>
