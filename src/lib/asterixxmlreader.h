@@ -26,11 +26,12 @@
 #include <QXmlStreamReader>
 
 /*!
- * \brief The AsterixXmlReader class reads ASTERIX protocol data in XML format.
+ * \brief The AsterixXmlReader class reads ASTERIX protocol data in
+ * line-delimited XML format.
  *
- * Reads ASTERIX data in XML format and generates AsterixRecord objects from
- * the data stream. These objects are placed in a queue to be consumed
- * upstream in the processing chain.
+ * Reads ASTERIX data in line-delimited XML format and generates AsterixRecord
+ * objects from the data stream. These objects are placed in a queue to be
+ * consumed upstream in the processing chain.
  */
 class AsterixXmlReader : public QObject
 {
