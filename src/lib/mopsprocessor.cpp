@@ -18,10 +18,13 @@
  */
 
 #include "mopsprocessor.h"
+#include <QDebug>
+#include <QSettings>
 
 void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const QPointF &)> callback)
 {
     m_locatePoint = callback;
+    readSettings();
 }
 
 MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
@@ -39,6 +42,10 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         // * I010/I000 Message Type
         // * I010/I020 Target Report Descriptor
 
+        AsterixDataItem di010_010 = record.m_dataItems[QLatin1String("I010")];
+        //quint8 sac = di010_010.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+        quint8 sic = di010_010.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+
         AsterixDataItem di010_000 = record.m_dataItems[QLatin1String("I000")];
         int msgType = di010_000.m_fields[0].value<AsterixDataElement>().m_value.toInt();
 
@@ -49,13 +56,17 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
             if (sysType == 1)  // Mode S Multilateration. ED-117 Norm.
             {
+                ++m_cat010MlatTgtRepCounter.total;
+
                 // Minimum Data Items.
-                ++m_ed117TgtRepCounter.total;
-                if (checkDataItems(record, m_ed117TgtRepMinDataItems))
+                if (!checkDataItems(record, m_ed117TgtRepMinDataItems))
                 {
-                    // Target Report is valid. Update surveillance state.
-                    ++m_ed117TgtRepCounter.n;
+                    // Target Report is invalid. Do not continue.
+                    return;
                 }
+
+                // Target Report is valid. Update surveillance state.
+                ++m_cat010MlatTgtRepCounter.n;
 
                 // Update Rate.
                 AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
@@ -71,7 +82,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
                 Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-                QHash<uint, Aerodrome::Area>::iterator itArea = m_ed117TgtRepAreas.find(icaoAddr);
+                QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010MlatTgtRepAreas.find(icaoAddr);
                 QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed117TgtRepUpdateRateCounters.find(icaoAddr);
 
                 if (itCounter == m_ed117TgtRepUpdateRateCounters.end())
@@ -84,7 +95,7 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
                     // Add it to the hash maps.
                     m_ed117TgtRepUpdateRateCounters[icaoAddr] = urCounter;
-                    m_ed117TgtRepAreas[icaoAddr] = area;
+                    m_cat010MlatTgtRepAreas[icaoAddr] = area;
                 }
                 else
                 {
@@ -108,13 +119,17 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
             }
             else if (sysType == 3)  // Primary Surveillance Radar. ED-116 Norm.
             {
+                ++m_cat010SmrTgtRepCounter.total;
+
                 // Minimum Data Items.
-                ++m_ed116TgtRepCounter.total;
-                if (checkDataItems(record, m_ed116TgtRepMinDataItems))
+                if (!checkDataItems(record, m_ed116TgtRepMinDataItems))
                 {
-                    // Target Report is valid. Update surveillance state.
-                    ++m_ed116TgtRepCounter.n;
+                    // Target Report is invalid. Do not continue.
+                    return;
                 }
+
+                // Target Report is valid. Update surveillance state.
+                ++m_cat010SmrTgtRepCounter.n;
 
                 // Update Rate.
                 AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
@@ -124,8 +139,15 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                 double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
                 QDateTime todDateTime = getDateTimefromTod(tod);
 
-                QHash<uint, UpdateRateCounter>::iterator it = m_ed116TgtRepUpdateRateCounters.find(trkNum);
-                if (it == m_ed116TgtRepUpdateRateCounters.end())
+                AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
+                double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+                double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+
+                Aerodrome::Area area = m_locatePoint(QPointF(x, y));
+
+                QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010SmrTgtRepAreas.find(trkNum);
+                QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed116TgtRepUpdateRateCounters.find(trkNum);
+                if (itCounter == m_ed116TgtRepUpdateRateCounters.end())
                 {
                     // Unknown target. Create a new counter for it.
                     UpdateRateCounter urCounter;
@@ -133,44 +155,99 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
                     urCounter.firstTod = todDateTime;
                     urCounter.isInitialized = true;
 
-                    // Add it to the hash map.
+                    // Add it to the hash maps.
                     m_ed116TgtRepUpdateRateCounters[trkNum] = urCounter;
+                    m_cat010SmrTgtRepAreas[trkNum] = area;
                 }
                 else
                 {
-                    // Known target. Update counter.
-                    ++it->n;
-                    it->lastTod = todDateTime;
+                    // Known target. Check area.
+                    Aerodrome::Area oldArea = itArea.value();
+                    if (area != oldArea)
+                    {
+                        // Area changed. Reset counter.
+                        *itArea = area;
+                        itCounter->reset();
+                        ++itCounter->n;
+                        itCounter->firstTod = todDateTime;
+                    }
+                    else
+                    {
+                        // Update counter.
+                        ++itCounter->n;
+                        itCounter->lastTod = todDateTime;
+                    }
                 }
             }
         }
         else if (msgType == 3)  // Periodic Status Message.
         {
-            // Minimum Data Items.
-            ++m_srvMsgCounter.total;
-            if (checkDataItems(record, m_srvMsgMinDataItems))
+            // Check the SIC to determine which system is the service message informing about.
+            if (sic == m_mlatSic)  // Mode S Multilateration.
             {
+                ++m_cat010MlatSrvMsgCounter.total;
+
+                // Minimum Data Items.
+                if (!checkDataItems(record, m_srvMsgMinDataItems))
+                {
+                    // Status Message is invalid. Do not continue.
+                    return;
+                }
+
                 // Status Message is valid. Update surveillance state.
-                ++m_srvMsgCounter.n;
+                ++m_cat010MlatSrvMsgCounter.n;
+
+                // Update Rate.
+                ++m_cat010MlatSrvMsgUpdateRateCounter.n;
+
+                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+                QDateTime todDateTime = getDateTimefromTod(tod);
+
+                if (!m_cat010MlatSrvMsgUpdateRateCounter.isInitialized)
+                {
+                    // First-time counter initialization.
+                    m_cat010MlatSrvMsgUpdateRateCounter.firstTod = todDateTime;
+                    m_cat010MlatSrvMsgUpdateRateCounter.isInitialized = true;
+                }
+                else
+                {
+                    // Update counter.
+                    m_cat010MlatSrvMsgUpdateRateCounter.lastTod = todDateTime;
+                }
             }
-
-            // Update Rate.
-            ++m_srvMsgUpdateRateCounter.n;
-
-            AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-            double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-            QDateTime todDateTime = getDateTimefromTod(tod);
-
-            if (!m_srvMsgUpdateRateCounter.isInitialized)
+            else if (sic == m_smrSic)  // Primary Surveillance Radar.
             {
-                // First-time counter initialization.
-                m_srvMsgUpdateRateCounter.firstTod = todDateTime;
-                m_srvMsgUpdateRateCounter.isInitialized = true;
-            }
-            else
-            {
-                // Update counter.
-                m_srvMsgUpdateRateCounter.lastTod = todDateTime;
+                ++m_cat010SmrSrvMsgCounter.total;
+
+                // Minimum Data Items.
+                if (!checkDataItems(record, m_srvMsgMinDataItems))
+                {
+                    // Status Message is invalid. Do not continue.
+                    return;
+                }
+
+                // Status Message is valid. Update surveillance state.
+                ++m_cat010SmrSrvMsgCounter.n;
+
+                // Update Rate.
+                ++m_cat010SmrSrvMsgUpdateRateCounter.n;
+
+                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+                QDateTime todDateTime = getDateTimefromTod(tod);
+
+                if (!m_cat010SmrSrvMsgUpdateRateCounter.isInitialized)
+                {
+                    // First-time counter initialization.
+                    m_cat010SmrSrvMsgUpdateRateCounter.firstTod = todDateTime;
+                    m_cat010SmrSrvMsgUpdateRateCounter.isInitialized = true;
+                }
+                else
+                {
+                    // Update counter.
+                    m_cat010SmrSrvMsgUpdateRateCounter.lastTod = todDateTime;
+                }
             }
         }
     }
@@ -178,8 +255,8 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 
 double MopsProcessor::ed116TargetReportsMinimumFields()
 {
-    double num = static_cast<double>(m_ed116TgtRepCounter.n);
-    double den = static_cast<double>(m_ed116TgtRepCounter.total);
+    double num = static_cast<double>(m_cat010SmrTgtRepCounter.n);
+    double den = static_cast<double>(m_cat010SmrTgtRepCounter.total);
 
     Q_ASSERT(den > 0);
 
@@ -187,36 +264,31 @@ double MopsProcessor::ed116TargetReportsMinimumFields()
     return p;
 }
 
-double MopsProcessor::ed116TargetReportsUpdateRate()
+double MopsProcessor::ed116TargetReportsUpdateRate(Aerodrome::Area area)
 {
-    double num = 0.0;
-    double den = 0.0;
+    return calculateUpdateRate(m_cat010SmrTgtRepAreas.keys(area), m_ed116TgtRepUpdateRateCounters);
+}
 
-    for (UpdateRateCounter urCounter : m_ed116TgtRepUpdateRateCounters)
-    {
-        if (urCounter.isInitialized)
-        {
-            QDateTime firstTod = urCounter.firstTod;
-            QDateTime lastTod = urCounter.lastTod;
-
-            if (!firstTod.isNull() && !lastTod.isNull())
-            {
-                num += static_cast<double>(urCounter.n);
-                den += static_cast<double>(firstTod.secsTo(lastTod) + 1);
-            }
-        }
-    }
+double MopsProcessor::ed116ServiceMessagesMinimumFields()
+{
+    double num = static_cast<double>(m_cat010SmrSrvMsgCounter.n);
+    double den = static_cast<double>(m_cat010SmrSrvMsgCounter.total);
 
     Q_ASSERT(den > 0);
 
     double p = num / den;
     return p;
+}
+
+double MopsProcessor::ed116ServiceMessagesUpdateRate()
+{
+    return calculateUpdateRate(m_cat010SmrSrvMsgUpdateRateCounter);
 }
 
 double MopsProcessor::ed117TargetReportsMinimumFields()
 {
-    double num = static_cast<double>(m_ed117TgtRepCounter.n);
-    double den = static_cast<double>(m_ed117TgtRepCounter.total);
+    double num = static_cast<double>(m_cat010MlatTgtRepCounter.n);
+    double den = static_cast<double>(m_cat010MlatTgtRepCounter.total);
 
     Q_ASSERT(den > 0);
 
@@ -226,33 +298,13 @@ double MopsProcessor::ed117TargetReportsMinimumFields()
 
 double MopsProcessor::ed117TargetReportsUpdateRate(Aerodrome::Area area)
 {
-    double num = 0.0;
-    double den = 0.0;
+    return calculateUpdateRate(m_cat010MlatTgtRepAreas.keys(area), m_ed117TgtRepUpdateRateCounters);
+}
 
-    QList<uint> addressList = m_ed117TgtRepAreas.keys(area);
-
-    if (addressList.isEmpty())
-    {
-        // Cannot perform calculation.
-        // TODO: Handle this case. Consider using std::optional.
-    }
-
-    for (uint addr : addressList)
-    {
-        UpdateRateCounter urCounter = m_ed117TgtRepUpdateRateCounters.value(addr);
-
-        if (urCounter.isInitialized)
-        {
-            QDateTime firstTod = urCounter.firstTod;
-            QDateTime lastTod = urCounter.lastTod;
-
-            if (!firstTod.isNull() && !lastTod.isNull())
-            {
-                num += static_cast<double>(urCounter.n);
-                den += static_cast<double>(firstTod.secsTo(lastTod) + 1);
-            }
-        }
-    }
+double MopsProcessor::ed117ServiceMessagesMinimumFields()
+{
+    double num = static_cast<double>(m_cat010MlatSrvMsgCounter.n);
+    double den = static_cast<double>(m_cat010MlatSrvMsgCounter.total);
 
     Q_ASSERT(den > 0);
 
@@ -260,26 +312,9 @@ double MopsProcessor::ed117TargetReportsUpdateRate(Aerodrome::Area area)
     return p;
 }
 
-double MopsProcessor::serviceMessagesMinimumFields()
+double MopsProcessor::ed117ServiceMessagesUpdateRate()
 {
-    double num = static_cast<double>(m_srvMsgCounter.n);
-    double den = static_cast<double>(m_srvMsgCounter.total);
-
-    Q_ASSERT(den > 0);
-
-    double p = num / den;
-    return p;
-}
-
-double MopsProcessor::serviceMessagesUpdateRate()
-{
-    double num = static_cast<double>(m_srvMsgUpdateRateCounter.n);
-    double den = static_cast<double>(m_srvMsgUpdateRateCounter.firstTod.secsTo(m_srvMsgUpdateRateCounter.lastTod) + 1);
-
-    Q_ASSERT(den > 0);
-
-    double p = num / den;
-    return p;
+    return calculateUpdateRate(m_cat010MlatSrvMsgUpdateRateCounter);
 }
 
 bool MopsProcessor::checkDataItems(const AsterixRecord &record,
@@ -460,4 +495,87 @@ QDateTime MopsProcessor::getDateTimefromTod(const double &tod)
 {
     QDateTime todDateTime = QDateTime::fromMSecsSinceEpoch(tod * 1000, Qt::UTC);
     return todDateTime;
+}
+
+double MopsProcessor::calculateUpdateRate(const QList<quint32> &addresses, const QHash<quint32, MopsProcessor::UpdateRateCounter> &counters)
+{
+    double num = 0.0;
+    double den = 0.0;
+
+    if (addresses.isEmpty())
+    {
+        // Cannot perform calculation.
+        return qQNaN();
+    }
+
+    for (uint addr : addresses)
+    {
+        UpdateRateCounter urCounter = counters.value(addr);
+
+        if (urCounter)
+        {
+            QDateTime firstTod = urCounter.firstTod;
+            QDateTime lastTod = urCounter.lastTod;
+
+            if (!firstTod.isNull() && !lastTod.isNull())
+            {
+                num += static_cast<double>(urCounter.n);
+                den += static_cast<double>(firstTod.msecsTo(lastTod)) / 1000 + 1;
+            }
+        }
+    }
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double p = num / den;
+    return p;
+}
+
+double MopsProcessor::calculateUpdateRate(const MopsProcessor::UpdateRateCounter &counter)
+{
+    double num = 0.0;
+    double den = 0.0;
+
+    if (counter)
+    {
+        QDateTime firstTod = counter.firstTod;
+        QDateTime lastTod = counter.lastTod;
+
+        if (!firstTod.isNull() && !lastTod.isNull())
+        {
+            num += static_cast<double>(counter.n);
+            den += static_cast<double>(firstTod.msecsTo(lastTod)) / 1000 + 1;
+        }
+    }
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double p = num / den;
+    return p;
+}
+
+void MopsProcessor::readSettings()
+{
+    QSettings settings;
+
+    auto initIfSet = [&settings](QString key, quint8 &var) {
+        if (settings.contains(key))
+        {
+            var = settings.value(key).toUInt();
+        }
+        else
+        {
+            qCritical() << key << "is not set in the configuration file!";
+        }
+    };
+
+    initIfSet(m_smrSicKey, m_smrSic);
+    initIfSet(m_mlatSicKey, m_mlatSic);
+    initIfSet(m_adsbSicKey, m_adsbSic);
 }

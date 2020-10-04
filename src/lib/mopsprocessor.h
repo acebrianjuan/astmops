@@ -25,7 +25,6 @@
 #include "astmops.h"
 #include <QObject>
 #include <QQueue>
-#include <optional>
 
 /*!
  * \brief The MopsProcessor class calculates the performance indicators of
@@ -68,6 +67,11 @@ public:
             firstTod = QDateTime();
             lastTod = QDateTime();
         }
+
+        operator bool() const
+        {
+            return n > 1 && firstTod.isValid() && lastTod.isValid();
+        }
     };
 
     struct TargetData
@@ -86,13 +90,16 @@ public:
 
 public slots:
     double ed116TargetReportsMinimumFields();
-    double ed116TargetReportsUpdateRate();
+    double ed116TargetReportsUpdateRate(Aerodrome::Area area = Aerodrome::All);
+
+    double ed116ServiceMessagesMinimumFields();
+    double ed116ServiceMessagesUpdateRate();
 
     double ed117TargetReportsMinimumFields();
     double ed117TargetReportsUpdateRate(Aerodrome::Area area = Aerodrome::All);
 
-    double serviceMessagesMinimumFields();
-    double serviceMessagesUpdateRate();
+    double ed117ServiceMessagesMinimumFields();
+    double ed117ServiceMessagesUpdateRate();
 
 signals:
 
@@ -107,30 +114,40 @@ private:
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
     static QDateTime getDateTimefromTod(const double& tod);
 
+    double calculateUpdateRate(const QList<quint32>& addresses, const QHash<quint32, UpdateRateCounter>& counters);
+    double calculateUpdateRate(const UpdateRateCounter& counter);
+
+    void readSettings();
+
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
 
     QVector<DataItemList> m_ed116TgtRepMinDataItems;
     QVector<DataItemList> m_ed117TgtRepMinDataItems;
     QVector<DataItemList> m_srvMsgMinDataItems;
 
-    Counter m_ed116TgtRepCounter;
-    Counter m_ed117TgtRepCounter;
-    Counter m_srvMsgCounter;
+    Counter m_cat010SmrTgtRepCounter;
+    Counter m_cat010MlatTgtRepCounter;
 
-    //Counter m_ed116SrvMsgCounter;
-    //Counter m_ed117SrvMsgCounter;
-
-    QDateTime m_asterixDateTime;
+    Counter m_cat010SmrSrvMsgCounter;
+    Counter m_cat010MlatSrvMsgCounter;
 
     QHash<TrackNum, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
     QHash<IcaoAddr, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
-    UpdateRateCounter m_srvMsgUpdateRateCounter;
 
-    //UpdateRateCounter m_ed116SrvMsgUpdateRateCounter;
-    //UpdateRateCounter m_ed117SrvMsgUpdateRateCounter;
+    UpdateRateCounter m_cat010SmrSrvMsgUpdateRateCounter;
+    UpdateRateCounter m_cat010MlatSrvMsgUpdateRateCounter;
 
-    QHash<TrackNum, Aerodrome::Area> m_ed116TgtRepAreas;
-    QHash<IcaoAddr, Aerodrome::Area> m_ed117TgtRepAreas;
+    QHash<TrackNum, Aerodrome::Area> m_cat010SmrTgtRepAreas;
+    QHash<IcaoAddr, Aerodrome::Area> m_cat010MlatTgtRepAreas;
+
+
+    const QString m_smrSicKey = QLatin1String("SMR.SIC");
+    const QString m_mlatSicKey = QLatin1String("MLAT.SIC");
+    const QString m_adsbSicKey = QLatin1String("ADS-B.SIC");
+
+    quint8 m_smrSic;
+    quint8 m_mlatSic;
+    quint8 m_adsbSic;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

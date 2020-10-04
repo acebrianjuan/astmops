@@ -30,13 +30,16 @@ class MopsProcessorTest : public QObject
 public:
     enum TestType
     {
-        Smr,
-        Mlat,
-        Adsb,
-        SrvMsg
+        cat010SmrTgtRep,
+        cat010SmrSrvMsg,
+        cat010MlatTgtRep,
+        cat010MlatSrvMsg,
+        cat021Adsb
     };
 
 private slots:
+    void initTestCase();
+
     void testMinimumFields_data();
     void testMinimumFields();
 
@@ -48,15 +51,28 @@ private:
 
 Q_DECLARE_METATYPE(MopsProcessorTest::TestType);
 
+void MopsProcessorTest::initTestCase()
+{
+    QCoreApplication::setOrganizationName(QLatin1String("astmops"));
+    QCoreApplication::setApplicationName(QLatin1String("astmops-mopsprocessortest"));
+
+    QSettings settings;
+    settings.setValue(QLatin1String("SMR.SIC"), 7);
+    settings.setValue(QLatin1String("MLAT.SIC"), 107);
+    settings.setValue(QLatin1String("ADS-B.SIC"), 109);
+}
+
 void MopsProcessorTest::testMinimumFields_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<double>("tgtRepResult");
-    QTest::addColumn<double>("srvMsgResult");
+    QTest::addColumn<double>("result");
 
-    QTest::newRow("SMR") << Smr << "ASTERIX_SMR.xml" << 0.5 << 0.5;
-    QTest::newRow("MLAT") << Mlat << "ASTERIX_MLAT.xml" << 0.5 << 0.5;
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep << "cat010-smr-TgtRep.xml" << 0.5;
+    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg << "cat010-smr-SrvMsg.xml" << 0.5;
+
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep << "cat010-mlat-TgtRep.xml" << 0.5;
+    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg << "cat010-mlat-SrvMsg.xml" << 0.5;
 }
 
 void MopsProcessorTest::testMinimumFields()
@@ -76,8 +92,7 @@ void MopsProcessorTest::testMinimumFields()
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
-    QFETCH(double, tgtRepResult);
-    QFETCH(double, srvMsgResult);
+    QFETCH(double, result);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
@@ -87,33 +102,39 @@ void MopsProcessorTest::testMinimumFields()
         processor.processRecord(reader.record());
     }
 
-    if (testType == Smr)
+    if (testType == cat010SmrTgtRep)
     {
-        QCOMPARE(processor.ed116TargetReportsMinimumFields(), tgtRepResult);
+        QCOMPARE(processor.ed116TargetReportsMinimumFields(), result);
     }
-    else if (testType == Mlat)
+    else if (testType == cat010SmrSrvMsg)
     {
-        QCOMPARE(processor.ed117TargetReportsMinimumFields(), tgtRepResult);
+        QCOMPARE(processor.ed116ServiceMessagesMinimumFields(), result);
     }
-
-    QCOMPARE(processor.serviceMessagesMinimumFields(), srvMsgResult);
+    else if (testType == cat010MlatTgtRep)
+    {
+        QCOMPARE(processor.ed117TargetReportsMinimumFields(), result);
+    }
+    else if (testType == cat010MlatSrvMsg)
+    {
+        QCOMPARE(processor.ed117ServiceMessagesMinimumFields(), result);
+    }
 }
 
 void MopsProcessorTest::testUpdateRate_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<double>("tgtRepResult");
-    QTest::addColumn<double>("srvMsgResult");
+    QTest::addColumn<double>("result");
 
-    QTest::newRow("SMR") << Smr << "ASTERIX_SMR.xml" << 1.0 << 1.0;
-    QTest::newRow("MLAT") << Mlat << "ASTERIX_MLAT.xml" << 1.0 << 1.0;
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep << "cat010-smr-TgtRep-ur.xml" << 1.0;
+    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg << "cat010-smr-SrvMsg-ur.xml" << 1.0;
+
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep << "cat010-mlat-TgtRep-ur.xml" << 1.0;
+    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg << "cat010-mlat-SrvMsg-ur.xml" << 1.0;
 }
 
 void MopsProcessorTest::testUpdateRate()
 {
-    QSKIP("Test not implemented yet!");
-
     AsterixXmlReader reader;
     MopsProcessor processor;
 
@@ -129,8 +150,7 @@ void MopsProcessorTest::testUpdateRate()
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
-    QFETCH(double, tgtRepResult);
-    QFETCH(double, srvMsgResult);
+    QFETCH(double, result);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
@@ -140,16 +160,22 @@ void MopsProcessorTest::testUpdateRate()
         processor.processRecord(reader.record());
     }
 
-    if (testType == Smr)
+    if (testType == cat010SmrTgtRep)
     {
-        QCOMPARE(processor.ed116TargetReportsUpdateRate(), tgtRepResult);
+        QCOMPARE(processor.ed116TargetReportsUpdateRate(Aerodrome::Runway), result);
     }
-    else if (testType == Mlat)
+    else if (testType == cat010SmrSrvMsg)
     {
-        QCOMPARE(processor.ed117TargetReportsUpdateRate(), tgtRepResult);
+        QCOMPARE(processor.ed116ServiceMessagesUpdateRate(), result);
     }
-
-    QCOMPARE(processor.serviceMessagesUpdateRate(), srvMsgResult);
+    else if (testType == cat010MlatTgtRep)
+    {
+        QCOMPARE(processor.ed117TargetReportsUpdateRate(Aerodrome::Runway), result);
+    }
+    else if (testType == cat010MlatSrvMsg)
+    {
+        QCOMPARE(processor.ed117ServiceMessagesUpdateRate(), result);
+    }
 }
 
 QTEST_APPLESS_MAIN(MopsProcessorTest)
