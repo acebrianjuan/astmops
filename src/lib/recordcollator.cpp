@@ -22,9 +22,11 @@
 #include <QSettings>
 #include <algorithm>
 
-RecordCollator::RecordCollator(QObject *parent) : QObject(parent)
+RecordCollator::RecordCollator(QObject *parent) : QObject(parent),
+                                                  m_smrSic(Configuration::smrSic()),
+                                                  m_mlatSic(Configuration::mlatSic()),
+                                                  m_adsbSic(Configuration::adsbSic())
 {
-    readSettings();
 }
 
 void RecordCollator::processRecord(const AsterixRecord &record)
@@ -199,26 +201,6 @@ bool RecordCollator::hasPendingMlatSrvMsgBatches()
 bool RecordCollator::hasPendingAdsbTgtRepBatches()
 {
     return m_adsbTgtRepQueue.size() >= m_minBatchSize;
-}
-
-void RecordCollator::readSettings()
-{
-    QSettings settings;
-
-    auto initIfSet = [&settings](QString key, quint8 &var) {
-        if (settings.contains(key))
-        {
-            var = settings.value(key).toUInt();
-        }
-        else
-        {
-            qCritical() << key << "is not set in the configuration file!";
-        }
-    };
-
-    initIfSet(m_smrSicKey, m_smrSic);
-    initIfSet(m_mlatSicKey, m_mlatSic);
-    initIfSet(m_adsbSicKey, m_adsbSic);
 }
 
 QVector<IcaoAddr> RecordCollator::excludedAddresses() const

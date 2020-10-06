@@ -21,6 +21,7 @@
 #ifndef ASTMOPS_ASTMOPS_H
 #define ASTMOPS_ASTMOPS_H
 
+#include <QSettings>
 #include <QtGlobal>
 
 using TrackNum = quint32;
@@ -33,5 +34,27 @@ enum SystemType
     Adsb,
     Unknown
 };
+
+namespace Configuration
+{
+inline quint8 smrSic()
+{
+    QSettings settings;
+    return settings.value("SMR.SIC").toUInt();
+}
+
+inline quint8 mlatSic()
+{
+    QSettings settings;
+    return settings.value("MLAT.SIC").toUInt();
+}
+
+inline quint8 adsbSic()
+{
+    QSettings settings;
+    return settings.value("ADSB.SIC").toUInt();
+}
+
+};  // namespace Configuration
 
 #endif  // ASTMOPS_ASTMOPS_H

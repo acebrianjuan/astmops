@@ -24,14 +24,16 @@
 void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const QPointF &)> callback)
 {
     m_locatePoint = callback;
-    readSettings();
 }
 
-MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
+MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent),
+                                                m_smrSic(Configuration::smrSic()),
+                                                m_mlatSic(Configuration::mlatSic()),
+                                                m_adsbSic(Configuration::adsbSic()),
+                                                m_ed116TgtRepMinDataItems(ed116TargetReportsMinimumDataItems()),
+                                                m_ed117TgtRepMinDataItems(ed117TargetReportsMinimumDataItems()),
+                                                m_srvMsgMinDataItems(serviceMessagesMinimumDataItems())
 {
-    m_ed116TgtRepMinDataItems = ed116TargetReportsMinimumDataItems();
-    m_ed117TgtRepMinDataItems = ed117TargetReportsMinimumDataItems();
-    m_srvMsgMinDataItems = serviceMessagesMinimumDataItems();
 }
 
 void MopsProcessor::processRecord(const AsterixRecord &record)
@@ -558,24 +560,4 @@ double MopsProcessor::calculateUpdateRate(const MopsProcessor::UpdateRateCounter
 
     double p = num / den;
     return p;
-}
-
-void MopsProcessor::readSettings()
-{
-    QSettings settings;
-
-    auto initIfSet = [&settings](QString key, quint8 &var) {
-        if (settings.contains(key))
-        {
-            var = settings.value(key).toUInt();
-        }
-        else
-        {
-            qCritical() << key << "is not set in the configuration file!";
-        }
-    };
-
-    initIfSet(m_smrSicKey, m_smrSic);
-    initIfSet(m_mlatSicKey, m_mlatSic);
-    initIfSet(m_adsbSicKey, m_adsbSic);
 }

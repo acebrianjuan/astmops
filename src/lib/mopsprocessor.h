@@ -49,14 +49,14 @@ public:
 
     struct Counter
     {
-        uint n = 0;
-        uint total = 0;
+        quint32 n = 0;
+        quint32 total = 0;
     };
 
     struct UpdateRateCounter
     {
         bool isInitialized = false;
-        uint n = 0;
+        quint32 n = 0;
         QDateTime firstTod;
         QDateTime lastTod;
 
@@ -76,7 +76,7 @@ public:
 
     struct TargetData
     {
-        uint address;
+        quint32 address;
         QDateTime firstTod;
         QDateTime lastTod;
         QPointF position;
@@ -117,9 +117,11 @@ private:
     double calculateUpdateRate(const QList<quint32>& addresses, const QHash<quint32, UpdateRateCounter>& counters);
     double calculateUpdateRate(const UpdateRateCounter& counter);
 
-    void readSettings();
-
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
+
+    quint8 m_smrSic;
+    quint8 m_mlatSic;
+    quint8 m_adsbSic;
 
     QVector<DataItemList> m_ed116TgtRepMinDataItems;
     QVector<DataItemList> m_ed117TgtRepMinDataItems;
@@ -139,15 +141,6 @@ private:
 
     QHash<TrackNum, Aerodrome::Area> m_cat010SmrTgtRepAreas;
     QHash<IcaoAddr, Aerodrome::Area> m_cat010MlatTgtRepAreas;
-
-
-    const QString m_smrSicKey = QLatin1String("SMR.SIC");
-    const QString m_mlatSicKey = QLatin1String("MLAT.SIC");
-    const QString m_adsbSicKey = QLatin1String("ADS-B.SIC");
-
-    quint8 m_smrSic;
-    quint8 m_mlatSic;
-    quint8 m_adsbSic;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

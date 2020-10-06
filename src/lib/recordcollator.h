@@ -51,8 +51,8 @@ class RecordCollator : public QObject
 public:
     struct Counter
     {
-        uint in = 0;
-        uint out = 0;
+        quint32 in = 0;
+        quint32 out = 0;
     };
 
     explicit RecordCollator(QObject* parent = nullptr);
@@ -70,8 +70,6 @@ public:
     bool hasPendingMlatTgtRepBatches();
     bool hasPendingMlatSrvMsgBatches();
     bool hasPendingAdsbTgtRepBatches();
-
-    void readSettings();
 
     QVector<IcaoAddr> excludedAddresses() const;
 
@@ -102,10 +100,6 @@ private:
     QVector<AsterixRecord> extractBatch(QQueue<AsterixRecord> queue, int batchSize);
 
     int m_minBatchSize;
-
-    const QString m_smrSicKey = QLatin1String("SMR.SIC");
-    const QString m_mlatSicKey = QLatin1String("MLAT.SIC");
-    const QString m_adsbSicKey = QLatin1String("ADS-B.SIC");
 
     QVector<IcaoAddr> m_excludedAddresses;
 
