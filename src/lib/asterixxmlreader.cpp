@@ -26,7 +26,7 @@ AsterixXmlReader::AsterixXmlReader(QObject* parent) : QObject(parent)
 
 void AsterixXmlReader::addData(const QByteArray& data)
 {
-    for (auto line : data.split('\n'))
+    for (const auto &line : data.split('\n'))
     {
         if (line.isEmpty())
         {

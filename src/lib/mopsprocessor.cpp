@@ -325,7 +325,7 @@ bool MopsProcessor::checkDataItems(const AsterixRecord &record,
     Q_ASSERT(!record.m_dataItems.isEmpty() && !collections.isEmpty());
 
     int count = collections.size();
-    for (DataItemList diList : collections)
+    for (const DataItemList &diList : collections)
     {
         if (checkDataItemsList(record, diList.items, diList.type))
         {

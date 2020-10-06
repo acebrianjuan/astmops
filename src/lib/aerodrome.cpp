@@ -124,7 +124,7 @@ bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, co
 {
     Q_ASSERT(!collection.isEmpty());
 
-    for (QPolygonF element : collection)
+    for (const QPolygonF &element : collection)
     {
         if (element.containsPoint(point, Qt::FillRule::OddEvenFill))
         {

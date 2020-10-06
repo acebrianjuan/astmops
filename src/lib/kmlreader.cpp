@@ -58,12 +58,12 @@ Aerodrome KmlReader::makeAerodrome() const
     aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
 
     // Runway elements.
-    for (QVector<QGeoCoordinate> rwyEleGeo : m_runwayElements)
+    for (const QVector<QGeoCoordinate> &rwyEleGeo : m_runwayElements)
     {
         QPolygonF polygon;
         polygon.reserve(rwyEleGeo.size());
 
-        for (QGeoCoordinate coord : rwyEleGeo)
+        for (const QGeoCoordinate &coord : rwyEleGeo)
         {
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
@@ -72,12 +72,12 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Taxiway elements.
-    for (QVector<QGeoCoordinate> twyEleGeo : m_taxiwayElements)
+    for (const QVector<QGeoCoordinate> &twyEleGeo : m_taxiwayElements)
     {
         QPolygonF polygon;
         polygon.reserve(twyEleGeo.size());
 
-        for (QGeoCoordinate coord : twyEleGeo)
+        for (const QGeoCoordinate &coord : twyEleGeo)
         {
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
@@ -86,12 +86,12 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Apron elements.
-    for (QVector<QGeoCoordinate> apronEleGeo : m_apronElements)
+    for (const QVector<QGeoCoordinate> &apronEleGeo : m_apronElements)
     {
         QPolygonF polygon;
         polygon.reserve(apronEleGeo.size());
 
-        for (QGeoCoordinate coord : apronEleGeo)
+        for (const QGeoCoordinate &coord : apronEleGeo)
         {
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
@@ -100,12 +100,12 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Stand elements.
-    for (QVector<QGeoCoordinate> standEleGeo : m_standElements)
+    for (const QVector<QGeoCoordinate> &standEleGeo : m_standElements)
     {
         QPolygonF polygon;
         polygon.reserve(standEleGeo.size());
 
-        for (QGeoCoordinate coord : standEleGeo)
+        for (const QGeoCoordinate &coord : standEleGeo)
         {
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
@@ -114,12 +114,12 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Approach 1 elements.
-    for (QVector<QGeoCoordinate> app1EleGeo : m_approach1Elements)
+    for (const QVector<QGeoCoordinate> &app1EleGeo : m_approach1Elements)
     {
         QPolygonF polygon;
         polygon.reserve(app1EleGeo.size());
 
-        for (QGeoCoordinate coord : app1EleGeo)
+        for (const QGeoCoordinate &coord : app1EleGeo)
         {
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
@@ -128,12 +128,12 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Approach 2 elements.
-    for (QVector<QGeoCoordinate> app2EleGeo : m_approach2Elements)
+    for (const QVector<QGeoCoordinate> &app2EleGeo : m_approach2Elements)
     {
         QPolygonF polygon;
         polygon.reserve(app2EleGeo.size());
 
-        for (QGeoCoordinate coord : app2EleGeo)
+        for (const QGeoCoordinate &coord : app2EleGeo)
         {
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
