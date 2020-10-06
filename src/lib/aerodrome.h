@@ -37,16 +37,18 @@ class Aerodrome
 public:
     enum Area
     {
-        Manoeuvering,
-        Runway,
-        Taxiway,
-        Apron,
-        Stand,
-        Approach1,
-        Approach2,
-        Airborne,
-        All,
-        None
+        Movement,      // Manoeuvering AND Apron
+        Manoeuvering,  // Runway AND Taxiway
+        Runway,        //
+        Taxiway,       //
+        Apron,         // Apron AND Stand
+        Stand,         //
+        Approach,      // Approach1 AND Approach2
+        Approach1,     //
+        Approach2,     //
+        Airborne,      //
+        All,           //
+        None           //
     };
 
     Aerodrome();

@@ -33,7 +33,7 @@ private slots:
     //void testLocatePoint();
 
 private:
-    Aerodrome dummyAerodrome();
+    //Aerodrome dummyAerodrome();
 };
 
 void AerodromeTest::test_data()
@@ -74,12 +74,35 @@ void AerodromeTest::test_data()
                  << QPointF(-4.0, 2.0)
                  << QPointF(4.0, 2.0)
                  << QPointF(4.0, 4.0);
-    apronPolygon = apronPolygon.subtracted(standPolygon);
+    //apronPolygon = apronPolygon.subtracted(standPolygon);
 
     QPolygonF approach1LPolygon;
+    approach1LPolygon << QPointF(4.0, 0.5)
+                      << QPointF(8.0, 1.0)
+                      << QPointF(8.0, -1.0)
+                      << QPointF(4.0, -0.5)
+                      << QPointF(4.0, 0.5);
+
     QPolygonF approach2LPolygon;
+    approach2LPolygon << QPointF(8.0, 1.0)
+                      << QPointF(12.0, 1.5)
+                      << QPointF(12.0, -1.5)
+                      << QPointF(8.0, -1.0)
+                      << QPointF(8.0, 1.0);
+
     QPolygonF approach1RPolygon;
+    approach1RPolygon << QPointF(-4.0, 0.5)
+                      << QPointF(-8.0, 1.0)
+                      << QPointF(-8.0, -1.0)
+                      << QPointF(-4.0, -0.5)
+                      << QPointF(-4.0, 0.5);
+
     QPolygonF approach2RPolygon;
+    approach2RPolygon << QPointF(-8.0, 1.0)
+                      << QPointF(-12.0, 1.5)
+                      << QPointF(-12.0, -1.5)
+                      << QPointF(-8.0, -1.0)
+                      << QPointF(-8.0, 1.0);
 
     QTest::newRow("Dummy Aerodrome")
         << runwayPolygon
@@ -116,54 +139,13 @@ void AerodromeTest::test()
 
     aerodrome.addApronElement(apron);
     aerodrome.addStandElement(stand);
-    aerodrome.addStandElement(approach1L);
-    aerodrome.addStandElement(approach2L);
-    aerodrome.addStandElement(approach1R);
-    aerodrome.addStandElement(approach2R);
+    aerodrome.addApproach1Element(approach1L);
+    aerodrome.addApproach2Element(approach2L);
+    aerodrome.addApproach1Element(approach1R);
+    aerodrome.addApproach2Element(approach2R);
 
     QVERIFY(aerodrome.hasAnyElements() == true);
     QVERIFY(aerodrome.hasAllElements() == true);
-}
-
-Aerodrome AerodromeTest::dummyAerodrome()
-{
-    Aerodrome aerodrome;
-
-    QPolygonF runwayPolygon;
-    runwayPolygon << QPointF(4.0, 0.5)
-                  << QPointF(-4.0, 0.5)
-                  << QPointF(-4.0, -0.5)
-                  << QPointF(4.0, -0.5)
-                  << QPointF(4.0, 0.5);
-
-    QPolygonF taxiwayPolygon;
-    taxiwayPolygon << QPointF(4.0, 2.0)
-                   << QPointF(-4.0, 2.0)
-                   << QPointF(-4.0, 0.5)
-                   << QPointF(4.0, 0.5)
-                   << QPointF(4.0, 2.0);
-
-    QPolygonF standPolygon;
-    standPolygon << QPointF(3.0, 4.0)
-                 << QPointF(-3.0, 4.0)
-                 << QPointF(-3.0, 3.0)
-                 << QPointF(3.0, 3.0)
-                 << QPointF(3.0, 4.0);
-
-    QPolygonF apronPolygon;
-    apronPolygon << QPointF(4.0, 4.0)
-                 << QPointF(-4.0, 4.0)
-                 << QPointF(-4.0, 2.0)
-                 << QPointF(4.0, 2.0)
-                 << QPointF(4.0, 4.0);
-    apronPolygon = apronPolygon.subtracted(standPolygon);
-
-    QPolygonF approach1LPolygon;
-    QPolygonF approach2LPolygon;
-    QPolygonF approach1RPolygon;
-    QPolygonF approach2RPolygon;
-
-    return aerodrome;
 }
 
 QTEST_APPLESS_MAIN(AerodromeTest)
