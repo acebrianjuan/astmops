@@ -104,6 +104,12 @@ public slots:
 signals:
 
 private:
+    void processCat010SmrTgtRep(const AsterixRecord& record);
+    void processCat010SmrSrvMsg(const AsterixRecord& record);
+
+    void processCat010MlatTgtRep(const AsterixRecord& record);
+    void processCat010MlatSrvMsg(const AsterixRecord& record);
+
     static bool checkDataItems(const AsterixRecord& record, const QVector<DataItemList>& collections);
     static bool checkDataItemsList(const AsterixRecord& record, const QStringList& list, DataItemListType type = Mandatory);
 

@@ -51,206 +51,22 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         AsterixDataItem di010_000 = record.m_dataItems[QLatin1String("I000")];
         int msgType = di010_000.m_fields[0].value<AsterixDataElement>().m_value.toInt();
 
-        if (msgType == 1)  // Target Report.
+        // TODO: Consider using enums instead of hardcoded numbers for the record triage.
+        if (sic == m_smrSic && msgType == 1)
         {
-            AsterixDataItem di010_020 = record.m_dataItems[QLatin1String("I020")];
-            int sysType = di010_020.m_fields[0].value<AsterixDataElement>().m_value.toInt();
-
-            if (sysType == 1)  // Mode S Multilateration. ED-117 Norm.
-            {
-                ++m_cat010MlatTgtRepCounter.total;
-
-                // Minimum Data Items.
-                if (!checkDataItems(record, m_ed117TgtRepMinDataItems))
-                {
-                    // Target Report is invalid. Do not continue.
-                    return;
-                }
-
-                // Target Report is valid. Update surveillance state.
-                ++m_cat010MlatTgtRepCounter.n;
-
-                // Update Rate.
-                AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
-                IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
-
-                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-                QDateTime todDateTime = getDateTimefromTod(tod);
-
-                AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
-                double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-                double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
-
-                Aerodrome::Area area = m_locatePoint(QPointF(x, y));
-
-                QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010MlatTgtRepAreas.find(icaoAddr);
-                QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed117TgtRepUpdateRateCounters.find(icaoAddr);
-
-                if (itCounter == m_ed117TgtRepUpdateRateCounters.end())
-                {
-                    // Unknown target. Create a new counter for it.
-                    UpdateRateCounter urCounter;
-                    ++urCounter.n;
-                    urCounter.firstTod = todDateTime;
-                    urCounter.isInitialized = true;
-
-                    // Add it to the hash maps.
-                    m_ed117TgtRepUpdateRateCounters[icaoAddr] = urCounter;
-                    m_cat010MlatTgtRepAreas[icaoAddr] = area;
-                }
-                else
-                {
-                    // Known target. Check area.
-                    Aerodrome::Area oldArea = itArea.value();
-                    if (area != oldArea)
-                    {
-                        // Area changed. Reset counter.
-                        *itArea = area;
-                        itCounter->reset();
-                        ++itCounter->n;
-                        itCounter->firstTod = todDateTime;
-                    }
-                    else
-                    {
-                        // Update counter.
-                        ++itCounter->n;
-                        itCounter->lastTod = todDateTime;
-                    }
-                }
-            }
-            else if (sysType == 3)  // Primary Surveillance Radar. ED-116 Norm.
-            {
-                ++m_cat010SmrTgtRepCounter.total;
-
-                // Minimum Data Items.
-                if (!checkDataItems(record, m_ed116TgtRepMinDataItems))
-                {
-                    // Target Report is invalid. Do not continue.
-                    return;
-                }
-
-                // Target Report is valid. Update surveillance state.
-                ++m_cat010SmrTgtRepCounter.n;
-
-                // Update Rate.
-                AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
-                TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
-
-                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-                QDateTime todDateTime = getDateTimefromTod(tod);
-
-                AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
-                double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-                double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
-
-                Aerodrome::Area area = m_locatePoint(QPointF(x, y));
-
-                QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010SmrTgtRepAreas.find(trkNum);
-                QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed116TgtRepUpdateRateCounters.find(trkNum);
-                if (itCounter == m_ed116TgtRepUpdateRateCounters.end())
-                {
-                    // Unknown target. Create a new counter for it.
-                    UpdateRateCounter urCounter;
-                    ++urCounter.n;
-                    urCounter.firstTod = todDateTime;
-                    urCounter.isInitialized = true;
-
-                    // Add it to the hash maps.
-                    m_ed116TgtRepUpdateRateCounters[trkNum] = urCounter;
-                    m_cat010SmrTgtRepAreas[trkNum] = area;
-                }
-                else
-                {
-                    // Known target. Check area.
-                    Aerodrome::Area oldArea = itArea.value();
-                    if (area != oldArea)
-                    {
-                        // Area changed. Reset counter.
-                        *itArea = area;
-                        itCounter->reset();
-                        ++itCounter->n;
-                        itCounter->firstTod = todDateTime;
-                    }
-                    else
-                    {
-                        // Update counter.
-                        ++itCounter->n;
-                        itCounter->lastTod = todDateTime;
-                    }
-                }
-            }
+            processCat010SmrTgtRep(record);
         }
-        else if (msgType == 3)  // Periodic Status Message.
+        else if (sic == m_smrSic && msgType == 3)
         {
-            // Check the SIC to determine which system is the service message informing about.
-            if (sic == m_mlatSic)  // Mode S Multilateration.
-            {
-                ++m_cat010MlatSrvMsgCounter.total;
-
-                // Minimum Data Items.
-                if (!checkDataItems(record, m_srvMsgMinDataItems))
-                {
-                    // Status Message is invalid. Do not continue.
-                    return;
-                }
-
-                // Status Message is valid. Update surveillance state.
-                ++m_cat010MlatSrvMsgCounter.n;
-
-                // Update Rate.
-                ++m_cat010MlatSrvMsgUpdateRateCounter.n;
-
-                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-                QDateTime todDateTime = getDateTimefromTod(tod);
-
-                if (!m_cat010MlatSrvMsgUpdateRateCounter.isInitialized)
-                {
-                    // First-time counter initialization.
-                    m_cat010MlatSrvMsgUpdateRateCounter.firstTod = todDateTime;
-                    m_cat010MlatSrvMsgUpdateRateCounter.isInitialized = true;
-                }
-                else
-                {
-                    // Update counter.
-                    m_cat010MlatSrvMsgUpdateRateCounter.lastTod = todDateTime;
-                }
-            }
-            else if (sic == m_smrSic)  // Primary Surveillance Radar.
-            {
-                ++m_cat010SmrSrvMsgCounter.total;
-
-                // Minimum Data Items.
-                if (!checkDataItems(record, m_srvMsgMinDataItems))
-                {
-                    // Status Message is invalid. Do not continue.
-                    return;
-                }
-
-                // Status Message is valid. Update surveillance state.
-                ++m_cat010SmrSrvMsgCounter.n;
-
-                // Update Rate.
-                ++m_cat010SmrSrvMsgUpdateRateCounter.n;
-
-                AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-                double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-                QDateTime todDateTime = getDateTimefromTod(tod);
-
-                if (!m_cat010SmrSrvMsgUpdateRateCounter.isInitialized)
-                {
-                    // First-time counter initialization.
-                    m_cat010SmrSrvMsgUpdateRateCounter.firstTod = todDateTime;
-                    m_cat010SmrSrvMsgUpdateRateCounter.isInitialized = true;
-                }
-                else
-                {
-                    // Update counter.
-                    m_cat010SmrSrvMsgUpdateRateCounter.lastTod = todDateTime;
-                }
-            }
+            processCat010SmrSrvMsg(record);
+        }
+        else if (sic == m_mlatSic && msgType == 1)
+        {
+            processCat010MlatTgtRep(record);
+        }
+        else if (sic == m_mlatSic && msgType == 3)
+        {
+            processCat010MlatSrvMsg(record);
         }
     }
 }
@@ -317,6 +133,201 @@ double MopsProcessor::ed117ServiceMessagesMinimumFields()
 double MopsProcessor::ed117ServiceMessagesUpdateRate()
 {
     return calculateUpdateRate(m_cat010MlatSrvMsgUpdateRateCounter);
+}
+
+void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
+{
+    ++m_cat010SmrTgtRepCounter.total;
+
+    // Minimum Data Items.
+    if (!checkDataItems(record, m_ed116TgtRepMinDataItems))
+    {
+        // Target Report is invalid. Do not continue.
+        return;
+    }
+
+    // Target Report is valid. Update surveillance state.
+    ++m_cat010SmrTgtRepCounter.n;
+
+    // Update Rate.
+    AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
+    TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+
+    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    QDateTime todDateTime = getDateTimefromTod(tod);
+
+    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
+    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+
+    Aerodrome::Area area = m_locatePoint(QPointF(x, y));
+
+    QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010SmrTgtRepAreas.find(trkNum);
+    QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed116TgtRepUpdateRateCounters.find(trkNum);
+    if (itCounter == m_ed116TgtRepUpdateRateCounters.end())
+    {
+        // Unknown target. Create a new counter for it.
+        UpdateRateCounter urCounter;
+        ++urCounter.n;
+        urCounter.firstTod = todDateTime;
+        urCounter.isInitialized = true;
+
+        // Add it to the hash maps.
+        m_ed116TgtRepUpdateRateCounters[trkNum] = urCounter;
+        m_cat010SmrTgtRepAreas[trkNum] = area;
+    }
+    else
+    {
+        // Known target. Check area.
+        Aerodrome::Area oldArea = itArea.value();
+        if (area != oldArea)
+        {
+            // Area changed. Reset counter.
+            *itArea = area;
+            itCounter->reset();
+            ++itCounter->n;
+            itCounter->firstTod = todDateTime;
+        }
+        else
+        {
+            // Update counter.
+            ++itCounter->n;
+            itCounter->lastTod = todDateTime;
+        }
+    }
+}
+
+void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
+{
+    ++m_cat010SmrSrvMsgCounter.total;
+
+    // Minimum Data Items.
+    if (!checkDataItems(record, m_srvMsgMinDataItems))
+    {
+        // Status Message is invalid. Do not continue.
+        return;
+    }
+
+    // Status Message is valid. Update surveillance state.
+    ++m_cat010SmrSrvMsgCounter.n;
+
+    // Update Rate.
+    ++m_cat010SmrSrvMsgUpdateRateCounter.n;
+
+    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    QDateTime todDateTime = getDateTimefromTod(tod);
+
+    if (!m_cat010SmrSrvMsgUpdateRateCounter.isInitialized)
+    {
+        // First-time counter initialization.
+        m_cat010SmrSrvMsgUpdateRateCounter.firstTod = todDateTime;
+        m_cat010SmrSrvMsgUpdateRateCounter.isInitialized = true;
+    }
+    else
+    {
+        // Update counter.
+        m_cat010SmrSrvMsgUpdateRateCounter.lastTod = todDateTime;
+    }
+}
+
+void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
+{
+    ++m_cat010MlatTgtRepCounter.total;
+
+    // Minimum Data Items.
+    if (!checkDataItems(record, m_ed117TgtRepMinDataItems))
+    {
+        // Target Report is invalid. Do not continue.
+        return;
+    }
+
+    // Target Report is valid. Update surveillance state.
+    ++m_cat010MlatTgtRepCounter.n;
+
+    // Update Rate.
+    AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
+    IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+
+    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    QDateTime todDateTime = getDateTimefromTod(tod);
+
+    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
+    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+
+    Aerodrome::Area area = m_locatePoint(QPointF(x, y));
+
+    QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010MlatTgtRepAreas.find(icaoAddr);
+    QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed117TgtRepUpdateRateCounters.find(icaoAddr);
+
+    if (itCounter == m_ed117TgtRepUpdateRateCounters.end())
+    {
+        // Unknown target. Create a new counter for it.
+        UpdateRateCounter urCounter;
+        ++urCounter.n;
+        urCounter.firstTod = todDateTime;
+        urCounter.isInitialized = true;
+
+        // Add it to the hash maps.
+        m_ed117TgtRepUpdateRateCounters[icaoAddr] = urCounter;
+        m_cat010MlatTgtRepAreas[icaoAddr] = area;
+    }
+    else
+    {
+        // Known target. Check area.
+        Aerodrome::Area oldArea = itArea.value();
+        if (area != oldArea)
+        {
+            // Area changed. Reset counter.
+            *itArea = area;
+            itCounter->reset();
+            ++itCounter->n;
+            itCounter->firstTod = todDateTime;
+        }
+        else
+        {
+            // Update counter.
+            ++itCounter->n;
+            itCounter->lastTod = todDateTime;
+        }
+    }
+}
+
+void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
+{
+    ++m_cat010MlatSrvMsgCounter.total;
+
+    // Minimum Data Items.
+    if (!checkDataItems(record, m_srvMsgMinDataItems))
+    {
+        // Status Message is invalid. Do not continue.
+        return;
+    }
+
+    // Status Message is valid. Update surveillance state.
+    ++m_cat010MlatSrvMsgCounter.n;
+
+    // Update Rate.
+    ++m_cat010MlatSrvMsgUpdateRateCounter.n;
+
+    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    QDateTime todDateTime = getDateTimefromTod(tod);
+
+    if (!m_cat010MlatSrvMsgUpdateRateCounter.isInitialized)
+    {
+        // First-time counter initialization.
+        m_cat010MlatSrvMsgUpdateRateCounter.firstTod = todDateTime;
+        m_cat010MlatSrvMsgUpdateRateCounter.isInitialized = true;
+    }
+    else
+    {
+        // Update counter.
+        m_cat010MlatSrvMsgUpdateRateCounter.lastTod = todDateTime;
+    }
 }
 
 bool MopsProcessor::checkDataItems(const AsterixRecord &record,
@@ -439,7 +450,7 @@ QVector<MopsProcessor::DataItemList> MopsProcessor::ed117TargetReportsMinimumDat
         mandatory.items = QStringList() << QLatin1String("I010")   // Data Source Identifier
                                         << QLatin1String("I020")   // Target Report Descriptor
                                         << QLatin1String("I140")   // Time of Day
-                                        << QLatin1String("I220");  // Target Address (ICAO)
+                                        << QLatin1String("I220");  // Mode S Target Address (ICAO)
 
         DataItemList disjunctive1;
         disjunctive1.type = DataItemListType::Disjunctive;
