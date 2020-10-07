@@ -40,19 +40,19 @@ namespace Configuration
 inline quint8 smrSic()
 {
     QSettings settings;
-    return settings.value("SMR.SIC").toUInt();
+    return settings.value(QLatin1String("SMR.SIC")).toUInt();
 }
 
 inline quint8 mlatSic()
 {
     QSettings settings;
-    return settings.value("MLAT.SIC").toUInt();
+    return settings.value(QLatin1String("MLAT.SIC")).toUInt();
 }
 
 inline quint8 adsbSic()
 {
     QSettings settings;
-    return settings.value("ADSB.SIC").toUInt();
+    return settings.value(QLatin1String("ADSB.SIC")).toUInt();
 }
 
 };  // namespace Configuration
