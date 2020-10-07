@@ -17,6 +17,9 @@ jobs:
       run: cd build && cmake -GNinja ..
     - name: build
       run: cd build && ninja
+    - name: check
+      run: cd build && ctest --output-on-failure
+     
       
   build-macos:
     runs-on: macos-latest
@@ -28,6 +31,8 @@ jobs:
       run: cd build && cmake -GNinja -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5 .. 
     - name: build
       run: cd build && ninja
+    - name: check
+      run: cd build && ctest --output-on-failure
 
   REUSE-compliance:
     runs-on: ubuntu-latest
