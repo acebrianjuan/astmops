@@ -56,9 +56,11 @@ void RecordCollatorTest::initTestCase()
     QCoreApplication::setApplicationName(QLatin1String("astmops-recordcollatortest"));
 
     QSettings settings;
+    settings.clear();
+
     settings.setValue(QLatin1String("SMR.SIC"), 7);
     settings.setValue(QLatin1String("MLAT.SIC"), 107);
-    settings.setValue(QLatin1String("ADS-B.SIC"), 109);
+    settings.setValue(QLatin1String("ADSB.SIC"), 109);
 }
 
 void RecordCollatorTest::test_data()

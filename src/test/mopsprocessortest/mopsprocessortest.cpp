@@ -57,9 +57,11 @@ void MopsProcessorTest::initTestCase()
     QCoreApplication::setApplicationName(QLatin1String("astmops-mopsprocessortest"));
 
     QSettings settings;
+    settings.clear();
+
     settings.setValue(QLatin1String("SMR.SIC"), 7);
     settings.setValue(QLatin1String("MLAT.SIC"), 107);
-    settings.setValue(QLatin1String("ADS-B.SIC"), 109);
+    settings.setValue(QLatin1String("ADSB.SIC"), 109);
 }
 
 void MopsProcessorTest::testMinimumFields_data()
