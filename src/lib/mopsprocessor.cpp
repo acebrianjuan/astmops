@@ -26,13 +26,7 @@ void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const Q
     m_locatePoint = callback;
 }
 
-MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent),
-                                                m_smrSic(Configuration::smrSic()),
-                                                m_mlatSic(Configuration::mlatSic()),
-                                                m_adsbSic(Configuration::adsbSic()),
-                                                m_ed116TgtRepMinDataItems(ed116TargetReportsMinimumDataItems()),
-                                                m_ed117TgtRepMinDataItems(ed117TargetReportsMinimumDataItems()),
-                                                m_srvMsgMinDataItems(serviceMessagesMinimumDataItems())
+MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
 }
 
@@ -84,7 +78,16 @@ double MopsProcessor::ed116TargetReportsMinimumFields()
 
 double MopsProcessor::ed116TargetReportsUpdateRate(Aerodrome::Area area)
 {
-    return calculateUpdateRate(m_cat010SmrTgtRepAreas.keys(area), m_ed116TgtRepUpdateRateCounters);
+    double num = m_cat010SmrTgtRepUpdateRateTable.value(area).updates;
+    double den = m_cat010SmrTgtRepUpdateRateTable.value(area).expected;
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double ur = num / den;
+    return ur;
 }
 
 double MopsProcessor::ed116ServiceMessagesMinimumFields()
@@ -100,7 +103,16 @@ double MopsProcessor::ed116ServiceMessagesMinimumFields()
 
 double MopsProcessor::ed116ServiceMessagesUpdateRate()
 {
-    return calculateUpdateRate(m_cat010SmrSrvMsgUpdateRateCounter);
+    double num = m_cat010SmrSrvMsgUpdateRateTable.updates;
+    double den = m_cat010SmrSrvMsgUpdateRateTable.expected;
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double ur = num / den;
+    return ur;
 }
 
 double MopsProcessor::ed117TargetReportsMinimumFields()
@@ -116,7 +128,16 @@ double MopsProcessor::ed117TargetReportsMinimumFields()
 
 double MopsProcessor::ed117TargetReportsUpdateRate(Aerodrome::Area area)
 {
-    return calculateUpdateRate(m_cat010MlatTgtRepAreas.keys(area), m_ed117TgtRepUpdateRateCounters);
+    double num = m_cat010MlatTgtRepUpdateRateTable.value(area).updates;
+    double den = m_cat010MlatTgtRepUpdateRateTable.value(area).expected;
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double ur = num / den;
+    return ur;
 }
 
 double MopsProcessor::ed117ServiceMessagesMinimumFields()
@@ -132,7 +153,16 @@ double MopsProcessor::ed117ServiceMessagesMinimumFields()
 
 double MopsProcessor::ed117ServiceMessagesUpdateRate()
 {
-    return calculateUpdateRate(m_cat010MlatSrvMsgUpdateRateCounter);
+    double num = m_cat010MlatSrvMsgUpdateRateTable.updates;
+    double den = m_cat010MlatSrvMsgUpdateRateTable.expected;
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double ur = num / den;
+    return ur;
 }
 
 void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
@@ -163,37 +193,40 @@ void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010SmrTgtRepAreas.find(trkNum);
-    QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed116TgtRepUpdateRateCounters.find(trkNum);
-    if (itCounter == m_ed116TgtRepUpdateRateCounters.end())
+    QHash<uint, UpdateRateCounter>::iterator itCounter = m_cat010SmrTgtRepUpdateRateCounters.find(trkNum);
+
+    if (itCounter == m_cat010SmrTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
         UpdateRateCounter urCounter;
-        ++urCounter.n;
-        urCounter.firstTod = todDateTime;
-        urCounter.isInitialized = true;
+        urCounter.update(todDateTime);
+        urCounter.area = area;
 
         // Add it to the hash maps.
-        m_ed116TgtRepUpdateRateCounters[trkNum] = urCounter;
-        m_cat010SmrTgtRepAreas[trkNum] = area;
+        m_cat010SmrTgtRepUpdateRateCounters[trkNum] = urCounter;
     }
     else
     {
         // Known target. Check area.
-        Aerodrome::Area oldArea = itArea.value();
-        if (area != oldArea)
+        Aerodrome::Area oldArea = itCounter->area;
+        if (area != oldArea || itCounter->lastTod.msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
-            // Area changed. Reset counter.
-            *itArea = area;
+            // Area changed or Silence Period. Reset counter.
             itCounter->reset();
-            ++itCounter->n;
-            itCounter->firstTod = todDateTime;
+            itCounter->update(todDateTime);
+            itCounter->area = area;
         }
         else
         {
             // Update counter.
-            ++itCounter->n;
-            itCounter->lastTod = todDateTime;
+            itCounter->update(todDateTime);
+
+            if (itCounter->timeDiff() <= 1 / m_ed116TgtRepUpdateRateHz)
+            {
+                ++m_cat010SmrTgtRepUpdateRateTable[area].updates;
+            }
+
+            m_cat010SmrTgtRepUpdateRateTable[area].expected += itCounter->timeDiff();
         }
     }
 }
@@ -213,23 +246,19 @@ void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
     ++m_cat010SmrSrvMsgCounter.n;
 
     // Update Rate.
-    ++m_cat010SmrSrvMsgUpdateRateCounter.n;
-
     AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
     double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    if (!m_cat010SmrSrvMsgUpdateRateCounter.isInitialized)
+    // Update counter.
+    m_cat010SmrSrvMsgUpdateRateCounter.update(todDateTime);
+
+    if (m_cat010SmrSrvMsgUpdateRateCounter.timeDiff() <= 1 / m_ed116SrvMsgUpdateRateHz)
     {
-        // First-time counter initialization.
-        m_cat010SmrSrvMsgUpdateRateCounter.firstTod = todDateTime;
-        m_cat010SmrSrvMsgUpdateRateCounter.isInitialized = true;
+        ++m_cat010SmrSrvMsgUpdateRateTable.updates;
     }
-    else
-    {
-        // Update counter.
-        m_cat010SmrSrvMsgUpdateRateCounter.lastTod = todDateTime;
-    }
+
+    m_cat010SmrSrvMsgUpdateRateTable.expected += m_cat010SmrSrvMsgUpdateRateCounter.timeDiff();
 }
 
 void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
@@ -260,39 +289,46 @@ void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<uint, Aerodrome::Area>::iterator itArea = m_cat010MlatTgtRepAreas.find(icaoAddr);
-    QHash<uint, UpdateRateCounter>::iterator itCounter = m_ed117TgtRepUpdateRateCounters.find(icaoAddr);
+    QHash<uint, UpdateRateCounter>::iterator itCounter = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
 
-    if (itCounter == m_ed117TgtRepUpdateRateCounters.end())
+    if (itCounter == m_cat010MlatTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
         UpdateRateCounter urCounter;
-        ++urCounter.n;
         urCounter.firstTod = todDateTime;
-        urCounter.isInitialized = true;
+        urCounter.area = area;
 
         // Add it to the hash maps.
-        m_ed117TgtRepUpdateRateCounters[icaoAddr] = urCounter;
-        m_cat010MlatTgtRepAreas[icaoAddr] = area;
+        m_cat010MlatTgtRepUpdateRateCounters[icaoAddr] = urCounter;
     }
     else
     {
         // Known target. Check area.
-        Aerodrome::Area oldArea = itArea.value();
-        if (area != oldArea)
+        Aerodrome::Area oldArea = itCounter->area;
+        if (area != oldArea || itCounter->lastTod.msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
-            // Area changed. Reset counter.
-            *itArea = area;
+            // Area changed or Silence Period. Reset counter.
             itCounter->reset();
-            ++itCounter->n;
-            itCounter->firstTod = todDateTime;
+            itCounter->update(todDateTime);
+            itCounter->area = area;
         }
         else
         {
             // Update counter.
-            ++itCounter->n;
-            itCounter->lastTod = todDateTime;
+            itCounter->update(todDateTime);
+
+            if (itCounter->timeDiff() <= 1 / m_ed117TgtRepUpdateRateHz)
+            {
+                ++m_cat010MlatTgtRepUpdateRateTable[area].updates;
+            }
+
+            m_cat010MlatTgtRepUpdateRateTable[area].expected += itCounter->timeDiff();
         }
+    }
+
+    // Probability of MLAT Detection.
+    if (containsPosition(record))
+    {
     }
 }
 
@@ -311,23 +347,19 @@ void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
     ++m_cat010MlatSrvMsgCounter.n;
 
     // Update Rate.
-    ++m_cat010MlatSrvMsgUpdateRateCounter.n;
-
     AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
     double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    if (!m_cat010MlatSrvMsgUpdateRateCounter.isInitialized)
+    // Update counter.
+    m_cat010MlatSrvMsgUpdateRateCounter.update(todDateTime);
+
+    if (m_cat010MlatSrvMsgUpdateRateCounter.timeDiff() <= 1 / m_ed117SrvMsgUpdateRateHz)
     {
-        // First-time counter initialization.
-        m_cat010MlatSrvMsgUpdateRateCounter.firstTod = todDateTime;
-        m_cat010MlatSrvMsgUpdateRateCounter.isInitialized = true;
+        ++m_cat010MlatSrvMsgUpdateRateTable.updates;
     }
-    else
-    {
-        // Update counter.
-        m_cat010MlatSrvMsgUpdateRateCounter.lastTod = todDateTime;
-    }
+
+    m_cat010MlatSrvMsgUpdateRateTable.expected += m_cat010MlatSrvMsgUpdateRateCounter.timeDiff();
 }
 
 bool MopsProcessor::checkDataItems(const AsterixRecord &record,
@@ -409,6 +441,16 @@ bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
     }
 
     return false;
+}
+
+bool MopsProcessor::containsPosition(const AsterixRecord &record)
+{
+    QStringList cat010PosDItems;
+    cat010PosDItems << QLatin1String("I040")   // Position in Polar Co-ordinates
+                    << QLatin1String("I041")   // Position in WGS-84 Coordinates
+                    << QLatin1String("I042");  // Position in Cartesian Coordinates
+
+    return checkDataItemsList(record, cat010PosDItems, DataItemListType::Disjunctive);
 }
 
 QVector<MopsProcessor::DataItemList> MopsProcessor::ed116TargetReportsMinimumDataItems()
@@ -508,67 +550,4 @@ QDateTime MopsProcessor::getDateTimefromTod(const double &tod)
 {
     QDateTime todDateTime = QDateTime::fromMSecsSinceEpoch(tod * 1000, Qt::UTC);
     return todDateTime;
-}
-
-double MopsProcessor::calculateUpdateRate(const QList<quint32> &addresses, const QHash<quint32, MopsProcessor::UpdateRateCounter> &counters)
-{
-    double num = 0.0;
-    double den = 0.0;
-
-    if (addresses.isEmpty())
-    {
-        // Cannot perform calculation.
-        return qQNaN();
-    }
-
-    for (uint addr : addresses)
-    {
-        UpdateRateCounter urCounter = counters.value(addr);
-
-        if (urCounter)
-        {
-            QDateTime firstTod = urCounter.firstTod;
-            QDateTime lastTod = urCounter.lastTod;
-
-            if (!firstTod.isNull() && !lastTod.isNull())
-            {
-                num += static_cast<double>(urCounter.n);
-                den += static_cast<double>(firstTod.msecsTo(lastTod)) / 1000 + 1;
-            }
-        }
-    }
-
-    if (den == 0)
-    {
-        return qQNaN();
-    }
-
-    double p = num / den;
-    return p;
-}
-
-double MopsProcessor::calculateUpdateRate(const MopsProcessor::UpdateRateCounter &counter)
-{
-    double num = 0.0;
-    double den = 0.0;
-
-    if (counter)
-    {
-        QDateTime firstTod = counter.firstTod;
-        QDateTime lastTod = counter.lastTod;
-
-        if (!firstTod.isNull() && !lastTod.isNull())
-        {
-            num += static_cast<double>(counter.n);
-            den += static_cast<double>(firstTod.msecsTo(lastTod)) / 1000 + 1;
-        }
-    }
-
-    if (den == 0)
-    {
-        return qQNaN();
-    }
-
-    double p = num / den;
-    return p;
 }

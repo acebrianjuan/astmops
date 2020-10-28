@@ -37,11 +37,13 @@ enum SystemType
 };
 
 
-const float ed116TgtRepUpdateRate = 1.0;  // Hz
-const float ed116SrvMsgUpdateRate = 1.0;  // Hz
+const float ed116TgtRepUpdateRateHz = 1.0;  // Hz
+const float ed116SrvMsgUpdateRateHz = 1.0;  // Hz
 
-const float ed117TgtRepUpdateRate = 1.0;  // Hz
-const float ed117SrvMsgUpdateRate = 1.0;  // Hz
+const float ed117TgtRepUpdateRateHz = 1.0;  // Hz
+const float ed117SrvMsgUpdateRateHz = 1.0;  // Hz
+
+const float silencePeriodSeconds = 60;  // s
 
 
 static quint8 readSic(QString key)
@@ -83,45 +85,111 @@ inline quint8 adsbSic()
     return readSic(key);
 }
 
-inline float tgtRepUpdateRate()
+inline float ed116TgtRepUpdateRate()
 {
-    QString key = QLatin1String("MOPS.TgtRepUpdateRate");
+    QString key = QLatin1String("MOPS.ed116TgtRepUpdateRate");
 
     QSettings settings;
 
     if (!settings.contains(key))
     {
-        return ed117TgtRepUpdateRate;
+        return ed116TgtRepUpdateRateHz;
     }
 
     float var = settings.value(key).toFloat();
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Update Rate, using default value: " << ed117TgtRepUpdateRate;
-        return ed117TgtRepUpdateRate;
+        qWarning() << "Invalid Update Rate, using default value: " << ed116TgtRepUpdateRateHz;
+        return ed116TgtRepUpdateRateHz;
     }
 
     return var;
 }
 
-inline float srvMsgUpdateRate()
+inline float ed116SrvMsgUpdateRate()
 {
-    QString key = QLatin1String("MOPS.SrvMsgUpdateRate");
+    QString key = QLatin1String("MOPS.ed116SrvMsgUpdateRate");
 
     QSettings settings;
 
     if (!settings.contains(key))
     {
-        return ed117SrvMsgUpdateRate;
+        return ed116SrvMsgUpdateRateHz;
     }
 
     float var = settings.value(key).toFloat();
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Update Rate, using default value: " << ed117SrvMsgUpdateRate;
-        return ed117SrvMsgUpdateRate;
+        qWarning() << "Invalid Update Rate, using default value: " << ed116SrvMsgUpdateRateHz;
+        return ed116SrvMsgUpdateRateHz;
+    }
+
+    return var;
+}
+
+inline float ed117TgtRepUpdateRate()
+{
+    QString key = QLatin1String("MOPS.ed117TgtRepUpdateRate");
+
+    QSettings settings;
+
+    if (!settings.contains(key))
+    {
+        return ed117TgtRepUpdateRateHz;
+    }
+
+    float var = settings.value(key).toFloat();
+
+    if (var <= 0)
+    {
+        qWarning() << "Invalid Update Rate, using default value: " << ed117TgtRepUpdateRateHz;
+        return ed117TgtRepUpdateRateHz;
+    }
+
+    return var;
+}
+
+inline float ed117SrvMsgUpdateRate()
+{
+    QString key = QLatin1String("MOPS.ed117SrvMsgUpdateRate");
+
+    QSettings settings;
+
+    if (!settings.contains(key))
+    {
+        return ed117SrvMsgUpdateRateHz;
+    }
+
+    float var = settings.value(key).toFloat();
+
+    if (var <= 0)
+    {
+        qWarning() << "Invalid Update Rate, using default value: " << ed117SrvMsgUpdateRateHz;
+        return ed117SrvMsgUpdateRateHz;
+    }
+
+    return var;
+}
+
+inline float silencePeriod()
+{
+    QString key = QLatin1String("MOPS.SilencePeriod");
+
+    QSettings settings;
+
+    if (!settings.contains(key))
+    {
+        return silencePeriodSeconds;
+    }
+
+    float var = settings.value(key).toFloat();
+
+    if (var <= 0)
+    {
+        qWarning() << "Invalid Silence Period, using default value: " << silencePeriodSeconds;
+        return silencePeriodSeconds;
     }
 
     return var;

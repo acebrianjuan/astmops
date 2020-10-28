@@ -55,32 +55,56 @@ public:
 
     struct UpdateRateCounter
     {
-        bool isInitialized = false;
-        quint32 n = 0;
         QDateTime firstTod;
         QDateTime lastTod;
+        Aerodrome::Area area = Aerodrome::Area::None;
+
+        bool isInitialized() { return firstTod.isValid(); }
 
         void reset()
         {
-            isInitialized = false;
-            n = 0;
             firstTod = QDateTime();
             lastTod = QDateTime();
+            area = Aerodrome::Area::None;
+        }
+
+        void update(QDateTime newTod)
+        {
+            if (firstTod.isNull())
+            {
+                firstTod = newTod;
+            }
+            else if (lastTod.isNull())
+            {
+                lastTod = newTod;
+            }
+            else if (firstTod.isValid() && lastTod.isValid())
+            {
+                firstTod = lastTod;
+                lastTod = newTod;
+            }
+        }
+
+        double timeDiff()
+        {
+            if (firstTod.isValid() && lastTod.isValid())
+            {
+                return firstTod.msecsTo(lastTod) / 1000;
+            }
+
+            return qQNaN();
         }
 
         operator bool() const
         {
-            return n > 1 && firstTod.isValid() && lastTod.isValid();
+            return firstTod.isValid() && lastTod.isValid();
         }
     };
 
-    struct TargetData
+    struct UpdateRateResult
     {
-        quint32 address;
-        QDateTime firstTod;
-        QDateTime lastTod;
-        QPointF position;
-        Aerodrome::Area area;
+        quint32 updates = 0;
+        quint32 expected = 0;
     };
 
     void setLocatePointCallback(std::function<Aerodrome::Area(const QPointF&)> callback);
@@ -113,6 +137,8 @@ private:
     static bool checkDataItems(const AsterixRecord& record, const QVector<DataItemList>& collections);
     static bool checkDataItemsList(const AsterixRecord& record, const QStringList& list, DataItemListType type = Mandatory);
 
+    static bool containsPosition(const AsterixRecord& record);
+
     static QVector<DataItemList> ed116TargetReportsMinimumDataItems();
     static QVector<DataItemList> ed117TargetReportsMinimumDataItems();
     static QVector<DataItemList> serviceMessagesMinimumDataItems();
@@ -120,18 +146,24 @@ private:
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
     static QDateTime getDateTimefromTod(const double& tod);
 
-    double calculateUpdateRate(const QList<quint32>& addresses, const QHash<quint32, UpdateRateCounter>& counters);
-    double calculateUpdateRate(const UpdateRateCounter& counter);
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;
 
-    quint8 m_smrSic;
-    quint8 m_mlatSic;
-    quint8 m_adsbSic;
+    quint8 m_smrSic = Configuration::smrSic();
+    quint8 m_mlatSic = Configuration::mlatSic();
+    quint8 m_adsbSic = Configuration::adsbSic();
 
-    QVector<DataItemList> m_ed116TgtRepMinDataItems;
-    QVector<DataItemList> m_ed117TgtRepMinDataItems;
-    QVector<DataItemList> m_srvMsgMinDataItems;
+    float m_ed116SrvMsgUpdateRateHz = Configuration::ed116SrvMsgUpdateRate();
+    float m_ed116TgtRepUpdateRateHz = Configuration::ed116TgtRepUpdateRate();
+
+    float m_ed117SrvMsgUpdateRateHz = Configuration::ed117SrvMsgUpdateRate();
+    float m_ed117TgtRepUpdateRateHz = Configuration::ed117TgtRepUpdateRate();
+
+    float m_silencePeriod = Configuration::silencePeriod();
+
+    QVector<DataItemList> m_ed116TgtRepMinDataItems = ed116TargetReportsMinimumDataItems();
+    QVector<DataItemList> m_ed117TgtRepMinDataItems = ed117TargetReportsMinimumDataItems();
+    QVector<DataItemList> m_srvMsgMinDataItems = serviceMessagesMinimumDataItems();
 
     Counter m_cat010SmrTgtRepCounter;
     Counter m_cat010MlatTgtRepCounter;
@@ -139,14 +171,17 @@ private:
     Counter m_cat010SmrSrvMsgCounter;
     Counter m_cat010MlatSrvMsgCounter;
 
-    QHash<TrackNum, UpdateRateCounter> m_ed116TgtRepUpdateRateCounters;
-    QHash<IcaoAddr, UpdateRateCounter> m_ed117TgtRepUpdateRateCounters;
+    QHash<TrackNum, UpdateRateCounter> m_cat010SmrTgtRepUpdateRateCounters;
+    QHash<IcaoAddr, UpdateRateCounter> m_cat010MlatTgtRepUpdateRateCounters;
 
     UpdateRateCounter m_cat010SmrSrvMsgUpdateRateCounter;
     UpdateRateCounter m_cat010MlatSrvMsgUpdateRateCounter;
 
-    QHash<TrackNum, Aerodrome::Area> m_cat010SmrTgtRepAreas;
-    QHash<IcaoAddr, Aerodrome::Area> m_cat010MlatTgtRepAreas;
+    UpdateRateResult m_cat010SmrSrvMsgUpdateRateTable;
+    UpdateRateResult m_cat010MlatSrvMsgUpdateRateTable;
+
+    QHash<Aerodrome::Area, UpdateRateResult> m_cat010SmrTgtRepUpdateRateTable;
+    QHash<Aerodrome::Area, UpdateRateResult> m_cat010MlatTgtRepUpdateRateTable;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H
