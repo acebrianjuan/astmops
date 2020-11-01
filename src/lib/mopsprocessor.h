@@ -134,6 +134,23 @@ private:
     void processCat010MlatTgtRep(const AsterixRecord& record);
     void processCat010MlatSrvMsg(const AsterixRecord& record);
 
+    // CAT010 SMR Target Report
+    bool cat010SmrTgtRepMinDataItems(const AsterixRecord& record);
+    void cat010SmrTgtRepUpdateRate(const AsterixRecord& record);
+
+    // CAT010 SMR Service Message
+    bool cat010SmrSrvMsgMinDataItems(const AsterixRecord& record);
+    void cat010SmrSrvMsgUpdateRate(const AsterixRecord& record);
+
+    // CAT010 MLAT Target Report
+    bool cat010MlatTgtRepMinDataItems(const AsterixRecord& record);
+    void cat010MlatTgtRepUpdateRate(const AsterixRecord& record);
+    void cat010MlatTgtRepProbDetection(const AsterixRecord& record);
+
+    // CAT010 MLAT Service Message
+    bool cat010MlatSrvMsgMinDataItems(const AsterixRecord& record);
+    void cat010MlatSrvMsgUpdateRate(const AsterixRecord& record);
+
     static bool checkDataItems(const AsterixRecord& record, const QVector<DataItemList>& collections);
     static bool checkDataItemsList(const AsterixRecord& record, const QStringList& list, DataItemListType type = Mandatory);
 

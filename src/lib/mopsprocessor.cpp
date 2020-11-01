@@ -167,18 +167,64 @@ double MopsProcessor::ed117ServiceMessagesUpdateRate()
 
 void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
 {
+    if (!cat010SmrTgtRepMinDataItems(record))
+    {
+        return;
+    }
+
+    cat010SmrTgtRepUpdateRate(record);
+}
+
+void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
+{
+    if (!cat010SmrSrvMsgMinDataItems(record))
+    {
+        return;
+    }
+
+    cat010SmrSrvMsgUpdateRate(record);
+}
+
+void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
+{
+    if (!cat010MlatTgtRepMinDataItems(record))
+    {
+        return;
+    }
+
+    cat010MlatTgtRepUpdateRate(record);
+    cat010MlatTgtRepProbDetection(record);
+}
+
+void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
+{
+    if (!cat010MlatSrvMsgMinDataItems(record))
+    {
+        return;
+    }
+
+    cat010MlatSrvMsgUpdateRate(record);
+}
+
+bool MopsProcessor::cat010SmrTgtRepMinDataItems(const AsterixRecord &record)
+{
     ++m_cat010SmrTgtRepCounter.total;
 
     // Minimum Data Items.
     if (!checkDataItems(record, m_ed116TgtRepMinDataItems))
     {
         // Target Report is invalid. Do not continue.
-        return;
+        return false;
     }
 
     // Target Report is valid. Update surveillance state.
     ++m_cat010SmrTgtRepCounter.n;
 
+    return true;
+}
+
+void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
+{
     // Update Rate.
     AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
     TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
@@ -231,7 +277,7 @@ void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
     }
 }
 
-void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
+bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const AsterixRecord &record)
 {
     ++m_cat010SmrSrvMsgCounter.total;
 
@@ -239,12 +285,17 @@ void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
     if (!checkDataItems(record, m_srvMsgMinDataItems))
     {
         // Status Message is invalid. Do not continue.
-        return;
+        return false;
     }
 
     // Status Message is valid. Update surveillance state.
     ++m_cat010SmrSrvMsgCounter.n;
 
+    return true;
+}
+
+void MopsProcessor::cat010SmrSrvMsgUpdateRate(const AsterixRecord &record)
+{
     // Update Rate.
     AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
     double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
@@ -261,7 +312,7 @@ void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
     m_cat010SmrSrvMsgUpdateRateTable.expected += m_cat010SmrSrvMsgUpdateRateCounter.timeDiff();
 }
 
-void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
+bool MopsProcessor::cat010MlatTgtRepMinDataItems(const AsterixRecord &record)
 {
     ++m_cat010MlatTgtRepCounter.total;
 
@@ -269,12 +320,17 @@ void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
     if (!checkDataItems(record, m_ed117TgtRepMinDataItems))
     {
         // Target Report is invalid. Do not continue.
-        return;
+        return false;
     }
 
     // Target Report is valid. Update surveillance state.
     ++m_cat010MlatTgtRepCounter.n;
 
+    return true;
+}
+
+void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
+{
     // Update Rate.
     AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
     IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -325,14 +381,18 @@ void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
             m_cat010MlatTgtRepUpdateRateTable[area].expected += itCounter->timeDiff();
         }
     }
+}
 
+void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
+{
     // Probability of MLAT Detection.
     if (containsPosition(record))
     {
+        return;
     }
 }
 
-void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
+bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const AsterixRecord &record)
 {
     ++m_cat010MlatSrvMsgCounter.total;
 
@@ -340,12 +400,17 @@ void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
     if (!checkDataItems(record, m_srvMsgMinDataItems))
     {
         // Status Message is invalid. Do not continue.
-        return;
+        return false;
     }
 
     // Status Message is valid. Update surveillance state.
     ++m_cat010MlatSrvMsgCounter.n;
 
+    return true;
+}
+
+void MopsProcessor::cat010MlatSrvMsgUpdateRate(const AsterixRecord &record)
+{
     // Update Rate.
     AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
     double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
