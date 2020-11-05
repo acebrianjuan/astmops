@@ -1,6 +1,7 @@
 /*!
  * \file counters.h
- * \brief
+ * \brief Interface of a set of counters to assist in the calculation
+ * of the performance indicators.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
  *
  * -----------------------------------------------------------------------
