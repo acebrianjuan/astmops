@@ -46,6 +46,9 @@ private slots:
     void testUpdateRate_data();
     void testUpdateRate();
 
+    void testProbDetection_data();
+    void testProbDetection();
+
 private:
 };
 
@@ -106,19 +109,19 @@ void MopsProcessorTest::testMinimumFields()
 
     if (testType == cat010SmrTgtRep)
     {
-        QCOMPARE(processor.ed116TargetReportsMinimumFields(), result);
+        QCOMPARE(processor.ed116TgtRepMinimumFields(), result);
     }
     else if (testType == cat010SmrSrvMsg)
     {
-        QCOMPARE(processor.ed116ServiceMessagesMinimumFields(), result);
+        QCOMPARE(processor.ed116SrvMsgMinimumFields(), result);
     }
     else if (testType == cat010MlatTgtRep)
     {
-        QCOMPARE(processor.ed117TargetReportsMinimumFields(), result);
+        QCOMPARE(processor.ed117TgtRepMinimumFields(), result);
     }
     else if (testType == cat010MlatSrvMsg)
     {
-        QCOMPARE(processor.ed117ServiceMessagesMinimumFields(), result);
+        QCOMPARE(processor.ed117SrvMsgMinimumFields(), result);
     }
 }
 
@@ -164,19 +167,66 @@ void MopsProcessorTest::testUpdateRate()
 
     if (testType == cat010SmrTgtRep)
     {
-        QCOMPARE(processor.ed116TargetReportsUpdateRate(Aerodrome::Runway), result);
+        QCOMPARE(processor.ed116TgtRepUpdateRate(Aerodrome::Runway), result);
     }
     else if (testType == cat010SmrSrvMsg)
     {
-        QCOMPARE(processor.ed116ServiceMessagesUpdateRate(), result);
+        QCOMPARE(processor.ed116SrvMsgUpdateRate(), result);
     }
     else if (testType == cat010MlatTgtRep)
     {
-        QCOMPARE(processor.ed117TargetReportsUpdateRate(Aerodrome::Runway), result);
+        QCOMPARE(processor.ed117TgtRepUpdateRate(Aerodrome::Runway), result);
     }
     else if (testType == cat010MlatSrvMsg)
     {
-        QCOMPARE(processor.ed117ServiceMessagesUpdateRate(), result);
+        QCOMPARE(processor.ed117SrvMsgUpdateRate(), result);
+    }
+}
+
+void MopsProcessorTest::testProbDetection_data()
+{
+    QTest::addColumn<TestType>("testType");
+    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<double>("result");
+
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep << "cat010-smr-TgtRep-ur.xml" << 1.0;
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep << "cat010-mlat-TgtRep-ur.xml" << 1.0;
+}
+
+void MopsProcessorTest::testProbDetection()
+{
+    AsterixXmlReader reader;
+    MopsProcessor processor;
+
+    auto runwayCallback = [](const QPointF& point) {
+        Q_UNUSED(point);
+        return Aerodrome::Runway;
+    };
+
+    processor.setLocatePointCallback(runwayCallback);
+
+    QFETCH(QString, fileName);
+    QFile file(QFINDTESTDATA(fileName));
+    QVERIFY(file.open(QIODevice::ReadOnly));
+
+    QFETCH(TestType, testType);
+    QFETCH(double, result);
+
+    const QByteArray contents = file.readAll();
+    reader.addData(contents);
+
+    while (reader.hasPendingRecords())
+    {
+        processor.processRecord(reader.record());
+    }
+
+    if (testType == cat010SmrTgtRep)
+    {
+        QCOMPARE(processor.ed116TgtRepProbDetection(Aerodrome::Runway), result);
+    }
+    else if (testType == cat010MlatTgtRep)
+    {
+        QCOMPARE(processor.ed117TgtRepProbDetection(Aerodrome::Runway), result);
     }
 }
 

@@ -37,13 +37,13 @@ enum SystemType
 };
 
 
-const float ed116TgtRepUpdateRateHz = 1.0;  // Hz
-const float ed116SrvMsgUpdateRateHz = 1.0;  // Hz
+const double ed116TgtRepUpdateRateHz = 1.0;  // Hz
+const double ed116SrvMsgUpdateRateHz = 1.0;  // Hz
 
-const float ed117TgtRepUpdateRateHz = 1.0;  // Hz
-const float ed117SrvMsgUpdateRateHz = 1.0;  // Hz
+const double ed117TgtRepUpdateRateHz = 1.0;  // Hz
+const double ed117SrvMsgUpdateRateHz = 1.0;  // Hz
 
-const float silencePeriodSeconds = 60;  // s
+const double silencePeriodSeconds = 60.0;  // s
 
 
 static quint8 readSic(QString key)
@@ -85,7 +85,7 @@ inline quint8 adsbSic()
     return readSic(key);
 }
 
-inline float ed116TgtRepUpdateRate()
+inline double ed116TgtRepUpdateRate()
 {
     QString key = QLatin1String("MOPS.ed116TgtRepUpdateRate");
 
@@ -96,7 +96,7 @@ inline float ed116TgtRepUpdateRate()
         return ed116TgtRepUpdateRateHz;
     }
 
-    float var = settings.value(key).toFloat();
+    double var = settings.value(key).toDouble();
 
     if (var <= 0)
     {
@@ -107,7 +107,7 @@ inline float ed116TgtRepUpdateRate()
     return var;
 }
 
-inline float ed116SrvMsgUpdateRate()
+inline double ed116SrvMsgUpdateRate()
 {
     QString key = QLatin1String("MOPS.ed116SrvMsgUpdateRate");
 
@@ -118,7 +118,7 @@ inline float ed116SrvMsgUpdateRate()
         return ed116SrvMsgUpdateRateHz;
     }
 
-    float var = settings.value(key).toFloat();
+    double var = settings.value(key).toDouble();
 
     if (var <= 0)
     {
@@ -129,7 +129,7 @@ inline float ed116SrvMsgUpdateRate()
     return var;
 }
 
-inline float ed117TgtRepUpdateRate()
+inline double ed117TgtRepUpdateRate()
 {
     QString key = QLatin1String("MOPS.ed117TgtRepUpdateRate");
 
@@ -140,7 +140,7 @@ inline float ed117TgtRepUpdateRate()
         return ed117TgtRepUpdateRateHz;
     }
 
-    float var = settings.value(key).toFloat();
+    double var = settings.value(key).toDouble();
 
     if (var <= 0)
     {
@@ -151,7 +151,7 @@ inline float ed117TgtRepUpdateRate()
     return var;
 }
 
-inline float ed117SrvMsgUpdateRate()
+inline double ed117SrvMsgUpdateRate()
 {
     QString key = QLatin1String("MOPS.ed117SrvMsgUpdateRate");
 
@@ -162,7 +162,7 @@ inline float ed117SrvMsgUpdateRate()
         return ed117SrvMsgUpdateRateHz;
     }
 
-    float var = settings.value(key).toFloat();
+    double var = settings.value(key).toDouble();
 
     if (var <= 0)
     {
@@ -173,7 +173,7 @@ inline float ed117SrvMsgUpdateRate()
     return var;
 }
 
-inline float silencePeriod()
+inline double silencePeriod()
 {
     QString key = QLatin1String("MOPS.SilencePeriod");
 
@@ -184,7 +184,7 @@ inline float silencePeriod()
         return silencePeriodSeconds;
     }
 
-    float var = settings.value(key).toFloat();
+    double var = settings.value(key).toDouble();
 
     if (var <= 0)
     {

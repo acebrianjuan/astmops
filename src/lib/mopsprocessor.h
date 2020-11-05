@@ -23,6 +23,7 @@
 #include "aerodrome.h"
 #include "asterix.h"
 #include "astmops.h"
+#include "counters.h"
 #include <QObject>
 #include <QQueue>
 
@@ -47,64 +48,11 @@ public:
         DataItemListType type;
     };
 
-    struct Counter
+    struct TargetData
     {
-        quint32 n = 0;
-        quint32 total = 0;
-    };
-
-    struct UpdateRateCounter
-    {
-        QDateTime firstTod;
-        QDateTime lastTod;
-        Aerodrome::Area area = Aerodrome::Area::None;
-
-        bool isInitialized() { return firstTod.isValid(); }
-
-        void reset()
-        {
-            firstTod = QDateTime();
-            lastTod = QDateTime();
-            area = Aerodrome::Area::None;
-        }
-
-        void update(QDateTime newTod)
-        {
-            if (firstTod.isNull())
-            {
-                firstTod = newTod;
-            }
-            else if (lastTod.isNull())
-            {
-                lastTod = newTod;
-            }
-            else if (firstTod.isValid() && lastTod.isValid())
-            {
-                firstTod = lastTod;
-                lastTod = newTod;
-            }
-        }
-
-        double timeDiff()
-        {
-            if (firstTod.isValid() && lastTod.isValid())
-            {
-                return firstTod.msecsTo(lastTod) / 1000;
-            }
-
-            return qQNaN();
-        }
-
-        operator bool() const
-        {
-            return firstTod.isValid() && lastTod.isValid();
-        }
-    };
-
-    struct UpdateRateResult
-    {
-        quint32 updates = 0;
-        quint32 expected = 0;
+        Aerodrome::Area area;
+        Counters::IntervalCounter updateRateCounter;
+        Counters::IntervalCounter probDetectionCounter;
     };
 
     void setLocatePointCallback(std::function<Aerodrome::Area(const QPointF&)> callback);
@@ -113,17 +61,19 @@ public:
     void processRecord(const AsterixRecord& record);
 
 public slots:
-    double ed116TargetReportsMinimumFields();
-    double ed116TargetReportsUpdateRate(Aerodrome::Area area = Aerodrome::All);
+    double ed116TgtRepMinimumFields();
+    double ed116TgtRepUpdateRate(Aerodrome::Area area = Aerodrome::All);
+    double ed116TgtRepProbDetection(Aerodrome::Area area = Aerodrome::All);
 
-    double ed116ServiceMessagesMinimumFields();
-    double ed116ServiceMessagesUpdateRate();
+    double ed116SrvMsgMinimumFields();
+    double ed116SrvMsgUpdateRate();
 
-    double ed117TargetReportsMinimumFields();
-    double ed117TargetReportsUpdateRate(Aerodrome::Area area = Aerodrome::All);
+    double ed117TgtRepMinimumFields();
+    double ed117TgtRepUpdateRate(Aerodrome::Area area = Aerodrome::All);
+    double ed117TgtRepProbDetection(Aerodrome::Area area = Aerodrome::All);
 
-    double ed117ServiceMessagesMinimumFields();
-    double ed117ServiceMessagesUpdateRate();
+    double ed117SrvMsgMinimumFields();
+    double ed117SrvMsgUpdateRate();
 
 signals:
 
@@ -137,6 +87,7 @@ private:
     // CAT010 SMR Target Report
     bool cat010SmrTgtRepMinDataItems(const AsterixRecord& record);
     void cat010SmrTgtRepUpdateRate(const AsterixRecord& record);
+    void cat010SmrTgtRepProbDetection(const AsterixRecord& record);
 
     // CAT010 SMR Service Message
     bool cat010SmrSrvMsgMinDataItems(const AsterixRecord& record);
@@ -170,35 +121,41 @@ private:
     quint8 m_mlatSic = Configuration::mlatSic();
     quint8 m_adsbSic = Configuration::adsbSic();
 
-    float m_ed116SrvMsgUpdateRateHz = Configuration::ed116SrvMsgUpdateRate();
-    float m_ed116TgtRepUpdateRateHz = Configuration::ed116TgtRepUpdateRate();
+    double m_ed116SrvMsgUpdateRateHz = Configuration::ed116SrvMsgUpdateRate();
+    double m_ed116TgtRepUpdateRateHz = Configuration::ed116TgtRepUpdateRate();
 
-    float m_ed117SrvMsgUpdateRateHz = Configuration::ed117SrvMsgUpdateRate();
-    float m_ed117TgtRepUpdateRateHz = Configuration::ed117TgtRepUpdateRate();
+    double m_ed117SrvMsgUpdateRateHz = Configuration::ed117SrvMsgUpdateRate();
+    double m_ed117TgtRepUpdateRateHz = Configuration::ed117TgtRepUpdateRate();
 
-    float m_silencePeriod = Configuration::silencePeriod();
+    double m_silencePeriod = Configuration::silencePeriod();
 
     QVector<DataItemList> m_ed116TgtRepMinDataItems = ed116TargetReportsMinimumDataItems();
     QVector<DataItemList> m_ed117TgtRepMinDataItems = ed117TargetReportsMinimumDataItems();
     QVector<DataItemList> m_srvMsgMinDataItems = serviceMessagesMinimumDataItems();
 
-    Counter m_cat010SmrTgtRepCounter;
-    Counter m_cat010MlatTgtRepCounter;
+    Counters::BasicCounter m_cat010SmrTgtRepCounter;
+    Counters::BasicCounter m_cat010MlatTgtRepCounter;
 
-    Counter m_cat010SmrSrvMsgCounter;
-    Counter m_cat010MlatSrvMsgCounter;
+    Counters::BasicCounter m_cat010SmrSrvMsgCounter;
+    Counters::BasicCounter m_cat010MlatSrvMsgCounter;
 
-    QHash<TrackNum, UpdateRateCounter> m_cat010SmrTgtRepUpdateRateCounters;
-    QHash<IcaoAddr, UpdateRateCounter> m_cat010MlatTgtRepUpdateRateCounters;
+    QHash<TrackNum, TargetData> m_cat010SmrTgtRepUpdateRateCounters;
+    QHash<TrackNum, TargetData> m_cat010SmrTgtRepProbDetectionCounters;
 
-    UpdateRateCounter m_cat010SmrSrvMsgUpdateRateCounter;
-    UpdateRateCounter m_cat010MlatSrvMsgUpdateRateCounter;
+    QHash<IcaoAddr, TargetData> m_cat010MlatTgtRepUpdateRateCounters;
+    QHash<IcaoAddr, TargetData> m_cat010MlatTgtRepProbDetectionCounters;
 
-    UpdateRateResult m_cat010SmrSrvMsgUpdateRateTable;
-    UpdateRateResult m_cat010MlatSrvMsgUpdateRateTable;
+    Counters::IntervalCounter m_cat010SmrSrvMsgUpdateRateCounter = Counters::IntervalCounter(1 / m_ed116SrvMsgUpdateRateHz);
+    Counters::IntervalCounter m_cat010MlatSrvMsgUpdateRateCounter = Counters::IntervalCounter(1 / m_ed117SrvMsgUpdateRateHz);
 
-    QHash<Aerodrome::Area, UpdateRateResult> m_cat010SmrTgtRepUpdateRateTable;
-    QHash<Aerodrome::Area, UpdateRateResult> m_cat010MlatTgtRepUpdateRateTable;
+    Counters::BasicCounter m_cat010SmrSrvMsgUpdateRateTable;
+    Counters::BasicCounter m_cat010MlatSrvMsgUpdateRateTable;
+
+    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010SmrTgtRepUpdateRateTable;
+    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010SmrTgtRepProbDetectionTable;
+
+    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatTgtRepUpdateRateTable;
+    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatTgtRepProbDetectionTable;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

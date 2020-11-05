@@ -34,9 +34,10 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
 {
     if (record.m_cat == 10)
     {
-        // TODO: Handle case when none of the following Data Items are present:
-        // * I010/I000 Message Type
-        // * I010/I020 Target Report Descriptor
+        // TODO: Handle case when any of the following Data Items are missing:
+        // * I010/000 Message Type
+        // * I010/010 Data Source Identifier
+        // * I010/020 Target Report Descriptor
 
         AsterixDataItem di010_010 = record.m_dataItems[QLatin1String("I010")];
         //quint8 sac = di010_010.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -65,21 +66,24 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
     }
 }
 
-double MopsProcessor::ed116TargetReportsMinimumFields()
+double MopsProcessor::ed116TgtRepMinimumFields()
 {
-    double num = static_cast<double>(m_cat010SmrTgtRepCounter.n);
-    double den = static_cast<double>(m_cat010SmrTgtRepCounter.total);
+    double num = m_cat010SmrTgtRepCounter.countValid;
+    double den = m_cat010SmrTgtRepCounter.countTotal;
 
-    Q_ASSERT(den > 0);
+    if (den == 0)
+    {
+        return qQNaN();
+    }
 
     double p = num / den;
     return p;
 }
 
-double MopsProcessor::ed116TargetReportsUpdateRate(Aerodrome::Area area)
+double MopsProcessor::ed116TgtRepUpdateRate(Aerodrome::Area area)
 {
-    double num = m_cat010SmrTgtRepUpdateRateTable.value(area).updates;
-    double den = m_cat010SmrTgtRepUpdateRateTable.value(area).expected;
+    double num = m_cat010SmrTgtRepUpdateRateTable.value(area).countValid;
+    double den = m_cat010SmrTgtRepUpdateRateTable.value(area).countTotal;
 
     if (den == 0)
     {
@@ -90,21 +94,38 @@ double MopsProcessor::ed116TargetReportsUpdateRate(Aerodrome::Area area)
     return ur;
 }
 
-double MopsProcessor::ed116ServiceMessagesMinimumFields()
+double MopsProcessor::ed116TgtRepProbDetection(Aerodrome::Area area)
 {
-    double num = static_cast<double>(m_cat010SmrSrvMsgCounter.n);
-    double den = static_cast<double>(m_cat010SmrSrvMsgCounter.total);
+    double num = m_cat010SmrTgtRepProbDetectionTable.value(area).countValid;
+    double den = m_cat010SmrTgtRepProbDetectionTable.value(area).countTotal;
 
-    Q_ASSERT(den > 0);
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double pd = num / den;
+    return pd;
+}
+
+double MopsProcessor::ed116SrvMsgMinimumFields()
+{
+    double num = m_cat010SmrSrvMsgCounter.countValid;
+    double den = m_cat010SmrSrvMsgCounter.countTotal;
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
 
     double p = num / den;
     return p;
 }
 
-double MopsProcessor::ed116ServiceMessagesUpdateRate()
+double MopsProcessor::ed116SrvMsgUpdateRate()
 {
-    double num = m_cat010SmrSrvMsgUpdateRateTable.updates;
-    double den = m_cat010SmrSrvMsgUpdateRateTable.expected;
+    double num = m_cat010SmrSrvMsgUpdateRateTable.countValid;
+    double den = m_cat010SmrSrvMsgUpdateRateTable.countTotal;
 
     if (den == 0)
     {
@@ -115,21 +136,24 @@ double MopsProcessor::ed116ServiceMessagesUpdateRate()
     return ur;
 }
 
-double MopsProcessor::ed117TargetReportsMinimumFields()
+double MopsProcessor::ed117TgtRepMinimumFields()
 {
-    double num = static_cast<double>(m_cat010MlatTgtRepCounter.n);
-    double den = static_cast<double>(m_cat010MlatTgtRepCounter.total);
+    double num = m_cat010MlatTgtRepCounter.countValid;
+    double den = m_cat010MlatTgtRepCounter.countTotal;
 
-    Q_ASSERT(den > 0);
+    if (den == 0)
+    {
+        return qQNaN();
+    }
 
     double p = num / den;
     return p;
 }
 
-double MopsProcessor::ed117TargetReportsUpdateRate(Aerodrome::Area area)
+double MopsProcessor::ed117TgtRepUpdateRate(Aerodrome::Area area)
 {
-    double num = m_cat010MlatTgtRepUpdateRateTable.value(area).updates;
-    double den = m_cat010MlatTgtRepUpdateRateTable.value(area).expected;
+    double num = m_cat010MlatTgtRepUpdateRateTable.value(area).countValid;
+    double den = m_cat010MlatTgtRepUpdateRateTable.value(area).countTotal;
 
     if (den == 0)
     {
@@ -140,21 +164,38 @@ double MopsProcessor::ed117TargetReportsUpdateRate(Aerodrome::Area area)
     return ur;
 }
 
-double MopsProcessor::ed117ServiceMessagesMinimumFields()
+double MopsProcessor::ed117TgtRepProbDetection(Aerodrome::Area area)
 {
-    double num = static_cast<double>(m_cat010MlatSrvMsgCounter.n);
-    double den = static_cast<double>(m_cat010MlatSrvMsgCounter.total);
+    double num = m_cat010MlatTgtRepProbDetectionTable.value(area).countValid;
+    double den = m_cat010MlatTgtRepProbDetectionTable.value(area).countTotal;
 
-    Q_ASSERT(den > 0);
+    if (den == 0)
+    {
+        return qQNaN();
+    }
+
+    double pd = num / den;
+    return pd;
+}
+
+double MopsProcessor::ed117SrvMsgMinimumFields()
+{
+    double num = m_cat010MlatSrvMsgCounter.countValid;
+    double den = m_cat010MlatSrvMsgCounter.countTotal;
+
+    if (den == 0)
+    {
+        return qQNaN();
+    }
 
     double p = num / den;
     return p;
 }
 
-double MopsProcessor::ed117ServiceMessagesUpdateRate()
+double MopsProcessor::ed117SrvMsgUpdateRate()
 {
-    double num = m_cat010MlatSrvMsgUpdateRateTable.updates;
-    double den = m_cat010MlatSrvMsgUpdateRateTable.expected;
+    double num = m_cat010MlatSrvMsgUpdateRateTable.countValid;
+    double den = m_cat010MlatSrvMsgUpdateRateTable.countTotal;
 
     if (den == 0)
     {
@@ -173,6 +214,7 @@ void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
     }
 
     cat010SmrTgtRepUpdateRate(record);
+    cat010SmrTgtRepProbDetection(record);
 }
 
 void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
@@ -208,7 +250,7 @@ void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
 
 bool MopsProcessor::cat010SmrTgtRepMinDataItems(const AsterixRecord &record)
 {
-    ++m_cat010SmrTgtRepCounter.total;
+    ++m_cat010SmrTgtRepCounter.countTotal;
 
     // Minimum Data Items.
     if (!checkDataItems(record, m_ed116TgtRepMinDataItems))
@@ -218,7 +260,7 @@ bool MopsProcessor::cat010SmrTgtRepMinDataItems(const AsterixRecord &record)
     }
 
     // Target Report is valid. Update surveillance state.
-    ++m_cat010SmrTgtRepCounter.n;
+    ++m_cat010SmrTgtRepCounter.countValid;
 
     return true;
 }
@@ -239,13 +281,13 @@ void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<uint, UpdateRateCounter>::iterator itCounter = m_cat010SmrTgtRepUpdateRateCounters.find(trkNum);
+    QHash<TrackNum, TargetData>::iterator itCounter = m_cat010SmrTgtRepUpdateRateCounters.find(trkNum);
 
     if (itCounter == m_cat010SmrTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
-        UpdateRateCounter urCounter;
-        urCounter.update(todDateTime);
+        TargetData urCounter;
+        urCounter.updateRateCounter.update(todDateTime);
         urCounter.area = area;
 
         // Add it to the hash maps.
@@ -255,31 +297,72 @@ void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
     {
         // Known target. Check area.
         Aerodrome::Area oldArea = itCounter->area;
-        if (area != oldArea || itCounter->lastTod.msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itCounter->reset();
-            itCounter->update(todDateTime);
+            itCounter->updateRateCounter.reset();
+            itCounter->updateRateCounter.update(todDateTime);
             itCounter->area = area;
         }
         else
         {
             // Update counter.
-            itCounter->update(todDateTime);
+            itCounter->updateRateCounter.update(todDateTime);
+            Counters::BasicCounter counter = itCounter->updateRateCounter.read();
 
-            if (itCounter->timeDiff() <= 1 / m_ed116TgtRepUpdateRateHz)
-            {
-                ++m_cat010SmrTgtRepUpdateRateTable[area].updates;
-            }
-
-            m_cat010SmrTgtRepUpdateRateTable[area].expected += itCounter->timeDiff();
+            m_cat010SmrTgtRepUpdateRateTable[area].countValid += counter.countValid;
+            m_cat010SmrTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
         }
+    }
+}
+
+void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
+{
+    // Probability of Detection.
+    if (!containsPosition(record))
+    {
+        return;
+    }
+
+    AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
+    TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+
+    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    QDateTime todDateTime = getDateTimefromTod(tod);
+
+    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
+    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+
+    Aerodrome::Area area = m_locatePoint(QPointF(x, y));
+
+    QHash<IcaoAddr, TargetData>::iterator itCounter = m_cat010SmrTgtRepProbDetectionCounters.find(trkNum);
+
+    if (itCounter == m_cat010SmrTgtRepProbDetectionCounters.end())
+    {
+        // Unknown target. Create a new counter for it.
+        TargetData urCounter;
+        urCounter.probDetectionCounter.update(todDateTime);
+        urCounter.area = area;
+
+        // Add it to the hash maps.
+        m_cat010SmrTgtRepProbDetectionCounters[trkNum] = urCounter;
+    }
+    else
+    {
+        // Update counter.
+        itCounter->probDetectionCounter.update(todDateTime);
+        Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
+
+        m_cat010SmrTgtRepProbDetectionTable[area].countValid += counter.countValid;
+        m_cat010SmrTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
     }
 }
 
 bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const AsterixRecord &record)
 {
-    ++m_cat010SmrSrvMsgCounter.total;
+    ++m_cat010SmrSrvMsgCounter.countTotal;
 
     // Minimum Data Items.
     if (!checkDataItems(record, m_srvMsgMinDataItems))
@@ -289,7 +372,7 @@ bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const AsterixRecord &record)
     }
 
     // Status Message is valid. Update surveillance state.
-    ++m_cat010SmrSrvMsgCounter.n;
+    ++m_cat010SmrSrvMsgCounter.countValid;
 
     return true;
 }
@@ -303,18 +386,15 @@ void MopsProcessor::cat010SmrSrvMsgUpdateRate(const AsterixRecord &record)
 
     // Update counter.
     m_cat010SmrSrvMsgUpdateRateCounter.update(todDateTime);
+    Counters::BasicCounter counter = m_cat010SmrSrvMsgUpdateRateCounter.read();
 
-    if (m_cat010SmrSrvMsgUpdateRateCounter.timeDiff() <= 1 / m_ed116SrvMsgUpdateRateHz)
-    {
-        ++m_cat010SmrSrvMsgUpdateRateTable.updates;
-    }
-
-    m_cat010SmrSrvMsgUpdateRateTable.expected += m_cat010SmrSrvMsgUpdateRateCounter.timeDiff();
+    m_cat010SmrSrvMsgUpdateRateTable.countValid += counter.countValid;
+    m_cat010SmrSrvMsgUpdateRateTable.countTotal += counter.countTotal;
 }
 
 bool MopsProcessor::cat010MlatTgtRepMinDataItems(const AsterixRecord &record)
 {
-    ++m_cat010MlatTgtRepCounter.total;
+    ++m_cat010MlatTgtRepCounter.countTotal;
 
     // Minimum Data Items.
     if (!checkDataItems(record, m_ed117TgtRepMinDataItems))
@@ -324,7 +404,7 @@ bool MopsProcessor::cat010MlatTgtRepMinDataItems(const AsterixRecord &record)
     }
 
     // Target Report is valid. Update surveillance state.
-    ++m_cat010MlatTgtRepCounter.n;
+    ++m_cat010MlatTgtRepCounter.countValid;
 
     return true;
 }
@@ -345,13 +425,13 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<uint, UpdateRateCounter>::iterator itCounter = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
+    QHash<IcaoAddr, TargetData>::iterator itCounter = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
 
     if (itCounter == m_cat010MlatTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
-        UpdateRateCounter urCounter;
-        urCounter.firstTod = todDateTime;
+        TargetData urCounter;
+        urCounter.updateRateCounter.update(todDateTime);
         urCounter.area = area;
 
         // Add it to the hash maps.
@@ -361,40 +441,72 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
     {
         // Known target. Check area.
         Aerodrome::Area oldArea = itCounter->area;
-        if (area != oldArea || itCounter->lastTod.msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itCounter->reset();
-            itCounter->update(todDateTime);
+            itCounter->updateRateCounter.reset();
+            itCounter->updateRateCounter.update(todDateTime);
             itCounter->area = area;
         }
         else
         {
             // Update counter.
-            itCounter->update(todDateTime);
+            itCounter->updateRateCounter.update(todDateTime);
+            Counters::BasicCounter counter = itCounter->updateRateCounter.read();
 
-            if (itCounter->timeDiff() <= 1 / m_ed117TgtRepUpdateRateHz)
-            {
-                ++m_cat010MlatTgtRepUpdateRateTable[area].updates;
-            }
-
-            m_cat010MlatTgtRepUpdateRateTable[area].expected += itCounter->timeDiff();
+            m_cat010MlatTgtRepUpdateRateTable[area].countValid += counter.countValid;
+            m_cat010MlatTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
         }
     }
 }
 
 void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
 {
-    // Probability of MLAT Detection.
-    if (containsPosition(record))
+    // Probability of Detection.
+    if (!containsPosition(record))
     {
         return;
+    }
+
+    AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
+    IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+
+    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
+    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    QDateTime todDateTime = getDateTimefromTod(tod);
+
+    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
+    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+
+    Aerodrome::Area area = m_locatePoint(QPointF(x, y));
+
+    QHash<IcaoAddr, TargetData>::iterator itCounter = m_cat010MlatTgtRepProbDetectionCounters.find(icaoAddr);
+
+    if (itCounter == m_cat010MlatTgtRepProbDetectionCounters.end())
+    {
+        // Unknown target. Create a new counter for it.
+        TargetData urCounter;
+        urCounter.probDetectionCounter.update(todDateTime);
+        urCounter.area = area;
+
+        // Add it to the hash maps.
+        m_cat010MlatTgtRepProbDetectionCounters[icaoAddr] = urCounter;
+    }
+    else
+    {
+        // Update counter.
+        itCounter->probDetectionCounter.update(todDateTime);
+        Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
+
+        m_cat010MlatTgtRepProbDetectionTable[area].countValid += counter.countValid;
+        m_cat010MlatTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
     }
 }
 
 bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const AsterixRecord &record)
 {
-    ++m_cat010MlatSrvMsgCounter.total;
+    ++m_cat010MlatSrvMsgCounter.countTotal;
 
     // Minimum Data Items.
     if (!checkDataItems(record, m_srvMsgMinDataItems))
@@ -404,7 +516,7 @@ bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const AsterixRecord &record)
     }
 
     // Status Message is valid. Update surveillance state.
-    ++m_cat010MlatSrvMsgCounter.n;
+    ++m_cat010MlatSrvMsgCounter.countValid;
 
     return true;
 }
@@ -418,13 +530,10 @@ void MopsProcessor::cat010MlatSrvMsgUpdateRate(const AsterixRecord &record)
 
     // Update counter.
     m_cat010MlatSrvMsgUpdateRateCounter.update(todDateTime);
+    Counters::BasicCounter counter = m_cat010MlatSrvMsgUpdateRateCounter.read();
 
-    if (m_cat010MlatSrvMsgUpdateRateCounter.timeDiff() <= 1 / m_ed117SrvMsgUpdateRateHz)
-    {
-        ++m_cat010MlatSrvMsgUpdateRateTable.updates;
-    }
-
-    m_cat010MlatSrvMsgUpdateRateTable.expected += m_cat010MlatSrvMsgUpdateRateCounter.timeDiff();
+    m_cat010MlatSrvMsgUpdateRateTable.countValid += counter.countValid;
+    m_cat010MlatSrvMsgUpdateRateTable.countTotal += counter.countTotal;
 }
 
 bool MopsProcessor::checkDataItems(const AsterixRecord &record,
