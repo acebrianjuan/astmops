@@ -286,12 +286,11 @@ void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
     if (itCounter == m_cat010SmrTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
-        TargetData urCounter;
-        urCounter.updateRateCounter.update(todDateTime);
-        urCounter.area = area;
+        TargetData targetData;
+        targetData.area = area;
 
         // Add it to the hash maps.
-        m_cat010SmrTgtRepUpdateRateCounters[trkNum] = urCounter;
+        itCounter = m_cat010SmrTgtRepUpdateRateCounters.insert(trkNum, targetData);
     }
     else
     {
@@ -301,19 +300,16 @@ void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
         {
             // Area changed or Silence Period. Reset counter.
             itCounter->updateRateCounter.reset();
-            itCounter->updateRateCounter.update(todDateTime);
             itCounter->area = area;
         }
-        else
-        {
-            // Update counter.
-            itCounter->updateRateCounter.update(todDateTime);
-            Counters::BasicCounter counter = itCounter->updateRateCounter.read();
-
-            m_cat010SmrTgtRepUpdateRateTable[area].countValid += counter.countValid;
-            m_cat010SmrTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
-        }
     }
+
+    // Update counter.
+    itCounter->updateRateCounter.update(todDateTime);
+    Counters::BasicCounter counter = itCounter->updateRateCounter.read();
+
+    m_cat010SmrTgtRepUpdateRateTable[area].countValid += counter.countValid;
+    m_cat010SmrTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
 }
 
 void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
@@ -343,21 +339,29 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
     {
         // Unknown target. Create a new counter for it.
         TargetData urCounter;
-        urCounter.probDetectionCounter.update(todDateTime);
         urCounter.area = area;
 
         // Add it to the hash maps.
-        m_cat010SmrTgtRepProbDetectionCounters[trkNum] = urCounter;
+        itCounter = m_cat010SmrTgtRepProbDetectionCounters.insert(trkNum, urCounter);
     }
     else
     {
-        // Update counter.
-        itCounter->probDetectionCounter.update(todDateTime);
-        Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
-
-        m_cat010SmrTgtRepProbDetectionTable[area].countValid += counter.countValid;
-        m_cat010SmrTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
+        // Known target. Check area.
+        Aerodrome::Area oldArea = itCounter->area;
+        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        {
+            // Area changed or Silence Period. Reset counter.
+            itCounter->updateRateCounter.reset();
+            itCounter->area = area;
+        }
     }
+
+    // Update counter.
+    itCounter->probDetectionCounter.update(todDateTime);
+    Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
+
+    m_cat010SmrTgtRepProbDetectionTable[area].countValid += counter.countValid;
+    m_cat010SmrTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
 }
 
 bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const AsterixRecord &record)
@@ -431,11 +435,10 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
     {
         // Unknown target. Create a new counter for it.
         TargetData urCounter;
-        urCounter.updateRateCounter.update(todDateTime);
         urCounter.area = area;
 
         // Add it to the hash maps.
-        m_cat010MlatTgtRepUpdateRateCounters[icaoAddr] = urCounter;
+        itCounter = m_cat010MlatTgtRepUpdateRateCounters.insert(icaoAddr, urCounter);
     }
     else
     {
@@ -445,19 +448,16 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
         {
             // Area changed or Silence Period. Reset counter.
             itCounter->updateRateCounter.reset();
-            itCounter->updateRateCounter.update(todDateTime);
             itCounter->area = area;
         }
-        else
-        {
-            // Update counter.
-            itCounter->updateRateCounter.update(todDateTime);
-            Counters::BasicCounter counter = itCounter->updateRateCounter.read();
-
-            m_cat010MlatTgtRepUpdateRateTable[area].countValid += counter.countValid;
-            m_cat010MlatTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
-        }
     }
+
+    // Update counter.
+    itCounter->updateRateCounter.update(todDateTime);
+    Counters::BasicCounter counter = itCounter->updateRateCounter.read();
+
+    m_cat010MlatTgtRepUpdateRateTable[area].countValid += counter.countValid;
+    m_cat010MlatTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
 }
 
 void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
@@ -487,21 +487,29 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
     {
         // Unknown target. Create a new counter for it.
         TargetData urCounter;
-        urCounter.probDetectionCounter.update(todDateTime);
         urCounter.area = area;
 
         // Add it to the hash maps.
-        m_cat010MlatTgtRepProbDetectionCounters[icaoAddr] = urCounter;
+        itCounter = m_cat010MlatTgtRepProbDetectionCounters.insert(icaoAddr, urCounter);
     }
     else
     {
-        // Update counter.
-        itCounter->probDetectionCounter.update(todDateTime);
-        Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
-
-        m_cat010MlatTgtRepProbDetectionTable[area].countValid += counter.countValid;
-        m_cat010MlatTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
+        // Known target. Check area.
+        Aerodrome::Area oldArea = itCounter->area;
+        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        {
+            // Area changed or Silence Period. Reset counter.
+            itCounter->updateRateCounter.reset();
+            itCounter->area = area;
+        }
     }
+
+    // Update counter.
+    itCounter->probDetectionCounter.update(todDateTime);
+    Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
+
+    m_cat010MlatTgtRepProbDetectionTable[area].countValid += counter.countValid;
+    m_cat010MlatTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
 }
 
 bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const AsterixRecord &record)
