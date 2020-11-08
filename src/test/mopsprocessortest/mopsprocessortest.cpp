@@ -71,13 +71,25 @@ void MopsProcessorTest::testMinimumFields_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<double>("result");
+    QTest::addColumn<QVector<double>>("result");
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep << "cat010-smr-TgtRep.xml" << 0.5;
-    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg << "cat010-smr-SrvMsg.xml" << 0.5;
+    QVector<double> expectedVals = QVector<double>() << 1.0 << 0.5;
 
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep << "cat010-mlat-TgtRep.xml" << 0.5;
-    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg << "cat010-mlat-SrvMsg.xml" << 0.5;
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
+                                << "CAT010_SMR_TgtRep_MF.xml"
+                                << expectedVals;
+
+    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg
+                                << "CAT010_SMR_SrvMsg_MF.xml"
+                                << expectedVals;
+
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
+                                 << "CAT010_MLAT_TgtRep_MF.xml"
+                                 << expectedVals;
+
+    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg
+                                 << "CAT010_MLAT_SrvMsg_MF.xml"
+                                 << expectedVals;
 }
 
 void MopsProcessorTest::testMinimumFields()
@@ -97,31 +109,46 @@ void MopsProcessorTest::testMinimumFields()
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
-    QFETCH(double, result);
+    QFETCH(QVector<double>, result);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
+    int i = 0;
     while (reader.hasPendingRecords())
     {
         processor.processRecord(reader.record());
-    }
 
-    if (testType == cat010SmrTgtRep)
-    {
-        QCOMPARE(processor.ed116TgtRepMinimumFields(), result);
-    }
-    else if (testType == cat010SmrSrvMsg)
-    {
-        QCOMPARE(processor.ed116SrvMsgMinimumFields(), result);
-    }
-    else if (testType == cat010MlatTgtRep)
-    {
-        QCOMPARE(processor.ed117TgtRepMinimumFields(), result);
-    }
-    else if (testType == cat010MlatSrvMsg)
-    {
-        QCOMPARE(processor.ed117SrvMsgMinimumFields(), result);
+        double expectedVal = result.at(i);
+        double actualVal = 0.0;
+
+        if (testType == cat010SmrTgtRep)
+        {
+            actualVal = processor.ed116TgtRepMinimumFields();
+        }
+        else if (testType == cat010SmrSrvMsg)
+        {
+            actualVal = processor.ed116SrvMsgMinimumFields();
+        }
+        else if (testType == cat010MlatTgtRep)
+        {
+            actualVal = processor.ed117TgtRepMinimumFields();
+        }
+        else if (testType == cat010MlatSrvMsg)
+        {
+            actualVal = processor.ed117SrvMsgMinimumFields();
+        }
+
+        if (qIsNaN(expectedVal))
+        {
+            QVERIFY(qIsNaN(actualVal));
+        }
+        else
+        {
+            QCOMPARE(actualVal, expectedVal);
+        }
+
+        ++i;
     }
 }
 
@@ -129,13 +156,36 @@ void MopsProcessorTest::testUpdateRate_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<double>("result");
+    QTest::addColumn<QVector<double>>("result");
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep << "cat010-smr-TgtRep-ur.xml" << 1.0;
-    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg << "cat010-smr-SrvMsg-ur.xml" << 1.0;
+    QVector<double> expectedVals1 = QVector<double>() << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
+                                                      << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
 
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep << "cat010-mlat-TgtRep-ur.xml" << 1.0;
-    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg << "cat010-mlat-SrvMsg-ur.xml" << 1.0;
+    QVector<double> expectedVals2 = QVector<double>() << 1.0 << 2.0 / 3.0 << 3.0 / 6.0 << 4.0 / 10.0;
+
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
+                                << "CAT010_SMR_TgtRep_UR_case_A.xml"
+                                << expectedVals1;
+
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
+                                << "CAT010_SMR_TgtRep_UR_case_B.xml"
+                                << expectedVals2;
+
+    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg
+                                << "CAT010_SMR_SrvMsg_UR_case_A.xml"
+                                << expectedVals1;
+
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
+                                 << "CAT010_MLAT_TgtRep_UR_case_A.xml"
+                                 << expectedVals1;
+
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
+                                 << "CAT010_MLAT_TgtRep_UR_case_B.xml"
+                                 << expectedVals2;
+
+    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg
+                                 << "CAT010_MLAT_SrvMsg_UR_case_A.xml"
+                                 << expectedVals1;
 }
 
 void MopsProcessorTest::testUpdateRate()
@@ -155,31 +205,46 @@ void MopsProcessorTest::testUpdateRate()
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
-    QFETCH(double, result);
+    QFETCH(QVector<double>, result);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
+    int i = 0;
     while (reader.hasPendingRecords())
     {
         processor.processRecord(reader.record());
-    }
 
-    if (testType == cat010SmrTgtRep)
-    {
-        QCOMPARE(processor.ed116TgtRepUpdateRate(Aerodrome::Runway), result);
-    }
-    else if (testType == cat010SmrSrvMsg)
-    {
-        QCOMPARE(processor.ed116SrvMsgUpdateRate(), result);
-    }
-    else if (testType == cat010MlatTgtRep)
-    {
-        QCOMPARE(processor.ed117TgtRepUpdateRate(Aerodrome::Runway), result);
-    }
-    else if (testType == cat010MlatSrvMsg)
-    {
-        QCOMPARE(processor.ed117SrvMsgUpdateRate(), result);
+        double expectedVal = result.at(i);
+        double actualVal = 0.0;
+
+        if (testType == cat010SmrTgtRep)
+        {
+            actualVal = processor.ed116TgtRepUpdateRate(Aerodrome::Runway);
+        }
+        else if (testType == cat010SmrSrvMsg)
+        {
+            actualVal = processor.ed116SrvMsgUpdateRate();
+        }
+        else if (testType == cat010MlatTgtRep)
+        {
+            actualVal = processor.ed117TgtRepUpdateRate(Aerodrome::Runway);
+        }
+        else if (testType == cat010MlatSrvMsg)
+        {
+            actualVal = processor.ed117SrvMsgUpdateRate();
+        }
+
+        if (qIsNaN(expectedVal))
+        {
+            QVERIFY(qIsNaN(actualVal));
+        }
+        else
+        {
+            QCOMPARE(actualVal, expectedVal);
+        }
+
+        ++i;
     }
 }
 
@@ -187,10 +252,18 @@ void MopsProcessorTest::testProbDetection_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
-    QTest::addColumn<double>("result");
+    QTest::addColumn<QVector<double>>("result");
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep << "cat010-smr-TgtRep-ur.xml" << 1.0;
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep << "cat010-mlat-TgtRep-ur.xml" << 1.0;
+    QVector<double> expectedVals = QVector<double>() << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
+                                                     << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
+
+    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
+                                << "CAT010_SMR_TgtRep_PD.xml"
+                                << expectedVals;
+
+    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
+                                 << "CAT010_MLAT_TgtRep_PD.xml"
+                                 << expectedVals;
 }
 
 void MopsProcessorTest::testProbDetection()
@@ -210,23 +283,38 @@ void MopsProcessorTest::testProbDetection()
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
-    QFETCH(double, result);
+    QFETCH(QVector<double>, result);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
+    int i = 0;
     while (reader.hasPendingRecords())
     {
         processor.processRecord(reader.record());
-    }
 
-    if (testType == cat010SmrTgtRep)
-    {
-        QCOMPARE(processor.ed116TgtRepProbDetection(Aerodrome::Runway), result);
-    }
-    else if (testType == cat010MlatTgtRep)
-    {
-        QCOMPARE(processor.ed117TgtRepProbDetection(Aerodrome::Runway), result);
+        double expectedVal = result.at(i);
+        double actualVal = 0.0;
+
+        if (testType == cat010SmrTgtRep)
+        {
+            actualVal = processor.ed116TgtRepProbDetection(Aerodrome::Runway);
+        }
+        else if (testType == cat010MlatTgtRep)
+        {
+            actualVal = processor.ed117TgtRepProbDetection(Aerodrome::Runway);
+        }
+
+        if (qIsNaN(expectedVal))
+        {
+            QVERIFY(qIsNaN(actualVal));
+        }
+        else
+        {
+            QCOMPARE(actualVal, expectedVal);
+        }
+
+        ++i;
     }
 }
 
