@@ -73,23 +73,45 @@ void MopsProcessorTest::testMinimumFields_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<QVector<double>>("result");
 
-    QVector<double> expectedVals = QVector<double>() << 1.0 << 0.5;
+    QVector<double> expectedVals1 = QVector<double>()
+                                    << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
+                                    << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
-                                << "CAT010_SMR_TgtRep_MF.xml"
-                                << expectedVals;
+    QVector<double> expectedVals2 = QVector<double>()
+                                    << 1.0 / 1.0 << 1.0 / 2.0 << 2.0 / 3.0 << 2.0 / 4.0 << 3.0 / 5.0
+                                    << 3.0 / 6.0 << 4.0 / 7.0 << 4.0 / 8.0 << 5.0 / 9.0 << 5.0 / 10.0;
 
-    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg
-                                << "CAT010_SMR_SrvMsg_MF.xml"
-                                << expectedVals;
+    QTest::newRow("SMR TgtRep (case A)") << cat010SmrTgtRep
+                                         << "CAT010_SMR_TgtRep_MF_case_A.xml"
+                                         << expectedVals1;
 
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
-                                 << "CAT010_MLAT_TgtRep_MF.xml"
-                                 << expectedVals;
+    QTest::newRow("SMR TgtRep (case B)") << cat010SmrTgtRep
+                                         << "CAT010_SMR_TgtRep_MF_case_B.xml"
+                                         << expectedVals2;
 
-    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg
-                                 << "CAT010_MLAT_SrvMsg_MF.xml"
-                                 << expectedVals;
+    QTest::newRow("SMR SrvMsg (case A)") << cat010SmrSrvMsg
+                                         << "CAT010_SMR_SrvMsg_MF_case_A.xml"
+                                         << expectedVals1;
+
+    QTest::newRow("SMR SrvMsg (case B)") << cat010SmrSrvMsg
+                                         << "CAT010_SMR_SrvMsg_MF_case_B.xml"
+                                         << expectedVals2;
+
+    QTest::newRow("MLAT TgtRep (case A)") << cat010MlatTgtRep
+                                          << "CAT010_MLAT_TgtRep_MF_case_A.xml"
+                                          << expectedVals1;
+
+    QTest::newRow("MLAT TgtRep (case B)") << cat010MlatTgtRep
+                                          << "CAT010_MLAT_TgtRep_MF_case_B.xml"
+                                          << expectedVals2;
+
+    QTest::newRow("MLAT SrvMsg (case A)") << cat010MlatSrvMsg
+                                          << "CAT010_MLAT_SrvMsg_MF_case_A.xml"
+                                          << expectedVals1;
+
+    QTest::newRow("MLAT SrvMsg (case B)") << cat010MlatSrvMsg
+                                          << "CAT010_MLAT_SrvMsg_MF_case_B.xml"
+                                          << expectedVals2;
 }
 
 void MopsProcessorTest::testMinimumFields()
@@ -158,34 +180,44 @@ void MopsProcessorTest::testUpdateRate_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<QVector<double>>("result");
 
-    QVector<double> expectedVals1 = QVector<double>() << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
-                                                      << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
+    QVector<double> expectedVals1 = QVector<double>()
+                                    << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
+                                    << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
 
-    QVector<double> expectedVals2 = QVector<double>() << 1.0 << 2.0 / 3.0 << 3.0 / 6.0 << 4.0 / 10.0;
+    QVector<double> expectedVals2 = QVector<double>()
+                                    << 1.0 << 2.0 / 3.0 << 3.0 / 6.0 << 4.0 / 10.0;
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
-                                << "CAT010_SMR_TgtRep_UR_case_A.xml"
-                                << expectedVals1;
+    QTest::newRow("SMR TgtRep (case A)") << cat010SmrTgtRep
+                                         << "CAT010_SMR_TgtRep_UR_case_A.xml"
+                                         << expectedVals1;
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
-                                << "CAT010_SMR_TgtRep_UR_case_B.xml"
-                                << expectedVals2;
+    QTest::newRow("SMR TgtRep (case B)") << cat010SmrTgtRep
+                                         << "CAT010_SMR_TgtRep_UR_case_B.xml"
+                                         << expectedVals2;
 
-    QTest::newRow("SMR SrvMsg") << cat010SmrSrvMsg
-                                << "CAT010_SMR_SrvMsg_UR_case_A.xml"
-                                << expectedVals1;
+    QTest::newRow("SMR SrvMsg (case A)") << cat010SmrSrvMsg
+                                         << "CAT010_SMR_SrvMsg_UR_case_A.xml"
+                                         << expectedVals1;
 
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
-                                 << "CAT010_MLAT_TgtRep_UR_case_A.xml"
-                                 << expectedVals1;
+    QTest::newRow("SMR SrvMsg (case B)") << cat010SmrSrvMsg
+                                         << "CAT010_SMR_SrvMsg_UR_case_B.xml"
+                                         << expectedVals2;
 
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
-                                 << "CAT010_MLAT_TgtRep_UR_case_B.xml"
-                                 << expectedVals2;
+    QTest::newRow("MLAT TgtRep (case A)") << cat010MlatTgtRep
+                                          << "CAT010_MLAT_TgtRep_UR_case_A.xml"
+                                          << expectedVals1;
 
-    QTest::newRow("MLAT SrvMsg") << cat010MlatSrvMsg
-                                 << "CAT010_MLAT_SrvMsg_UR_case_A.xml"
-                                 << expectedVals1;
+    QTest::newRow("MLAT TgtRep (case B)") << cat010MlatTgtRep
+                                          << "CAT010_MLAT_TgtRep_UR_case_B.xml"
+                                          << expectedVals2;
+
+    QTest::newRow("MLAT SrvMsg (case A)") << cat010MlatSrvMsg
+                                          << "CAT010_MLAT_SrvMsg_UR_case_A.xml"
+                                          << expectedVals1;
+
+    QTest::newRow("MLAT SrvMsg (case B)") << cat010MlatSrvMsg
+                                          << "CAT010_MLAT_SrvMsg_UR_case_B.xml"
+                                          << expectedVals2;
 }
 
 void MopsProcessorTest::testUpdateRate()
