@@ -281,32 +281,32 @@ void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<TrackNum, TargetData>::iterator itCounter = m_cat010SmrTgtRepUpdateRateCounters.find(trkNum);
+    QHash<TrackNum, TargetData>::iterator itTarget = m_cat010SmrTgtRepUpdateRateCounters.find(trkNum);
 
-    if (itCounter == m_cat010SmrTgtRepUpdateRateCounters.end())
+    if (itTarget == m_cat010SmrTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
         TargetData targetData;
         targetData.area = area;
 
         // Add it to the hash maps.
-        itCounter = m_cat010SmrTgtRepUpdateRateCounters.insert(trkNum, targetData);
+        itTarget = m_cat010SmrTgtRepUpdateRateCounters.insert(trkNum, targetData);
     }
     else
     {
         // Known target. Check area.
-        Aerodrome::Area oldArea = itCounter->area;
-        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        Aerodrome::Area oldArea = itTarget->area;
+        if (area != oldArea || itTarget->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itCounter->updateRateCounter.reset();
-            itCounter->area = area;
+            itTarget->updateRateCounter.reset();
+            itTarget->area = area;
         }
     }
 
     // Update counter.
-    itCounter->updateRateCounter.update(todDateTime);
-    Counters::BasicCounter counter = itCounter->updateRateCounter.read();
+    itTarget->updateRateCounter.update(todDateTime);
+    Counters::BasicCounter counter = itTarget->updateRateCounter.read();
 
     m_cat010SmrTgtRepUpdateRateTable[area].countValid += counter.countValid;
     m_cat010SmrTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
@@ -333,32 +333,32 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<IcaoAddr, TargetData>::iterator itCounter = m_cat010SmrTgtRepProbDetectionCounters.find(trkNum);
+    QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010SmrTgtRepProbDetectionCounters.find(trkNum);
 
-    if (itCounter == m_cat010SmrTgtRepProbDetectionCounters.end())
+    if (itTarget == m_cat010SmrTgtRepProbDetectionCounters.end())
     {
         // Unknown target. Create a new counter for it.
-        TargetData urCounter;
-        urCounter.area = area;
+        TargetData targetData;
+        targetData.area = area;
 
         // Add it to the hash maps.
-        itCounter = m_cat010SmrTgtRepProbDetectionCounters.insert(trkNum, urCounter);
+        itTarget = m_cat010SmrTgtRepProbDetectionCounters.insert(trkNum, targetData);
     }
     else
     {
         // Known target. Check area.
-        Aerodrome::Area oldArea = itCounter->area;
-        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        Aerodrome::Area oldArea = itTarget->area;
+        if (area != oldArea || itTarget->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itCounter->updateRateCounter.reset();
-            itCounter->area = area;
+            itTarget->updateRateCounter.reset();
+            itTarget->area = area;
         }
     }
 
     // Update counter.
-    itCounter->probDetectionCounter.update(todDateTime);
-    Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
+    itTarget->probDetectionCounter.update(todDateTime);
+    Counters::BasicCounter counter = itTarget->probDetectionCounter.read();
 
     m_cat010SmrTgtRepProbDetectionTable[area].countValid += counter.countValid;
     m_cat010SmrTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
@@ -429,32 +429,32 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<IcaoAddr, TargetData>::iterator itCounter = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
+    QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
 
-    if (itCounter == m_cat010MlatTgtRepUpdateRateCounters.end())
+    if (itTarget == m_cat010MlatTgtRepUpdateRateCounters.end())
     {
         // Unknown target. Create a new counter for it.
-        TargetData urCounter;
-        urCounter.area = area;
+        TargetData targetData;
+        targetData.area = area;
 
         // Add it to the hash maps.
-        itCounter = m_cat010MlatTgtRepUpdateRateCounters.insert(icaoAddr, urCounter);
+        itTarget = m_cat010MlatTgtRepUpdateRateCounters.insert(icaoAddr, targetData);
     }
     else
     {
         // Known target. Check area.
-        Aerodrome::Area oldArea = itCounter->area;
-        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        Aerodrome::Area oldArea = itTarget->area;
+        if (area != oldArea || itTarget->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itCounter->updateRateCounter.reset();
-            itCounter->area = area;
+            itTarget->updateRateCounter.reset();
+            itTarget->area = area;
         }
     }
 
     // Update counter.
-    itCounter->updateRateCounter.update(todDateTime);
-    Counters::BasicCounter counter = itCounter->updateRateCounter.read();
+    itTarget->updateRateCounter.update(todDateTime);
+    Counters::BasicCounter counter = itTarget->updateRateCounter.read();
 
     m_cat010MlatTgtRepUpdateRateTable[area].countValid += counter.countValid;
     m_cat010MlatTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
@@ -481,32 +481,32 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<IcaoAddr, TargetData>::iterator itCounter = m_cat010MlatTgtRepProbDetectionCounters.find(icaoAddr);
+    QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010MlatTgtRepProbDetectionCounters.find(icaoAddr);
 
-    if (itCounter == m_cat010MlatTgtRepProbDetectionCounters.end())
+    if (itTarget == m_cat010MlatTgtRepProbDetectionCounters.end())
     {
         // Unknown target. Create a new counter for it.
-        TargetData urCounter;
-        urCounter.area = area;
+        TargetData targetData;
+        targetData.area = area;
 
         // Add it to the hash maps.
-        itCounter = m_cat010MlatTgtRepProbDetectionCounters.insert(icaoAddr, urCounter);
+        itTarget = m_cat010MlatTgtRepProbDetectionCounters.insert(icaoAddr, targetData);
     }
     else
     {
         // Known target. Check area.
-        Aerodrome::Area oldArea = itCounter->area;
-        if (area != oldArea || itCounter->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        Aerodrome::Area oldArea = itTarget->area;
+        if (area != oldArea || itTarget->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itCounter->updateRateCounter.reset();
-            itCounter->area = area;
+            itTarget->updateRateCounter.reset();
+            itTarget->area = area;
         }
     }
 
     // Update counter.
-    itCounter->probDetectionCounter.update(todDateTime);
-    Counters::BasicCounter counter = itCounter->probDetectionCounter.read();
+    itTarget->probDetectionCounter.update(todDateTime);
+    Counters::BasicCounter counter = itTarget->probDetectionCounter.read();
 
     m_cat010MlatTgtRepProbDetectionTable[area].countValid += counter.countValid;
     m_cat010MlatTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
