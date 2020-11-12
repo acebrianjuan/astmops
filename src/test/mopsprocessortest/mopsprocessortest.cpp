@@ -53,6 +53,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(MopsProcessorTest::TestType);
+Q_DECLARE_METATYPE(Aerodrome::Area);
 
 void MopsProcessorTest::initTestCase()
 {
@@ -284,18 +285,38 @@ void MopsProcessorTest::testProbDetection_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QString>("fileName");
+    QTest::addColumn<QVector<Aerodrome::Area>>("areas");
     QTest::addColumn<QVector<double>>("result");
 
-    QVector<double> expectedVals = QVector<double>() << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
-                                                     << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
+    QVector<double> expectedVals1 = QVector<double>() << 1.0 << 1.0 << 1.0 << 1.0 << 1.0
+                                                      << 1.0 << 1.0 << 1.0 << 1.0 << 1.0;
 
-    QTest::newRow("SMR TgtRep") << cat010SmrTgtRep
-                                << "CAT010_SMR_TgtRep_PD.xml"
-                                << expectedVals;
+    QVector<double> expectedVals2 = QVector<double>() << 1.0 << 0.5 << 1.0 << 0.5 << 1.0 << 0.5;
 
-    QTest::newRow("MLAT TgtRep") << cat010MlatTgtRep
-                                 << "CAT010_MLAT_TgtRep_PD.xml"
-                                 << expectedVals;
+    QVector<Aerodrome::Area> areas;
+    areas << QVector<Aerodrome::Area>(2, Aerodrome::Runway)
+          << QVector<Aerodrome::Area>(2, Aerodrome::Taxiway)
+          << QVector<Aerodrome::Area>(2, Aerodrome::Apron);
+
+    QTest::newRow("SMR TgtRep (case A)") << cat010SmrTgtRep
+                                         << "CAT010_SMR_TgtRep_PD_case_A.xml"
+                                         << QVector<Aerodrome::Area>(10, Aerodrome::Runway)
+                                         << expectedVals1;
+
+    QTest::newRow("SMR TgtRep (case B)") << cat010SmrTgtRep
+                                         << "CAT010_SMR_TgtRep_PD_case_B.xml"
+                                         << areas
+                                         << expectedVals2;
+
+    QTest::newRow("MLAT TgtRep (case A)") << cat010MlatTgtRep
+                                          << "CAT010_MLAT_TgtRep_PD_case_A.xml"
+                                          << QVector<Aerodrome::Area>(10, Aerodrome::Runway)
+                                          << expectedVals1;
+
+    QTest::newRow("MLAT TgtRep (case B)") << cat010MlatTgtRep
+                                          << "CAT010_MLAT_TgtRep_PD_case_B.xml"
+                                          << areas
+                                          << expectedVals2;
 }
 
 void MopsProcessorTest::testProbDetection()
@@ -303,24 +324,26 @@ void MopsProcessorTest::testProbDetection()
     AsterixXmlReader reader;
     MopsProcessor processor;
 
-    auto runwayCallback = [](const QPointF& point) {
-        Q_UNUSED(point);
-        return Aerodrome::Runway;
-    };
-
-    processor.setLocatePointCallback(runwayCallback);
-
     QFETCH(QString, fileName);
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
+    QFETCH(QVector<Aerodrome::Area>, areas);
     QFETCH(QVector<double>, result);
 
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
     int i = 0;
+
+    auto areaCallback = [&areas, &i](const QPointF& point) {
+        Q_UNUSED(point);
+        return areas.at(i);
+    };
+
+    processor.setLocatePointCallback(areaCallback);
+
     while (reader.hasPendingRecords())
     {
         processor.processRecord(reader.record());
@@ -330,11 +353,11 @@ void MopsProcessorTest::testProbDetection()
 
         if (testType == cat010SmrTgtRep)
         {
-            actualVal = processor.ed116TgtRepProbDetection(Aerodrome::Runway);
+            actualVal = processor.ed116TgtRepProbDetection(areas.at(i));
         }
         else if (testType == cat010MlatTgtRep)
         {
-            actualVal = processor.ed117TgtRepProbDetection(Aerodrome::Runway);
+            actualVal = processor.ed117TgtRepProbDetection(areas.at(i));
         }
 
         if (qIsNaN(expectedVal))
