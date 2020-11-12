@@ -21,6 +21,7 @@
 #ifndef ASTMOPS_ASTMOPS_H
 #define ASTMOPS_ASTMOPS_H
 
+#include "aerodrome.h"
 #include <QDebug>
 #include <QSettings>
 #include <QtGlobal>
@@ -44,6 +45,10 @@ const double ed117TgtRepUpdateRateHz = 1.0;  // Hz
 const double ed117SrvMsgUpdateRateHz = 1.0;  // Hz
 
 const double silencePeriodSeconds = 60.0;  // s
+
+const double ed117ProbDetectionPeriodRunway = 1.0;
+const double ed117ProbDetectionPeriodApron = 5.0;
+const double ed117ProbDetectionPeriodOther = 2.0;
 
 
 static quint8 readSic(QString key)
@@ -193,6 +198,42 @@ inline double silencePeriod()
     }
 
     return var;
+}
+
+inline double probDetectionPeriod(Aerodrome::Area area)
+{
+    static QHash<Aerodrome::Area, double> periods;
+
+    if (periods.contains(area))
+    {
+        return periods.value(area);
+    }
+
+    auto readConfig = [area](const QString &key, double period) {
+        QSettings settings;
+        double var = settings.value(key, period).toDouble();
+
+        if (var <= 0)
+        {
+            qWarning() << "Invalid value for" << key << "using default value: " << period;
+            var = period;
+        }
+
+        periods.insert(area, var);
+        return var;
+    };
+
+    switch (area)
+    {
+    case Aerodrome::Area::Runway:
+        return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodRunway"), ed117ProbDetectionPeriodRunway);
+    case Aerodrome::Area::Apron:
+        return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodApron"), ed117ProbDetectionPeriodApron);
+    default:
+        break;
+    }
+
+    return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodOther"), ed117ProbDetectionPeriodOther);
 }
 
 };  // namespace Configuration

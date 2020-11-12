@@ -333,12 +333,20 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
+    if (area == Aerodrome::Area::None)
+    {
+        return;
+    }
+
+    double period = Configuration::probDetectionPeriod(area);
+
     QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010SmrTgtRepProbDetectionCounters.find(trkNum);
 
     if (itTarget == m_cat010SmrTgtRepProbDetectionCounters.end())
     {
         // Unknown target. Create a new counter for it.
         TargetData targetData;
+        targetData.probDetectionCounter.setPeriod(period);
         targetData.area = area;
 
         // Add it to the hash maps.
@@ -348,10 +356,11 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
     {
         // Known target. Check area.
         Aerodrome::Area oldArea = itTarget->area;
-        if (area != oldArea || itTarget->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        if (area != oldArea || itTarget->probDetectionCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itTarget->updateRateCounter.reset();
+            itTarget->probDetectionCounter.reset();
+            itTarget->probDetectionCounter.setPeriod(period);
             itTarget->area = area;
         }
     }
@@ -481,12 +490,20 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
+    if (area == Aerodrome::Area::None)
+    {
+        return;
+    }
+
+    double period = Configuration::probDetectionPeriod(area);
+
     QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010MlatTgtRepProbDetectionCounters.find(icaoAddr);
 
     if (itTarget == m_cat010MlatTgtRepProbDetectionCounters.end())
     {
         // Unknown target. Create a new counter for it.
         TargetData targetData;
+        targetData.probDetectionCounter.setPeriod(period);
         targetData.area = area;
 
         // Add it to the hash maps.
@@ -496,10 +513,11 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
     {
         // Known target. Check area.
         Aerodrome::Area oldArea = itTarget->area;
-        if (area != oldArea || itTarget->updateRateCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
+        if (area != oldArea || itTarget->probDetectionCounter.intervalStart().msecsTo(todDateTime) / 1000 > m_silencePeriod)
         {
             // Area changed or Silence Period. Reset counter.
-            itTarget->updateRateCounter.reset();
+            itTarget->probDetectionCounter.reset();
+            itTarget->probDetectionCounter.setPeriod(period);
             itTarget->area = area;
         }
     }
