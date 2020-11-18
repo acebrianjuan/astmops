@@ -34,6 +34,8 @@
  */
 class Aerodrome
 {
+    Q_GADGET
+
 public:
     enum Area
     {
@@ -69,6 +71,7 @@ public:
         All = 0b0011'0011'0000'0111,
         //    All               = Airborne|Ground,
     };
+    Q_ENUM(Area)
 
     Aerodrome();
 
