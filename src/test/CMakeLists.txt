@@ -11,7 +11,9 @@
 add_subdirectory(aerodrometest)
 add_subdirectory(aixmreadertest)
 add_subdirectory(asterixxmlreadertest)
+add_subdirectory(dgpscsvreadertest)
 add_subdirectory(geofunctionstest)
 add_subdirectory(kmlreadertest)
 add_subdirectory(mopsprocessortest)
 add_subdirectory(recordcollatortest)
+

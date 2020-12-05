@@ -19,6 +19,8 @@
  */
 
 #include "geofunctions.h"
+#include <QDebug>
+#include <QRegularExpression>
 
 /*!
  * \brief Computes the prime vertical radius of curvature for the given
@@ -34,7 +36,7 @@
  * intersection between the perpendicular to the earth ellipsoid tangent and
  * the vertical joining the poles.
  */
-double wgs84TransverseRadius(double latGeoRad)
+double wgs84TransverseRadius(const double latGeoRad)
 {
     double N = WGS84_A / sqrt(1 - WGS84_E2 * sin(latGeoRad) * sin(latGeoRad));
     return N;
@@ -48,7 +50,7 @@ double wgs84TransverseRadius(double latGeoRad)
  *
  * \return QVector3D object with the converted XYZ ECEF coordinates in meters.
  */
-QVector3D geoToEcef(QGeoCoordinate llh)
+QVector3D geoToEcef(const QGeoCoordinate llh)
 {
     double phi = qDegreesToRadians(llh.latitude());
     double lambda = qDegreesToRadians(llh.longitude());
@@ -83,7 +85,7 @@ QVector3D geoToEcef(QGeoCoordinate llh)
  * \return QVector3D object with the converted XYZ local ENU coordinates in
  * meters.
  */
-QVector3D ecefToLocalEnu(QVector3D ecef, QGeoCoordinate llhRef)
+QVector3D ecefToLocalEnu(const QVector3D ecef, const QGeoCoordinate llhRef)
 {
     QVector3D ecefRef = geoToEcef(llhRef);
 
@@ -122,9 +124,47 @@ QVector3D ecefToLocalEnu(QVector3D ecef, QGeoCoordinate llhRef)
  * \return QVector3D object with the converted XYZ local ENU coordinates in
  * meters.
  */
-QVector3D geoToLocalEnu(QGeoCoordinate llh, QGeoCoordinate llhRef)
+QVector3D geoToLocalEnu(const QGeoCoordinate llh, const QGeoCoordinate llhRef)
 {
     QVector3D ecef = geoToEcef(llh);
     QVector3D enu = ecefToLocalEnu(ecef, llhRef);
     return enu;
+}
+
+double dmsToDeg(const double deg, const double min, const double sec)
+{
+    double d = deg + min / 60.0 + sec / 3600.0;
+    return d;
+}
+
+double dmsToDeg(const double deg, const double min, const double sec, const QString hemisphere)
+{
+    if (hemisphere.size() != 1)
+    {
+        qWarning() << "Invalid hemisphere indicator:" << hemisphere;
+        return qQNaN();
+    }
+
+    if (!hemisphere.at(0).isLetter())
+    {
+        qWarning() << "Invalid hemisphere indicator:" << hemisphere;
+        return qQNaN();
+    }
+
+    QRegularExpression regEx(QLatin1String("[NSEW]"), QRegularExpression::CaseInsensitiveOption);
+    if (!regEx.match(hemisphere).hasMatch())
+    {
+        qWarning() << "Invalid hemisphere indicator:" << hemisphere;
+        return qQNaN();
+    }
+
+    double d = dmsToDeg(deg, min, sec);
+
+    regEx.setPattern(QLatin1String("[SW]"));
+    if (regEx.match(hemisphere).hasMatch())
+    {
+        d = -d;
+    }
+
+    return d;
 }
