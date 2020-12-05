@@ -47,6 +47,18 @@ jobs:
       run: git diff > clang_format.patch && echo -e "if \n [ -s clang_format.patch ] \nthen \n echo "clang-format not applied:"; echo ""; more clang_format.patch; exit 1 \nfi \n" > detect && chmod +x ./detect && ./detect
 
 
+  cmakelint:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          sudo python -m pip install --upgrade pip
+          sudo pip install cmakelint
+      - name: check CMake scripts
+        run: find . -iname "CMakeLists.txt" -o -iname "*.cmake" | xargs cmakelint --filter=-linelength,-readability/wonkycase
+
+
   REUSE-compliance:
     runs-on: ubuntu-latest
     steps:

@@ -10,8 +10,8 @@
 
 find_package(Qt5 REQUIRED COMPONENTS Core Test)
 if(NOT Qt5_FOUND)
-     message(FATAL_ERROR "Fatal error: Qt5 required.")
-endif(NOT Qt5_FOUND)
+    message(FATAL_ERROR "Fatal error: Qt5 required.")
+endif()
 
 set(CMAKE_AUTOMOC ON)
 
