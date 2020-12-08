@@ -145,8 +145,9 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
 void RecordCollator::loadExcludedAddresses(QIODevice *device)
 {
-    QByteArray data = device->readAll();
-    for (const auto &line : data.split('\n'))
+    const QByteArray data = device->readAll();
+    const QByteArrayList lines = data.split('\n');
+    for (const auto &line : lines)
     {
         // TODO: Consider ignoring comment lines explicitly.
         bool ok;

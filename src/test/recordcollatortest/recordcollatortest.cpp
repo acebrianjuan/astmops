@@ -425,9 +425,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.smrTgtRepQueue().size(), sizeOut);
+        const QQueue<AsterixRecord> smrTgtRepQueue = collator.smrTgtRepQueue();
+        QCOMPARE(smrTgtRepQueue.size(), sizeOut);
 
-        for (const AsterixRecord &rout : collator.smrTgtRepQueue())
+        for (const AsterixRecord &rout : smrTgtRepQueue)
         {
             AsterixDataItem di010_220 = rout.m_dataItems[QLatin1String("I220")];
             IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -445,9 +446,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.mlatTgtRepQueue().size(), sizeOut);
+        const QQueue<AsterixRecord> mlatTgtRepQueue = collator.mlatTgtRepQueue();
+        QCOMPARE(mlatTgtRepQueue.size(), sizeOut);
 
-        for (const AsterixRecord &rout : collator.mlatTgtRepQueue())
+        for (const AsterixRecord &rout : mlatTgtRepQueue)
         {
             AsterixDataItem di010_220 = rout.m_dataItems[QLatin1String("I220")];
             IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -465,9 +467,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.adsbTgtRepQueue().size(), sizeOut);
+        const QQueue<AsterixRecord> adsbTgtRepQueue = collator.adsbTgtRepQueue();
+        QCOMPARE(adsbTgtRepQueue.size(), sizeOut);
 
-        for (const AsterixRecord &rout : collator.adsbTgtRepQueue())
+        for (const AsterixRecord &rout : adsbTgtRepQueue)
         {
             AsterixDataItem di021_080 = rout.m_dataItems[QLatin1String("I080")];
             IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
@@ -485,9 +488,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.smrSrvMsgQueue().size(), sizeOut);
+        const QQueue<AsterixRecord> smrSrvMsgQueue = collator.smrSrvMsgQueue();
+        QCOMPARE(smrSrvMsgQueue.size(), sizeOut);
 
-        for (const AsterixRecord &rout : collator.smrSrvMsgQueue())
+        for (const AsterixRecord &rout : smrSrvMsgQueue)
         {
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
@@ -500,9 +504,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        QCOMPARE(collator.mlatSrvMsgQueue().size(), sizeOut);
+        const QQueue<AsterixRecord> mlatSrvMsgQueue = collator.mlatSrvMsgQueue();
+        QCOMPARE(mlatSrvMsgQueue.size(), sizeOut);
 
-        for (const AsterixRecord &rout : collator.mlatSrvMsgQueue())
+        for (const AsterixRecord &rout : mlatSrvMsgQueue)
         {
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }

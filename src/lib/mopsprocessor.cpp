@@ -616,7 +616,7 @@ bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
          * Stop when there's none left.
          */
         QHash<QString, bool> hash = makeHash(list);
-        int count = hash.values().size();
+        int count = hash.size();
         if (record.m_dataItems.size() >= count)
         {
             for (const AsterixDataItem &di : record.m_dataItems)
