@@ -58,16 +58,11 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
     Position positionUnit = Degrees;
     Altitude altitudeUnit = Feet;
 
-    // Default column ordering.
-    int timeColumn = 0;
-    int latitudeColumn = 1;
-    int longitudeColumn = 2;
-    int altitudeColumn = 3;
-
-    bool timeFound = false;
-    bool latitudeFound = false;
-    bool longitudeFound = false;
-    bool altitudeFound = false;
+    // Default column values.
+    int timeColumn = -1;
+    int latitudeColumn = -1;
+    int longitudeColumn = -1;
+    int altitudeColumn = -1;
 
     const QByteArray first = file->readLine();
 
@@ -89,7 +84,7 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
         const QByteArray fieldSpec = headerParts.at(index);
         const QByteArrayList fieldSpecParts = fieldSpec.split('_');
 
-        // FieldName_format.
+        // Split "FieldName_format" into "FieldName" + "format" parts.
         if (fieldSpecParts.size() != 2)
         {
             if (error)
@@ -104,26 +99,23 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
         if (qstricmp(fieldName.constData(), "datetime") == 0)
         {
             timeColumn = index;
-            timeFound = true;
         }
         else if (qstricmp(fieldName.constData(), "latitude") == 0)
         {
             latitudeColumn = index;
-            latitudeFound = true;
         }
         else if (qstricmp(fieldName.constData(), "longitude") == 0)
         {
             longitudeColumn = index;
-            longitudeFound = true;
         }
         else if (qstricmp(fieldName.constData(), "gpsaltitude") == 0)
         {
             altitudeColumn = index;
-            altitudeFound = true;
         }
     }
 
-    if (!timeFound || !latitudeFound || !longitudeFound || !altitudeFound)
+    // Stop if any column is missing.
+    if (timeColumn == -1 || latitudeColumn == -1 || longitudeColumn == -1 || altitudeColumn == -1)
     {
         if (error)
         {
