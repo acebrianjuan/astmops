@@ -66,6 +66,7 @@ void DgpsCsvReaderTest::test_data()
 
     QTest::newRow("DGPS: UNIX; DD; DD; ft") << "dgps_unix.csv" << posInfo << ErrorType::NoError;
     QTest::newRow("DGPS: ISO; DD; DD; ft") << "dgps_iso.csv" << posInfo << ErrorType::NoError;
+    QTest::newRow("DGPS (bad header)") << "dgps_bad_header.csv" << QVector<QGeoPositionInfo>() << ErrorType::NotWellFormedHeaderError;
 }
 
 void DgpsCsvReaderTest::test()
