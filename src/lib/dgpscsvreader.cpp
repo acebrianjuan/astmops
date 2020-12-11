@@ -182,10 +182,17 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
         const QByteArray longitudeText = lineParts.at(longitudeColumn).trimmed();
         const QByteArray altitudeText = lineParts.at(altitudeColumn).trimmed();
 
+        QString timeStr = QString::fromLatin1(timeText);
+
+        // Remove decimal point from Unix timestamp.
+        if (timeUnit == Unix)
+        {
+            timeStr.remove(QLatin1Char('.'));
+        }
+
         const QDateTime timeValue =
-            timeUnit == Unix ? QDateTime::fromMSecsSinceEpoch(timeText.toULong(), Qt::UTC)
-                             : QDateTime::fromString(QString::fromLatin1(timeText),
-                                   Qt::ISODateWithMs);
+            timeUnit == Unix ? QDateTime::fromMSecsSinceEpoch(timeStr.toULong(), Qt::UTC)
+                             : QDateTime::fromString(timeStr, Qt::ISODateWithMs);
 
         const double latitude =
             positionUnit == Degrees ? latitudeText.toDouble() : qQNaN();
