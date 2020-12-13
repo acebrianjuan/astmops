@@ -47,6 +47,22 @@ jobs:
       run: git diff > clang_format.patch && echo -e "if \n [ -s clang_format.patch ] \nthen \n echo "clang-format not applied:"; echo ""; more clang_format.patch; exit 1 \nfi \n" > detect && chmod +x ./detect && ./detect
 
 
+  clang-tidy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends clang clang-tidy clang-tools ninja-build cmake qtbase5-dev qtpositioning5-dev
+    - name: configure
+      run: cd build && cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+    - name: build
+      run: cd build && ninja
+    - name: run clang-tidy
+      run: cd build && run-clang-tidy -extra-arg=-Wno-unknown-warning-option -fix
+    - name: check
+      run: git diff > clang_tidy.patch && echo -e "if \n [ -s clang_tidy.patch ] \nthen \n echo "clang_tidy not applied:"; echo ""; more clang_tidy.patch; exit 1 \nfi \n" > detect && chmod +x ./detect && ./detect
+
+
   cmakelint:
       runs-on: ubuntu-latest
       steps:
