@@ -55,7 +55,7 @@ public:
         Counters::IntervalCounter probDetectionCounter;
     };
 
-    void setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF&)> &callback);
+    void setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF&)>& callback);
 
     explicit MopsProcessor(QObject* parent = nullptr);
     void processRecord(const AsterixRecord& record);
