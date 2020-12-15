@@ -50,7 +50,7 @@ double wgs84TransverseRadius(const double latGeoRad)
  *
  * \return QVector3D object with the converted XYZ ECEF coordinates in meters.
  */
-QVector3D geoToEcef(const QGeoCoordinate llh)
+QVector3D geoToEcef(const QGeoCoordinate &llh)
 {
     double phi = qDegreesToRadians(llh.latitude());
     double lambda = qDegreesToRadians(llh.longitude());
@@ -85,7 +85,7 @@ QVector3D geoToEcef(const QGeoCoordinate llh)
  * \return QVector3D object with the converted XYZ local ENU coordinates in
  * meters.
  */
-QVector3D ecefToLocalEnu(const QVector3D ecef, const QGeoCoordinate llhRef)
+QVector3D ecefToLocalEnu(const QVector3D ecef, const QGeoCoordinate &llhRef)
 {
     QVector3D ecefRef = geoToEcef(llhRef);
 
@@ -124,7 +124,7 @@ QVector3D ecefToLocalEnu(const QVector3D ecef, const QGeoCoordinate llhRef)
  * \return QVector3D object with the converted XYZ local ENU coordinates in
  * meters.
  */
-QVector3D geoToLocalEnu(const QGeoCoordinate llh, const QGeoCoordinate llhRef)
+QVector3D geoToLocalEnu(const QGeoCoordinate &llh, const QGeoCoordinate &llhRef)
 {
     QVector3D ecef = geoToEcef(llh);
     QVector3D enu = ecefToLocalEnu(ecef, llhRef);
@@ -137,7 +137,7 @@ double dmsToDeg(const double deg, const double min, const double sec)
     return d;
 }
 
-double dmsToDeg(const double deg, const double min, const double sec, const QString hemisphere)
+double dmsToDeg(const double deg, const double min, const double sec, const QString &hemisphere)
 {
     if (hemisphere.size() != 1)
     {

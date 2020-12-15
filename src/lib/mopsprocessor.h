@@ -55,7 +55,7 @@ public:
         Counters::IntervalCounter probDetectionCounter;
     };
 
-    void setLocatePointCallback(std::function<Aerodrome::Area(const QPointF&)> callback);
+    void setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF&)> &callback);
 
     explicit MopsProcessor(QObject* parent = nullptr);
     void processRecord(const AsterixRecord& record);
@@ -112,7 +112,7 @@ private:
     static QVector<DataItemList> serviceMessagesMinimumDataItems();
 
     static QHash<QString, bool> makeHash(const QStringList& list, bool state = false);
-    static QDateTime getDateTimefromTod(const double& tod);
+    static QDateTime getDateTimefromTod(double tod);
 
 
     std::function<Aerodrome::Area(const QPointF&)> m_locatePoint;

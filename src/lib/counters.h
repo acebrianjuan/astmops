@@ -39,15 +39,15 @@ class IntervalCounter
 public:
     IntervalCounter() = default;
     IntervalCounter(double period);
-    IntervalCounter(double period, QDateTime tod);
+    IntervalCounter(double period, const QDateTime &tod);
 
     bool isInitialized() const;
     void reset();
     void setPeriod(double period);
-    void init(QDateTime tod);
+    void init(const QDateTime &tod);
     void advance();
-    bool contains(QDateTime tod) const;
-    void update(QDateTime newTod);
+    bool contains(const QDateTime &tod) const;
+    void update(const QDateTime &newTod);
     BasicCounter read();
 
     QDateTime intervalStart() const;

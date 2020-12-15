@@ -33,10 +33,10 @@ const double WGS84_E2 = 0.00669437999013;  // Eccentricity of the ellipsoid squa
 //const double WGS84_E = (sqrt(2 * WGS84_F - WGS84_F * WGS84_F));  // Eccentricity of the ellipsoid.
 
 double wgs84TransverseRadius(const double latGeoRad);
-QVector3D geoToEcef(const QGeoCoordinate llh);
-QVector3D ecefToLocalEnu(const QVector3D ecef, const QGeoCoordinate llhRef);
-QVector3D geoToLocalEnu(const QGeoCoordinate llh, const QGeoCoordinate llhRef);
+QVector3D geoToEcef(const QGeoCoordinate &llh);
+QVector3D ecefToLocalEnu(const QVector3D ecef, const QGeoCoordinate &llhRef);
+QVector3D geoToLocalEnu(const QGeoCoordinate &llh, const QGeoCoordinate &llhRef);
 double dmsToDeg(const double deg, const double min, const double sec);
-double dmsToDeg(const double deg, const double min, const double sec, const QString hemisphere);
+double dmsToDeg(const double deg, const double min, const double sec, const QString &hemisphere);
 
 #endif  // ASTMOPS_GEOFUNCTIONS_H

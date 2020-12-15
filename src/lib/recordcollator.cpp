@@ -159,7 +159,7 @@ void RecordCollator::loadExcludedAddresses(QIODevice *device)
     }
 }
 
-void RecordCollator::loadExcludedAddresses(QVector<IcaoAddr> excladdr)
+void RecordCollator::loadExcludedAddresses(const QVector<IcaoAddr> &excladdr)
 {
     m_excludedAddresses = excladdr;
 }

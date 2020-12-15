@@ -120,7 +120,7 @@ void MopsProcessorTest::testMinimumFields()
     AsterixXmlReader reader;
     MopsProcessor processor;
 
-    auto runwayCallback = [](const QPointF& point) {
+    auto runwayCallback = [](QPointF point) {
         Q_UNUSED(point);
         return Aerodrome::Runway;
     };
@@ -226,7 +226,7 @@ void MopsProcessorTest::testUpdateRate()
     AsterixXmlReader reader;
     MopsProcessor processor;
 
-    auto runwayCallback = [](const QPointF& point) {
+    auto runwayCallback = [](QPointF point) {
         Q_UNUSED(point);
         return Aerodrome::Runway;
     };
@@ -337,7 +337,7 @@ void MopsProcessorTest::testProbDetection()
 
     int i = 0;
 
-    auto areaCallback = [&areas, &i](const QPointF& point) {
+    auto areaCallback = [&areas, &i](QPointF point) {
         Q_UNUSED(point);
         return areas.at(i);
     };

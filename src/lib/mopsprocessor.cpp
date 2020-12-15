@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QSettings>
 
-void MopsProcessor::setLocatePointCallback(std::function<Aerodrome::Area(const QPointF &)> callback)
+void MopsProcessor::setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF &)> &callback)
 {
     m_locatePoint = callback;
 }
@@ -746,7 +746,7 @@ QHash<QString, bool> MopsProcessor::makeHash(const QStringList &list, bool state
     return hash;
 }
 
-QDateTime MopsProcessor::getDateTimefromTod(const double &tod)
+QDateTime MopsProcessor::getDateTimefromTod(double tod)
 {
     QDateTime todDateTime = QDateTime::fromMSecsSinceEpoch(tod * 1000, Qt::UTC);
     return todDateTime;

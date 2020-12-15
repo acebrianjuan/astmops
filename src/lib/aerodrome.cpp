@@ -45,7 +45,7 @@ bool Aerodrome::hasAllElements()
     return false;
 }
 
-void Aerodrome::setArp(const QVector3D &point)
+void Aerodrome::setArp(QVector3D point)
 {
     m_arp = point;
 }
@@ -86,7 +86,7 @@ void Aerodrome::addApproach2Element(const QPolygonF &polygon)
     m_approach2Elements.append(polygon);
 }
 
-Aerodrome::Area Aerodrome::locatePoint(const QPointF &point)
+Aerodrome::Area Aerodrome::locatePoint(QPointF point)
 {
     Q_ASSERT(hasAnyElements());
 
@@ -120,7 +120,7 @@ Aerodrome::Area Aerodrome::locatePoint(const QPointF &point)
     return Area::None;
 }
 
-bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point)
+bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point)
 {
     Q_ASSERT(!collection.isEmpty());
 

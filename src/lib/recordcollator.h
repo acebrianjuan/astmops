@@ -60,7 +60,7 @@ public:
     void processRecord(const AsterixRecord& record);
 
     void loadExcludedAddresses(QIODevice* device);
-    void loadExcludedAddresses(QVector<IcaoAddr> excladdr);
+    void loadExcludedAddresses(const QVector<IcaoAddr> &excladdr);
     void clearExcludedAddresses();
     void addExcludedAddress(const IcaoAddr addr);
     void removeExcludedAddress(const IcaoAddr addr);

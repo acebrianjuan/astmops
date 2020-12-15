@@ -51,7 +51,7 @@ const double ed117ProbDetectionPeriodApron = 5.0;
 const double ed117ProbDetectionPeriodOther = 2.0;
 
 
-static quint8 readSic(QString key)
+static quint8 readSic(const QString &key)
 {
     QSettings settings;
 

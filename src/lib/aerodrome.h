@@ -78,7 +78,7 @@ public:
     bool hasAnyElements();
     bool hasAllElements();
 
-    void setArp(const QVector3D &point);
+    void setArp(QVector3D point);
     void addRunwayElement(const QPolygonF &polygon);
     void addTaxiwayElement(const QPolygonF &polygon);
     void addApronElement(const QPolygonF &polygon);
@@ -86,7 +86,7 @@ public:
     void addApproach1Element(const QPolygonF &polygon);
     void addApproach2Element(const QPolygonF &polygon);
 
-    Aerodrome::Area locatePoint(const QPointF &point);
+    Aerodrome::Area locatePoint(QPointF point);
 
     QVector<QPolygonF> getRunwayElements() const;
     QVector<QPolygonF> getTaxiwayElements() const;
@@ -96,7 +96,7 @@ public:
     QVector<QPolygonF> getApproach2Elements() const;
 
 private:
-    bool collectionContainsPoint(const QVector<QPolygonF> &collection, const QPointF &point);
+    bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point);
 
     QVector3D m_arp;
     QVector3D m_smr;

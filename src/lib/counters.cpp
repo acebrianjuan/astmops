@@ -31,7 +31,7 @@ Counters::IntervalCounter::IntervalCounter(double period)
     setPeriod(period);
 }
 
-Counters::IntervalCounter::IntervalCounter(double period, QDateTime tod)
+Counters::IntervalCounter::IntervalCounter(double period, const QDateTime &tod)
 {
     setPeriod(period);
     init(tod);
@@ -55,7 +55,7 @@ void Counters::IntervalCounter::setPeriod(double period)
     m_period = period;
 }
 
-void Counters::IntervalCounter::init(QDateTime tod)
+void Counters::IntervalCounter::init(const QDateTime &tod)
 {
     m_intervalStart = tod;
     ++m_counter.countValid;
@@ -68,7 +68,7 @@ void Counters::IntervalCounter::advance()
     ++m_counter.countTotal;
 }
 
-bool Counters::IntervalCounter::contains(QDateTime tod) const
+bool Counters::IntervalCounter::contains(const QDateTime &tod) const
 {
     if (intervalStart() <= tod && tod <= intervalEnd())
     {
@@ -77,7 +77,7 @@ bool Counters::IntervalCounter::contains(QDateTime tod) const
     return false;
 }
 
-void Counters::IntervalCounter::update(QDateTime newTod)
+void Counters::IntervalCounter::update(const QDateTime &newTod)
 {
     if (!isInitialized())
     {
