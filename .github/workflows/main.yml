@@ -63,6 +63,23 @@ jobs:
       run: git diff > clang_tidy.patch && echo -e "if \n [ -s clang_tidy.patch ] \nthen \n echo "clang_tidy not applied:"; echo ""; more clang_tidy.patch; exit 1 \nfi \n" > detect && chmod +x ./detect && ./detect
 
 
+  clazy:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends jq clazy ninja-build qtbase5-dev qtpositioning5-dev
+    - name: Configure
+      run: cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+      working-directory: build
+    - name: Build
+      run: ninja -j $(nproc) -k 0
+      working-directory: build
+    - name: run clazy
+      run: jq ".[] | .file" ./compile_commands.json | xargs clazy-standalone -checks=level1 -extra-arg=-Wno-unknown-warning-option -p ./
+      working-directory: build
+
+
   cmakelint:
       runs-on: ubuntu-latest
       steps:
