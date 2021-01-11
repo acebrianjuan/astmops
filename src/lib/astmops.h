@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QtGlobal>
+#include <QtMath>
 
 using TrackNum = quint32;
 using IcaoAddr = quint32;
@@ -49,6 +50,8 @@ const double silencePeriodSeconds = 60.0;  // s
 const double ed117ProbDetectionPeriodRunway = 1.0;
 const double ed117ProbDetectionPeriodApron = 5.0;
 const double ed117ProbDetectionPeriodOther = 2.0;
+
+const int defaultDgpsTimeOfDayOffset = 0;  // s
 
 
 static quint8 readSic(const QString &key)
@@ -235,6 +238,92 @@ inline double probDetectionPeriod(Aerodrome::Area area)
 
     return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodOther"), ed117ProbDetectionPeriodOther);
 }
+
+inline qint32 dgpsTimeOfDayOffset()
+{
+    QString key = QLatin1String("DGPS.TimeOfDayOffset");
+
+    QSettings settings;
+
+    if (!settings.contains(key))
+    {
+        return defaultDgpsTimeOfDayOffset;
+    }
+
+    qint32 var = settings.value(key).toInt();
+
+    if (qFabs(var) > 86400)  // Maximum TOD.
+    {
+        qWarning() << "Invalid Time of Day Offset, using default value: " << defaultDgpsTimeOfDayOffset;
+        return defaultDgpsTimeOfDayOffset;
+    }
+
+    return var;
+}
+
+//inline quint16 dgpsMode3ACode()
+//{
+//    QString key = QLatin1String("DGPS.Mode3ACode");
+
+//    QSettings settings;
+
+//    if (!settings.contains(key))
+//    {
+//        qFatal("%s is mandatory.", qPrintable(key));
+//    }
+
+//    quint16 val = settings.value(key).toUInt();
+
+//    if (val > 07777)
+//    {
+//        qFatal("Invalid %s value.", qPrintable(key));
+//    }
+
+//    return val;
+//}
+
+inline quint32 dgpsTargetAddress()
+{
+    QString key = QLatin1String("DGPS.TargetAddress");
+
+    QSettings settings;
+
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
+
+    quint32 val = settings.value(key).toUInt();
+
+    if (val > 0xFFFFFF)
+    {
+        qFatal("Invalid %s value.", qPrintable(key));
+    }
+
+    return val;
+}
+
+//inline QString dgpsIdentification()
+//{
+//    QString key = QLatin1String("DGPS.Identification");
+
+//    QSettings settings;
+
+//    if (!settings.contains(key))
+//    {
+//        qFatal("%s is mandatory.", qPrintable(key));
+//    }
+
+//    QString val = settings.value(key).toString();
+
+//    if (val.size() > 8)  // Maximum 8 characters.
+//    {
+//        qFatal("Invalid %s value.", qPrintable(key));
+//    }
+
+//    return val;
+//}
+
 
 };  // namespace Configuration
 
