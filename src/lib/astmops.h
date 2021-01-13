@@ -23,6 +23,9 @@
 
 #include "aerodrome.h"
 #include <QDebug>
+#include <QGeoCircle>
+#include <QGeoPolygon>
+#include <QGeoShape>
 #include <QSettings>
 #include <QtGlobal>
 #include <QtMath>
@@ -324,7 +327,53 @@ inline quint32 dgpsTargetAddress()
 //    return val;
 //}
 
+inline QGeoShape evalSector()
+{
+    // TODO: Allow defining more than one sector.
 
+    QString keyPolygon = QLatin1String("Polygon");
+    QString keyCenter = QLatin1String("Center");
+    QString keyRadius = QLatin1String("Radius");
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("EvalSector"));
+
+    int polygonSize = settings.beginReadArray(keyPolygon);
+
+    if (!polygonSize)
+    {
+        if (!settings.contains(keyCenter) && !settings.contains(keyRadius))
+        {
+            // No keys found. Return empty QGeoShape.
+            settings.endGroup();
+            return QGeoShape();
+        }
+
+        // Circular sector case.
+        QGeoCoordinate center = settings.value(keyCenter).value<QGeoCoordinate>();
+        double radius = settings.value(keyRadius).toDouble();
+
+        settings.endGroup();
+        return QGeoCircle(center, radius);
+    }
+
+    // Polygon sector case.
+    QList<QGeoCoordinate> list;
+    list.reserve(polygonSize);
+
+    for (int i = 0; i < polygonSize; ++i)
+    {
+        settings.setArrayIndex(i);
+
+        QStringList strList = settings.value(QLatin1String("Coordinates")).toStringList();
+        QGeoCoordinate coord = QGeoCoordinate(strList.at(0).toDouble(), strList.at(1).toDouble(), 0);
+        list.append(coord);
+    }
+    settings.endArray();
+    settings.endGroup();
+
+    return QGeoPolygon(list);
+}
 };  // namespace Configuration
 
 #endif  // ASTMOPS_ASTMOPS_H
