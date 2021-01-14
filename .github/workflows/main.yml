@@ -8,7 +8,7 @@ on: [push, pull_request]
 jobs:
 
   build-ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - name: install dependencies
@@ -36,7 +36,7 @@ jobs:
 
 
   clang-format:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - name: install dependencies
@@ -48,7 +48,7 @@ jobs:
 
 
   clang-tidy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - name: install dependencies
@@ -81,7 +81,7 @@ jobs:
 
 
   cmakelint:
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-20.04
       steps:
       - uses: actions/checkout@v2
       - name: install dependencies
@@ -93,7 +93,7 @@ jobs:
 
 
   REUSE-compliance:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - name: Check REUSE compliance
