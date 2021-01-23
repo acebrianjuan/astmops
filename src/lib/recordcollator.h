@@ -65,12 +65,6 @@ public:
     void addExcludedAddress(const IcaoAddr addr);
     void removeExcludedAddress(const IcaoAddr addr);
 
-    bool hasPendingSmrTgtRepBatches();
-    bool hasPendingSmrSrvMsgBatches();
-    bool hasPendingMlatTgtRepBatches();
-    bool hasPendingMlatSrvMsgBatches();
-    bool hasPendingAdsbTgtRepBatches();
-
     QVector<IcaoAddr> excludedAddresses() const;
 
     QQueue<AsterixRecord> smrTgtRepQueue() const;
@@ -78,12 +72,6 @@ public:
     QQueue<AsterixRecord> mlatTgtRepQueue() const;
     QQueue<AsterixRecord> mlatSrvMsgQueue() const;
     QQueue<AsterixRecord> adsbTgtRepQueue() const;
-
-    QVector<AsterixRecord> smrTgtRepBatch(int size);
-    QVector<AsterixRecord> smrSrvMsgBatch(int size);
-    QVector<AsterixRecord> mlatTgtRepBatch(int size);
-    QVector<AsterixRecord> mlatSrvMsgBatch(int size);
-    QVector<AsterixRecord> adsbTgtRepBatch(int size);
 
     Counter smrTgtRepCounter() const;
     Counter smrSrvMsgCounter() const;
@@ -94,20 +82,14 @@ public:
 public slots:
 
 signals:
-    void readyRead();
 
 private:
-    QVector<AsterixRecord> extractBatch(QQueue<AsterixRecord> queue, int batchSize);
-
-    int m_minBatchSize;
-
     QVector<IcaoAddr> m_excludedAddresses;
 
     quint8 m_smrSic;
     quint8 m_mlatSic;
     quint8 m_adsbSic;
 
-    QHash<SystemType, QQueue<AsterixRecord>> m_catMap;
     QQueue<AsterixRecord> m_smrTgtRepQueue;
     QQueue<AsterixRecord> m_smrSrvMsgQueue;
     QQueue<AsterixRecord> m_mlatTgtRepQueue;
