@@ -45,17 +45,12 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
     if (record.m_cat == 10)  // Monosensor Surface Movement Data.
     {
-        AsterixDataItem di010_000 = record.m_dataItems[QLatin1String("I000")];
-        quint8 msgType = di010_000.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
-
-        AsterixDataItem di010_010 = record.m_dataItems[QLatin1String("I010")];
-        //quint8 sac = di010_010.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
-        quint8 sic = di010_010.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+        quint8 msgType = record.valStrFromDitem(QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
+        quint8 sic = record.valStrFromDitem(QLatin1String("I010"), QLatin1String("SIC")).toUInt();
 
         if (msgType == 1)  // Target Report.
         {
-            AsterixDataItem di010_020 = record.m_dataItems[QLatin1String("I020")];
-            quint8 sysType = di010_020.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+            quint8 sysType = record.valStrFromDitem(QLatin1String("I020"), QLatin1String("TYP")).toUInt();
 
             if (sysType == 1)  // Mode S Multilateration.
             {
@@ -67,8 +62,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             }
 
             bool ok;
-            AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
-            IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt(&ok, 16);
+            IcaoAddr tgtAddr = record.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
             if (ok)  // Valid Target Address.
             {
@@ -122,8 +116,7 @@ void RecordCollator::processRecord(const AsterixRecord &record)
     {
         ++m_adsbTgtRepCounter.in;
         bool ok;
-        AsterixDataItem di021_080 = record.m_dataItems[QLatin1String("I080")];
-        IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt(&ok, 16);
+        IcaoAddr tgtAddr = record.valStrFromDitem(QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
         if (ok)  // Valid Target Address.
         {

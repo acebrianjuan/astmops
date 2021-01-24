@@ -430,8 +430,7 @@ void RecordCollatorTest::test()
 
         for (const AsterixRecord &rout : smrTgtRepQueue)
         {
-            AsterixDataItem di010_220 = rout.m_dataItems[QLatin1String("I220")];
-            IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+            IcaoAddr tgtAddr = rout.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
@@ -451,8 +450,7 @@ void RecordCollatorTest::test()
 
         for (const AsterixRecord &rout : mlatTgtRepQueue)
         {
-            AsterixDataItem di010_220 = rout.m_dataItems[QLatin1String("I220")];
-            IcaoAddr tgtAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+            IcaoAddr tgtAddr = rout.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
@@ -472,8 +470,7 @@ void RecordCollatorTest::test()
 
         for (const AsterixRecord &rout : adsbTgtRepQueue)
         {
-            AsterixDataItem di021_080 = rout.m_dataItems[QLatin1String("I080")];
-            IcaoAddr tgtAddr = di021_080.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+            IcaoAddr tgtAddr = rout.valStrFromDitem(QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");

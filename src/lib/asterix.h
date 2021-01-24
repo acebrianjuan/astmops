@@ -39,6 +39,11 @@ struct AsterixDataElement
     AsterixDataElement() = default;
     AsterixDataElement(const QString &name, const QString &value);
 
+    inline bool isNull()
+    {
+        return m_name.isEmpty() || m_value.isEmpty();
+    }
+
     QString m_name;
     QString m_value;
 };
@@ -53,6 +58,14 @@ struct AsterixDataItem
 {
     AsterixDataItem() = default;
     AsterixDataItem(const QString &name, const QVariantList &fields = QVariantList());
+
+    inline bool isNull()
+    {
+        return m_name.isEmpty() || m_fields.isEmpty();
+    }
+
+    AsterixDataElement element(QLatin1String elStr) const;
+    QString valStr(QLatin1String elStr) const;
 
     QString m_name;
     QVariantList m_fields;
@@ -70,6 +83,9 @@ struct AsterixRecord
     AsterixRecord() = default;
     AsterixRecord(const quint8 cat, const QDateTime &dateTime, const SystemType sysType,
         const QHash<QString, AsterixDataItem> &dataItems = QHash<QString, AsterixDataItem>());
+
+    AsterixDataItem dataItem(QLatin1String diStr) const;
+    QString valStrFromDitem(QLatin1String diStr, QLatin1String elStr) const;
 
     quint8 m_cat = 0;
     QDateTime m_dateTime;
