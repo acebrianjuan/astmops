@@ -425,10 +425,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QQueue<AsterixRecord> smrTgtRepQueue = collator.smrTgtRepQueue();
-        QCOMPARE(smrTgtRepQueue.size(), sizeOut);
+        const QMultiMap<QDateTime, AsterixRecord> smrTgtRepMultiMap = collator.smrTgtRepMultiMap();
+        QCOMPARE(smrTgtRepMultiMap.size(), sizeOut);
 
-        for (const AsterixRecord &rout : smrTgtRepQueue)
+        for (const AsterixRecord &rout : smrTgtRepMultiMap)
         {
             IcaoAddr tgtAddr = rout.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
@@ -445,10 +445,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QQueue<AsterixRecord> mlatTgtRepQueue = collator.mlatTgtRepQueue();
-        QCOMPARE(mlatTgtRepQueue.size(), sizeOut);
+        const QMultiMap<QDateTime, AsterixRecord> mlatTgtRepMultiMap = collator.mlatTgtRepMultiMap();
+        QCOMPARE(mlatTgtRepMultiMap.size(), sizeOut);
 
-        for (const AsterixRecord &rout : mlatTgtRepQueue)
+        for (const AsterixRecord &rout : mlatTgtRepMultiMap)
         {
             IcaoAddr tgtAddr = rout.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
@@ -465,10 +465,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QQueue<AsterixRecord> adsbTgtRepQueue = collator.adsbTgtRepQueue();
-        QCOMPARE(adsbTgtRepQueue.size(), sizeOut);
+        const QMultiMap<QDateTime, AsterixRecord> adsbTgtRepMultiMap = collator.adsbTgtRepMultiMap();
+        QCOMPARE(adsbTgtRepMultiMap.size(), sizeOut);
 
-        for (const AsterixRecord &rout : adsbTgtRepQueue)
+        for (const AsterixRecord &rout : adsbTgtRepMultiMap)
         {
             IcaoAddr tgtAddr = rout.valStrFromDitem(QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
 
@@ -485,10 +485,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QQueue<AsterixRecord> smrSrvMsgQueue = collator.smrSrvMsgQueue();
-        QCOMPARE(smrSrvMsgQueue.size(), sizeOut);
+        const QMultiMap<QDateTime, AsterixRecord> smrSrvMsgMultiMap = collator.smrSrvMsgMultiMap();
+        QCOMPARE(smrSrvMsgMultiMap.size(), sizeOut);
 
-        for (const AsterixRecord &rout : smrSrvMsgQueue)
+        for (const AsterixRecord &rout : smrSrvMsgMultiMap)
         {
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }
@@ -501,10 +501,10 @@ void RecordCollatorTest::test()
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QQueue<AsterixRecord> mlatSrvMsgQueue = collator.mlatSrvMsgQueue();
-        QCOMPARE(mlatSrvMsgQueue.size(), sizeOut);
+        const QMultiMap<QDateTime, AsterixRecord> mlatSrvMsgMultiMap = collator.mlatSrvMsgMultiMap();
+        QCOMPARE(mlatSrvMsgMultiMap.size(), sizeOut);
 
-        for (const AsterixRecord &rout : mlatSrvMsgQueue)
+        for (const AsterixRecord &rout : mlatSrvMsgMultiMap)
         {
             msecs << rout.m_dateTime.toMSecsSinceEpoch();
         }

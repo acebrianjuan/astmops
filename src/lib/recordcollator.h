@@ -23,13 +23,14 @@
 #include "asterix.h"
 #include "astmops.h"
 #include <QIODevice>
+#include <QMultiMap>
 #include <QObject>
 #include <QQueue>
 #include <QVector>
 
 /*!
  * \brief The RecordCollator class filters, sorts and classifies
- * AsterixRecord objects into different queues.
+ * AsterixRecord objects into different multimaps.
  *
  * The purpose of this class is threefold:
  *
@@ -37,12 +38,12 @@
  * of the target. The list of addresses to be filtered is read from a text
  * file.
  *
- * Classifies records into different queues based on their nature.
+ * Classifies records into different multimaps based on their nature.
  * Factors such as the Category, Data Source Identifier, Message Type and
  * Target Report Descriptor are taken into account for this classification.
  *
  * Makes sure that the records are sorted in chronological order within
- * each queue.
+ * each multimap.
  */
 class RecordCollator : public QObject
 {
@@ -67,11 +68,11 @@ public:
 
     QVector<IcaoAddr> excludedAddresses() const;
 
-    QQueue<AsterixRecord> smrTgtRepQueue() const;
-    QQueue<AsterixRecord> smrSrvMsgQueue() const;
-    QQueue<AsterixRecord> mlatTgtRepQueue() const;
-    QQueue<AsterixRecord> mlatSrvMsgQueue() const;
-    QQueue<AsterixRecord> adsbTgtRepQueue() const;
+    QMultiMap<QDateTime, AsterixRecord> smrTgtRepMultiMap() const;
+    QMultiMap<QDateTime, AsterixRecord> smrSrvMsgMultiMap() const;
+    QMultiMap<QDateTime, AsterixRecord> mlatTgtRepMultiMap() const;
+    QMultiMap<QDateTime, AsterixRecord> mlatSrvMsgMultiMap() const;
+    QMultiMap<QDateTime, AsterixRecord> adsbTgtRepMultiMap() const;
 
     Counter smrTgtRepCounter() const;
     Counter smrSrvMsgCounter() const;
@@ -90,11 +91,11 @@ private:
     quint8 m_mlatSic;
     quint8 m_adsbSic;
 
-    QQueue<AsterixRecord> m_smrTgtRepQueue;
-    QQueue<AsterixRecord> m_smrSrvMsgQueue;
-    QQueue<AsterixRecord> m_mlatTgtRepQueue;
-    QQueue<AsterixRecord> m_mlatSrvMsgQueue;
-    QQueue<AsterixRecord> m_adsbTgtRepQueue;
+    QMultiMap<QDateTime, AsterixRecord> m_smrTgtRepMultiMap;
+    QMultiMap<QDateTime, AsterixRecord> m_smrSrvMsgMultiMap;
+    QMultiMap<QDateTime, AsterixRecord> m_mlatTgtRepMultiMap;
+    QMultiMap<QDateTime, AsterixRecord> m_mlatSrvMsgMultiMap;
+    QMultiMap<QDateTime, AsterixRecord> m_adsbTgtRepMultiMap;
 
     Counter m_smrTgtRepCounter;
     Counter m_smrSrvMsgCounter;

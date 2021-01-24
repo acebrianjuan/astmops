@@ -39,9 +39,12 @@ void RecordCollator::processRecord(const AsterixRecord &record)
     // TODO: Handle cases with no Target Address information.
     // TODO: Consider sorting only the last n elements of the queues for performance.
 
+
+    /*
     auto sorter = [](const AsterixRecord &lhs, const AsterixRecord &rhs) {
         return lhs.m_dateTime < rhs.m_dateTime;
     };
+    */
 
     if (record.m_cat == 10)  // Monosensor Surface Movement Data.
     {
@@ -78,14 +81,14 @@ void RecordCollator::processRecord(const AsterixRecord &record)
              */
             if (sysType == 1)  // Mode S Multilateration.
             {
-                m_mlatTgtRepQueue.enqueue(record);
-                std::sort(m_mlatTgtRepQueue.begin(), m_mlatTgtRepQueue.end(), sorter);
+                m_mlatTgtRepMultiMap.insert(record.m_dateTime, record);
+                //std::sort(m_mlatTgtRepMultiMap.begin(), m_mlatTgtRepMultiMap.end(), sorter);
                 ++m_mlatTgtRepCounter.out;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                m_smrTgtRepQueue.enqueue(record);
-                std::sort(m_smrTgtRepQueue.begin(), m_smrTgtRepQueue.end(), sorter);
+                m_smrTgtRepMultiMap.insert(record.m_dateTime, record);
+                //std::sort(m_smrTgtRepMultiMap.begin(), m_smrTgtRepMultiMap.end(), sorter);
                 ++m_smrTgtRepCounter.out;
             }
         }
@@ -98,16 +101,16 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             {
                 ++m_mlatSrvMsgCounter.in;
 
-                m_mlatSrvMsgQueue.enqueue(record);
-                std::sort(m_mlatSrvMsgQueue.begin(), m_mlatSrvMsgQueue.end(), sorter);
+                m_mlatSrvMsgMultiMap.insert(record.m_dateTime, record);
+                //std::sort(m_mlatSrvMsgMultiMap.begin(), m_mlatSrvMsgMultiMap.end(), sorter);
                 ++m_mlatSrvMsgCounter.out;
             }
             else if (sic == m_smrSic)  // Primary Surveillance Radar.
             {
                 ++m_smrSrvMsgCounter.in;
 
-                m_smrSrvMsgQueue.enqueue(record);
-                std::sort(m_smrSrvMsgQueue.begin(), m_smrSrvMsgQueue.end(), sorter);
+                m_smrSrvMsgMultiMap.insert(record.m_dateTime, record);
+                //std::sort(m_smrSrvMsgMultiMap.begin(), m_smrSrvMsgMultiMap.end(), sorter);
                 ++m_smrSrvMsgCounter.out;
             }
         }
@@ -130,8 +133,8 @@ void RecordCollator::processRecord(const AsterixRecord &record)
         /* Continue if address is a valid non-excluded address
          * or if there is no address information at all.
          */
-        m_adsbTgtRepQueue.enqueue(record);
-        std::sort(m_adsbTgtRepQueue.begin(), m_adsbTgtRepQueue.end(), sorter);
+        m_adsbTgtRepMultiMap.insert(record.m_dateTime, record);
+        //std::sort(m_adsbTgtRepMultiMap.begin(), m_adsbTgtRepMultiMap.end(), sorter);
         ++m_adsbTgtRepCounter.out;
     }
 }
@@ -177,29 +180,29 @@ QVector<IcaoAddr> RecordCollator::excludedAddresses() const
     return m_excludedAddresses;
 }
 
-QQueue<AsterixRecord> RecordCollator::smrTgtRepQueue() const
+QMultiMap<QDateTime, AsterixRecord> RecordCollator::smrTgtRepMultiMap() const
 {
-    return m_smrTgtRepQueue;
+    return m_smrTgtRepMultiMap;
 }
 
-QQueue<AsterixRecord> RecordCollator::smrSrvMsgQueue() const
+QMultiMap<QDateTime, AsterixRecord> RecordCollator::smrSrvMsgMultiMap() const
 {
-    return m_smrSrvMsgQueue;
+    return m_smrSrvMsgMultiMap;
 }
 
-QQueue<AsterixRecord> RecordCollator::mlatTgtRepQueue() const
+QMultiMap<QDateTime, AsterixRecord> RecordCollator::mlatTgtRepMultiMap() const
 {
-    return m_mlatTgtRepQueue;
+    return m_mlatTgtRepMultiMap;
 }
 
-QQueue<AsterixRecord> RecordCollator::mlatSrvMsgQueue() const
+QMultiMap<QDateTime, AsterixRecord> RecordCollator::mlatSrvMsgMultiMap() const
 {
-    return m_mlatSrvMsgQueue;
+    return m_mlatSrvMsgMultiMap;
 }
 
-QQueue<AsterixRecord> RecordCollator::adsbTgtRepQueue() const
+QMultiMap<QDateTime, AsterixRecord> RecordCollator::adsbTgtRepMultiMap() const
 {
-    return m_adsbTgtRepQueue;
+    return m_adsbTgtRepMultiMap;
 }
 
 RecordCollator::Counter RecordCollator::smrTgtRepCounter() const
