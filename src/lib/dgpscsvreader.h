@@ -22,7 +22,7 @@
 
 #include <QGeoPositionInfo>
 #include <QIODevice>
-#include <QVector>
+#include <QMultiMap>
 
 enum ErrorType
 {
@@ -31,6 +31,6 @@ enum ErrorType
     OtherError
 };
 
-QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error = nullptr);
+QMultiMap<QDateTime, QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error = nullptr);
 
 #endif  // ASTMOPS_DGPSCSVREADER_H

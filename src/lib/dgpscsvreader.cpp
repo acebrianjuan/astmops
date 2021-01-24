@@ -26,14 +26,14 @@
  * \param error
  * \return
  */
-QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
+QMultiMap<QDateTime, QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
 {
     if (error)
     {
         *error = NoError;
     }
 
-    QVector<QGeoPositionInfo> result;
+    QMultiMap<QDateTime, QGeoPositionInfo> result;
 
     enum Timestamp
     {
@@ -205,7 +205,7 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
         const QGeoCoordinate position =
             QGeoCoordinate(latitude, longitude, altitudeValue);
 
-        result.append(QGeoPositionInfo(position, timeValue));
+        result.insert(timeValue, QGeoPositionInfo(position, timeValue));
     }
 
     return result;

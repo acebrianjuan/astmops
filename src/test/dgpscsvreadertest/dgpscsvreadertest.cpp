@@ -79,14 +79,18 @@ void DgpsCsvReaderTest::test()
     QFETCH(ErrorType, errorType);
 
     ErrorType error;
-    QVector<QGeoPositionInfo> refData = readDgpsCsv(&file, &error);
+    QMultiMap<QDateTime, QGeoPositionInfo> refData = readDgpsCsv(&file, &error);
 
     QCOMPARE(error, errorType);
     QVERIFY(refData.size() == posInfo.size());
 
-    for (int i = 0; i < posInfo.size(); ++i)
+    int i = 0;
+    QMapIterator<QDateTime, QGeoPositionInfo> itRef(refData);
+    while (itRef.hasNext())
     {
-        QGeoPositionInfo p1 = refData.at(i);
+        itRef.next();
+
+        QGeoPositionInfo p1 = itRef.value();
         //qDebug() << p1;
 
         QGeoPositionInfo p2 = posInfo.at(i);
@@ -95,6 +99,8 @@ void DgpsCsvReaderTest::test()
         QCOMPARE(p1.timestamp(), p2.timestamp());
         QVERIFY(p1.coordinate().distanceTo(p2.coordinate()) <= 1);
         QCOMPARE(p1.coordinate().altitude(), p2.coordinate().altitude());
+
+        ++i;
     }
 }
 
