@@ -22,6 +22,7 @@
 #define ASTMOPS_ASTMOPS_H
 
 #include "aerodrome.h"
+#include <QDate>
 #include <QDebug>
 #include <QGeoCircle>
 #include <QGeoPolygon>
@@ -29,7 +30,6 @@
 #include <QSettings>
 #include <QtGlobal>
 #include <QtMath>
-#include <QDate>
 
 using TrackNum = quint32;
 using IcaoAddr = quint32;
@@ -79,7 +79,6 @@ static quint8 readSic(const QString &key)
 
 namespace Configuration
 {
-
 inline QDate asterixDate()
 {
     QString key = QLatin1String("Date");

@@ -84,7 +84,6 @@ public:
     TargetReport();
 
     TargetReportType m_type;
-
 };
 
 class Cat010TargetReport : TargetReport
@@ -181,4 +180,4 @@ public:
     // I021/400 Receiver ID
 };
 
-#endif // ASTMOPS_MESSAGE_H
+#endif  // ASTMOPS_MESSAGE_H
