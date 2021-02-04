@@ -17,3 +17,5 @@ add_subdirectory(kmlreadertest)
 add_subdirectory(mopsprocessortest)
 add_subdirectory(recordcollatortest)
 
+
+add_subdirectory(evaluatortest)

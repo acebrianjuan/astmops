@@ -11,6 +11,6 @@
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Positioning)
 set(CMAKE_AUTOMOC ON)
 
-add_library(lib asterix.cpp geofunctions.cpp aerodrome.cpp aixmreader.cpp kmlreader.cpp asterixxmlreader.cpp dgpscsvreader.cpp recordcollator.cpp message.cpp mopsprocessor.cpp counters.cpp)
+add_library(lib asterix.cpp geofunctions.cpp aerodrome.cpp aixmreader.cpp kmlreader.cpp asterixxmlreader.cpp dgpscsvreader.cpp recordcollator.cpp message.cpp evaluator.cpp mopsprocessor.cpp counters.cpp)
 target_include_directories(lib PUBLIC .)
 target_link_libraries(lib Qt5::Core Qt5::Gui Qt5::Positioning)

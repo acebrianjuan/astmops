@@ -21,6 +21,7 @@
 #define ASTMOPS_ASTERIXXMLREADER_H
 
 #include "asterix.h"
+#include <QMultiMap>
 #include <QObject>
 #include <QQueue>
 #include <QXmlStreamReader>
@@ -43,6 +44,9 @@ public:
     void addData(const QByteArray& data);
     AsterixRecord record();
     bool hasPendingRecords();
+    void setOverrideDate(QDate date);
+
+    QMultiMap<QDateTime, AsterixRecord> getMultiMap();
 
 public slots:
 
@@ -55,6 +59,7 @@ private:
     AsterixDataElement readDataField();
     bool isValidDataItem(const QString& di);
 
+    QDate m_overrideDate;
     QXmlStreamReader m_xml;
     QQueue<AsterixRecord> m_recordsQueue;
 };

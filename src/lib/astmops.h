@@ -29,6 +29,7 @@
 #include <QSettings>
 #include <QtGlobal>
 #include <QtMath>
+#include <QDate>
 
 using TrackNum = quint32;
 using IcaoAddr = quint32;
@@ -78,6 +79,25 @@ static quint8 readSic(const QString &key)
 
 namespace Configuration
 {
+
+inline QDate asterixDate()
+{
+    QString key = QLatin1String("Date");
+
+    QSettings settings;
+    //settings.beginGroup(QLatin1String("Global"));
+
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
+
+    QString timeStr = settings.value(key).toString();
+    QDate date = QDate::fromString(timeStr, Qt::ISODate);
+
+    return date;
+}
+
 inline quint8 smrSic()
 {
     QString key = QLatin1String("SMR.SIC");
@@ -285,11 +305,12 @@ inline qint32 dgpsTimeOfDayOffset()
 //    return val;
 //}
 
-inline quint32 dgpsTargetAddress()
+inline IcaoAddr dgpsTargetAddress()
 {
-    QString key = QLatin1String("DGPS.TargetAddress");
+    QString key = QLatin1String("TargetAddress");
 
     QSettings settings;
+    settings.beginGroup(QLatin1String("DGPS"));
 
     if (!settings.contains(key))
     {
