@@ -280,11 +280,12 @@ QStringList KmlReader::getPosList(const QStringList &tokens)
 
 QGeoCoordinate KmlReader::posListToCoord(QStringList list)
 {
-    Q_ASSERT(list.size() == 2 || list.size() % 3 == 0);
+    Q_ASSERT(/*list.size() == 2 ||*/ list.size() % 3 == 0);
 
     double lon = list.takeFirst().toDouble();
     double lat = list.takeFirst().toDouble();
-    QGeoCoordinate coord(lat, lon);
+    double alt = list.takeFirst().toDouble();
+    QGeoCoordinate coord(lat, lon, alt);
 
     return coord;
 }
@@ -295,14 +296,14 @@ QVector<QGeoCoordinate> KmlReader::posListToCoordVector(QStringList list)
     Q_ASSERT(sizeIn % 3 == 0);
 
     QVector<QGeoCoordinate> coordVector;
-    double lon, lat;
+    double lon, lat, alt;
 
     while (list.size() > 0)
     {
         lon = list.takeFirst().toDouble();
         lat = list.takeFirst().toDouble();
-        list.takeFirst().toDouble();  // Discard altitude component.
-        coordVector << QGeoCoordinate(lat, lon);
+        alt = list.takeFirst().toDouble();
+        coordVector << QGeoCoordinate(lat, lon, alt);
     }
 
     int sizeOut = coordVector.size();

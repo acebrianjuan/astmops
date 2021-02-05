@@ -18,6 +18,8 @@
  */
 
 #include "aerodrome.h"
+#include "astmops.h"
+#include <QVector2D>
 
 Aerodrome::Aerodrome()
 {
@@ -86,43 +88,67 @@ void Aerodrome::addApproach2Element(const QPolygonF &polygon)
     m_approach2Elements.append(polygon);
 }
 
-Aerodrome::Area Aerodrome::locatePoint(QPointF point)
+Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit)
 {
     Q_ASSERT(hasAnyElements());
 
-    if (collectionContainsPoint(m_runwayElements, point))
+    QPointF pos2D = cartPos.toPointF();
+    double alt = cartPos.z();
+
+    Layer layer = UnknownLayer;
+
+    if (gndBit.has_value())
     {
-        return Area::Runway;
+        layer = gndBit.value() ? Layer::GroundLayer
+                               : Layer::AirborneLayer;
     }
-    else if (collectionContainsPoint(m_taxiwayElements, point))
+    else
     {
-        return Area::Taxiway;
-    }
-    else if (collectionContainsPoint(m_apronElements, point))
-    {
-        return Area::Apron;
-    }
-    else if (collectionContainsPoint(m_standElements, point))
-    {
-        return Area::Stand;
-    }
-    else if (collectionContainsPoint(m_approach1Elements, point))
-    {
-        return Area::Approach1;
-    }
-    else if (collectionContainsPoint(m_approach2Elements, point))
-    {
-        return Area::Approach2;
+        layer = alt > 0 ? Layer::AirborneLayer
+                        : Layer::GroundLayer;
     }
 
-    // TODO: Handle Area::Airborne case.
+    if (layer == Layer::GroundLayer)
+    {
+        if (collectionContainsPoint(m_runwayElements, pos2D))
+        {
+            return Area::Runway;
+        }
+        else if (collectionContainsPoint(m_taxiwayElements, pos2D))
+        {
+            return Area::Taxiway;
+        }
+        else if (collectionContainsPoint(m_apronElements, pos2D))
+        {
+            return Area::Apron;
+        }
+        else if (collectionContainsPoint(m_standElements, pos2D))
+        {
+            return Area::Stand;
+        }
+    }
+    else if (layer == Layer::AirborneLayer)
+    {
+        if (collectionContainsPoint(m_approach1Elements, pos2D))
+        {
+            return Area::Approach1;
+        }
+        else if (collectionContainsPoint(m_approach2Elements, pos2D))
+        {
+            return Area::Approach2;
+        }
+        else
+        {
+            return Area::Airborne;
+        }
+    }
 
     return Area::None;
 }
 
 bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point)
 {
-    Q_ASSERT(!collection.isEmpty());
+    //Q_ASSERT(!collection.isEmpty());
 
     for (const QPolygonF &element : collection)
     {

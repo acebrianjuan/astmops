@@ -23,6 +23,7 @@
 #include <QPolygonF>
 #include <QVector3D>
 #include <QVector>
+#include <optional>
 
 /*!
  * \brief The Aerodrome class contains the assets of an aerodrome.
@@ -86,7 +87,7 @@ public:
     void addApproach1Element(const QPolygonF &polygon);
     void addApproach2Element(const QPolygonF &polygon);
 
-    Aerodrome::Area locatePoint(QPointF point);
+    Aerodrome::Area locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit = std::nullopt);
 
     QVector<QPolygonF> getRunwayElements() const;
     QVector<QPolygonF> getTaxiwayElements() const;

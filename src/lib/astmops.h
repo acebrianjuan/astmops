@@ -42,6 +42,12 @@ enum SystemType
     Unknown
 };
 
+enum Layer
+{
+    GroundLayer,
+    AirborneLayer,
+    UnknownLayer
+};
 
 const double ed116TgtRepUpdateRateHz = 1.0;  // Hz
 const double ed116SrvMsgUpdateRateHz = 1.0;  // Hz
