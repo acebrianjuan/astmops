@@ -20,6 +20,7 @@
 #include "evaluator.h"
 #include "asterixxmlreader.h"
 #include "dgpscsvreader.h"
+#include "kmlreader.h"
 #include <QObject>
 #include <QtTest>
 
@@ -77,10 +78,22 @@ void EvaluatorTest::testPosAccDgps_data()
 
 void EvaluatorTest::testPosAccDgps()
 {
-    AsterixXmlReader reader;
-    reader.setOverrideDate(Configuration::asterixDate());
+    AsterixXmlReader asterixReader;
+    asterixReader.setOverrideDate(Configuration::asterixDate());
+
+    QFile kmlFile(QFINDTESTDATA("lebl-insignia.kml"));
+    QVERIFY(kmlFile.open(QIODevice::ReadOnly));
+
+    KmlReader kmlReader;
+    kmlReader.read(&kmlFile);
+
+    Aerodrome lebl = kmlReader.makeAerodrome();
+    auto leblCallback = [&lebl](const QVector3D cartPos, const std::optional<bool> &gndBit = std::nullopt) {
+        return lebl.locatePoint(cartPos, gndBit);
+    };
 
     Evaluator evaluator;
+    evaluator.setLocatePointCallback(leblCallback);
 
     IcaoAddr dgpsAddr = Configuration::dgpsTargetAddress();
 
@@ -95,8 +108,8 @@ void EvaluatorTest::testPosAccDgps()
     QMultiMap<QDateTime, QGeoPositionInfo> refData = readDgpsCsv(&refFile);
 
     const QByteArray contents = testFile.readAll();
-    reader.addData(contents);
-    QMultiMap<QDateTime, AsterixRecord> testData = reader.getMultiMap();
+    asterixReader.addData(contents);
+    QMultiMap<QDateTime, AsterixRecord> testData = asterixReader.getMultiMap();
 
     evaluator.setRefData(refData);
     evaluator.setTestData(dgpsTestDataMap(testData, dgpsAddr));

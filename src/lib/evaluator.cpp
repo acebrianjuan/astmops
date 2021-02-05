@@ -19,11 +19,17 @@
 
 #include "evaluator.h"
 #include "geofunctions.h"
+#include <QMetaEnum>
 #include <QtMath>
 #include <iostream>
 
 Evaluator::Evaluator(QObject *parent) : QObject(parent)
 {
+    QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
+    for (int i = 0; i < e.keyCount(); ++i)
+    {
+        m_cat010MlatPosAccuracy.insert(static_cast<Aerodrome::Area>(e.value(i)), Counters::BasicCounter());
+    }
 }
 
 double Evaluator::evalPosAccDgps()
@@ -46,6 +52,8 @@ double Evaluator::evalPosAccDgps()
         double xTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("X")).toDouble();
         double yTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
+        bool gndBit = testRec.valStrFromDitem(QLatin1String("I020"), QLatin1String("GBS")).toUInt();
+
         TestDataMapping mapping = m_testDataMappings.value(tod);
 
         if (!mapping.hasRefPosInfo)
@@ -57,10 +65,18 @@ double Evaluator::evalPosAccDgps()
 
         QVector3D cartRef = geoToLocalEnu(refPosInfo.coordinate(), leblArp);
 
+        Aerodrome::Area area = m_locatePoint(cartRef, gndBit);
+
         double errX = cartRef.x() - xTest;
         double errY = cartRef.y() - yTest;
 
         double dist = qSqrt(qPow(errX, 2) + qPow(errY, 2));
+
+        ++m_cat010MlatPosAccuracy[area].countTotal;
+        if (dist <= 7.5)
+        {
+            ++m_cat010MlatPosAccuracy[area].countValid;
+        }
 
         /*
         qDebug() << tod
@@ -68,7 +84,16 @@ double Evaluator::evalPosAccDgps()
                  << "TST_X:" << xTest << "TST_Y:" << yTest
                  << "ERR: " << dist;
         */
-        std::cout << tod.toString(Qt::ISODateWithMs).toStdString() << " ERR: " << dist << '\n';
+
+        //std::cout << tod.toString(Qt::ISODateWithMs).toStdString() << " ERR: " << dist << '\n';
+    }
+
+    for (QHash<Aerodrome::Area, Counters::BasicCounter>::const_iterator it = m_cat010MlatPosAccuracy.constBegin(); it != m_cat010MlatPosAccuracy.constEnd(); ++it)
+    {
+        double result = it.value().countTotal == 0 ? qSNaN()
+                                                   : it.value().countValid / static_cast<double>(it.value().countTotal);
+
+        qDebug() << it.key() << "\t\t" << it.value().countValid << "/" << it.value().countTotal << "=" << result;
     }
 
     return 0.0;
@@ -79,7 +104,7 @@ void Evaluator::setTestData(const QMultiMap<QDateTime, AsterixRecord> &testData)
     m_testData = testData;
 }
 
-void Evaluator::setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF &)> &callback)
+void Evaluator::setLocatePointCallback(const std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> &callback)
 {
     m_locatePoint = callback;
 }

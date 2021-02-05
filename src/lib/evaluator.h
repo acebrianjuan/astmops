@@ -21,10 +21,12 @@
 #define ASTMOPS_EVALUATOR_H
 
 #include "asterix.h"
+#include "counters.h"
 #include <QDateTime>
 #include <QGeoPositionInfo>
 #include <QMultiMap>
 #include <QObject>
+#include <optional>
 
 struct TestDataMapping  // mapping to respective ref data
 {
@@ -51,7 +53,7 @@ public:
 
     void setRefData(const QMultiMap<QDateTime, QGeoPositionInfo> &refData);
     void setTestData(const QMultiMap<QDateTime, AsterixRecord> &testData);
-    void setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF &)> &callback);
+    void setLocatePointCallback(const std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> &callback);
 
 private:
     QGeoPositionInfo interpolatedRefPosForTime(const QDateTime &tod, double dtMax, bool *ok = nullptr);
@@ -61,13 +63,15 @@ private:
     TestDataMapping calculateTestDataMapping(const QDateTime &tod) const;
     void addRefPosToMapping(TestDataMapping &mapping) const;
 
-    std::function<Aerodrome::Area(const QPointF &)> m_locatePoint;
+    std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> m_locatePoint;
 
     IcaoAddr m_dgpsAddr = Configuration::dgpsTargetAddress();
 
     QMultiMap<QDateTime, QGeoPositionInfo> m_refData;
     QMultiMap<QDateTime, AsterixRecord> m_testData;
     QMap<QDateTime, TestDataMapping> m_testDataMappings;
+
+    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatPosAccuracy;
 };
 
 #endif  // ASTMOPS_EVALUATOR_H
