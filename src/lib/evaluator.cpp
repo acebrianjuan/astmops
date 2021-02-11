@@ -18,9 +18,12 @@
  */
 
 #include "evaluator.h"
+#include "aerodrome.h"
 #include "geofunctions.h"
 #include <QMetaEnum>
 #include <QtMath>
+#include <algorithm>
+#include <cmath>
 #include <iostream>
 
 Evaluator::Evaluator(QObject *parent) : QObject(parent)
@@ -28,7 +31,8 @@ Evaluator::Evaluator(QObject *parent) : QObject(parent)
     QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
     for (int i = 0; i < e.keyCount(); ++i)
     {
-        m_cat010MlatPosAccuracy.insert(static_cast<Aerodrome::Area>(e.value(i)), Counters::BasicCounter());
+        m_cat010MlatPosAccuracyCounters.insert(static_cast<Aerodrome::Area>(e.value(i)), Counters::BasicCounter());
+        m_cat010MlatPosAccuracyErrors.insert(static_cast<Aerodrome::Area>(e.value(i)), QVector<double>());
     }
 }
 
@@ -72,11 +76,38 @@ double Evaluator::evalPosAccDgps()
 
         double dist = qSqrt(qPow(errX, 2) + qPow(errY, 2));
 
-        ++m_cat010MlatPosAccuracy[area].countTotal;
-        if (dist <= 7.5)
+        double minDist;
+        switch (area)
         {
-            ++m_cat010MlatPosAccuracy[area].countValid;
+        case Aerodrome::Area::Runway:
+            minDist = 7.5;
+            break;
+        case Aerodrome::Area::Taxiway:
+            minDist = 7.5;
+            break;
+        case Aerodrome::Area::Apron:
+            minDist = 20;
+            break;
+        case Aerodrome::Area::Stand:
+            minDist = 20;
+            break;
+        case Aerodrome::Area::Approach1:
+            minDist = 20;
+            break;
+        case Aerodrome::Area::Approach2:
+            minDist = 40;
+            break;
+        default:
+            minDist = 40;
         }
+
+        ++m_cat010MlatPosAccuracyCounters[area].countTotal;
+        if (dist <= minDist)
+        {
+            ++m_cat010MlatPosAccuracyCounters[area].countValid;
+        }
+
+        m_cat010MlatPosAccuracyErrors[area].append(dist);
 
         /*
         qDebug() << tod
@@ -88,12 +119,23 @@ double Evaluator::evalPosAccDgps()
         //std::cout << tod.toString(Qt::ISODateWithMs).toStdString() << " ERR: " << dist << '\n';
     }
 
-    for (QHash<Aerodrome::Area, Counters::BasicCounter>::const_iterator it = m_cat010MlatPosAccuracy.constBegin(); it != m_cat010MlatPosAccuracy.constEnd(); ++it)
+    /*
+    for (QHash<Aerodrome::Area, Counters::BasicCounter>::const_iterator it = m_cat010MlatPosAccuracyCounters.constBegin(); it != m_cat010MlatPosAccuracyCounters.constEnd(); ++it)
     {
         double result = it.value().countTotal == 0 ? qSNaN()
                                                    : it.value().countValid / static_cast<double>(it.value().countTotal);
 
         qDebug() << it.key() << "\t\t" << it.value().countValid << "/" << it.value().countTotal << "=" << result;
+    }
+    */
+
+    for (QHash<Aerodrome::Area, QVector<double>>::const_iterator it = m_cat010MlatPosAccuracyErrors.constBegin(); it != m_cat010MlatPosAccuracyErrors.constEnd(); ++it)
+    {
+        QVector<double> errors = it.value();
+
+        qDebug() << it.key()
+                 << "P95:" << percentile(errors, 95) << "m"
+                 << "P99:" << percentile(errors, 99) << "m";
     }
 
     return 0.0;
@@ -290,6 +332,50 @@ void Evaluator::addRefPosToMapping(TestDataMapping &mapping) const
             mapping.hasRefPosInfo = true;
             mapping.refPosInfo = posInfoInterp;
         }
+    }
+}
+
+double Evaluator::percentile(QVector<double> vec, const double percent)
+{
+    //Q_ASSERT(!vec.isEmpty() && percent <= 100);
+
+    if (vec.isEmpty() || percent == 0 || percent > 100)
+    {
+        return qSNaN();  // TODO: Should throw a warning here.
+    }
+
+    if (vec.size() == 1)
+    {
+        return vec.first();
+    }
+
+    std::sort(vec.begin(), vec.end());
+
+    if (percent == 100)
+    {
+        return vec.last();
+    }
+
+    const int numRecords = vec.size();
+    double rank = percent / 100.0 * numRecords;
+
+    if (rank >= numRecords - 1)
+    {
+        return vec.last();
+    }
+
+    double intPart;
+    double fractPart = std::modf(rank, &intPart);
+
+    int idx = static_cast<int>(intPart);
+
+    if (fractPart != 0)
+    {
+        return vec.at(idx + 1);
+    }
+    else
+    {
+        return (vec.at(idx) + vec.at(idx + 1)) / 2.0;
     }
 }
 

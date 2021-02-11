@@ -62,6 +62,7 @@ private:
     void calculateTestDataMappings();
     TestDataMapping calculateTestDataMapping(const QDateTime &tod) const;
     void addRefPosToMapping(TestDataMapping &mapping) const;
+    double percentile(QVector<double> vec, const double percent);
 
     std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> m_locatePoint;
 
@@ -71,7 +72,8 @@ private:
     QMultiMap<QDateTime, AsterixRecord> m_testData;
     QMap<QDateTime, TestDataMapping> m_testDataMappings;
 
-    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatPosAccuracy;
+    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatPosAccuracyCounters;
+    QHash<Aerodrome::Area, QVector<double>> m_cat010MlatPosAccuracyErrors;
 };
 
 #endif  // ASTMOPS_EVALUATOR_H

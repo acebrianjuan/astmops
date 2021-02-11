@@ -239,7 +239,14 @@ void KmlReader::readPlacemark()
         {
             m_standElements << coords;
         }
-        // TODO: Implement Approach 1 and 2 cases.
+        else if (desc == QLatin1String("Approach1Element"))
+        {
+            m_approach1Elements << coords;
+        }
+        else if (desc == QLatin1String("Approach2Element"))
+        {
+            m_approach2Elements << coords;
+        }
     }
 }
 

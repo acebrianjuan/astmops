@@ -129,11 +129,11 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
     }
     else if (layer == Layer::AirborneLayer)
     {
-        if (collectionContainsPoint(m_approach1Elements, pos2D))
+        if (collectionContainsPoint(m_approach1Elements, pos2D) && alt <= 762)
         {
             return Area::Approach1;
         }
-        else if (collectionContainsPoint(m_approach2Elements, pos2D))
+        else if (collectionContainsPoint(m_approach2Elements, pos2D) && alt <= 762)
         {
             return Area::Approach2;
         }

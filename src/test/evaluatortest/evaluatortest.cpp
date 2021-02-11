@@ -54,34 +54,48 @@ void EvaluatorTest::initTestCase()
     QSettings settings;
     settings.clear();
 
-    settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));
-
     settings.setValue(QLatin1String("SMR.SIC"), 7);
     settings.setValue(QLatin1String("MLAT.SIC"), 107);
     settings.setValue(QLatin1String("ADSB.SIC"), 109);
-
-    settings.beginGroup(QLatin1String("DGPS"));
-    settings.setValue(QLatin1String("TargetAddress"), 0x34304F);
-    settings.endGroup();
 }
 
 void EvaluatorTest::testPosAccDgps_data()
 {
+    QTest::addColumn<QString>("date");
+    QTest::addColumn<IcaoAddr>("targetAddr");
     QTest::addColumn<QString>("refFileName");
     QTest::addColumn<QString>("testFileName");
     QTest::addColumn<double>("result");
 
-    QTest::newRow("TEST") << "eckjq_dgps_200505.csv"
-                          << "eckjq_mlat_200505.xml"
-                          << 0.0;
+    QTest::newRow("TEST 34304F") << "2020-05-05"
+                                 << 0x34304FU
+                                 << "dgps_34304F_20200505.csv"
+                                 << "mlat_34304F_20200505.xml"
+                                 << 0.0;
+
+    QTest::newRow("TEST 344399") << "2019-05-21"
+                                 << 0x344399U
+                                 << "dgps_344399_20190521.csv"
+                                 << "mlat_344399_20190521.xml"
+                                 << 0.0;
 }
 
 void EvaluatorTest::testPosAccDgps()
 {
+    QSettings settings;
+
+    QFETCH(QString, date);
+    QFETCH(IcaoAddr, targetAddr);
+    settings.setValue(QLatin1String("Date"), date);
+
+    settings.beginGroup(QLatin1String("DGPS"));
+    settings.setValue(QLatin1String("TargetAddress"), targetAddr);
+    settings.endGroup();
+
     AsterixXmlReader asterixReader;
     asterixReader.setOverrideDate(Configuration::asterixDate());
 
-    QFile kmlFile(QFINDTESTDATA("lebl-insignia.kml"));
+    QFile kmlFile(QFINDTESTDATA("lebl_insignia.kml"));
     QVERIFY(kmlFile.open(QIODevice::ReadOnly));
 
     KmlReader kmlReader;

@@ -63,7 +63,7 @@ public:
         Apron = 0b0011'0000'0000'0000,
         //    Apron             = Stand|ApronLane,
 
-        MovementArea = 0b0011'0011'0000'0000,
+        Movement = 0b0011'0011'0000'0000,
         //    MovementArea      = Manoeuvering|Apron,
 
         Ground = 0b0011'0011'0000'0000,
