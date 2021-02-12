@@ -44,9 +44,7 @@ public:
     void addData(const QByteArray& data);
     AsterixRecord record();
     bool hasPendingRecords();
-    void setOverrideDate(QDate date);
-
-    QMultiMap<QDateTime, AsterixRecord> getMultiMap();
+    void setStartDate(QDate date);
 
 public slots:
 
@@ -59,7 +57,7 @@ private:
     AsterixDataElement readDataField();
     bool isValidDataItem(const QString& di);
 
-    QDate m_overrideDate;
+    QDate m_startDate;
     QXmlStreamReader m_xml;
     QQueue<AsterixRecord> m_recordsQueue;
 };

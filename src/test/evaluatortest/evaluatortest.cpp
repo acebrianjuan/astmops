@@ -21,6 +21,7 @@
 #include "asterixxmlreader.h"
 #include "dgpscsvreader.h"
 #include "kmlreader.h"
+#include "recordcollator.h"
 #include <QObject>
 #include <QtTest>
 
@@ -92,8 +93,10 @@ void EvaluatorTest::testPosAccDgps()
     settings.setValue(QLatin1String("TargetAddress"), targetAddr);
     settings.endGroup();
 
-    AsterixXmlReader asterixReader;
-    asterixReader.setOverrideDate(Configuration::asterixDate());
+    AsterixXmlReader asterixXmlReader;
+    asterixXmlReader.setStartDate(Configuration::asterixDate());
+
+    RecordCollator recordCollator;
 
     QFile kmlFile(QFINDTESTDATA("lebl_insignia.kml"));
     QVERIFY(kmlFile.open(QIODevice::ReadOnly));
@@ -122,8 +125,14 @@ void EvaluatorTest::testPosAccDgps()
     QMultiMap<QDateTime, QGeoPositionInfo> refData = readDgpsCsv(&refFile);
 
     const QByteArray contents = testFile.readAll();
-    asterixReader.addData(contents);
-    QMultiMap<QDateTime, AsterixRecord> testData = asterixReader.getMultiMap();
+    asterixXmlReader.addData(contents);
+
+    while (asterixXmlReader.hasPendingRecords())
+    {
+        recordCollator.processRecord(asterixXmlReader.record());
+    }
+
+    QMultiMap<QDateTime, AsterixRecord> testData = recordCollator.mlatTgtRepMultiMap();
 
     evaluator.setRefData(refData);
     evaluator.setTestData(dgpsTestDataMap(testData, dgpsAddr));

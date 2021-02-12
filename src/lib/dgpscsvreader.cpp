@@ -205,6 +205,11 @@ QMultiMap<QDateTime, QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *e
         const QGeoCoordinate position =
             QGeoCoordinate(latitude, longitude, altitudeValue);
 
+        if (!timeValue.isValid() || !position.isValid())
+        {
+            qWarning() << "Ignoring invalid reference data:" << line;
+        }
+
         result.insert(timeValue, QGeoPositionInfo(position, timeValue));
     }
 

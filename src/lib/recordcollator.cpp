@@ -29,7 +29,7 @@ RecordCollator::RecordCollator(QObject *parent) : QObject(parent),
 {
 }
 
-void RecordCollator::processRecord(const AsterixRecord &record)
+void RecordCollator::processRecord(AsterixRecord record)
 {
     // Classify record by System Type (smr, mlat, adsb).
     // Filter out if record is an excluded address.
@@ -37,8 +37,6 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
     // TODO: Classify Records based on System Identification Code (SIC).
     // TODO: Handle cases with no Target Address information.
-    // TODO: Consider sorting only the last n elements of the queues for performance.
-
 
     /*
     auto sorter = [](const AsterixRecord &lhs, const AsterixRecord &rhs) {
@@ -57,10 +55,14 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
             if (sysType == 1)  // Mode S Multilateration.
             {
+                monotonicTimeCheck(m_lastMlatTgtRepDateTime, record.m_dateTime);
+
                 ++m_mlatTgtRepCounter.in;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
+                monotonicTimeCheck(m_lastSmrTgtRepDateTime, record.m_dateTime);
+
                 ++m_smrTgtRepCounter.in;
             }
 
@@ -82,13 +84,11 @@ void RecordCollator::processRecord(const AsterixRecord &record)
             if (sysType == 1)  // Mode S Multilateration.
             {
                 m_mlatTgtRepMultiMap.insert(record.m_dateTime, record);
-                //std::sort(m_mlatTgtRepMultiMap.begin(), m_mlatTgtRepMultiMap.end(), sorter);
                 ++m_mlatTgtRepCounter.out;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
                 m_smrTgtRepMultiMap.insert(record.m_dateTime, record);
-                //std::sort(m_smrTgtRepMultiMap.begin(), m_smrTgtRepMultiMap.end(), sorter);
                 ++m_smrTgtRepCounter.out;
             }
         }
@@ -99,25 +99,28 @@ void RecordCollator::processRecord(const AsterixRecord &record)
 
             if (sic == m_mlatSic)  // Mode S Multilateration.
             {
+                monotonicTimeCheck(m_lastMlatSrvMsgDateTime, record.m_dateTime);
                 ++m_mlatSrvMsgCounter.in;
 
                 m_mlatSrvMsgMultiMap.insert(record.m_dateTime, record);
-                //std::sort(m_mlatSrvMsgMultiMap.begin(), m_mlatSrvMsgMultiMap.end(), sorter);
                 ++m_mlatSrvMsgCounter.out;
             }
             else if (sic == m_smrSic)  // Primary Surveillance Radar.
             {
+                monotonicTimeCheck(m_lastSmrSrvMsgDateTime, record.m_dateTime);
                 ++m_smrSrvMsgCounter.in;
 
                 m_smrSrvMsgMultiMap.insert(record.m_dateTime, record);
-                //std::sort(m_smrSrvMsgMultiMap.begin(), m_smrSrvMsgMultiMap.end(), sorter);
                 ++m_smrSrvMsgCounter.out;
             }
         }
     }
     else if (record.m_cat == 21)  // ADS-B Reports.
     {
+        monotonicTimeCheck(m_lastAdsbTgtRepDateTime, record.m_dateTime);
+
         ++m_adsbTgtRepCounter.in;
+
         bool ok;
         IcaoAddr tgtAddr = record.valStrFromDitem(QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
@@ -228,4 +231,37 @@ RecordCollator::Counter RecordCollator::mlatSrvMsgCounter() const
 RecordCollator::Counter RecordCollator::adsbTgtRepCounter() const
 {
     return m_adsbTgtRepCounter;
+}
+
+void RecordCollator::monotonicTimeCheck(QDateTime &lastdt, QDateTime &newdt)
+{
+    if (newdt.isNull())
+    {
+        return;
+    }
+
+    if (lastdt.isValid() && newdt.isValid())
+    {
+        if (newdt < lastdt)
+        {
+            // Check if time difference in seconds is close to 24h (tolerance of 10 sec).
+            double tdiff = lastdt.msecsTo(newdt) / 1000.0;
+            if (tdiff <= -(24 * 3600 - 10))
+            {
+                // TOD ROLLOVER! Increase day by one.
+                /*
+                qWarning() << "Detected TOD ROLLOVER"
+                           << "(" << tdiff << "seconds)";
+                */
+                newdt = newdt.addDays(1);
+            }
+            else
+            {
+                qWarning() << "Detected TOD regression of" << tdiff << "seconds";
+                return;
+            }
+        }
+    }
+
+    lastdt = newdt;
 }

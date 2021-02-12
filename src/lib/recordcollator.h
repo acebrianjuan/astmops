@@ -58,7 +58,7 @@ public:
 
     explicit RecordCollator(QObject* parent = nullptr);
 
-    void processRecord(const AsterixRecord& record);
+    void processRecord(AsterixRecord record);
 
     void loadExcludedAddresses(QIODevice* device);
     void loadExcludedAddresses(const QVector<IcaoAddr>& excladdr);
@@ -85,11 +85,19 @@ public slots:
 signals:
 
 private:
+    void monotonicTimeCheck(QDateTime& lastdt, QDateTime& newdt);
+
     QVector<IcaoAddr> m_excludedAddresses;
 
     quint8 m_smrSic;
     quint8 m_mlatSic;
     quint8 m_adsbSic;
+
+    QDateTime m_lastSmrTgtRepDateTime;
+    QDateTime m_lastSmrSrvMsgDateTime;
+    QDateTime m_lastMlatTgtRepDateTime;
+    QDateTime m_lastMlatSrvMsgDateTime;
+    QDateTime m_lastAdsbTgtRepDateTime;
 
     QMultiMap<QDateTime, AsterixRecord> m_smrTgtRepMultiMap;
     QMultiMap<QDateTime, AsterixRecord> m_smrSrvMsgMultiMap;

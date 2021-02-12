@@ -410,7 +410,7 @@ void RecordCollatorTest::test()
     QCOMPARE(counter.out, 0u);
 
     // Feed Records to the RecordCollator.
-    for (const AsterixRecord &rin : recordsIn)
+    for (AsterixRecord &rin : recordsIn)
     {
         collator.processRecord(rin);
     }

@@ -62,6 +62,7 @@ private:
     void calculateTestDataMappings();
     TestDataMapping calculateTestDataMapping(const QDateTime &tod) const;
     void addRefPosToMapping(TestDataMapping &mapping) const;
+    bool hasRefDataForTime(const QDateTime &tod, double tdiffMax) const;
     double percentile(QVector<double> vec, const double percent);
 
     std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> m_locatePoint;

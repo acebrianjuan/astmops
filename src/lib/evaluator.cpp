@@ -47,11 +47,18 @@ double Evaluator::evalPosAccDgps()
     QGeoPositionInfo testPos;
     QGeoPositionInfo refPos;
 
+    double tdiffMax = 2.0;  // seconds.
     for (QMultiMap<QDateTime, AsterixRecord>::const_iterator it = m_testData.constBegin(); it != m_testData.constEnd(); ++it)
     {
         AsterixRecord testRec = it.value();
 
         tod = it.key();
+
+        if (!hasRefDataForTime(tod, tdiffMax))
+        {
+            //qWarning() << tod.toString(Qt::ISODateWithMs) << "Ref data beyond time limit of" << tdiffMax << "seconds";
+            continue;
+        }
 
         double xTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("X")).toDouble();
         double yTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("Y")).toDouble();
@@ -134,8 +141,12 @@ double Evaluator::evalPosAccDgps()
         QVector<double> errors = it.value();
 
         qDebug() << it.key()
-                 << "P95:" << percentile(errors, 95) << "m"
-                 << "P99:" << percentile(errors, 99) << "m";
+                 << "\t"
+                 << "P95:"
+                 << "\t" << percentile(errors, 95) << "m"
+                 << "\t"
+                 << "P99:"
+                 << "\t" << percentile(errors, 99) << "m";
     }
 
     return 0.0;
@@ -335,11 +346,43 @@ void Evaluator::addRefPosToMapping(TestDataMapping &mapping) const
     }
 }
 
+bool Evaluator::hasRefDataForTime(const QDateTime &tod, double tdiffMax) const
+{
+    Q_ASSERT(m_testDataMappings.contains(tod));
+
+    TestDataMapping mapping = m_testDataMappings.value(tod);
+
+    if (!mapping.hasRef1 && !mapping.hasRef2)  // No ref data.
+    {
+        return false;
+    }
+
+    if (mapping.hasRef1 && mapping.hasRef2)  // Interpolated.
+    {
+        Q_ASSERT(mapping.refPosInfo1.timestamp() <= tod);
+        Q_ASSERT(mapping.refPosInfo2.timestamp() >= tod);
+
+        if (mapping.refPosInfo1.timestamp().msecsTo(tod) / 1000.0 > tdiffMax)  // Lower too far.
+        {
+            return false;
+        }
+
+        if (tod.msecsTo(mapping.refPosInfo2.timestamp()) / 1000.0 > tdiffMax)  // Upper too far.
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 double Evaluator::percentile(QVector<double> vec, const double percent)
 {
     //Q_ASSERT(!vec.isEmpty() && percent <= 100);
 
-    if (vec.isEmpty() || percent == 0 || percent > 100)
+    if (vec.isEmpty() || percent < 0 || percent > 100)
     {
         return qSNaN();  // TODO: Should throw a warning here.
     }
@@ -351,6 +394,10 @@ double Evaluator::percentile(QVector<double> vec, const double percent)
 
     std::sort(vec.begin(), vec.end());
 
+    if (percent == 0)
+    {
+        return vec.first();
+    }
     if (percent == 100)
     {
         return vec.last();
@@ -367,7 +414,7 @@ double Evaluator::percentile(QVector<double> vec, const double percent)
     double intPart;
     double fractPart = std::modf(rank, &intPart);
 
-    int idx = static_cast<int>(intPart);
+    int idx = static_cast<int>(intPart) - 1;
 
     if (fractPart != 0)
     {

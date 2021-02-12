@@ -74,24 +74,12 @@ bool AsterixXmlReader::hasPendingRecords()
     return !m_recordsQueue.isEmpty();
 }
 
-void AsterixXmlReader::setOverrideDate(QDate date)
+void AsterixXmlReader::setStartDate(QDate date)
 {
     if (date.isValid())
     {
-        m_overrideDate = date;
+        m_startDate = date;
     }
-}
-
-QMultiMap<QDateTime, AsterixRecord> AsterixXmlReader::getMultiMap()
-{
-    QMultiMap<QDateTime, AsterixRecord> mmap;
-
-    for (const AsterixRecord& r : qAsConst(m_recordsQueue))
-    {
-        mmap.insert(r.m_dateTime, r);
-    }
-
-    return mmap;
 }
 
 void AsterixXmlReader::readRecord()
@@ -115,11 +103,7 @@ void AsterixXmlReader::readRecord()
     }
 
     record.m_cat = cat;
-    record.m_dateTime = QDateTime::fromMSecsSinceEpoch(timeStamp, Qt::UTC);
-
-    record.m_dateTime =
-        m_overrideDate.isNull() == true ? QDateTime::fromMSecsSinceEpoch(timeStamp, Qt::UTC)
-                                        : QDateTime(m_overrideDate, QTime::fromMSecsSinceStartOfDay(timeStamp), Qt::UTC);
+    record.m_dateTime = QDateTime(m_startDate, QTime::fromMSecsSinceStartOfDay(timeStamp), Qt::UTC);
 
     while (m_xml.readNextStartElement())
     {
