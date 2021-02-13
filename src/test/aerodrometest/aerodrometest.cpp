@@ -42,10 +42,10 @@ void AerodromeTest::test_data()
     QTest::addColumn<QPolygonF>("taxiway");
     QTest::addColumn<QPolygonF>("apron");
     QTest::addColumn<QPolygonF>("stand");
-    QTest::addColumn<QPolygonF>("approach1L");
-    QTest::addColumn<QPolygonF>("approach2L");
-    QTest::addColumn<QPolygonF>("approach1R");
-    QTest::addColumn<QPolygonF>("approach2R");
+    QTest::addColumn<QPolygonF>("airborne1L");
+    QTest::addColumn<QPolygonF>("airborne2L");
+    QTest::addColumn<QPolygonF>("airborne1R");
+    QTest::addColumn<QPolygonF>("airborne2R");
 
     QPolygonF runwayPolygon;
     runwayPolygon << QPointF(4.0, 0.5)
@@ -76,29 +76,29 @@ void AerodromeTest::test_data()
                  << QPointF(4.0, 4.0);
     //apronPolygon = apronPolygon.subtracted(standPolygon);
 
-    QPolygonF approach1LPolygon;
-    approach1LPolygon << QPointF(4.0, 0.5)
+    QPolygonF airborne1LPolygon;
+    airborne1LPolygon << QPointF(4.0, 0.5)
                       << QPointF(8.0, 1.0)
                       << QPointF(8.0, -1.0)
                       << QPointF(4.0, -0.5)
                       << QPointF(4.0, 0.5);
 
-    QPolygonF approach2LPolygon;
-    approach2LPolygon << QPointF(8.0, 1.0)
+    QPolygonF airborne2LPolygon;
+    airborne2LPolygon << QPointF(8.0, 1.0)
                       << QPointF(12.0, 1.5)
                       << QPointF(12.0, -1.5)
                       << QPointF(8.0, -1.0)
                       << QPointF(8.0, 1.0);
 
-    QPolygonF approach1RPolygon;
-    approach1RPolygon << QPointF(-4.0, 0.5)
+    QPolygonF airborne1RPolygon;
+    airborne1RPolygon << QPointF(-4.0, 0.5)
                       << QPointF(-8.0, 1.0)
                       << QPointF(-8.0, -1.0)
                       << QPointF(-4.0, -0.5)
                       << QPointF(-4.0, 0.5);
 
-    QPolygonF approach2RPolygon;
-    approach2RPolygon << QPointF(-8.0, 1.0)
+    QPolygonF airborne2RPolygon;
+    airborne2RPolygon << QPointF(-8.0, 1.0)
                       << QPointF(-12.0, 1.5)
                       << QPointF(-12.0, -1.5)
                       << QPointF(-8.0, -1.0)
@@ -109,10 +109,10 @@ void AerodromeTest::test_data()
         << taxiwayPolygon
         << apronPolygon
         << standPolygon
-        << approach1LPolygon
-        << approach2LPolygon
-        << approach1RPolygon
-        << approach2RPolygon;
+        << airborne1LPolygon
+        << airborne2LPolygon
+        << airborne1RPolygon
+        << airborne2RPolygon;
 }
 
 void AerodromeTest::test()
@@ -121,10 +121,10 @@ void AerodromeTest::test()
     QFETCH(QPolygonF, taxiway);
     QFETCH(QPolygonF, apron);
     QFETCH(QPolygonF, stand);
-    QFETCH(QPolygonF, approach1L);
-    QFETCH(QPolygonF, approach2L);
-    QFETCH(QPolygonF, approach1R);
-    QFETCH(QPolygonF, approach2R);
+    QFETCH(QPolygonF, airborne1L);
+    QFETCH(QPolygonF, airborne2L);
+    QFETCH(QPolygonF, airborne1R);
+    QFETCH(QPolygonF, airborne2R);
 
     Aerodrome aerodrome;
 
@@ -139,10 +139,10 @@ void AerodromeTest::test()
 
     aerodrome.addApronElement(apron);
     aerodrome.addStandElement(stand);
-    aerodrome.addApproach1Element(approach1L);
-    aerodrome.addApproach2Element(approach2L);
-    aerodrome.addApproach1Element(approach1R);
-    aerodrome.addApproach2Element(approach2R);
+    aerodrome.addAirborne1Element(airborne1L);
+    aerodrome.addAirborne2Element(airborne2L);
+    aerodrome.addAirborne1Element(airborne1R);
+    aerodrome.addAirborne2Element(airborne2R);
 
     QVERIFY(aerodrome.hasAnyElements() == true);
     QVERIFY(aerodrome.hasAllElements() == true);

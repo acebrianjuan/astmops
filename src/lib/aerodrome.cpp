@@ -29,7 +29,7 @@ bool Aerodrome::hasAnyElements()
 {
     if (!m_runwayElements.isEmpty() || !m_taxiwayElements.isEmpty() ||
         !m_apronElements.isEmpty() || !m_standElements.isEmpty() ||
-        !m_approach1Elements.isEmpty() || !m_approach2Elements.isEmpty())
+        !m_airborne1Elements.isEmpty() || !m_airborne2Elements.isEmpty())
     {
         return true;
     }
@@ -40,7 +40,7 @@ bool Aerodrome::hasAllElements()
 {
     if (!m_runwayElements.isEmpty() && !m_taxiwayElements.isEmpty() &&
         !m_apronElements.isEmpty() && !m_standElements.isEmpty() &&
-        !m_approach1Elements.isEmpty() && !m_approach2Elements.isEmpty())
+        !m_airborne1Elements.isEmpty() && !m_airborne2Elements.isEmpty())
     {
         return true;
     }
@@ -76,16 +76,16 @@ void Aerodrome::addStandElement(const QPolygonF &polygon)
     m_standElements.append(polygon);
 }
 
-void Aerodrome::addApproach1Element(const QPolygonF &polygon)
+void Aerodrome::addAirborne1Element(const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_approach1Elements.append(polygon);
+    m_airborne1Elements.append(polygon);
 }
 
-void Aerodrome::addApproach2Element(const QPolygonF &polygon)
+void Aerodrome::addAirborne2Element(const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_approach2Elements.append(polygon);
+    m_airborne2Elements.append(polygon);
 }
 
 Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit)
@@ -93,7 +93,7 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
     Q_ASSERT(hasAnyElements());
 
     QPointF pos2D = cartPos.toPointF();
-    double alt = cartPos.z();
+    double alt = cartPos.z();  // TODO: Revise altitude/height values in local radar cartesian frame.
 
     Layer layer = UnknownLayer;
 
@@ -129,17 +129,13 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
     }
     else if (layer == Layer::AirborneLayer)
     {
-        if (collectionContainsPoint(m_approach1Elements, pos2D) && alt <= 762)
+        if (collectionContainsPoint(m_airborne1Elements, pos2D) && alt <= 762)
         {
-            return Area::Approach1;
+            return Area::Airborne1;
         }
-        else if (collectionContainsPoint(m_approach2Elements, pos2D) && alt <= 762)
+        else if (collectionContainsPoint(m_airborne2Elements, pos2D) && alt <= 762)
         {
-            return Area::Approach2;
-        }
-        else
-        {
-            return Area::Airborne;
+            return Area::Airborne2;
         }
     }
 
@@ -180,12 +176,12 @@ QVector<QPolygonF> Aerodrome::getStandElements() const
     return m_standElements;
 }
 
-QVector<QPolygonF> Aerodrome::getApproach1Elements() const
+QVector<QPolygonF> Aerodrome::getAirborne1Elements() const
 {
-    return m_approach1Elements;
+    return m_airborne1Elements;
 }
 
-QVector<QPolygonF> Aerodrome::getApproach2Elements() const
+QVector<QPolygonF> Aerodrome::getAirborne2Elements() const
 {
-    return m_approach2Elements;
+    return m_airborne2Elements;
 }

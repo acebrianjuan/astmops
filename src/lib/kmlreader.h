@@ -67,8 +67,8 @@ private:
     QVector<QVector<QGeoCoordinate>> m_taxiwayElements;
     QVector<QVector<QGeoCoordinate>> m_apronElements;
     QVector<QVector<QGeoCoordinate>> m_standElements;
-    QVector<QVector<QGeoCoordinate>> m_approach1Elements;
-    QVector<QVector<QGeoCoordinate>> m_approach2Elements;
+    QVector<QVector<QGeoCoordinate>> m_airborne1Elements;
+    QVector<QVector<QGeoCoordinate>> m_airborne2Elements;
 };
 
 #endif  // ASTMOPS_KMLREADER_H

@@ -63,7 +63,8 @@ double Evaluator::evalPosAccDgps()
         double xTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("X")).toDouble();
         double yTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
-        bool gndBit = testRec.valStrFromDitem(QLatin1String("I020"), QLatin1String("GBS")).toUInt();
+        bool gbOk;
+        bool gndBit = testRec.valStrFromDitem(QLatin1String("I020"), QLatin1String("GBS")).toUInt(&gbOk);
 
         TestDataMapping mapping = m_testDataMappings.value(tod);
 
@@ -76,7 +77,15 @@ double Evaluator::evalPosAccDgps()
 
         QVector3D cartRef = geoToLocalEnu(refPosInfo.coordinate(), leblArp);
 
-        Aerodrome::Area area = m_locatePoint(cartRef, gndBit);
+        Aerodrome::Area area;
+        if (gbOk)
+        {
+            area = m_locatePoint(cartRef, gndBit);
+        }
+        else
+        {
+            area = m_locatePoint(cartRef, {});
+        }
 
         double errX = cartRef.x() - xTest;
         double errY = cartRef.y() - yTest;
@@ -98,10 +107,10 @@ double Evaluator::evalPosAccDgps()
         case Aerodrome::Area::Stand:
             minDist = 20;
             break;
-        case Aerodrome::Area::Approach1:
+        case Aerodrome::Area::Airborne1:
             minDist = 20;
             break;
-        case Aerodrome::Area::Approach2:
+        case Aerodrome::Area::Airborne2:
             minDist = 40;
             break;
         default:
@@ -139,6 +148,13 @@ double Evaluator::evalPosAccDgps()
     for (QHash<Aerodrome::Area, QVector<double>>::const_iterator it = m_cat010MlatPosAccuracyErrors.constBegin(); it != m_cat010MlatPosAccuracyErrors.constEnd(); ++it)
     {
         QVector<double> errors = it.value();
+
+        /*
+        if (it.key() == Aerodrome::Area::None)
+        {
+            continue;
+        }
+        */
 
         qDebug() << it.key()
                  << "\t"

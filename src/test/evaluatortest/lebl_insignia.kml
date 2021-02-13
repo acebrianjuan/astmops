@@ -13180,7 +13180,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach1Element</description>
+		<description>Airborne1Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13204,7 +13204,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach1Element</description>
+		<description>Airborne1Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13228,7 +13228,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach1Element</description>
+		<description>Airborne1Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13252,7 +13252,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach1Element</description>
+		<description>Airborne1Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13276,7 +13276,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach1Element</description>
+		<description>Airborne1Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13300,7 +13300,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach2Element</description>
+		<description>Airborne2Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13324,7 +13324,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach2Element</description>
+		<description>Airborne2Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13348,7 +13348,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach2Element</description>
+		<description>Airborne2Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13372,7 +13372,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach2Element</description>
+		<description>Airborne2Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -13396,7 +13396,7 @@
 	<Placemark>
 		<name>NULL</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>Approach2Element</description>
+		<description>Airborne2Element</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>

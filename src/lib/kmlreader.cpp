@@ -113,8 +113,8 @@ Aerodrome KmlReader::makeAerodrome() const
         aerodrome.addStandElement(polygon);
     }
 
-    // Approach 1 elements.
-    for (const QVector<QGeoCoordinate> &app1EleGeo : m_approach1Elements)
+    // Airborne 1 elements.
+    for (const QVector<QGeoCoordinate> &app1EleGeo : m_airborne1Elements)
     {
         QPolygonF polygon;
         polygon.reserve(app1EleGeo.size());
@@ -124,11 +124,11 @@ Aerodrome KmlReader::makeAerodrome() const
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
 
-        aerodrome.addApproach1Element(polygon);
+        aerodrome.addAirborne1Element(polygon);
     }
 
-    // Approach 2 elements.
-    for (const QVector<QGeoCoordinate> &app2EleGeo : m_approach2Elements)
+    // Airborne 2 elements.
+    for (const QVector<QGeoCoordinate> &app2EleGeo : m_airborne2Elements)
     {
         QPolygonF polygon;
         polygon.reserve(app2EleGeo.size());
@@ -138,7 +138,7 @@ Aerodrome KmlReader::makeAerodrome() const
             polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
         }
 
-        aerodrome.addApproach2Element(polygon);
+        aerodrome.addAirborne2Element(polygon);
     }
 
     return aerodrome;
@@ -239,13 +239,13 @@ void KmlReader::readPlacemark()
         {
             m_standElements << coords;
         }
-        else if (desc == QLatin1String("Approach1Element"))
+        else if (desc == QLatin1String("Airborne1Element"))
         {
-            m_approach1Elements << coords;
+            m_airborne1Elements << coords;
         }
-        else if (desc == QLatin1String("Approach2Element"))
+        else if (desc == QLatin1String("Airborne2Element"))
         {
-            m_approach2Elements << coords;
+            m_airborne2Elements << coords;
         }
     }
 }
