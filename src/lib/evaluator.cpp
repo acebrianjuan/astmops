@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <numeric>
 
 Evaluator::Evaluator(QObject *parent) : QObject(parent)
 {
@@ -156,14 +157,41 @@ double Evaluator::evalPosAccDgps()
         }
         */
 
+        int N = errors.size();
+
+        double sum = std::accumulate(errors.begin(), errors.end(), 0.0);
+        double mean = sum / N;
+
+        std::vector<double> diff(errors.size());
+        std::transform(errors.begin(), errors.end(), diff.begin(), [mean](double x) { return x - mean; });
+        double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+        double stdev = std::sqrt(sq_sum / N);
+
         qDebug() << it.key()
                  << "\t"
                  << "P95:"
                  << "\t" << percentile(errors, 95) << "m"
                  << "\t"
                  << "P99:"
-                 << "\t" << percentile(errors, 99) << "m";
+                 << "\t" << percentile(errors, 99) << "m"
+                 << "\t"
+                 << "Mean:"
+                 << "\t" << mean << "m"
+                 << "\t"
+                 << "StdDev:"
+                 << "\t" << stdev << "m"
+                 << "\t"
+                 << "N:"
+                 << "\t" << N;
+
+        /*
+        for (const auto err : qAsConst(errors))
+        {
+            std::cout << err << "\n";
+        }
+        */
     }
+
 
     return 0.0;
 }
