@@ -157,16 +157,6 @@ double Evaluator::evalPosAccDgps()
         }
         */
 
-        int N = errors.size();
-
-        double sum = std::accumulate(errors.begin(), errors.end(), 0.0);
-        double mean = sum / N;
-
-        std::vector<double> diff(errors.size());
-        std::transform(errors.begin(), errors.end(), diff.begin(), [mean](double x) { return x - mean; });
-        double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
-        double stdev = std::sqrt(sq_sum / N);
-
         qDebug() << it.key()
                  << "\t"
                  << "P95:"
@@ -176,13 +166,13 @@ double Evaluator::evalPosAccDgps()
                  << "\t" << percentile(errors, 99) << "m"
                  << "\t"
                  << "Mean:"
-                 << "\t" << mean << "m"
+                 << "\t" << mean(errors) << "m"
                  << "\t"
                  << "StdDev:"
-                 << "\t" << stdev << "m"
+                 << "\t" << stdDev(errors) << "m"
                  << "\t"
                  << "N:"
-                 << "\t" << N;
+                 << "\t" << errors.size();
 
         /*
         for (const auto err : qAsConst(errors))
@@ -468,6 +458,40 @@ double Evaluator::percentile(QVector<double> vec, const double percent)
     {
         return (vec.at(idx) + vec.at(idx + 1)) / 2.0;
     }
+}
+
+double Evaluator::mean(const QVector<double> &v)
+{
+    int N = v.size();
+
+    double sum = std::accumulate(v.begin(), v.end(), 0.0);
+    double mean = sum / N;
+
+    return mean;
+}
+
+double Evaluator::stdDev(const QVector<double> &v)
+{
+    int N = v.size();
+
+    if (N == 0)
+    {
+        return qSNaN();
+    }
+
+    if (N == 1)
+    {
+        return 0.0;
+    }
+
+    double mean = Evaluator::mean(v);
+
+    std::vector<double> diff(v.size());
+    std::transform(v.begin(), v.end(), diff.begin(), [mean](double x) { return x - mean; });
+    double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+    double stdev = std::sqrt(sq_sum / (N - 1));
+
+    return stdev;
 }
 
 void Evaluator::setRefData(const QMultiMap<QDateTime, QGeoPositionInfo> &refData)
