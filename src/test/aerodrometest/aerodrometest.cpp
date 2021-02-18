@@ -31,9 +31,6 @@ private slots:
 
     //void testLocatePoint_data();
     //void testLocatePoint();
-
-private:
-    //Aerodrome dummyAerodrome();
 };
 
 void AerodromeTest::test_data()
@@ -131,18 +128,18 @@ void AerodromeTest::test()
     QVERIFY(aerodrome.hasAnyElements() == false);
     QVERIFY(aerodrome.hasAllElements() == false);
 
-    aerodrome.addRunwayElement(runway);
-    aerodrome.addTaxiwayElement(taxiway);
+    aerodrome.addRunwayElement({}, runway);
+    aerodrome.addTaxiwayElement({}, taxiway);
 
     QVERIFY(aerodrome.hasAnyElements() == true);
     QVERIFY(aerodrome.hasAllElements() == false);
 
-    aerodrome.addApronElement(apron);
-    aerodrome.addStandElement(stand);
-    aerodrome.addAirborne1Element(airborne1L);
-    aerodrome.addAirborne2Element(airborne2L);
-    aerodrome.addAirborne1Element(airborne1R);
-    aerodrome.addAirborne2Element(airborne2R);
+    aerodrome.addApronElement({}, apron);
+    aerodrome.addStandElement({}, stand);
+    aerodrome.addAirborne1Element({}, airborne1L);
+    aerodrome.addAirborne2Element({}, airborne2L);
+    aerodrome.addAirborne1Element({}, airborne1R);
+    aerodrome.addAirborne2Element({}, airborne2R);
 
     QVERIFY(aerodrome.hasAnyElements() == true);
     QVERIFY(aerodrome.hasAllElements() == true);

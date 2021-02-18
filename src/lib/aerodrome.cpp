@@ -52,40 +52,40 @@ void Aerodrome::setArp(QVector3D point)
     m_arp = point;
 }
 
-void Aerodrome::addRunwayElement(const QPolygonF &polygon)
+void Aerodrome::addRunwayElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_runwayElements.append(polygon);
+    m_runwayElements[name] << polygon;
 }
 
-void Aerodrome::addTaxiwayElement(const QPolygonF &polygon)
+void Aerodrome::addTaxiwayElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_taxiwayElements.append(polygon);
+    m_taxiwayElements[name] << polygon;
 }
 
-void Aerodrome::addApronElement(const QPolygonF &polygon)
+void Aerodrome::addApronElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_apronElements.append(polygon);
+    m_apronElements[name] << polygon;
 }
 
-void Aerodrome::addStandElement(const QPolygonF &polygon)
+void Aerodrome::addStandElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_standElements.append(polygon);
+    m_standElements[name] << polygon;
 }
 
-void Aerodrome::addAirborne1Element(const QPolygonF &polygon)
+void Aerodrome::addAirborne1Element(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_airborne1Elements.append(polygon);
+    m_airborne1Elements[name] << polygon;
 }
 
-void Aerodrome::addAirborne2Element(const QPolygonF &polygon)
+void Aerodrome::addAirborne2Element(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_airborne2Elements.append(polygon);
+    m_airborne2Elements[name] << polygon;
 }
 
 Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit)
@@ -108,6 +108,7 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
                         : Layer::GroundLayer;
     }
 
+    // TODO: Consider returning a NamedArea instead of an Aerodrome::Area.
     if (layer == Layer::GroundLayer)
     {
         if (collectionContainsPoint(m_runwayElements, pos2D))
@@ -144,8 +145,6 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
 
 bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point)
 {
-    //Q_ASSERT(!collection.isEmpty());
-
     for (const QPolygonF &element : collection)
     {
         if (element.containsPoint(point, Qt::FillRule::OddEvenFill))
@@ -153,35 +152,21 @@ bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QP
             return true;
         }
     }
+
     return false;
 }
 
-QVector<QPolygonF> Aerodrome::getRunwayElements() const
+bool Aerodrome::collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point)
 {
-    return m_runwayElements;
-}
+    for (auto it = collection.begin(); it != collection.end(); ++it)
+    {
+        QVector<QPolygonF> vec = it.value();
 
-QVector<QPolygonF> Aerodrome::getTaxiwayElements() const
-{
-    return m_taxiwayElements;
-}
+        if (collectionContainsPoint(vec, point))
+        {
+            return true;
+        }
+    }
 
-QVector<QPolygonF> Aerodrome::getApronElements() const
-{
-    return m_apronElements;
-}
-
-QVector<QPolygonF> Aerodrome::getStandElements() const
-{
-    return m_standElements;
-}
-
-QVector<QPolygonF> Aerodrome::getAirborne1Elements() const
-{
-    return m_airborne1Elements;
-}
-
-QVector<QPolygonF> Aerodrome::getAirborne2Elements() const
-{
-    return m_airborne2Elements;
+    return false;
 }

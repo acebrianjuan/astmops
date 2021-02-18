@@ -21,10 +21,6 @@
 #include "geofunctions.h"
 #include <QDebug>
 
-AixmReader::AixmReader(QObject *parent) : QObject(parent)
-{
-}
-
 bool AixmReader::read(QIODevice *device)
 {
     m_xml.setDevice(device);
@@ -58,87 +54,123 @@ Aerodrome AixmReader::makeAerodrome() const
     aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
 
     // Runway elements.
-    for (const QVector<QGeoCoordinate> &rwyEleGeo : m_runwayElements)
+    for (auto it = m_runwayElements.begin(); it != m_runwayElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(rwyEleGeo.size());
+        QString idStr = it.key();
+        Collection rwyElements = it.value();
 
-        for (const QGeoCoordinate &coord : rwyEleGeo)
+        for (const QVector<QGeoCoordinate> &rwyEleGeo : rwyElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(rwyEleGeo.size());
 
-        aerodrome.addRunwayElement(polygon);
+            for (const QGeoCoordinate &coord : rwyEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addRunwayElement(idStr, polygon);
+        }
     }
 
     // Taxiway elements.
-    for (const QVector<QGeoCoordinate> &twyEleGeo : m_taxiwayElements)
+    for (auto it = m_taxiwayElements.begin(); it != m_taxiwayElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(twyEleGeo.size());
+        QString idStr = it.key();
+        Collection twyElements = it.value();
 
-        for (const QGeoCoordinate &coord : twyEleGeo)
+        for (const QVector<QGeoCoordinate> &twyEleGeo : twyElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(twyEleGeo.size());
 
-        aerodrome.addTaxiwayElement(polygon);
+            for (const QGeoCoordinate &coord : twyEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addTaxiwayElement(idStr, polygon);
+        }
     }
 
     // Apron elements.
-    for (const QVector<QGeoCoordinate> &apronEleGeo : m_apronElements)
+    for (auto it = m_apronElements.begin(); it != m_apronElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(apronEleGeo.size());
+        QString idStr = it.key();
+        Collection apronElements = it.value();
 
-        for (const QGeoCoordinate &coord : apronEleGeo)
+        for (const QVector<QGeoCoordinate> &apronEleGeo : apronElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(apronEleGeo.size());
 
-        aerodrome.addApronElement(polygon);
+            for (const QGeoCoordinate &coord : apronEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addApronElement(idStr, polygon);
+        }
     }
 
     // Stand elements.
-    for (const QVector<QGeoCoordinate> &standEleGeo : m_standElements)
+    for (auto it = m_standElements.begin(); it != m_standElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(standEleGeo.size());
+        QString idStr = it.key();
+        Collection standElements = it.value();
 
-        for (const QGeoCoordinate &coord : standEleGeo)
+        for (const QVector<QGeoCoordinate> &standEleGeo : standElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(standEleGeo.size());
 
-        aerodrome.addStandElement(polygon);
+            for (const QGeoCoordinate &coord : standEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addStandElement(idStr, polygon);
+        }
     }
 
     // Airborne 1 elements.
-    for (const QVector<QGeoCoordinate> &app1EleGeo : m_airborne1Elements)
+    for (auto it = m_airborne1Elements.begin(); it != m_airborne1Elements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(app1EleGeo.size());
+        QString idStr = it.key();
+        Collection airborne1Elements = it.value();
 
-        for (const QGeoCoordinate &coord : app1EleGeo)
+        for (const QVector<QGeoCoordinate> &airborne1EleGeo : airborne1Elements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(airborne1EleGeo.size());
 
-        aerodrome.addAirborne1Element(polygon);
+            for (const QGeoCoordinate &coord : airborne1EleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addAirborne1Element(idStr, polygon);
+        }
     }
 
     // Airborne 2 elements.
-    for (const QVector<QGeoCoordinate> &app2EleGeo : m_airborne2Elements)
+    for (auto it = m_airborne2Elements.begin(); it != m_airborne2Elements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(app2EleGeo.size());
+        QString idStr = it.key();
+        Collection airborne2Elements = it.value();
 
-        for (const QGeoCoordinate &coord : app2EleGeo)
+        for (const QVector<QGeoCoordinate> &airborne2EleGeo : airborne2Elements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(airborne2EleGeo.size());
 
-        aerodrome.addAirborne2Element(polygon);
+            for (const QGeoCoordinate &coord : airborne2EleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addAirborne2Element(idStr, polygon);
+        }
     }
 
     return aerodrome;
@@ -161,6 +193,8 @@ void AixmReader::readAixm()
                 continue;
             }
 
+            // TODO: Consider reading an appropriate AIXM field to fill up the empty "name".
+            QString name = QString();  // Using an empty string as a temporary placeholder.
             if (m_xml.readNextStartElement())
             {
                 if (m_xml.name() == QLatin1String("AirportHeliport"))
@@ -169,19 +203,19 @@ void AixmReader::readAixm()
                 }
                 else if (m_xml.name() == QLatin1String("RunwayElement"))
                 {
-                    m_runwayElements << posListToCoordVector(getPosList(runwayPosListXmlPath()));
+                    m_runwayElements[name] << posListToCoordVector(getPosList(runwayPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("TaxiwayElement"))
                 {
-                    m_taxiwayElements << posListToCoordVector(getPosList(taxiwayPosListXmlPath()));
+                    m_taxiwayElements[name] << posListToCoordVector(getPosList(taxiwayPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("ApronElement"))
                 {
-                    m_apronElements << posListToCoordVector(getPosList(apronPosListXmlPath()));
+                    m_apronElements[name] << posListToCoordVector(getPosList(apronPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("AircraftStand"))
                 {
-                    m_standElements << posListToCoordVector(getPosList(standPosListXmlPath()));
+                    m_standElements[name] << posListToCoordVector(getPosList(standPosListXmlPath()));
                 }
                 else
                 {

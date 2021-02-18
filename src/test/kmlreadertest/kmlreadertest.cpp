@@ -76,17 +76,17 @@ void KmlReaderTest::test()
     //Aerodrome aerodrome = reader.makeAerodrome();
 
     // Check number of elements of each collection.
-    QCOMPARE(reader.m_runwayElements.size(), runwayElements);
-    QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
-    QCOMPARE(reader.m_apronElements.size(), apronElements);
-    QCOMPARE(reader.m_standElements.size(), aircraftStands);
+    QCOMPARE(reader.m_runwayElements.values().size(), runwayElements);
+    QCOMPARE(reader.m_taxiwayElements.values().size(), taxiwayElements);
+    QCOMPARE(reader.m_apronElements.values().size(), apronElements);
+    QCOMPARE(reader.m_standElements.values().size(), aircraftStands);
 
     // Check first coordinates of each collection.
     QCOMPARE(reader.m_arp, arpCoordinates);
-    QCOMPARE(reader.m_runwayElements.first().first(), runwayCoordinates);
-    QCOMPARE(reader.m_taxiwayElements.first().first(), taxiwayCoordinates);
-    QCOMPARE(reader.m_apronElements.first().first(), apronCoordinates);
-    QCOMPARE(reader.m_standElements.first().first(), standCoordinates);
+    QCOMPARE(reader.m_runwayElements.value(QLatin1String("07R/25L")).first().first(), runwayCoordinates);
+    QCOMPARE(reader.m_taxiwayElements.value({}).first().first(), taxiwayCoordinates);
+    QCOMPARE(reader.m_apronElements.value({}).first().first(), apronCoordinates);
+    QCOMPARE(reader.m_standElements.value({}).first().first(), standCoordinates);
 }
 
 QTEST_APPLESS_MAIN(KmlReaderTest)

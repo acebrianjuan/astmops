@@ -21,8 +21,8 @@
 #define ASTMOPS_AIXMREADER_H
 
 #include "aerodrome.h"
+#include "aerodromereaderinterface.h"
 #include <QGeoCoordinate>
-#include <QObject>
 #include <QXmlStreamReader>
 
 /*!
@@ -33,21 +33,17 @@
  * the elements of interest to generate a digital representation of the
  * aerodrome expressed in local east, north, up (ENU) coordinates.
  */
-class AixmReader : public QObject
+class AixmReader : AerodromeReaderInterface
 {
-    Q_OBJECT
+    using Collection = QVector<QVector<QGeoCoordinate>>;
 
     friend class AixmReaderTest;
 
 public:
-    explicit AixmReader(QObject *parent = nullptr);
+    AixmReader() = default;
 
-    bool read(QIODevice *device);
-    Aerodrome makeAerodrome() const;
-
-public slots:
-
-signals:
+    bool read(QIODevice *device) override;
+    Aerodrome makeAerodrome() const override;
 
 private:
     void readAixm();
@@ -65,12 +61,12 @@ private:
     QXmlStreamReader m_xml;
 
     QGeoCoordinate m_arp;
-    QVector<QVector<QGeoCoordinate>> m_runwayElements;
-    QVector<QVector<QGeoCoordinate>> m_taxiwayElements;
-    QVector<QVector<QGeoCoordinate>> m_apronElements;
-    QVector<QVector<QGeoCoordinate>> m_standElements;
-    QVector<QVector<QGeoCoordinate>> m_airborne1Elements;
-    QVector<QVector<QGeoCoordinate>> m_airborne2Elements;
+    QHash<QString, Collection> m_runwayElements;
+    QHash<QString, Collection> m_taxiwayElements;
+    QHash<QString, Collection> m_apronElements;
+    QHash<QString, Collection> m_standElements;
+    QHash<QString, Collection> m_airborne1Elements;
+    QHash<QString, Collection> m_airborne2Elements;
 };
 
 #endif  // ASTMOPS_AIXMREADER_H

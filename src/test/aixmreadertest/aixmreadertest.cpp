@@ -82,10 +82,10 @@ void AixmReaderTest::test()
 
     // Check first coordinates of each collection.
     QCOMPARE(reader.m_arp, arpCoordinates);
-    QCOMPARE(reader.m_runwayElements.first().first(), runwayCoordinates);
-    QCOMPARE(reader.m_taxiwayElements.first().first(), taxiwayCoordinates);
-    QCOMPARE(reader.m_apronElements.first().first(), apronCoordinates);
-    //QCOMPARE(reader.m_standElements.first().first(), standCoordinates);
+    QCOMPARE(reader.m_runwayElements.value({}).first().first(), runwayCoordinates);
+    QCOMPARE(reader.m_taxiwayElements.value({}).first().first(), taxiwayCoordinates);
+    QCOMPARE(reader.m_apronElements.value({}).first().first(), apronCoordinates);
+    //QCOMPARE(reader.m_standElements.value({}).first().first(), standCoordinates);
 }
 
 QTEST_APPLESS_MAIN(AixmReaderTest)

@@ -21,10 +21,6 @@
 #include "geofunctions.h"
 #include <QRegularExpression>
 
-KmlReader::KmlReader(QObject *parent) : QObject(parent)
-{
-}
-
 bool KmlReader::read(QIODevice *device)
 {
     m_xml.setDevice(device);
@@ -58,12 +54,9 @@ Aerodrome KmlReader::makeAerodrome() const
     aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
 
     // Runway elements.
-
-    for (auto it = m_runwayElementsHash.begin(), last = m_runwayElementsHash.end(); it != last; ++it)
+    for (auto it = m_runwayElements.begin(); it != m_runwayElements.end(); ++it)
     {
         QString idStr = it.key();
-        Q_UNUSED(idStr);
-
         Collection rwyElements = it.value();
 
         for (const QVector<QGeoCoordinate> &rwyEleGeo : rwyElements)
@@ -76,94 +69,108 @@ Aerodrome KmlReader::makeAerodrome() const
                 polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
             }
 
-            aerodrome.addRunwayElement(polygon);
+            aerodrome.addRunwayElement(idStr, polygon);
         }
     }
-
-    /*
-    // Runway elements.
-    for (const QVector<QGeoCoordinate> &rwyEleGeo : m_runwayElements)
-    {
-        QPolygonF polygon;
-        polygon.reserve(rwyEleGeo.size());
-
-        for (const QGeoCoordinate &coord : rwyEleGeo)
-        {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
-
-        aerodrome.addRunwayElement(polygon);
-    }
-    */
 
     // Taxiway elements.
-    for (const QVector<QGeoCoordinate> &twyEleGeo : m_taxiwayElements)
+    for (auto it = m_taxiwayElements.begin(); it != m_taxiwayElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(twyEleGeo.size());
+        QString idStr = it.key();
+        Collection twyElements = it.value();
 
-        for (const QGeoCoordinate &coord : twyEleGeo)
+        for (const QVector<QGeoCoordinate> &twyEleGeo : twyElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(twyEleGeo.size());
 
-        aerodrome.addTaxiwayElement(polygon);
+            for (const QGeoCoordinate &coord : twyEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addTaxiwayElement(idStr, polygon);
+        }
     }
 
     // Apron elements.
-    for (const QVector<QGeoCoordinate> &apronEleGeo : m_apronElements)
+    for (auto it = m_apronElements.begin(); it != m_apronElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(apronEleGeo.size());
+        QString idStr = it.key();
+        Collection apronElements = it.value();
 
-        for (const QGeoCoordinate &coord : apronEleGeo)
+        for (const QVector<QGeoCoordinate> &apronEleGeo : apronElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(apronEleGeo.size());
 
-        aerodrome.addApronElement(polygon);
+            for (const QGeoCoordinate &coord : apronEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addApronElement(idStr, polygon);
+        }
     }
 
     // Stand elements.
-    for (const QVector<QGeoCoordinate> &standEleGeo : m_standElements)
+    for (auto it = m_standElements.begin(); it != m_standElements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(standEleGeo.size());
+        QString idStr = it.key();
+        Collection standElements = it.value();
 
-        for (const QGeoCoordinate &coord : standEleGeo)
+        for (const QVector<QGeoCoordinate> &standEleGeo : standElements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(standEleGeo.size());
 
-        aerodrome.addStandElement(polygon);
+            for (const QGeoCoordinate &coord : standEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addStandElement(idStr, polygon);
+        }
     }
 
     // Airborne 1 elements.
-    for (const QVector<QGeoCoordinate> &app1EleGeo : m_airborne1Elements)
+    for (auto it = m_airborne1Elements.begin(); it != m_airborne1Elements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(app1EleGeo.size());
+        QString idStr = it.key();
+        Collection airborne1Elements = it.value();
 
-        for (const QGeoCoordinate &coord : app1EleGeo)
+        for (const QVector<QGeoCoordinate> &airborne1EleGeo : airborne1Elements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(airborne1EleGeo.size());
 
-        aerodrome.addAirborne1Element(polygon);
+            for (const QGeoCoordinate &coord : airborne1EleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addAirborne1Element(idStr, polygon);
+        }
     }
 
     // Airborne 2 elements.
-    for (const QVector<QGeoCoordinate> &app2EleGeo : m_airborne2Elements)
+    for (auto it = m_airborne2Elements.begin(); it != m_airborne2Elements.end(); ++it)
     {
-        QPolygonF polygon;
-        polygon.reserve(app2EleGeo.size());
+        QString idStr = it.key();
+        Collection airborne2Elements = it.value();
 
-        for (const QGeoCoordinate &coord : app2EleGeo)
+        for (const QVector<QGeoCoordinate> &airborne2EleGeo : airborne2Elements)
         {
-            polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
-        }
+            QPolygonF polygon;
+            polygon.reserve(airborne2EleGeo.size());
 
-        aerodrome.addAirborne2Element(polygon);
+            for (const QGeoCoordinate &coord : airborne2EleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addAirborne2Element(idStr, polygon);
+        }
     }
 
     return aerodrome;
@@ -244,35 +251,51 @@ void KmlReader::readPlacemark()
     // Found description and coordinates?
     if (!desc.isNull() && !coords.isEmpty())
     {
-        if (desc == QLatin1String("ARP"))
+        // Example 1:
+        // desc: RunwayElement_07R/25L
+        //     -> token: RunwayElement
+        //     -> name: 07R/25L
+
+        // Example 2:
+        // desc: TaxiwayElement
+        //     -> token: TaxiwayElement
+        //     -> name: (empty)
+
+        QStringList descParts = desc.split(QLatin1Char('_'));
+        QString token = descParts.first();
+        QString name;  // name is empty by default.
+        if (descParts.size() == 2)
+        {
+            name = descParts.at(1);
+        }
+
+        if (token == QLatin1String("ARP"))
         {
             m_arp = coords.first();
         }
-        else if (desc.startsWith(QLatin1String("RunwayElement_")))
+        else if (token == QLatin1String("RunwayElement"))
         {
-            QString idStr = desc.split(QLatin1Char('_')).at(1);
-            m_runwayElementsHash[idStr] << coords;
-            m_runwayElements << coords;
+            m_runwayElements[name] << coords;
         }
-        else if (desc == QLatin1String("TaxiwayElement"))
+        else if (token == QLatin1String("TaxiwayElement"))
         {
-            m_taxiwayElements << coords;
+            m_taxiwayElements[name] << coords;
         }
-        else if (desc == QLatin1String("ApronElement"))
+        else if (token == QLatin1String("ApronElement"))
         {
-            m_apronElements << coords;
+            m_apronElements[name] << coords;
         }
-        else if (desc == QLatin1String("AircraftStand"))
+        else if (token == QLatin1String("AircraftStand"))
         {
-            m_standElements << coords;
+            m_standElements[name] << coords;
         }
-        else if (desc == QLatin1String("Airborne1Element"))
+        else if (token == QLatin1String("Airborne1Element"))
         {
-            m_airborne1Elements << coords;
+            m_airborne1Elements[name] << coords;
         }
-        else if (desc == QLatin1String("Airborne2Element"))
+        else if (token == QLatin1String("Airborne2Element"))
         {
-            m_airborne2Elements << coords;
+            m_airborne2Elements[name] << coords;
         }
     }
 }

@@ -39,11 +39,10 @@ class Aerodrome
     Q_GADGET
 
 public:
+    // TODO: Revise enum values.
     enum Area
     {
         None = 0,
-
-        // TODO: Revise enum values.
 
         //Enroute = 0b0000'0000'0000'0001,
         Airborne1 = 0b0000'0000'0000'0010,
@@ -83,35 +82,28 @@ public:
     bool hasAllElements();
 
     void setArp(QVector3D point);
-    void addRunwayElement(const QPolygonF &polygon);
-    void addTaxiwayElement(const QPolygonF &polygon);
-    void addApronElement(const QPolygonF &polygon);
-    void addStandElement(const QPolygonF &polygon);
-    void addAirborne1Element(const QPolygonF &polygon);
-    void addAirborne2Element(const QPolygonF &polygon);
+    void addRunwayElement(const QString &name, const QPolygonF &polygon);
+    void addTaxiwayElement(const QString &name, const QPolygonF &polygon);
+    void addApronElement(const QString &name, const QPolygonF &polygon);
+    void addStandElement(const QString &name, const QPolygonF &polygon);
+    void addAirborne1Element(const QString &name, const QPolygonF &polygon);
+    void addAirborne2Element(const QString &name, const QPolygonF &polygon);
 
     Aerodrome::Area locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit = std::nullopt);
 
-    QVector<QPolygonF> getRunwayElements() const;
-    QVector<QPolygonF> getTaxiwayElements() const;
-    QVector<QPolygonF> getApronElements() const;
-    QVector<QPolygonF> getStandElements() const;
-    QVector<QPolygonF> getAirborne1Elements() const;
-    QVector<QPolygonF> getAirborne2Elements() const;
-
 private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point);
+    bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
 
     QVector3D m_arp;
     QVector3D m_smr;
 
-    QHash<QString, QVector<QPolygonF>> m_runwayElementsHash;
-    QVector<QPolygonF> m_runwayElements;
-    QVector<QPolygonF> m_taxiwayElements;
-    QVector<QPolygonF> m_apronElements;
-    QVector<QPolygonF> m_standElements;
-    QVector<QPolygonF> m_airborne1Elements;
-    QVector<QPolygonF> m_airborne2Elements;
+    QHash<QString, QVector<QPolygonF>> m_runwayElements;
+    QHash<QString, QVector<QPolygonF>> m_taxiwayElements;
+    QHash<QString, QVector<QPolygonF>> m_apronElements;
+    QHash<QString, QVector<QPolygonF>> m_standElements;
+    QHash<QString, QVector<QPolygonF>> m_airborne1Elements;
+    QHash<QString, QVector<QPolygonF>> m_airborne2Elements;
 };
 
 #endif  // ASTMOPS_AERODROME_H
