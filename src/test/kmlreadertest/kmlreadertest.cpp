@@ -44,8 +44,8 @@ void KmlReaderTest::test_data()
     QTest::addColumn<QGeoCoordinate>("apronCoordinates");
     QTest::addColumn<QGeoCoordinate>("standCoordinates");
 
-    QTest::newRow("LEBL") << "lebl-test.kml"
-                          << 1 << 1 << 1 << 1
+    QTest::newRow("LEBL") << "lebl_test.kml"
+                          << 2 << 1 << 1 << 1
                           << QGeoCoordinate(41.29707777777777, 2.078462920115866, 0)
                           << QGeoCoordinate(41.2827740402838, 2.07656517967082, 0)
                           << QGeoCoordinate(41.2868783930656, 2.07892935775076, 0)

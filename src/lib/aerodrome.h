@@ -20,6 +20,7 @@
 #ifndef ASTMOPS_AERODROME_H
 #define ASTMOPS_AERODROME_H
 
+#include <QHash>
 #include <QPolygonF>
 #include <QVector3D>
 #include <QVector>
@@ -103,6 +104,8 @@ private:
 
     QVector3D m_arp;
     QVector3D m_smr;
+
+    QHash<QString, QVector<QPolygonF>> m_runwayElementsHash;
     QVector<QPolygonF> m_runwayElements;
     QVector<QPolygonF> m_taxiwayElements;
     QVector<QPolygonF> m_apronElements;

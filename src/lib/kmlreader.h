@@ -35,6 +35,8 @@
  */
 class KmlReader : public QObject
 {
+    using Collection = QVector<QVector<QGeoCoordinate>>;
+
     Q_OBJECT
 
     friend class KmlReaderTest;
@@ -63,12 +65,14 @@ private:
     QXmlStreamReader m_xml;
 
     QGeoCoordinate m_arp;
-    QVector<QVector<QGeoCoordinate>> m_runwayElements;
-    QVector<QVector<QGeoCoordinate>> m_taxiwayElements;
-    QVector<QVector<QGeoCoordinate>> m_apronElements;
-    QVector<QVector<QGeoCoordinate>> m_standElements;
-    QVector<QVector<QGeoCoordinate>> m_airborne1Elements;
-    QVector<QVector<QGeoCoordinate>> m_airborne2Elements;
+
+    QHash<QString, Collection> m_runwayElementsHash;
+    Collection m_runwayElements;
+    Collection m_taxiwayElements;
+    Collection m_apronElements;
+    Collection m_standElements;
+    Collection m_airborne1Elements;
+    Collection m_airborne2Elements;
 };
 
 #endif  // ASTMOPS_KMLREADER_H

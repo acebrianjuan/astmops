@@ -58,6 +58,30 @@ Aerodrome KmlReader::makeAerodrome() const
     aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
 
     // Runway elements.
+
+    for (auto it = m_runwayElementsHash.begin(), last = m_runwayElementsHash.end(); it != last; ++it)
+    {
+        QString idStr = it.key();
+        Q_UNUSED(idStr);
+
+        Collection rwyElements = it.value();
+
+        for (const QVector<QGeoCoordinate> &rwyEleGeo : rwyElements)
+        {
+            QPolygonF polygon;
+            polygon.reserve(rwyEleGeo.size());
+
+            for (const QGeoCoordinate &coord : rwyEleGeo)
+            {
+                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+            }
+
+            aerodrome.addRunwayElement(polygon);
+        }
+    }
+
+    /*
+    // Runway elements.
     for (const QVector<QGeoCoordinate> &rwyEleGeo : m_runwayElements)
     {
         QPolygonF polygon;
@@ -70,6 +94,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
         aerodrome.addRunwayElement(polygon);
     }
+    */
 
     // Taxiway elements.
     for (const QVector<QGeoCoordinate> &twyEleGeo : m_taxiwayElements)
@@ -223,8 +248,10 @@ void KmlReader::readPlacemark()
         {
             m_arp = coords.first();
         }
-        else if (desc == QLatin1String("RunwayElement"))
+        else if (desc.startsWith(QLatin1String("RunwayElement_")))
         {
+            QString idStr = desc.split(QLatin1Char('_')).at(1);
+            m_runwayElementsHash[idStr] << coords;
             m_runwayElements << coords;
         }
         else if (desc == QLatin1String("TaxiwayElement"))
