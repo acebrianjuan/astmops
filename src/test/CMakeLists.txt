@@ -19,3 +19,5 @@ add_subdirectory(recordcollatortest)
 
 
 add_subdirectory(evaluatortest)
+add_subdirectory(areahashtest)
+
