@@ -76,10 +76,10 @@ void KmlReaderTest::test()
     //Aerodrome aerodrome = reader.makeAerodrome();
 
     // Check number of elements of each collection.
-    QCOMPARE(reader.m_runwayElements.values().size(), runwayElements);
-    QCOMPARE(reader.m_taxiwayElements.values().size(), taxiwayElements);
-    QCOMPARE(reader.m_apronElements.values().size(), apronElements);
-    QCOMPARE(reader.m_standElements.values().size(), aircraftStands);
+    QCOMPARE(reader.m_runwayElements.size(), runwayElements);
+    QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
+    QCOMPARE(reader.m_apronElements.size(), apronElements);
+    QCOMPARE(reader.m_standElements.size(), aircraftStands);
 
     // Check first coordinates of each collection.
     QCOMPARE(reader.m_arp, arpCoordinates);
