@@ -78,14 +78,14 @@ void KmlReaderTest::test()
     // Check number of elements of each collection.
     QCOMPARE(reader.m_runwayElements.size(), runwayElements);
     QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
-    QCOMPARE(reader.m_apronElements.size(), apronElements);
+    QCOMPARE(reader.m_apronLaneElements.size(), apronElements);
     QCOMPARE(reader.m_standElements.size(), aircraftStands);
 
     // Check first coordinates of each collection.
     QCOMPARE(reader.m_arp, arpCoordinates);
     QCOMPARE(reader.m_runwayElements.value(QLatin1String("07R/25L")).first().first(), runwayCoordinates);
     QCOMPARE(reader.m_taxiwayElements.value({}).first().first(), taxiwayCoordinates);
-    QCOMPARE(reader.m_apronElements.value({}).first().first(), apronCoordinates);
+    QCOMPARE(reader.m_apronLaneElements.value({}).first().first(), apronCoordinates);
     QCOMPARE(reader.m_standElements.value({}).first().first(), standCoordinates);
 }
 

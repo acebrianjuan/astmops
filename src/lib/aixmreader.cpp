@@ -94,22 +94,22 @@ Aerodrome AixmReader::makeAerodrome() const
     }
 
     // Apron elements.
-    for (auto it = m_apronElements.begin(); it != m_apronElements.end(); ++it)
+    for (auto it = m_apronLaneElements.begin(); it != m_apronLaneElements.end(); ++it)
     {
         QString idStr = it.key();
-        Collection apronElements = it.value();
+        Collection apronLaneElements = it.value();
 
-        for (const QVector<QGeoCoordinate> &apronEleGeo : apronElements)
+        for (const QVector<QGeoCoordinate> &apronLaneEleGeo : apronLaneElements)
         {
             QPolygonF polygon;
-            polygon.reserve(apronEleGeo.size());
+            polygon.reserve(apronLaneEleGeo.size());
 
-            for (const QGeoCoordinate &coord : apronEleGeo)
+            for (const QGeoCoordinate &coord : apronLaneEleGeo)
             {
                 polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
             }
 
-            aerodrome.addApronElement(idStr, polygon);
+            aerodrome.addApronLaneElement(idStr, polygon);
         }
     }
 
@@ -211,7 +211,7 @@ void AixmReader::readAixm()
                 }
                 else if (m_xml.name() == QLatin1String("ApronElement"))
                 {
-                    m_apronElements[name] << posListToCoordVector(getPosList(apronPosListXmlPath()));
+                    m_apronLaneElements[name] << posListToCoordVector(getPosList(apronPosListXmlPath()));
                 }
                 else if (m_xml.name() == QLatin1String("AircraftStand"))
                 {

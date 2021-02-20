@@ -93,23 +93,23 @@ Aerodrome KmlReader::makeAerodrome() const
         }
     }
 
-    // Apron elements.
-    for (auto it = m_apronElements.begin(); it != m_apronElements.end(); ++it)
+    // ApronLane elements.
+    for (auto it = m_apronLaneElements.begin(); it != m_apronLaneElements.end(); ++it)
     {
         QString idStr = it.key();
-        Collection apronElements = it.value();
+        Collection apronLaneElements = it.value();
 
-        for (const QVector<QGeoCoordinate> &apronEleGeo : apronElements)
+        for (const QVector<QGeoCoordinate> &apronLaneEleGeo : apronLaneElements)
         {
             QPolygonF polygon;
-            polygon.reserve(apronEleGeo.size());
+            polygon.reserve(apronLaneEleGeo.size());
 
-            for (const QGeoCoordinate &coord : apronEleGeo)
+            for (const QGeoCoordinate &coord : apronLaneEleGeo)
             {
                 polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
             }
 
-            aerodrome.addApronElement(idStr, polygon);
+            aerodrome.addApronLaneElement(idStr, polygon);
         }
     }
 
@@ -283,7 +283,7 @@ void KmlReader::readPlacemark()
         }
         else if (token == QLatin1String("ApronElement"))
         {
-            m_apronElements[name] << coords;
+            m_apronLaneElements[name] << coords;
         }
         else if (token == QLatin1String("AircraftStand"))
         {

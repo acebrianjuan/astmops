@@ -28,7 +28,7 @@ Aerodrome::Aerodrome()
 bool Aerodrome::hasAnyElements()
 {
     if (!m_runwayElements.isEmpty() || !m_taxiwayElements.isEmpty() ||
-        !m_apronElements.isEmpty() || !m_standElements.isEmpty() ||
+        !m_apronLaneElements.isEmpty() || !m_standElements.isEmpty() ||
         !m_airborne1Elements.isEmpty() || !m_airborne2Elements.isEmpty())
     {
         return true;
@@ -39,7 +39,7 @@ bool Aerodrome::hasAnyElements()
 bool Aerodrome::hasAllElements()
 {
     if (!m_runwayElements.isEmpty() && !m_taxiwayElements.isEmpty() &&
-        !m_apronElements.isEmpty() && !m_standElements.isEmpty() &&
+        !m_apronLaneElements.isEmpty() && !m_standElements.isEmpty() &&
         !m_airborne1Elements.isEmpty() && !m_airborne2Elements.isEmpty())
     {
         return true;
@@ -64,10 +64,10 @@ void Aerodrome::addTaxiwayElement(const QString &name, const QPolygonF &polygon)
     m_taxiwayElements[name] << polygon;
 }
 
-void Aerodrome::addApronElement(const QString &name, const QPolygonF &polygon)
+void Aerodrome::addApronLaneElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_apronElements[name] << polygon;
+    m_apronLaneElements[name] << polygon;
 }
 
 void Aerodrome::addStandElement(const QString &name, const QPolygonF &polygon)
@@ -90,7 +90,8 @@ void Aerodrome::addAirborne2Element(const QString &name, const QPolygonF &polygo
 
 Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit)
 {
-    Q_ASSERT(hasAnyElements());
+    Q_ASSERT(hasAnyElements());  // Asserting for "any" elements is enough.
+    // It should not be mandatory for an aerodrome to have "all" elements.
 
     QPointF pos2D = cartPos.toPointF();
     double alt = cartPos.z();  // TODO: Revise altitude/height values in local radar cartesian frame.
@@ -99,8 +100,8 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
 
     if (gndBit.has_value())
     {
-        layer = gndBit.value() ? Layer::GroundLayer
-                               : Layer::AirborneLayer;
+        layer = gndBit.value() ? Layer::GroundLayer     // GBS = 1
+                               : Layer::AirborneLayer;  // GBS = 0
     }
     else
     {
@@ -119,9 +120,9 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
         {
             return Area::Taxiway;
         }
-        else if (collectionContainsPoint(m_apronElements, pos2D))
+        else if (collectionContainsPoint(m_apronLaneElements, pos2D))
         {
-            return Area::Apron;
+            return Area::ApronLane;
         }
         else if (collectionContainsPoint(m_standElements, pos2D))
         {

@@ -21,7 +21,6 @@
 #define ASTMOPS_KMLREADER_H
 
 #include "aerodrome.h"
-#include "aerodromereaderinterface.h"
 #include <QGeoCoordinate>
 #include <QXmlStreamReader>
 
@@ -33,7 +32,7 @@
  * the elements of interest to generate a digital representation of the
  * aerodrome expressed in local east, north, up (ENU) coordinates.
  */
-class KmlReader : AerodromeReaderInterface
+class KmlReader
 {
     using Collection = QVector<QVector<QGeoCoordinate>>;
 
@@ -42,8 +41,8 @@ class KmlReader : AerodromeReaderInterface
 public:
     KmlReader() = default;
 
-    bool read(QIODevice *device) override;
-    Aerodrome makeAerodrome() const override;
+    bool read(QIODevice *device);
+    Aerodrome makeAerodrome() const;
 
 private:
     void readKml();
@@ -62,7 +61,7 @@ private:
 
     QHash<QString, Collection> m_runwayElements;
     QHash<QString, Collection> m_taxiwayElements;
-    QHash<QString, Collection> m_apronElements;
+    QHash<QString, Collection> m_apronLaneElements;
     QHash<QString, Collection> m_standElements;
     QHash<QString, Collection> m_airborne1Elements;
     QHash<QString, Collection> m_airborne2Elements;

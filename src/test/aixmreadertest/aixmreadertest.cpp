@@ -35,13 +35,13 @@ void AixmReaderTest::test_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<int>("runwayElements");
     QTest::addColumn<int>("taxiwayElements");
-    QTest::addColumn<int>("apronElements");
+    QTest::addColumn<int>("apronLaneElements");
     //QTest::addColumn<int>("aircraftStands");
 
     QTest::addColumn<QGeoCoordinate>("arpCoordinates");
     QTest::addColumn<QGeoCoordinate>("runwayCoordinates");
     QTest::addColumn<QGeoCoordinate>("taxiwayCoordinates");
-    QTest::addColumn<QGeoCoordinate>("apronCoordinates");
+    QTest::addColumn<QGeoCoordinate>("apronLaneCoordinates");
     //QTest::addColumn<QGeoCoordinate>("standCoordinates");
 
     QTest::newRow("KCLT") << "kclt-test.xml"
@@ -62,13 +62,13 @@ void AixmReaderTest::test()
 
     QFETCH(int, runwayElements);
     QFETCH(int, taxiwayElements);
-    QFETCH(int, apronElements);
+    QFETCH(int, apronLaneElements);
     //QFETCH(int, aircraftStands);
 
     QFETCH(QGeoCoordinate, arpCoordinates);
     QFETCH(QGeoCoordinate, runwayCoordinates);
     QFETCH(QGeoCoordinate, taxiwayCoordinates);
-    QFETCH(QGeoCoordinate, apronCoordinates);
+    QFETCH(QGeoCoordinate, apronLaneCoordinates);
     //QFETCH(QGeoCoordinate, standCoordinates);
 
     reader.read(&file);
@@ -77,14 +77,14 @@ void AixmReaderTest::test()
     // Check number of elements of each collection.
     QCOMPARE(reader.m_runwayElements.size(), runwayElements);
     QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
-    QCOMPARE(reader.m_apronElements.size(), apronElements);
+    QCOMPARE(reader.m_apronLaneElements.size(), apronLaneElements);
     //QCOMPARE(reader.m_standElements.size(), aircraftStands);
 
     // Check first coordinates of each collection.
     QCOMPARE(reader.m_arp, arpCoordinates);
     QCOMPARE(reader.m_runwayElements.value({}).first().first(), runwayCoordinates);
     QCOMPARE(reader.m_taxiwayElements.value({}).first().first(), taxiwayCoordinates);
-    QCOMPARE(reader.m_apronElements.value({}).first().first(), apronCoordinates);
+    QCOMPARE(reader.m_apronLaneElements.value({}).first().first(), apronLaneCoordinates);
     //QCOMPARE(reader.m_standElements.value({}).first().first(), standCoordinates);
 }
 

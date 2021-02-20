@@ -84,7 +84,7 @@ public:
     void setArp(QVector3D point);
     void addRunwayElement(const QString &name, const QPolygonF &polygon);
     void addTaxiwayElement(const QString &name, const QPolygonF &polygon);
-    void addApronElement(const QString &name, const QPolygonF &polygon);
+    void addApronLaneElement(const QString &name, const QPolygonF &polygon);
     void addStandElement(const QString &name, const QPolygonF &polygon);
     void addAirborne1Element(const QString &name, const QPolygonF &polygon);
     void addAirborne2Element(const QString &name, const QPolygonF &polygon);
@@ -100,10 +100,11 @@ private:
 
     QHash<QString, QVector<QPolygonF>> m_runwayElements;
     QHash<QString, QVector<QPolygonF>> m_taxiwayElements;
-    QHash<QString, QVector<QPolygonF>> m_apronElements;
+    QHash<QString, QVector<QPolygonF>> m_apronLaneElements;
     QHash<QString, QVector<QPolygonF>> m_standElements;
     QHash<QString, QVector<QPolygonF>> m_airborne1Elements;
     QHash<QString, QVector<QPolygonF>> m_airborne2Elements;
 };
+Q_DECLARE_METATYPE(Aerodrome);
 
 #endif  // ASTMOPS_AERODROME_H

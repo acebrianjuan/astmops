@@ -42,6 +42,7 @@ struct NamedArea
 };
 Q_DECLARE_METATYPE(NamedArea);
 
+
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 uint qHash(const NamedArea& narea, uint seed)
 #else
