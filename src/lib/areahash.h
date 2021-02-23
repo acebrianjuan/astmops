@@ -23,30 +23,11 @@
 #include "aerodrome.h"
 #include <QHash>
 
-struct NamedArea
-{
-    NamedArea() = default;
-
-    NamedArea(const Aerodrome::Area area)
-        : area_(area)
-    {
-    }
-
-    NamedArea(const Aerodrome::Area area, const QString& name)
-        : area_(area), name_(name)
-    {
-    }
-
-    Aerodrome::Area area_ = Aerodrome::Area::None;
-    QString name_;
-};
-Q_DECLARE_METATYPE(NamedArea);
-
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-uint qHash(const NamedArea& narea, uint seed)
+uint qHash(const Aerodrome::NamedArea& narea, uint seed)
 #else
-size_t qHash(const NamedArea& narea, size_t seed)
+size_t qHash(const Aerodrome::NamedArea& narea, size_t seed)
 #endif
 {
     QtPrivate::QHashCombine hash;
@@ -55,14 +36,14 @@ size_t qHash(const NamedArea& narea, size_t seed)
     return seed;
 }
 
-bool operator==(const NamedArea& a, const NamedArea& b)
+bool operator==(const Aerodrome::NamedArea& a, const Aerodrome::NamedArea& b)
 {
     return a.area_ == b.area_ &&
            a.name_ == b.name_;
 }
 
 template <typename T>
-struct AreaHash : public QHash<NamedArea, T>
+struct AreaHash : public QHash<Aerodrome::NamedArea, T>
 {
     QVector<typename AreaHash::iterator> findByArea(Aerodrome::Area wantedArea)
     {

@@ -39,6 +39,7 @@ Evaluator::Evaluator(QObject *parent) : QObject(parent)
 
 double Evaluator::evalPosAccDgps()
 {
+    // TODO: These coordinates should be read from the KML file.
     QGeoCoordinate leblArp(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
     QGeoCoordinate leblSmr(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
 
@@ -78,15 +79,17 @@ double Evaluator::evalPosAccDgps()
 
         QVector3D cartRef = geoToLocalEnu(refPosInfo.coordinate(), leblArp);
 
-        Aerodrome::Area area;
+        Aerodrome::NamedArea namedArea;
         if (gbOk)
         {
-            area = m_locatePoint(cartRef, gndBit);
+            namedArea = m_locatePoint(cartRef, gndBit);
         }
         else
         {
-            area = m_locatePoint(cartRef, {});
+            continue;
         }
+
+        Aerodrome::Area area = namedArea.area_;
 
         double errX = cartRef.x() - xTest;
         double errY = cartRef.y() - yTest;
@@ -125,6 +128,48 @@ double Evaluator::evalPosAccDgps()
         }
 
         m_cat010MlatPosAccuracyErrors[area].append(dist);
+
+        /*
+        int ncheck = 10;
+        QVector<double> errVec = m_cat010MlatPosAccuracyErrors.value(area);
+        if (errVec.size() > ncheck)
+        {
+            double lastErr = errVec.constLast();
+
+            bool found = false;
+            auto itErr = errVec.crbegin();
+            while (!found && qAbs(*itErr - lastErr) < 1e-4)
+            {
+                ++itErr;
+                --ncheck;
+                if (ncheck == 0)
+                {
+                    qDebug() << "FOUND ERROR REPETITION!";
+                    found = true;
+                }
+            }
+
+            if (found)
+            {
+                int i = 10;
+
+                auto itMapping = m_testDataMappings.find(tod);
+                while (i > 0)
+                {
+                    qDebug()
+                        << itMapping.key().toString(Qt::ISODateWithMs)
+                        << itMapping.value().tod.toString(Qt::ISODateWithMs)
+                        << itMapping.value().refPosInfo1.timestamp().toString(Qt::ISODateWithMs)
+                        << itMapping.value().refPosInfo2.timestamp().toString(Qt::ISODateWithMs)
+                        << "-->"
+                        << itMapping.value().refPosInfo;
+                    --itMapping;
+                    --i;
+                }
+            }
+        }
+        */
+
 
         /*
         qDebug() << tod
@@ -191,7 +236,7 @@ void Evaluator::setTestData(const QMultiMap<QDateTime, AsterixRecord> &testData)
     m_testData = testData;
 }
 
-void Evaluator::setLocatePointCallback(const std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> &callback)
+void Evaluator::setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> &callback)
 {
     m_locatePoint = callback;
 }
@@ -463,6 +508,11 @@ double Evaluator::percentile(QVector<double> vec, const double percent)
 double Evaluator::mean(const QVector<double> &v)
 {
     int N = v.size();
+
+    if (N == 0)
+    {
+        return qSNaN();
+    }
 
     double sum = std::accumulate(v.begin(), v.end(), 0.0);
     double mean = sum / N;

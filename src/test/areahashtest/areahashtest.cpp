@@ -33,13 +33,13 @@ void AreaHashTest::test()
 {
     AreaHash<int> areaHash;
 
-    NamedArea runway1 = NamedArea(Aerodrome::Area::Runway, QLatin1String("18/36"));
-    NamedArea runway2 = NamedArea(Aerodrome::Area::Runway, QLatin1String("09/27"));
-    NamedArea taxiway = NamedArea(Aerodrome::Area::Taxiway);
-    NamedArea apronLane = NamedArea(Aerodrome::Area::ApronLane);
-    NamedArea stand = NamedArea(Aerodrome::Area::Stand);
-    NamedArea airborne1 = NamedArea(Aerodrome::Area::Airborne1);
-    NamedArea airborne2 = NamedArea(Aerodrome::Area::Airborne2);
+    Aerodrome::NamedArea runway1 = Aerodrome::NamedArea(Aerodrome::Area::Runway, QLatin1String("18/36"));
+    Aerodrome::NamedArea runway2 = Aerodrome::NamedArea(Aerodrome::Area::Runway, QLatin1String("09/27"));
+    Aerodrome::NamedArea taxiway = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+    Aerodrome::NamedArea apronLane = Aerodrome::NamedArea(Aerodrome::Area::ApronLane);
+    Aerodrome::NamedArea stand = Aerodrome::NamedArea(Aerodrome::Area::Stand);
+    Aerodrome::NamedArea airborne1 = Aerodrome::NamedArea(Aerodrome::Area::Airborne1);
+    Aerodrome::NamedArea airborne2 = Aerodrome::NamedArea(Aerodrome::Area::Airborne2);
 
     areaHash.insert(runway1, 100);
     QVERIFY(areaHash.findByArea(Aerodrome::Area::All).size() == 1);

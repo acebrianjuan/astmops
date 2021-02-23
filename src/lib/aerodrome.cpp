@@ -88,7 +88,7 @@ void Aerodrome::addAirborne2Element(const QString &name, const QPolygonF &polygo
     m_airborne2Elements[name] << polygon;
 }
 
-Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit)
+Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool gndBit)
 {
     Q_ASSERT(hasAnyElements());  // Asserting for "any" elements is enough.
     // It should not be mandatory for an aerodrome to have "all" elements.
@@ -96,48 +96,48 @@ Aerodrome::Area Aerodrome::locatePoint(const QVector3D cartPos, const std::optio
     QPointF pos2D = cartPos.toPointF();
     double alt = cartPos.z();  // TODO: Revise altitude/height values in local radar cartesian frame.
 
-    Layer layer = UnknownLayer;
-
-    if (gndBit.has_value())
-    {
-        layer = gndBit.value() ? Layer::GroundLayer     // GBS = 1
-                               : Layer::AirborneLayer;  // GBS = 0
-    }
+    Layer layer = gndBit ? Layer::GroundLayer     // GBS = 1
+                         : Layer::AirborneLayer;  // GBS = 0
+    /*
     else
     {
         layer = alt > 0 ? Layer::AirborneLayer
                         : Layer::GroundLayer;
-    }
+    }*/
 
     // TODO: Consider returning a NamedArea instead of an Aerodrome::Area.
     if (layer == Layer::GroundLayer)
     {
-        if (collectionContainsPoint(m_runwayElements, pos2D))
+        if (auto name = areaContainsPoint(m_runwayElements, pos2D))
         {
-            return Area::Runway;
+            return NamedArea(Area::Runway, name.value());
         }
-        else if (collectionContainsPoint(m_taxiwayElements, pos2D))
+
+        if (auto name = areaContainsPoint(m_taxiwayElements, pos2D))
         {
-            return Area::Taxiway;
+            return NamedArea(Area::Taxiway, name.value());
         }
-        else if (collectionContainsPoint(m_apronLaneElements, pos2D))
+
+        if (auto name = areaContainsPoint(m_apronLaneElements, pos2D))
         {
-            return Area::ApronLane;
+            return NamedArea(Area::ApronLane, name.value());
         }
-        else if (collectionContainsPoint(m_standElements, pos2D))
+
+        if (auto name = areaContainsPoint(m_standElements, pos2D))
         {
-            return Area::Stand;
+            return NamedArea(Area::Stand, name.value());
         }
     }
     else if (layer == Layer::AirborneLayer)
     {
-        if (collectionContainsPoint(m_airborne1Elements, pos2D) && alt <= 762)
+        if (auto name = areaContainsPoint(m_airborne1Elements, pos2D); name && alt <= 762)
         {
-            return Area::Airborne1;
+            return NamedArea(Area::Airborne1, name.value());
         }
-        else if (collectionContainsPoint(m_airborne2Elements, pos2D) && alt <= 762)
+
+        if (auto name = areaContainsPoint(m_airborne2Elements, pos2D); name && alt <= 762)
         {
-            return Area::Airborne2;
+            return NamedArea(Area::Airborne2, name.value());
         }
     }
 
@@ -170,4 +170,19 @@ bool Aerodrome::collectionContainsPoint(const QHash<QString, QVector<QPolygonF>>
     }
 
     return false;
+}
+
+std::optional<QString> Aerodrome::areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point)
+{
+    for (auto it = collection.begin(); it != collection.end(); ++it)
+    {
+        QVector<QPolygonF> vec = it.value();
+
+        if (collectionContainsPoint(vec, point))
+        {
+            return it.key();
+        }
+    }
+
+    return std::nullopt;
 }

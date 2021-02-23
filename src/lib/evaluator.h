@@ -20,6 +20,7 @@
 #ifndef ASTMOPS_EVALUATOR_H
 #define ASTMOPS_EVALUATOR_H
 
+#include "aerodrome.h"
 #include "asterix.h"
 #include "counters.h"
 #include <QDateTime>
@@ -53,7 +54,7 @@ public:
 
     void setRefData(const QMultiMap<QDateTime, QGeoPositionInfo> &refData);
     void setTestData(const QMultiMap<QDateTime, AsterixRecord> &testData);
-    void setLocatePointCallback(const std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> &callback);
+    void setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> &callback);
 
 private:
     QGeoPositionInfo interpolatedRefPosForTime(const QDateTime &tod, double dtMax, bool *ok = nullptr);
@@ -67,7 +68,7 @@ private:
     double mean(const QVector<double> &v);
     double stdDev(const QVector<double> &v);
 
-    std::function<Aerodrome::Area(const QVector3D &, const std::optional<bool>)> m_locatePoint;
+    std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> m_locatePoint;
 
     IcaoAddr m_dgpsAddr = Configuration::dgpsTargetAddress();
 

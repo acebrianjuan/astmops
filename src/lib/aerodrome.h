@@ -76,6 +76,24 @@ public:
     };
     Q_ENUM(Area)
 
+    struct NamedArea
+    {
+        NamedArea() = default;
+
+        NamedArea(const Aerodrome::Area area)
+            : area_(area)
+        {
+        }
+
+        NamedArea(const Aerodrome::Area area, const QString &name)
+            : area_(area), name_(name)
+        {
+        }
+
+        Aerodrome::Area area_ = Aerodrome::Area::None;
+        QString name_;
+    };
+
     Aerodrome();
 
     bool hasAnyElements();
@@ -89,11 +107,12 @@ public:
     void addAirborne1Element(const QString &name, const QPolygonF &polygon);
     void addAirborne2Element(const QString &name, const QPolygonF &polygon);
 
-    Aerodrome::Area locatePoint(const QVector3D cartPos, const std::optional<bool> &gndBit = std::nullopt);
+    NamedArea locatePoint(const QVector3D cartPos, const bool gndBit);
 
 private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point);
     bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
+    std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
 
     QVector3D m_arp;
     QVector3D m_smr;
@@ -106,5 +125,6 @@ private:
     QHash<QString, QVector<QPolygonF>> m_airborne2Elements;
 };
 Q_DECLARE_METATYPE(Aerodrome);
+Q_DECLARE_METATYPE(Aerodrome::NamedArea);
 
 #endif  // ASTMOPS_AERODROME_H

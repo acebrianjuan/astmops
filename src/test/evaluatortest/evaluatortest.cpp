@@ -105,7 +105,7 @@ void EvaluatorTest::testPosAccDgps()
     kmlReader.read(&kmlFile);
 
     Aerodrome lebl = kmlReader.makeAerodrome();
-    auto leblCallback = [&lebl](const QVector3D cartPos, const std::optional<bool> &gndBit = std::nullopt) {
+    auto leblCallback = [&lebl](const QVector3D cartPos, const bool gndBit) {
         return lebl.locatePoint(cartPos, gndBit);
     };
 

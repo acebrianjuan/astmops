@@ -155,8 +155,8 @@ void AerodromeTest::testElements()
 void AerodromeTest::testLocatePoint_data()
 {
     QTest::addColumn<Aerodrome>("aerodrome");
-    QTest::addColumn<QVector<QVector3D>>("points");
-    QTest::addColumn<QVector<NamedArea>>("result");
+    QTest::addColumn<QVector<QPair<QVector3D, uint>>>("points");
+    QTest::addColumn<QVector<Aerodrome::NamedArea>>("result");
 
     QPolygonF runwayPolygon;
     runwayPolygon << QPointF(4.0, 0.5)
@@ -226,21 +226,21 @@ void AerodromeTest::testLocatePoint_data()
     aerodrome.addAirborne1Element({}, airborne1RPolygon);
     aerodrome.addAirborne2Element({}, airborne2RPolygon);
 
-    QVector<QVector3D> points;
-    points << QVector3D(10, 0, 1)
-           << QVector3D(6, 0, 1)
-           << QVector3D(0, 0, 0)
-           << QVector3D(0, 1, 0)
-           << QVector3D(0, 2, 0)
-           << QVector3D(0, 3.5, 0);
+    QVector<QPair<QVector3D, uint>> points;
+    points << QPair<QVector3D, uint>(QVector3D(10, 0, 1), 0)
+           << QPair<QVector3D, uint>(QVector3D(6, 0, 1), 0)
+           << QPair<QVector3D, uint>(QVector3D(0, 0, 0), 1)
+           << QPair<QVector3D, uint>(QVector3D(0, 1, 0), 1)
+           << QPair<QVector3D, uint>(QVector3D(0, 2, 0), 1)
+           << QPair<QVector3D, uint>(QVector3D(0, 3.5, 0), 1);
 
-    QVector<NamedArea> nareas;
-    nareas << NamedArea(Aerodrome::Area::Airborne2)
-           << NamedArea(Aerodrome::Area::Airborne1)
-           << NamedArea(Aerodrome::Area::Runway)
-           << NamedArea(Aerodrome::Area::Taxiway)
-           << NamedArea(Aerodrome::Area::ApronLane)
-           << NamedArea(Aerodrome::Area::Stand);
+    QVector<Aerodrome::NamedArea> nareas;
+    nareas << Aerodrome::NamedArea(Aerodrome::Area::Airborne2)
+           << Aerodrome::NamedArea(Aerodrome::Area::Airborne1)
+           << Aerodrome::NamedArea(Aerodrome::Area::Runway)
+           << Aerodrome::NamedArea(Aerodrome::Area::Taxiway)
+           << Aerodrome::NamedArea(Aerodrome::Area::ApronLane)
+           << Aerodrome::NamedArea(Aerodrome::Area::Stand);
 
     QTest::newRow("Dummy Aerodrome") << aerodrome
                                      << points
@@ -249,16 +249,18 @@ void AerodromeTest::testLocatePoint_data()
 
 void AerodromeTest::testLocatePoint()
 {
+    using PairVec = QVector<QPair<QVector3D, uint>>;
+
     QFETCH(Aerodrome, aerodrome);
-    QFETCH(QVector<QVector3D>, points);
-    QFETCH(QVector<NamedArea>, result);
+    QFETCH(PairVec, points);
+    QFETCH(QVector<Aerodrome::NamedArea>, result);
 
     QCOMPARE(points.size(), result.size());
 
     auto it = result.begin();
-    for (QVector3D point : points)
+    for (QPair<QVector3D, uint> pair : points)
     {
-        Aerodrome::Area area = aerodrome.locatePoint(point);
+        Aerodrome::NamedArea area = aerodrome.locatePoint(pair.first, pair.second);
         QCOMPARE(area, it->area_);
         ++it;
     }
