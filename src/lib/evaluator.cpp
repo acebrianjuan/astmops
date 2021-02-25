@@ -549,7 +549,7 @@ void Evaluator::printPosAccResuls()
         auto subAreas = m_cat010MlatPosAccuracyErrors.findByArea(area);
 
         QVector<double> errorsTotal;
-        for (const auto it : subAreas)
+        for (const auto &it : subAreas)
         {
             QVector<double> errors = it.value();
             errorsTotal.append(errors);
