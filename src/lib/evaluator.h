@@ -20,7 +20,7 @@
 #ifndef ASTMOPS_EVALUATOR_H
 #define ASTMOPS_EVALUATOR_H
 
-#include "aerodrome.h"
+#include "areahash.h"
 #include "asterix.h"
 #include "counters.h"
 #include <QDateTime>
@@ -68,6 +68,8 @@ private:
     double mean(const QVector<double> &v);
     double stdDev(const QVector<double> &v);
 
+    void printPosAccResuls();
+
     std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> m_locatePoint;
 
     IcaoAddr m_dgpsAddr = Configuration::dgpsTargetAddress();
@@ -76,8 +78,8 @@ private:
     QMultiMap<QDateTime, AsterixRecord> m_testData;
     QMap<QDateTime, TestDataMapping> m_testDataMappings;
 
-    QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatPosAccuracyCounters;
-    QHash<Aerodrome::Area, QVector<double>> m_cat010MlatPosAccuracyErrors;
+    AreaHash<Counters::BasicCounter> m_cat010MlatPosAccuracyCounters;
+    AreaHash<QVector<double>> m_cat010MlatPosAccuracyErrors;
 };
 
 #endif  // ASTMOPS_EVALUATOR_H

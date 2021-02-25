@@ -26,6 +26,7 @@
 #include <QVector>
 #include <optional>
 
+
 /*!
  * \brief The Aerodrome class contains the assets of an aerodrome.
  *
@@ -126,5 +127,15 @@ private:
 };
 Q_DECLARE_METATYPE(Aerodrome);
 Q_DECLARE_METATYPE(Aerodrome::NamedArea);
+
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+uint qHash(const Aerodrome::NamedArea &narea, uint seed);
+#else
+size_t qHash(const Aerodrome::NamedArea &narea, size_t seed);
+#endif
+
+bool operator==(const Aerodrome::NamedArea &a, const Aerodrome::NamedArea &b);
+
 
 #endif  // ASTMOPS_AERODROME_H

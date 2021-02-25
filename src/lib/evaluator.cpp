@@ -29,19 +29,21 @@
 
 Evaluator::Evaluator(QObject *parent) : QObject(parent)
 {
+    /*
     QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
     for (int i = 0; i < e.keyCount(); ++i)
     {
         m_cat010MlatPosAccuracyCounters.insert(static_cast<Aerodrome::Area>(e.value(i)), Counters::BasicCounter());
         m_cat010MlatPosAccuracyErrors.insert(static_cast<Aerodrome::Area>(e.value(i)), QVector<double>());
     }
+    */
 }
 
 double Evaluator::evalPosAccDgps()
 {
     // TODO: These coordinates should be read from the KML file.
     QGeoCoordinate leblArp(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
-    QGeoCoordinate leblSmr(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
+    QGeoCoordinate leblSmr(41.2961573950623, 2.086652827750635, 4.3200000000000003);
 
     calculateTestDataMappings();
 
@@ -90,6 +92,10 @@ double Evaluator::evalPosAccDgps()
         }
 
         Aerodrome::Area area = namedArea.area_;
+        if (area == Aerodrome::Area::None)
+        {
+            continue;
+        }
 
         double errX = cartRef.x() - xTest;
         double errY = cartRef.y() - yTest;
@@ -118,16 +124,16 @@ double Evaluator::evalPosAccDgps()
             minDist = 40;
             break;
         default:
-            minDist = 40;
+            continue;
         }
 
-        ++m_cat010MlatPosAccuracyCounters[area].countTotal;
+        ++m_cat010MlatPosAccuracyCounters[namedArea].countTotal;
         if (dist <= minDist)
         {
-            ++m_cat010MlatPosAccuracyCounters[area].countValid;
+            ++m_cat010MlatPosAccuracyCounters[namedArea].countValid;
         }
 
-        m_cat010MlatPosAccuracyErrors[area].append(dist);
+        m_cat010MlatPosAccuracyErrors[namedArea].append(dist);
 
         /*
         int ncheck = 10;
@@ -191,41 +197,8 @@ double Evaluator::evalPosAccDgps()
     }
     */
 
-    for (QHash<Aerodrome::Area, QVector<double>>::const_iterator it = m_cat010MlatPosAccuracyErrors.constBegin(); it != m_cat010MlatPosAccuracyErrors.constEnd(); ++it)
-    {
-        QVector<double> errors = it.value();
 
-        /*
-        if (it.key() == Aerodrome::Area::None)
-        {
-            continue;
-        }
-        */
-
-        qDebug() << it.key()
-                 << "\t"
-                 << "P95:"
-                 << "\t" << percentile(errors, 95) << "m"
-                 << "\t"
-                 << "P99:"
-                 << "\t" << percentile(errors, 99) << "m"
-                 << "\t"
-                 << "Mean:"
-                 << "\t" << mean(errors) << "m"
-                 << "\t"
-                 << "StdDev:"
-                 << "\t" << stdDev(errors) << "m"
-                 << "\t"
-                 << "N:"
-                 << "\t" << errors.size();
-
-        /*
-        for (const auto err : qAsConst(errors))
-        {
-            std::cout << err << "\n";
-        }
-        */
-    }
+    printPosAccResuls();
 
 
     return 0.0;
@@ -542,6 +515,65 @@ double Evaluator::stdDev(const QVector<double> &v)
     double stdev = std::sqrt(sq_sum / (N - 1));
 
     return stdev;
+}
+
+void Evaluator::printPosAccResuls()
+{
+    QVector<Aerodrome::Area> areas;
+    areas << Aerodrome::Area::Manoeuvering
+          << Aerodrome::Area::Apron
+          << Aerodrome::Area::Airborne;
+
+    auto printStats = [this](AreaHash<QVector<double>>::iterator it, const QVector<double> &errors) {
+        qDebug() << it.key().area_ << it.key().name_
+                 << "\t"
+                 << "P95:"
+                 << "\t" << percentile(errors, 95) << "m"
+                 << "\t"
+                 << "P99:"
+                 << "\t" << percentile(errors, 99) << "m"
+                 << "\t"
+                 << "Mean:"
+                 << "\t" << mean(errors) << "m"
+                 << "\t"
+                 << "StdDev:"
+                 << "\t" << stdDev(errors) << "m"
+                 << "\t"
+                 << "N:"
+                 << "\t" << errors.size();
+    };
+
+
+    for (const Aerodrome::Area area : qAsConst(areas))
+    {
+        auto subAreas = m_cat010MlatPosAccuracyErrors.findByArea(area);
+
+        QVector<double> errorsTotal;
+        for (const auto it : subAreas)
+        {
+            QVector<double> errors = it.value();
+            errorsTotal.append(errors);
+
+            printStats(it, errors);
+        }
+
+        qDebug() << area
+                 << "\t"
+                 << "P95:"
+                 << "\t" << percentile(errorsTotal, 95) << "m"
+                 << "\t"
+                 << "P99:"
+                 << "\t" << percentile(errorsTotal, 99) << "m"
+                 << "\t"
+                 << "Mean:"
+                 << "\t" << mean(errorsTotal) << "m"
+                 << "\t"
+                 << "StdDev:"
+                 << "\t" << stdDev(errorsTotal) << "m"
+                 << "\t"
+                 << "N:"
+                 << "\t" << errorsTotal.size();
+    }
 }
 
 void Evaluator::setRefData(const QMultiMap<QDateTime, QGeoPositionInfo> &refData)
