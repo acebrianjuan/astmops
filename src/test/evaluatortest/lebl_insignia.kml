@@ -5,24 +5,14 @@
 <Document>
 	<name>LEBL_INSIGNIA</name>
 	<open>1</open>
-	<Style id="s_ylw-pushpin_hl2">
+	<Style id="s_ylw-pushpin6">
 		<IconStyle>
 			<scale>1.2</scale>
 			<Icon>
-				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square_highlight.png</href>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
 			</Icon>
 		</IconStyle>
 	</Style>
-	<StyleMap id="msn_placemark_square">
-		<Pair>
-			<key>normal</key>
-			<styleUrl>#sn_placemark_square</styleUrl>
-		</Pair>
-		<Pair>
-			<key>highlight</key>
-			<styleUrl>#sh_placemark_square_highlight</styleUrl>
-		</Pair>
-	</StyleMap>
 	<Style id="sn_placemark_square">
 		<IconStyle>
 			<scale>1.2</scale>
@@ -41,7 +31,7 @@
 			<styleUrl>#s_ylw-pushpin_hl2</styleUrl>
 		</Pair>
 	</StyleMap>
-	<Style id="sh_placemark_square_highlight">
+	<Style id="s_ylw-pushpin_hl2">
 		<IconStyle>
 			<scale>1.2</scale>
 			<Icon>
@@ -49,11 +39,21 @@
 			</Icon>
 		</IconStyle>
 	</Style>
-	<Style id="s_ylw-pushpin6">
+	<StyleMap id="msn_placemark_square">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_placemark_square</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_placemark_square_highlight</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="sh_placemark_square_highlight">
 		<IconStyle>
 			<scale>1.2</scale>
 			<Icon>
-				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square_highlight.png</href>
 			</Icon>
 		</IconStyle>
 	</Style>
@@ -532,7 +532,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -556,7 +556,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -580,7 +580,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -604,7 +604,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -628,7 +628,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -652,7 +652,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -676,7 +676,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -700,7 +700,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -724,7 +724,7 @@
 	<Placemark>
 		<name>FE636291-5569-495D-84B9-8A7FD031CFD7</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -748,7 +748,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -772,7 +772,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -796,7 +796,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -820,7 +820,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -844,7 +844,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -868,7 +868,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -892,7 +892,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -916,7 +916,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -940,7 +940,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -964,7 +964,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -988,7 +988,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1012,7 +1012,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1036,7 +1036,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1060,7 +1060,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1084,7 +1084,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1108,7 +1108,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1132,7 +1132,7 @@
 	<Placemark>
 		<name>A8D045D4-D925-4992-91DD-98EF6B57DA1B</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1156,7 +1156,7 @@
 	<Placemark>
 		<name>BBBBBED5-3757-4B75-B743-B058658C5E44</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1180,7 +1180,7 @@
 	<Placemark>
 		<name>3F424A76-807A-4750-8720-D01CF2B0CF0C</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1204,7 +1204,7 @@
 	<Placemark>
 		<name>6A977671-589C-4C0F-80FC-6C7236EC3CE9</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_07L/25R</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
@@ -1228,7 +1228,7 @@
 	<Placemark>
 		<name>426AD99C-8809-4A63-9898-9FBA2A6A7AEE</name>
 		<Snippet maxLines="0"></Snippet>
-		<description>RunwayElement</description>
+		<description>RunwayElement_02/20</description>
 		<Style>
 			<LineStyle>
 				<color>ffffffff</color>
