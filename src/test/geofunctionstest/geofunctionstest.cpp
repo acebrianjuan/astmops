@@ -106,7 +106,7 @@ void GeoFunctionsTest::ecefToLocalEnuTest_data()
     QVector3D leblArpEcef(4795728, 174046, 4187269);
     QVector3D leblArpEnu(0, 0, 0);
 
-    QGeoCoordinate leblSmrGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
+    QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
     //QVector3D leblSmrEcef(000, 000, 000);
     //QVector3D leblSmrEnu(1394.60223, -162.34771, 0);
 

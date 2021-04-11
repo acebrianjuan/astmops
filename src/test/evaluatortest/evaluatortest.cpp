@@ -43,7 +43,7 @@ private slots:
     void testPosAccDgps();
 
 private:
-    QMultiMap<QDateTime, AsterixRecord> dgpsTestDataMap(const QMultiMap<QDateTime, AsterixRecord> &testData, IcaoAddr dgpsAddr);
+    QMultiMap<QDateTime, Asterix::Record> dgpsTestDataMap(const QMultiMap<QDateTime, Asterix::Record> &testData, IcaoAddr dgpsAddr);
 };
 
 
@@ -132,7 +132,7 @@ void EvaluatorTest::testPosAccDgps()
         recordCollator.processRecord(asterixXmlReader.record());
     }
 
-    QMultiMap<QDateTime, AsterixRecord> testData = recordCollator.mlatTgtRepMultiMap();
+    QMultiMap<QDateTime, Asterix::Record> testData = recordCollator.mlatTgtRepMultiMap();
 
     evaluator.setRefData(refData);
     evaluator.setTestData(dgpsTestDataMap(testData, dgpsAddr));
@@ -143,14 +143,14 @@ void EvaluatorTest::testPosAccDgps()
     QCOMPARE(rpa, result);
 }
 
-QMultiMap<QDateTime, AsterixRecord> EvaluatorTest::dgpsTestDataMap(const QMultiMap<QDateTime, AsterixRecord> &testData, IcaoAddr dgpsAddr)
+QMultiMap<QDateTime, Asterix::Record> EvaluatorTest::dgpsTestDataMap(const QMultiMap<QDateTime, Asterix::Record> &testData, IcaoAddr dgpsAddr)
 {
-    QMultiMap<QDateTime, AsterixRecord> mmap;
+    QMultiMap<QDateTime, Asterix::Record> mmap;
 
-    for (QMultiMap<QDateTime, AsterixRecord>::const_iterator it = testData.constBegin(); it != testData.constEnd(); ++it)
+    for (QMultiMap<QDateTime, Asterix::Record>::const_iterator it = testData.constBegin(); it != testData.constEnd(); ++it)
     {
-        AsterixRecord rec = it.value();
-        QString addrStr = rec.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr"));
+        Asterix::Record rec = it.value();
+        QString addrStr = Asterix::extractDataElementValue(rec, QLatin1String("I220"), QLatin1String("TAddr"));
         if (!addrStr.isEmpty())
         {
             bool ok;

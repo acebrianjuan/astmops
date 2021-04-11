@@ -42,7 +42,7 @@ public:
     explicit AsterixXmlReader(QObject* parent = nullptr);
 
     void addData(const QByteArray& data);
-    AsterixRecord record();
+    Asterix::Record record();
     bool hasPendingRecords();
     void setStartDate(QDate date);
 
@@ -53,13 +53,13 @@ signals:
 
 private:
     void readRecord();
-    AsterixDataItem readDataItem();
-    AsterixDataElement readDataField();
+    Asterix::DataItem readDataItem();
+    Asterix::DataElement readDataElement();
     bool isValidDataItem(const QString& di);
 
     QDate m_startDate;
     QXmlStreamReader m_xml;
-    QQueue<AsterixRecord> m_recordsQueue;
+    QQueue<Asterix::Record> m_recordsQueue;
 };
 
 #endif  // ASTMOPS_ASTERIXXMLREADER_H

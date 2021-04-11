@@ -52,9 +52,9 @@ double Evaluator::evalPosAccDgps()
     QGeoPositionInfo refPos;
 
     double tdiffMax = 2.0;  // seconds.
-    for (QMultiMap<QDateTime, AsterixRecord>::const_iterator it = m_testData.constBegin(); it != m_testData.constEnd(); ++it)
+    for (QMultiMap<QDateTime, Asterix::Record>::const_iterator it = m_testData.constBegin(); it != m_testData.constEnd(); ++it)
     {
-        AsterixRecord testRec = it.value();
+        Asterix::Record testRec = it.value();
 
         tod = it.key();
 
@@ -64,11 +64,11 @@ double Evaluator::evalPosAccDgps()
             continue;
         }
 
-        double xTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("X")).toDouble();
-        double yTest = testRec.valStrFromDitem(QLatin1String("I042"), QLatin1String("Y")).toDouble();
+        double xTest = Asterix::extractDataElementValue(testRec, QLatin1String("I042"), QLatin1String("X")).toDouble();
+        double yTest = Asterix::extractDataElementValue(testRec, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
         bool gbOk;
-        bool gndBit = testRec.valStrFromDitem(QLatin1String("I020"), QLatin1String("GBS")).toUInt(&gbOk);
+        bool gndBit = Asterix::extractDataElementValue(testRec, QLatin1String("I020"), QLatin1String("GBS")).toUInt(&gbOk);
 
         TestDataMapping mapping = m_testDataMappings.value(tod);
 
@@ -204,7 +204,7 @@ double Evaluator::evalPosAccDgps()
     return 0.0;
 }
 
-void Evaluator::setTestData(const QMultiMap<QDateTime, AsterixRecord> &testData)
+void Evaluator::setTestData(const QMultiMap<QDateTime, Asterix::Record> &testData)
 {
     m_testData = testData;
 }
@@ -260,7 +260,7 @@ void Evaluator::calculateTestDataMappings()
 {
     Q_ASSERT(m_testDataMappings.isEmpty());
 
-    for (QMultiMap<QDateTime, AsterixRecord>::const_iterator it = m_testData.constBegin(); it != m_testData.constEnd(); ++it)
+    for (QMultiMap<QDateTime, Asterix::Record>::const_iterator it = m_testData.constBegin(); it != m_testData.constEnd(); ++it)
     {
         QDateTime todTestData = it.key();
         m_testDataMappings.insert(todTestData, calculateTestDataMapping(todTestData));

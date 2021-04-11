@@ -24,6 +24,7 @@
 #include "asterix.h"
 #include "astmops.h"
 #include "counters.h"
+#include <QGeoPositionInfo>
 #include <QObject>
 #include <QQueue>
 
@@ -58,7 +59,8 @@ public:
     void setLocatePointCallback(const std::function<Aerodrome::Area(const QPointF&)>& callback);
 
     explicit MopsProcessor(QObject* parent = nullptr);
-    void processRecord(const AsterixRecord& record);
+    void processRecord(const Asterix::Record& record);
+    void setPosRef(const QMultiMap<QDateTime, QGeoPositionInfo>& posRef);
 
 public slots:
     double ed116TgtRepMinimumFields();
@@ -78,34 +80,36 @@ public slots:
 signals:
 
 private:
-    void processCat010SmrTgtRep(const AsterixRecord& record);
-    void processCat010SmrSrvMsg(const AsterixRecord& record);
+    void processCat010SmrTgtRep(const Asterix::Record& record);
+    void processCat010SmrSrvMsg(const Asterix::Record& record);
 
-    void processCat010MlatTgtRep(const AsterixRecord& record);
-    void processCat010MlatSrvMsg(const AsterixRecord& record);
+    void processCat010MlatTgtRep(const Asterix::Record& record);
+    void processCat010MlatSrvMsg(const Asterix::Record& record);
+
+    void processCat021AdsbTgtRep(const Asterix::Record& record);
 
     // CAT010 SMR Target Report
-    bool cat010SmrTgtRepMinDataItems(const AsterixRecord& record);
-    void cat010SmrTgtRepUpdateRate(const AsterixRecord& record);
-    void cat010SmrTgtRepProbDetection(const AsterixRecord& record);
+    bool cat010SmrTgtRepMinDataItems(const Asterix::Record& record);
+    void cat010SmrTgtRepUpdateRate(const Asterix::Record& record);
+    void cat010SmrTgtRepProbDetection(const Asterix::Record& record);
 
     // CAT010 SMR Service Message
-    bool cat010SmrSrvMsgMinDataItems(const AsterixRecord& record);
-    void cat010SmrSrvMsgUpdateRate(const AsterixRecord& record);
+    bool cat010SmrSrvMsgMinDataItems(const Asterix::Record& record);
+    void cat010SmrSrvMsgUpdateRate(const Asterix::Record& record);
 
     // CAT010 MLAT Target Report
-    bool cat010MlatTgtRepMinDataItems(const AsterixRecord& record);
-    void cat010MlatTgtRepUpdateRate(const AsterixRecord& record);
-    void cat010MlatTgtRepProbDetection(const AsterixRecord& record);
+    bool cat010MlatTgtRepMinDataItems(const Asterix::Record& record);
+    void cat010MlatTgtRepUpdateRate(const Asterix::Record& record);
+    void cat010MlatTgtRepProbDetection(const Asterix::Record& record);
 
     // CAT010 MLAT Service Message
-    bool cat010MlatSrvMsgMinDataItems(const AsterixRecord& record);
-    void cat010MlatSrvMsgUpdateRate(const AsterixRecord& record);
+    bool cat010MlatSrvMsgMinDataItems(const Asterix::Record& record);
+    void cat010MlatSrvMsgUpdateRate(const Asterix::Record& record);
 
-    static bool checkDataItems(const AsterixRecord& record, const QVector<DataItemList>& collections);
-    static bool checkDataItemsList(const AsterixRecord& record, const QStringList& list, DataItemListType type = Mandatory);
+    static bool checkDataItems(const Asterix::Record& record, const QVector<DataItemList>& collections);
+    static bool checkDataItemsList(const Asterix::Record& record, const QStringList& list, DataItemListType type = Mandatory);
 
-    static bool containsPosition(const AsterixRecord& record);
+    static bool containsPosition(const Asterix::Record& record);
 
     static QVector<DataItemList> ed116TargetReportsMinimumDataItems();
     static QVector<DataItemList> ed117TargetReportsMinimumDataItems();
@@ -156,6 +160,8 @@ private:
 
     QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatTgtRepUpdateRateTable;
     QHash<Aerodrome::Area, Counters::BasicCounter> m_cat010MlatTgtRepProbDetectionTable;
+
+    QMultiMap<QDateTime, QGeoPositionInfo> m_posRef;
 };
 
 #endif  // ASTMOPS_MOPSPROCESSOR_H

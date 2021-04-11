@@ -53,7 +53,7 @@ public:
     double evalPosAccDgps();
 
     void setRefData(const QMultiMap<QDateTime, QGeoPositionInfo> &refData);
-    void setTestData(const QMultiMap<QDateTime, AsterixRecord> &testData);
+    void setTestData(const QMultiMap<QDateTime, Asterix::Record> &testData);
     void setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> &callback);
 
 private:
@@ -75,7 +75,7 @@ private:
     IcaoAddr m_dgpsAddr = Configuration::dgpsTargetAddress();
 
     QMultiMap<QDateTime, QGeoPositionInfo> m_refData;
-    QMultiMap<QDateTime, AsterixRecord> m_testData;
+    QMultiMap<QDateTime, Asterix::Record> m_testData;
     QMap<QDateTime, TestDataMapping> m_testDataMappings;
 
     AreaHash<Counters::BasicCounter> m_cat010MlatPosAccuracyCounters;

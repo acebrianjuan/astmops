@@ -64,7 +64,7 @@ void AsterixXmlReader::addData(const QByteArray& data)
     }
 }
 
-AsterixRecord AsterixXmlReader::record()
+Asterix::Record AsterixXmlReader::record()
 {
     return m_recordsQueue.dequeue();
 }
@@ -87,9 +87,10 @@ void AsterixXmlReader::readRecord()
     Q_ASSERT(m_xml.isStartElement() &&
              m_xml.name() == QLatin1String("ASTERIX") &&
              m_xml.attributes().hasAttribute(QLatin1String("cat")) &&
+             m_xml.attributes().hasAttribute(QLatin1String("crc")) &&
              m_xml.attributes().hasAttribute(QLatin1String("timestamp")));
 
-    AsterixRecord record;
+    Asterix::Record record;
     bool catOk, timeStampOk;
     quint8 cat = m_xml.attributes().value(QLatin1String("cat")).toUInt(&catOk);
     quint64 timeStamp = m_xml.attributes().value(QLatin1String("timestamp")).toUInt(&timeStampOk);
@@ -102,8 +103,8 @@ void AsterixXmlReader::readRecord()
         return;
     }
 
-    record.m_cat = cat;
-    record.m_dateTime = QDateTime(m_startDate, QTime::fromMSecsSinceStartOfDay(timeStamp), Qt::UTC);
+    record.cat_ = cat;
+    record.datetime_ = QDateTime(m_startDate, QTime::fromMSecsSinceStartOfDay(timeStamp), Qt::UTC);
 
     while (m_xml.readNextStartElement())
     {
@@ -111,7 +112,7 @@ void AsterixXmlReader::readRecord()
         if (isValidDataItem(diName))
         {
             //qDebug() << diName;
-            record.m_dataItems[diName] = readDataItem();
+            record.dataItems_[diName] = readDataItem();
         }
         else
         {
@@ -122,30 +123,32 @@ void AsterixXmlReader::readRecord()
     m_recordsQueue.enqueue(record);
 }
 
-AsterixDataItem AsterixXmlReader::readDataItem()
+Asterix::DataItem AsterixXmlReader::readDataItem()
 {
     Q_ASSERT(m_xml.isStartElement() && isValidDataItem(m_xml.name().toString()));
 
-    AsterixDataItem di;
-    di.m_name = m_xml.name().toString();
+    Asterix::DataItem di;
+    di.name_ = m_xml.name().toString();
 
+    Asterix::DataElement de;
     while (m_xml.readNextStartElement())
     {
-        di.m_fields.append(QVariant::fromValue(readDataField()));
+        de = readDataElement();
+        di.data_.insert(de.name_, de);
     }
 
     return di;
 }
 
-AsterixDataElement AsterixXmlReader::readDataField()
+Asterix::DataElement AsterixXmlReader::readDataElement()
 {
     Q_ASSERT(m_xml.isStartElement());
 
-    AsterixDataElement df;
-    df.m_name = m_xml.name().toString();
-    df.m_value = m_xml.readElementText();
+    Asterix::DataElement de;
+    de.name_ = m_xml.name().toString();
+    de.value_ = m_xml.readElementText();
 
-    return df;
+    return de;
 }
 
 bool AsterixXmlReader::isValidDataItem(const QString& di)

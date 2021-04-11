@@ -58,7 +58,7 @@ public:
 
     explicit RecordCollator(QObject* parent = nullptr);
 
-    void processRecord(AsterixRecord record);
+    void processRecord(Asterix::Record record);
 
     void loadExcludedAddresses(QIODevice* device);
     void loadExcludedAddresses(const QVector<IcaoAddr>& excladdr);
@@ -68,11 +68,11 @@ public:
 
     QVector<IcaoAddr> excludedAddresses() const;
 
-    QMultiMap<QDateTime, AsterixRecord> smrTgtRepMultiMap() const;
-    QMultiMap<QDateTime, AsterixRecord> smrSrvMsgMultiMap() const;
-    QMultiMap<QDateTime, AsterixRecord> mlatTgtRepMultiMap() const;
-    QMultiMap<QDateTime, AsterixRecord> mlatSrvMsgMultiMap() const;
-    QMultiMap<QDateTime, AsterixRecord> adsbTgtRepMultiMap() const;
+    QMultiMap<QDateTime, Asterix::Record> smrTgtRepMultiMap() const;
+    QMultiMap<QDateTime, Asterix::Record> smrSrvMsgMultiMap() const;
+    QMultiMap<QDateTime, Asterix::Record> mlatTgtRepMultiMap() const;
+    QMultiMap<QDateTime, Asterix::Record> mlatSrvMsgMultiMap() const;
+    QMultiMap<QDateTime, Asterix::Record> adsbTgtRepMultiMap() const;
 
     Counter smrTgtRepCounter() const;
     Counter smrSrvMsgCounter() const;
@@ -99,11 +99,11 @@ private:
     QDateTime m_lastMlatSrvMsgDateTime;
     QDateTime m_lastAdsbTgtRepDateTime;
 
-    QMultiMap<QDateTime, AsterixRecord> m_smrTgtRepMultiMap;
-    QMultiMap<QDateTime, AsterixRecord> m_smrSrvMsgMultiMap;
-    QMultiMap<QDateTime, AsterixRecord> m_mlatTgtRepMultiMap;
-    QMultiMap<QDateTime, AsterixRecord> m_mlatSrvMsgMultiMap;
-    QMultiMap<QDateTime, AsterixRecord> m_adsbTgtRepMultiMap;
+    QMultiMap<QDateTime, Asterix::Record> m_smrTgtRepMultiMap;
+    QMultiMap<QDateTime, Asterix::Record> m_smrSrvMsgMultiMap;
+    QMultiMap<QDateTime, Asterix::Record> m_mlatTgtRepMultiMap;
+    QMultiMap<QDateTime, Asterix::Record> m_mlatSrvMsgMultiMap;
+    QMultiMap<QDateTime, Asterix::Record> m_adsbTgtRepMultiMap;
 
     Counter m_smrTgtRepCounter;
     Counter m_smrSrvMsgCounter;

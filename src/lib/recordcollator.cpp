@@ -29,7 +29,7 @@ RecordCollator::RecordCollator(QObject *parent) : QObject(parent),
 {
 }
 
-void RecordCollator::processRecord(AsterixRecord record)
+void RecordCollator::processRecord(Asterix::Record record)
 {
     // Classify record by System Type (smr, mlat, adsb).
     // Filter out if record is an excluded address.
@@ -44,30 +44,30 @@ void RecordCollator::processRecord(AsterixRecord record)
     };
     */
 
-    if (record.m_cat == 10)  // Monosensor Surface Movement Data.
+    if (record.cat_ == 10)  // Monosensor Surface Movement Data.
     {
-        quint8 msgType = record.valStrFromDitem(QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
-        quint8 sic = record.valStrFromDitem(QLatin1String("I010"), QLatin1String("SIC")).toUInt();
+        quint8 msgType = Asterix::extractDataElementValue(record, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
+        quint8 sic = Asterix::extractDataElementValue(record, QLatin1String("I010"), QLatin1String("SIC")).toUInt();
 
         if (msgType == 1)  // Target Report.
         {
-            quint8 sysType = record.valStrFromDitem(QLatin1String("I020"), QLatin1String("TYP")).toUInt();
+            quint8 sysType = Asterix::extractDataElementValue(record, QLatin1String("I020"), QLatin1String("TYP")).toUInt();
 
             if (sysType == 1)  // Mode S Multilateration.
             {
-                monotonicTimeCheck(m_lastMlatTgtRepDateTime, record.m_dateTime);
+                monotonicTimeCheck(m_lastMlatTgtRepDateTime, record.datetime_);
 
                 ++m_mlatTgtRepCounter.in;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                monotonicTimeCheck(m_lastSmrTgtRepDateTime, record.m_dateTime);
+                monotonicTimeCheck(m_lastSmrTgtRepDateTime, record.datetime_);
 
                 ++m_smrTgtRepCounter.in;
             }
 
             bool ok;
-            IcaoAddr tgtAddr = record.valStrFromDitem(QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
+            IcaoAddr tgtAddr = Asterix::extractDataElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
             if (ok)  // Valid Target Address.
             {
@@ -83,12 +83,12 @@ void RecordCollator::processRecord(AsterixRecord record)
              */
             if (sysType == 1)  // Mode S Multilateration.
             {
-                m_mlatTgtRepMultiMap.insert(record.m_dateTime, record);
+                m_mlatTgtRepMultiMap.insert(record.datetime_, record);
                 ++m_mlatTgtRepCounter.out;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                m_smrTgtRepMultiMap.insert(record.m_dateTime, record);
+                m_smrTgtRepMultiMap.insert(record.datetime_, record);
                 ++m_smrTgtRepCounter.out;
             }
         }
@@ -99,30 +99,30 @@ void RecordCollator::processRecord(AsterixRecord record)
 
             if (sic == m_mlatSic)  // Mode S Multilateration.
             {
-                monotonicTimeCheck(m_lastMlatSrvMsgDateTime, record.m_dateTime);
+                monotonicTimeCheck(m_lastMlatSrvMsgDateTime, record.datetime_);
                 ++m_mlatSrvMsgCounter.in;
 
-                m_mlatSrvMsgMultiMap.insert(record.m_dateTime, record);
+                m_mlatSrvMsgMultiMap.insert(record.datetime_, record);
                 ++m_mlatSrvMsgCounter.out;
             }
             else if (sic == m_smrSic)  // Primary Surveillance Radar.
             {
-                monotonicTimeCheck(m_lastSmrSrvMsgDateTime, record.m_dateTime);
+                monotonicTimeCheck(m_lastSmrSrvMsgDateTime, record.datetime_);
                 ++m_smrSrvMsgCounter.in;
 
-                m_smrSrvMsgMultiMap.insert(record.m_dateTime, record);
+                m_smrSrvMsgMultiMap.insert(record.datetime_, record);
                 ++m_smrSrvMsgCounter.out;
             }
         }
     }
-    else if (record.m_cat == 21)  // ADS-B Reports.
+    else if (record.cat_ == 21)  // ADS-B Reports.
     {
-        monotonicTimeCheck(m_lastAdsbTgtRepDateTime, record.m_dateTime);
+        monotonicTimeCheck(m_lastAdsbTgtRepDateTime, record.datetime_);
 
         ++m_adsbTgtRepCounter.in;
 
         bool ok;
-        IcaoAddr tgtAddr = record.valStrFromDitem(QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
+        IcaoAddr tgtAddr = Asterix::extractDataElementValue(record, QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
         if (ok)  // Valid Target Address.
         {
@@ -136,7 +136,7 @@ void RecordCollator::processRecord(AsterixRecord record)
         /* Continue if address is a valid non-excluded address
          * or if there is no address information at all.
          */
-        m_adsbTgtRepMultiMap.insert(record.m_dateTime, record);
+        m_adsbTgtRepMultiMap.insert(record.datetime_, record);
         //std::sort(m_adsbTgtRepMultiMap.begin(), m_adsbTgtRepMultiMap.end(), sorter);
         ++m_adsbTgtRepCounter.out;
     }
@@ -183,27 +183,27 @@ QVector<IcaoAddr> RecordCollator::excludedAddresses() const
     return m_excludedAddresses;
 }
 
-QMultiMap<QDateTime, AsterixRecord> RecordCollator::smrTgtRepMultiMap() const
+QMultiMap<QDateTime, Asterix::Record> RecordCollator::smrTgtRepMultiMap() const
 {
     return m_smrTgtRepMultiMap;
 }
 
-QMultiMap<QDateTime, AsterixRecord> RecordCollator::smrSrvMsgMultiMap() const
+QMultiMap<QDateTime, Asterix::Record> RecordCollator::smrSrvMsgMultiMap() const
 {
     return m_smrSrvMsgMultiMap;
 }
 
-QMultiMap<QDateTime, AsterixRecord> RecordCollator::mlatTgtRepMultiMap() const
+QMultiMap<QDateTime, Asterix::Record> RecordCollator::mlatTgtRepMultiMap() const
 {
     return m_mlatTgtRepMultiMap;
 }
 
-QMultiMap<QDateTime, AsterixRecord> RecordCollator::mlatSrvMsgMultiMap() const
+QMultiMap<QDateTime, Asterix::Record> RecordCollator::mlatSrvMsgMultiMap() const
 {
     return m_mlatSrvMsgMultiMap;
 }
 
-QMultiMap<QDateTime, AsterixRecord> RecordCollator::adsbTgtRepMultiMap() const
+QMultiMap<QDateTime, Asterix::Record> RecordCollator::adsbTgtRepMultiMap() const
 {
     return m_adsbTgtRepMultiMap;
 }
@@ -248,16 +248,16 @@ void RecordCollator::monotonicTimeCheck(QDateTime &lastdt, QDateTime &newdt)
             double tdiff = lastdt.msecsTo(newdt) / 1000.0;
             if (tdiff <= -(24 * 3600 - 10))
             {
-                // TOD ROLLOVER! Increase day by one.
+                // TOD MIDNIGHT ROLLOVER! Increase day by one.
                 /*
-                qWarning() << "Detected TOD ROLLOVER"
+                qWarning() << "Detected TOD MIDNIGHT ROLLOVER"
                            << "(" << tdiff << "seconds)";
                 */
                 newdt = newdt.addDays(1);
             }
             else
             {
-                qWarning() << "Detected TOD regression of" << tdiff << "seconds";
+                qWarning() << "Detected TOD backjump of" << tdiff << "seconds";
                 return;
             }
         }

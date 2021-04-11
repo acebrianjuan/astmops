@@ -30,21 +30,17 @@ MopsProcessor::MopsProcessor(QObject *parent) : QObject(parent)
 {
 }
 
-void MopsProcessor::processRecord(const AsterixRecord &record)
+void MopsProcessor::processRecord(const Asterix::Record &record)
 {
-    if (record.m_cat == 10)
+    if (record.cat_ == 10)
     {
         // TODO: Handle case when any of the following Data Items are missing:
         // * I010/000 Message Type
         // * I010/010 Data Source Identifier
         // * I010/020 Target Report Descriptor
 
-        AsterixDataItem di010_010 = record.m_dataItems[QLatin1String("I010")];
-        //quint8 sac = di010_010.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
-        quint8 sic = di010_010.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
-
-        AsterixDataItem di010_000 = record.m_dataItems[QLatin1String("I000")];
-        int msgType = di010_000.m_fields[0].value<AsterixDataElement>().m_value.toInt();
+        quint8 sic = Asterix::extractDataElementValue(record, QLatin1String("I010"), QLatin1String("SIC")).toUInt();
+        quint8 msgType = Asterix::extractDataElementValue(record, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
 
         // TODO: Consider using enums instead of hardcoded numbers for the record triage.
         if (sic == m_smrSic && msgType == 1)
@@ -63,6 +59,10 @@ void MopsProcessor::processRecord(const AsterixRecord &record)
         {
             processCat010MlatSrvMsg(record);
         }
+    }
+    else if (record.cat_ == 21)
+    {
+        //processCat021AdsbTgtRep(record);
     }
 }
 
@@ -206,7 +206,7 @@ double MopsProcessor::ed117SrvMsgUpdateRate()
     return ur;
 }
 
-void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
+void MopsProcessor::processCat010SmrTgtRep(const Asterix::Record &record)
 {
     if (!cat010SmrTgtRepMinDataItems(record))
     {
@@ -217,7 +217,7 @@ void MopsProcessor::processCat010SmrTgtRep(const AsterixRecord &record)
     cat010SmrTgtRepProbDetection(record);
 }
 
-void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
+void MopsProcessor::processCat010SmrSrvMsg(const Asterix::Record &record)
 {
     if (!cat010SmrSrvMsgMinDataItems(record))
     {
@@ -227,7 +227,7 @@ void MopsProcessor::processCat010SmrSrvMsg(const AsterixRecord &record)
     cat010SmrSrvMsgUpdateRate(record);
 }
 
-void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
+void MopsProcessor::processCat010MlatTgtRep(const Asterix::Record &record)
 {
     if (!cat010MlatTgtRepMinDataItems(record))
     {
@@ -238,7 +238,7 @@ void MopsProcessor::processCat010MlatTgtRep(const AsterixRecord &record)
     cat010MlatTgtRepProbDetection(record);
 }
 
-void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
+void MopsProcessor::processCat010MlatSrvMsg(const Asterix::Record &record)
 {
     if (!cat010MlatSrvMsgMinDataItems(record))
     {
@@ -248,7 +248,15 @@ void MopsProcessor::processCat010MlatSrvMsg(const AsterixRecord &record)
     cat010MlatSrvMsgUpdateRate(record);
 }
 
-bool MopsProcessor::cat010SmrTgtRepMinDataItems(const AsterixRecord &record)
+void MopsProcessor::processCat021AdsbTgtRep(const Asterix::Record &record)
+{
+    if (!cat010MlatSrvMsgMinDataItems(record))
+    {
+        return;
+    }
+}
+
+bool MopsProcessor::cat010SmrTgtRepMinDataItems(const Asterix::Record &record)
 {
     ++m_cat010SmrTgtRepCounter.countTotal;
 
@@ -265,19 +273,16 @@ bool MopsProcessor::cat010SmrTgtRepMinDataItems(const AsterixRecord &record)
     return true;
 }
 
-void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
+void MopsProcessor::cat010SmrTgtRepUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
-    TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+    TrackNum trkNum = Asterix::extractDataElementValue(record, QLatin1String("I161"), QLatin1String("TrkNb")).toUInt();
 
-    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
-    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -312,7 +317,7 @@ void MopsProcessor::cat010SmrTgtRepUpdateRate(const AsterixRecord &record)
     m_cat010SmrTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
 }
 
-void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
+void MopsProcessor::cat010SmrTgtRepProbDetection(const Asterix::Record &record)
 {
     // Probability of Detection.
     if (!containsPosition(record))
@@ -320,16 +325,13 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
         return;
     }
 
-    AsterixDataItem di010_161 = record.m_dataItems[QLatin1String("I161")];
-    TrackNum trkNum = di010_161.m_fields[1].value<AsterixDataElement>().m_value.toUInt();
+    TrackNum trkNum = Asterix::extractDataElementValue(record, QLatin1String("I161"), QLatin1String("TrkNb")).toUInt();
 
-    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
-    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -373,7 +375,7 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const AsterixRecord &record)
     m_cat010SmrTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
 }
 
-bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const AsterixRecord &record)
+bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const Asterix::Record &record)
 {
     ++m_cat010SmrSrvMsgCounter.countTotal;
 
@@ -390,11 +392,10 @@ bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const AsterixRecord &record)
     return true;
 }
 
-void MopsProcessor::cat010SmrSrvMsgUpdateRate(const AsterixRecord &record)
+void MopsProcessor::cat010SmrSrvMsgUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
     // Update counter.
@@ -405,7 +406,7 @@ void MopsProcessor::cat010SmrSrvMsgUpdateRate(const AsterixRecord &record)
     m_cat010SmrSrvMsgUpdateRateTable.countTotal += counter.countTotal;
 }
 
-bool MopsProcessor::cat010MlatTgtRepMinDataItems(const AsterixRecord &record)
+bool MopsProcessor::cat010MlatTgtRepMinDataItems(const Asterix::Record &record)
 {
     ++m_cat010MlatTgtRepCounter.countTotal;
 
@@ -422,19 +423,16 @@ bool MopsProcessor::cat010MlatTgtRepMinDataItems(const AsterixRecord &record)
     return true;
 }
 
-void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
+void MopsProcessor::cat010MlatTgtRepUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
-    IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+    IcaoAddr icaoAddr = Asterix::extractDataElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
-    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
-    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -469,7 +467,7 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const AsterixRecord &record)
     m_cat010MlatTgtRepUpdateRateTable[area].countTotal += counter.countTotal;
 }
 
-void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
+void MopsProcessor::cat010MlatTgtRepProbDetection(const Asterix::Record &record)
 {
     // Probability of Detection.
     if (!containsPosition(record))
@@ -477,16 +475,13 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
         return;
     }
 
-    AsterixDataItem di010_220 = record.m_dataItems[QLatin1String("I220")];
-    IcaoAddr icaoAddr = di010_220.m_fields[0].value<AsterixDataElement>().m_value.toUInt();
+    IcaoAddr icaoAddr = Asterix::extractDataElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
-    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    AsterixDataItem di010_042 = record.m_dataItems[QLatin1String("I042")];
-    double x = di010_042.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
-    double y = di010_042.m_fields[1].value<AsterixDataElement>().m_value.toDouble();
+    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -530,7 +525,7 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const AsterixRecord &record)
     m_cat010MlatTgtRepProbDetectionTable[area].countTotal += counter.countTotal;
 }
 
-bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const AsterixRecord &record)
+bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const Asterix::Record &record)
 {
     ++m_cat010MlatSrvMsgCounter.countTotal;
 
@@ -547,11 +542,10 @@ bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const AsterixRecord &record)
     return true;
 }
 
-void MopsProcessor::cat010MlatSrvMsgUpdateRate(const AsterixRecord &record)
+void MopsProcessor::cat010MlatSrvMsgUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    AsterixDataItem di010_140 = record.m_dataItems[QLatin1String("I140")];
-    double tod = di010_140.m_fields[0].value<AsterixDataElement>().m_value.toDouble();
+    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
     // Update counter.
@@ -562,10 +556,10 @@ void MopsProcessor::cat010MlatSrvMsgUpdateRate(const AsterixRecord &record)
     m_cat010MlatSrvMsgUpdateRateTable.countTotal += counter.countTotal;
 }
 
-bool MopsProcessor::checkDataItems(const AsterixRecord &record,
+bool MopsProcessor::checkDataItems(const Asterix::Record &record,
     const QVector<DataItemList> &collections)
 {
-    Q_ASSERT(!record.m_dataItems.isEmpty() && !collections.isEmpty());
+    Q_ASSERT(!record.dataItems_.isEmpty() && !collections.isEmpty());
 
     int count = collections.size();
     for (const DataItemList &diList : collections)
@@ -591,16 +585,16 @@ bool MopsProcessor::checkDataItems(const AsterixRecord &record,
     return false;
 }
 
-bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
+bool MopsProcessor::checkDataItemsList(const Asterix::Record &record,
     const QStringList &list, DataItemListType type)
 {
-    Q_ASSERT(!record.m_dataItems.isEmpty() && !list.isEmpty());
+    Q_ASSERT(!record.dataItems_.isEmpty() && !list.isEmpty());
 
     if (type == MopsProcessor::Disjunctive)
     {
-        for (const AsterixDataItem &di : record.m_dataItems)
+        for (const Asterix::DataItem &di : record.dataItems_)
         {
-            QString diName = di.m_name;
+            QString diName = di.name_;
             if (list.contains(diName))
             {
                 // One match is enough. Return true.
@@ -617,13 +611,13 @@ bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
          */
         QHash<QString, bool> hash = makeHash(list);
         int count = hash.size();
-        if (record.m_dataItems.size() >= count)
+        if (record.dataItems_.size() >= count)
         {
-            for (const AsterixDataItem &di : record.m_dataItems)
+            for (const Asterix::DataItem &di : record.dataItems_)
             {
                 if (count == 0) break;
 
-                QString diName = di.m_name;
+                QString diName = di.name_;
                 QHash<QString, bool>::iterator it = hash.find(diName);
                 if (it != hash.end())
                 {
@@ -643,7 +637,7 @@ bool MopsProcessor::checkDataItemsList(const AsterixRecord &record,
     return false;
 }
 
-bool MopsProcessor::containsPosition(const AsterixRecord &record)
+bool MopsProcessor::containsPosition(const Asterix::Record &record)
 {
     QStringList cat010PosDItems;
     cat010PosDItems << QLatin1String("I040")   // Position in Polar Co-ordinates
@@ -750,4 +744,9 @@ QDateTime MopsProcessor::getDateTimefromTod(double tod)
 {
     QDateTime todDateTime = QDateTime::fromMSecsSinceEpoch(tod * 1000, Qt::UTC);
     return todDateTime;
+}
+
+void MopsProcessor::setPosRef(const QMultiMap<QDateTime, QGeoPositionInfo> &posRef)
+{
+    m_posRef = posRef;
 }

@@ -25,8 +25,9 @@
 #include "astmops.h"
 #include <QDateTime>
 #include <QString>
-#include <QVariantList>
 
+namespace Asterix
+{
 /*!
  * \brief The AsterixDataElement struct is an abstraction of the unit of
  * information being transmitted.
@@ -34,18 +35,18 @@
  * An AsterixDataElement object contains the name and value of a unit of
  * information.
  */
-struct AsterixDataElement
+struct DataElement
 {
-    AsterixDataElement() = default;
-    AsterixDataElement(const QString &name, const QString &value);
+    DataElement() = default;
+    DataElement(const QString &name, const QString &value);
 
     inline bool isNull()
     {
-        return m_name.isEmpty() || m_value.isEmpty();
+        return name_.isEmpty() || value_.isEmpty();
     }
 
-    QString m_name;
-    QString m_value;
+    QString name_;
+    QString value_;
 };
 
 /*!
@@ -54,21 +55,21 @@ struct AsterixDataElement
  *
  * An AsterixDataItem object contains a collection of AsterixDataElement objects.
  */
-struct AsterixDataItem
+struct DataItem
 {
-    AsterixDataItem() = default;
-    AsterixDataItem(const QString &name, const QVariantList &fields = QVariantList());
+    DataItem() = default;
+    DataItem(const QString &name,
+        const QVector<DataElement> &data = QVector<DataElement>());
 
     inline bool isNull()
     {
-        return m_name.isEmpty() || m_fields.isEmpty();
+        return name_.isEmpty() || data_.isEmpty();
     }
 
-    AsterixDataElement element(QLatin1String elStr) const;
-    QString valStr(QLatin1String elStr) const;
+    DataElement element(QLatin1String elStr) const;
 
-    QString m_name;
-    QVariantList m_fields;
+    QString name_;
+    QHash<QString, DataElement> data_;
 };
 
 /*!
@@ -78,26 +79,31 @@ struct AsterixDataItem
  * An AsterixRecord object contains a collection of AsterixDataItem objects
  * of the same category.
  */
-struct AsterixRecord
+struct Record
 {
-    AsterixRecord() = default;
-    AsterixRecord(const quint8 cat, const QDateTime &dateTime, const SystemType sysType,
-        const QHash<QString, AsterixDataItem> &dataItems = QHash<QString, AsterixDataItem>());
+    Record() = default;
+    Record(const quint8 cat, const QDateTime &dateTime,
+        const QVector<DataItem> &dataItems = QVector<DataItem>());
 
-    AsterixDataItem dataItem(QLatin1String diStr) const;
-    QString valStrFromDitem(QLatin1String diStr, QLatin1String elStr) const;
+    DataItem dataItem(QLatin1String diName) const;
 
-    quint8 m_cat = 0;
-    QDateTime m_dateTime;
-    SystemType m_sysType = Unknown;
-    QHash<QString, AsterixDataItem> m_dataItems;
+    quint8 cat_ = 0;
+    quint16 len_ = 0;
+    quint32 crc_ = 0xFFFFFFFF;
+    QDateTime datetime_;
+    QHash<QString, DataItem> dataItems_;
 };
 
-Q_DECLARE_METATYPE(AsterixRecord);
-Q_DECLARE_METATYPE(AsterixDataItem);
-Q_DECLARE_METATYPE(AsterixDataElement);
+QString extractDataElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
 
 // TODO: Implement streaming operator for debugging.
 //QDebug operator<<(QDebug dbg, const AsterixRecord &record);
+
+};  // namespace Asterix
+
+Q_DECLARE_METATYPE(Asterix::Record);
+Q_DECLARE_METATYPE(Asterix::DataItem);
+Q_DECLARE_METATYPE(Asterix::DataElement);
+
 
 #endif  // ASTMOPS_ASTERIX_H

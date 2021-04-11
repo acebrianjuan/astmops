@@ -33,12 +33,14 @@
 
 using TrackNum = quint32;
 using IcaoAddr = quint32;
+using Utn = quint32;
 
 enum SystemType
 {
     Smr,
     Mlat,
     Adsb,
+    Dgps,
     Unknown
 };
 
@@ -123,9 +125,10 @@ inline quint8 adsbSic()
 
 inline double ed116TgtRepUpdateRate()
 {
-    QString key = QLatin1String("MOPS.ed116TgtRepUpdateRate");
+    QString key = QLatin1String("TgtRepUpdateRate");
 
     QSettings settings;
+    settings.beginGroup(QLatin1String("MOPS/ED116"));
 
     if (!settings.contains(key))
     {
@@ -145,9 +148,10 @@ inline double ed116TgtRepUpdateRate()
 
 inline double ed116SrvMsgUpdateRate()
 {
-    QString key = QLatin1String("MOPS.ed116SrvMsgUpdateRate");
+    QString key = QLatin1String("SrvMsgUpdateRate");
 
     QSettings settings;
+    settings.beginGroup(QLatin1String("MOPS/ED116"));
 
     if (!settings.contains(key))
     {
@@ -167,9 +171,10 @@ inline double ed116SrvMsgUpdateRate()
 
 inline double ed117TgtRepUpdateRate()
 {
-    QString key = QLatin1String("MOPS.ed117TgtRepUpdateRate");
+    QString key = QLatin1String("TgtRepUpdateRate");
 
     QSettings settings;
+    settings.beginGroup(QLatin1String("MOPS/ED117"));
 
     if (!settings.contains(key))
     {
@@ -189,9 +194,10 @@ inline double ed117TgtRepUpdateRate()
 
 inline double ed117SrvMsgUpdateRate()
 {
-    QString key = QLatin1String("MOPS.ed117SrvMsgUpdateRate");
+    QString key = QLatin1String("SrvMsgUpdateRate");
 
     QSettings settings;
+    settings.beginGroup(QLatin1String("MOPS/ED117"));
 
     if (!settings.contains(key))
     {
@@ -211,7 +217,7 @@ inline double ed117SrvMsgUpdateRate()
 
 inline double silencePeriod()
 {
-    QString key = QLatin1String("MOPS.SilencePeriod");
+    QString key = QLatin1String("TimeOutPeriod");
 
     QSettings settings;
 
@@ -269,9 +275,10 @@ inline double probDetectionPeriod(Aerodrome::Area area)
 
 inline qint32 dgpsTimeOfDayOffset()
 {
-    QString key = QLatin1String("DGPS.TimeOfDayOffset");
+    QString key = QLatin1String("TimeOfDayOffset");
 
     QSettings settings;
+    settings.beginGroup(QLatin1String("DGPS"));
 
     if (!settings.contains(key))
     {
@@ -291,9 +298,10 @@ inline qint32 dgpsTimeOfDayOffset()
 
 //inline quint16 dgpsMode3ACode()
 //{
-//    QString key = QLatin1String("DGPS.Mode3ACode");
+//    QString key = QLatin1String("Mode3ACode");
 
 //    QSettings settings;
+//    settings.beginGroup(QLatin1String("DGPS"));
 
 //    if (!settings.contains(key))
 //    {
@@ -334,9 +342,10 @@ inline IcaoAddr dgpsTargetAddress()
 
 //inline QString dgpsIdentification()
 //{
-//    QString key = QLatin1String("DGPS.Identification");
+//    QString key = QLatin1String("Identification");
 
 //    QSettings settings;
+//    settings.beginGroup(QLatin1String("DGPS"));
 
 //    if (!settings.contains(key))
 //    {
@@ -371,7 +380,6 @@ inline QGeoShape evalSector()
         if (!settings.contains(keyCenter) && !settings.contains(keyRadius))
         {
             // No keys found. Return empty QGeoShape.
-            settings.endGroup();
             return QGeoShape();
         }
 
@@ -379,7 +387,6 @@ inline QGeoShape evalSector()
         QGeoCoordinate center = settings.value(keyCenter).value<QGeoCoordinate>();
         double radius = settings.value(keyRadius).toDouble();
 
-        settings.endGroup();
         return QGeoCircle(center, radius);
     }
 
@@ -390,13 +397,10 @@ inline QGeoShape evalSector()
     for (int i = 0; i < polygonSize; ++i)
     {
         settings.setArrayIndex(i);
-
         QStringList strList = settings.value(QLatin1String("Coordinates")).toStringList();
         QGeoCoordinate coord = QGeoCoordinate(strList.at(0).toDouble(), strList.at(1).toDouble(), 0);
         list.append(coord);
     }
-    settings.endArray();
-    settings.endGroup();
 
     return QGeoPolygon(list);
 }

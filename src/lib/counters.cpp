@@ -112,7 +112,7 @@ QDateTime Counters::IntervalCounter::intervalStart() const
 
 QDateTime Counters::IntervalCounter::intervalEnd() const
 {
-    return m_intervalStart.addSecs(m_period);
+    return m_intervalStart.addMSecs(m_period * 1000);
 }
 
 Counters::IntervalCounter::operator bool() const

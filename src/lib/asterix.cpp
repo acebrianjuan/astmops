@@ -21,59 +21,53 @@
 
 #include "asterix.h"
 
-AsterixDataElement::AsterixDataElement(const QString &name, const QString &value)
-    : m_name(name), m_value(value)
+Asterix::DataElement::DataElement(const QString &name, const QString &value)
+    : name_(name), value_(value)
 {
 }
 
-AsterixDataItem::AsterixDataItem(const QString &name, const QVariantList &fields)
-    : m_name(name), m_fields(fields)
+Asterix::DataItem::DataItem(const QString &name, const QVector<DataElement> &data)
+    : name_(name)
 {
-}
-
-AsterixDataElement AsterixDataItem::element(QLatin1String elStr) const
-{
-    for (const auto &elVariant : m_fields)
+    for (const Asterix::DataElement &de : data)
     {
-        AsterixDataElement el = elVariant.value<AsterixDataElement>();
-        if (el.m_name == elStr)
-        {
-            return el;
-        }
+        data_.insert(de.name_, de);
     }
-
-    return AsterixDataElement();
 }
 
-QString AsterixDataItem::valStr(QLatin1String elStr) const
+Asterix::DataElement Asterix::DataItem::element(QLatin1String elStr) const
 {
-    AsterixDataElement el = element(elStr);
-    if (el.isNull())
+    return data_.value(elStr);
+}
+
+Asterix::Record::Record(const quint8 cat, const QDateTime &dateTime,
+    const QVector<Asterix::DataItem> &dataItems)
+    : cat_(cat), datetime_(dateTime)
+{
+    for (const Asterix::DataItem &di : dataItems)
     {
-        return QString();
+        dataItems_.insert(di.name_, di);
     }
-
-    return el.m_value;
 }
 
-AsterixRecord::AsterixRecord(const quint8 cat, const QDateTime &dateTime, const SystemType sysType,
-    const QHash<QString, AsterixDataItem> &dataItems)
-    : m_cat(cat), m_dateTime(dateTime), m_sysType(sysType), m_dataItems(dataItems)
+Asterix::DataItem Asterix::Record::dataItem(QLatin1String diName) const
 {
+    return dataItems_.value(diName);
 }
 
-AsterixDataItem AsterixRecord::dataItem(QLatin1String diStr) const
+QString Asterix::extractDataElementValue(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName)
 {
-    return m_dataItems.value(diStr);
-}
-
-QString AsterixRecord::valStrFromDitem(QLatin1String diStr, QLatin1String elStr) const
-{
-    AsterixDataItem di = dataItem(diStr);
+    Asterix::DataItem di = rec.dataItem(diName);
     if (di.isNull())
     {
         return QString();
     }
 
-    return di.valStr(elStr);
+    Asterix::DataElement el = di.element(deName);
+    if (el.isNull())
+    {
+        return QString();
+    }
+
+    return el.value_;
 }

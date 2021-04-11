@@ -54,7 +54,7 @@ void AsterixXmlReaderTest::test()
     const QByteArray contents = file.readAll();
     reader.addData(contents);
 
-    QVector<AsterixRecord> records;
+    QVector<Asterix::Record> records;
     while (reader.hasPendingRecords())
     {
         records.append(reader.record());
@@ -64,7 +64,7 @@ void AsterixXmlReaderTest::test()
 
     for (int i = 0; i < records.size(); ++i)
     {
-        QCOMPARE(records.at(i).m_dataItems.size(), items.at(i));
+        QCOMPARE(records.at(i).dataItems_.size(), items.at(i));
     }
 }
 
