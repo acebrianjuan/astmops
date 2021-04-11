@@ -150,7 +150,7 @@ QMultiMap<QDateTime, Asterix::Record> EvaluatorTest::dgpsTestDataMap(const QMult
     for (QMultiMap<QDateTime, Asterix::Record>::const_iterator it = testData.constBegin(); it != testData.constEnd(); ++it)
     {
         Asterix::Record rec = it.value();
-        QString addrStr = Asterix::extractDataElementValue(rec, QLatin1String("I220"), QLatin1String("TAddr"));
+        QString addrStr = Asterix::getElementValue(rec, QLatin1String("I220"), QLatin1String("TAddr"));
         if (!addrStr.isEmpty())
         {
             bool ok;

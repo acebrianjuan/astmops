@@ -64,11 +64,11 @@ double Evaluator::evalPosAccDgps()
             continue;
         }
 
-        double xTest = Asterix::extractDataElementValue(testRec, QLatin1String("I042"), QLatin1String("X")).toDouble();
-        double yTest = Asterix::extractDataElementValue(testRec, QLatin1String("I042"), QLatin1String("Y")).toDouble();
+        double xTest = Asterix::getElementValue(testRec, QLatin1String("I042"), QLatin1String("X")).toDouble();
+        double yTest = Asterix::getElementValue(testRec, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
         bool gbOk;
-        bool gndBit = Asterix::extractDataElementValue(testRec, QLatin1String("I020"), QLatin1String("GBS")).toUInt(&gbOk);
+        bool gndBit = Asterix::getElementValue(testRec, QLatin1String("I020"), QLatin1String("GBS")).toUInt(&gbOk);
 
         TestDataMapping mapping = m_testDataMappings.value(tod);
 

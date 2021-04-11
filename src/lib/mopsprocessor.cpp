@@ -39,8 +39,8 @@ void MopsProcessor::processRecord(const Asterix::Record &record)
         // * I010/010 Data Source Identifier
         // * I010/020 Target Report Descriptor
 
-        quint8 sic = Asterix::extractDataElementValue(record, QLatin1String("I010"), QLatin1String("SIC")).toUInt();
-        quint8 msgType = Asterix::extractDataElementValue(record, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
+        quint8 sic = Asterix::getElementValue(record, QLatin1String("I010"), QLatin1String("SIC")).toUInt();
+        quint8 msgType = Asterix::getElementValue(record, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
 
         // TODO: Consider using enums instead of hardcoded numbers for the record triage.
         if (sic == m_smrSic && msgType == 1)
@@ -276,13 +276,13 @@ bool MopsProcessor::cat010SmrTgtRepMinDataItems(const Asterix::Record &record)
 void MopsProcessor::cat010SmrTgtRepUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    TrackNum trkNum = Asterix::extractDataElementValue(record, QLatin1String("I161"), QLatin1String("TrkNb")).toUInt();
+    TrackNum trkNum = Asterix::getElementValue(record, QLatin1String("I161"), QLatin1String("TrkNb")).toUInt();
 
-    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
+    double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
-    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
+    double x = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -325,13 +325,13 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const Asterix::Record &record)
         return;
     }
 
-    TrackNum trkNum = Asterix::extractDataElementValue(record, QLatin1String("I161"), QLatin1String("TrkNb")).toUInt();
+    TrackNum trkNum = Asterix::getElementValue(record, QLatin1String("I161"), QLatin1String("TrkNb")).toUInt();
 
-    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
+    double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
-    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
+    double x = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -395,7 +395,7 @@ bool MopsProcessor::cat010SmrSrvMsgMinDataItems(const Asterix::Record &record)
 void MopsProcessor::cat010SmrSrvMsgUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
+    double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
     // Update counter.
@@ -426,13 +426,13 @@ bool MopsProcessor::cat010MlatTgtRepMinDataItems(const Asterix::Record &record)
 void MopsProcessor::cat010MlatTgtRepUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    IcaoAddr icaoAddr = Asterix::extractDataElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+    IcaoAddr icaoAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
-    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
+    double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
-    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
+    double x = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -475,13 +475,13 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const Asterix::Record &record)
         return;
     }
 
-    IcaoAddr icaoAddr = Asterix::extractDataElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+    IcaoAddr icaoAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
-    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
+    double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
-    double x = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
-    double y = Asterix::extractDataElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
+    double x = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("X")).toDouble();
+    double y = Asterix::getElementValue(record, QLatin1String("I042"), QLatin1String("Y")).toDouble();
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
@@ -545,7 +545,7 @@ bool MopsProcessor::cat010MlatSrvMsgMinDataItems(const Asterix::Record &record)
 void MopsProcessor::cat010MlatSrvMsgUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    double tod = Asterix::extractDataElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
+    double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
 
     // Update counter.

@@ -55,7 +55,7 @@ Asterix::DataItem Asterix::Record::dataItem(QLatin1String diName) const
     return dataItems_.value(diName);
 }
 
-QString Asterix::extractDataElementValue(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName)
+QString Asterix::getElementValue(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName)
 {
     Asterix::DataItem di = rec.dataItem(diName);
     if (di.isNull())

@@ -46,12 +46,12 @@ void RecordCollator::processRecord(Asterix::Record record)
 
     if (record.cat_ == 10)  // Monosensor Surface Movement Data.
     {
-        quint8 msgType = Asterix::extractDataElementValue(record, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
-        quint8 sic = Asterix::extractDataElementValue(record, QLatin1String("I010"), QLatin1String("SIC")).toUInt();
+        quint8 msgType = Asterix::getElementValue(record, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt();
+        quint8 sic = Asterix::getElementValue(record, QLatin1String("I010"), QLatin1String("SIC")).toUInt();
 
         if (msgType == 1)  // Target Report.
         {
-            quint8 sysType = Asterix::extractDataElementValue(record, QLatin1String("I020"), QLatin1String("TYP")).toUInt();
+            quint8 sysType = Asterix::getElementValue(record, QLatin1String("I020"), QLatin1String("TYP")).toUInt();
 
             if (sysType == 1)  // Mode S Multilateration.
             {
@@ -67,7 +67,7 @@ void RecordCollator::processRecord(Asterix::Record record)
             }
 
             bool ok;
-            IcaoAddr tgtAddr = Asterix::extractDataElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
+            IcaoAddr tgtAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
             if (ok)  // Valid Target Address.
             {
@@ -122,7 +122,7 @@ void RecordCollator::processRecord(Asterix::Record record)
         ++m_adsbTgtRepCounter.in;
 
         bool ok;
-        IcaoAddr tgtAddr = Asterix::extractDataElementValue(record, QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
+        IcaoAddr tgtAddr = Asterix::getElementValue(record, QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
         if (ok)  // Valid Target Address.
         {

@@ -430,7 +430,7 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : smrTgtRepMultiMap)
         {
-            IcaoAddr tgtAddr = Asterix::extractDataElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            IcaoAddr tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
@@ -450,7 +450,7 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : mlatTgtRepMultiMap)
         {
-            IcaoAddr tgtAddr = Asterix::extractDataElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            IcaoAddr tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
@@ -470,7 +470,7 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : adsbTgtRepMultiMap)
         {
-            IcaoAddr tgtAddr = Asterix::extractDataElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
+            IcaoAddr tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");

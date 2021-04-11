@@ -94,7 +94,7 @@ struct Record
     QHash<QString, DataItem> dataItems_;
 };
 
-QString extractDataElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
+QString getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
 
 // TODO: Implement streaming operator for debugging.
 //QDebug operator<<(QDebug dbg, const AsterixRecord &record);
