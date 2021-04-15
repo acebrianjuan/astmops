@@ -61,12 +61,12 @@ public:
     void processRecord(Asterix::Record record);
 
     void loadExcludedAddresses(QIODevice* device);
-    void loadExcludedAddresses(const QVector<IcaoAddr>& excladdr);
+    void loadExcludedAddresses(const QVector<ModeS>& excladdr);
     void clearExcludedAddresses();
-    void addExcludedAddress(const IcaoAddr addr);
-    void removeExcludedAddress(const IcaoAddr addr);
+    void addExcludedAddress(const ModeS addr);
+    void removeExcludedAddress(const ModeS addr);
 
-    QVector<IcaoAddr> excludedAddresses() const;
+    QVector<ModeS> excludedAddresses() const;
 
     QMultiMap<QDateTime, Asterix::Record> smrTgtRepMultiMap() const;
     QMultiMap<QDateTime, Asterix::Record> smrSrvMsgMultiMap() const;
@@ -87,7 +87,7 @@ signals:
 private:
     void monotonicTimeCheck(QDateTime& lastdt, QDateTime& newdt);
 
-    QVector<IcaoAddr> m_excludedAddresses;
+    QVector<ModeS> m_excludedAddresses;
 
     quint8 m_smrSic;
     quint8 m_mlatSic;

@@ -72,7 +72,7 @@ private:
 
     std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> m_locatePoint;
 
-    IcaoAddr m_dgpsAddr = Configuration::dgpsTargetAddress();
+    ModeS m_dgpsAddr = Configuration::dgpsTargetAddress();
 
     QMultiMap<QDateTime, QGeoPositionInfo> m_refData;
     QMultiMap<QDateTime, Asterix::Record> m_testData;

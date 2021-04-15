@@ -1,6 +1,6 @@
 /*!
- * \file recordcollatortest.cpp
- * \brief Implements unit tests for the RecordCollator class.
+ * \file recordfiltertest.cpp
+ * \brief Implements unit tests for the RecordFilter class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
  *
  * -----------------------------------------------------------------------
@@ -17,11 +17,11 @@
  * -----------------------------------------------------------------------
  */
 
-#include "recordcollator.h"
+#include "recordfilter.h"
 #include <QObject>
 #include <QtTest>
 
-class RecordCollatorTest : public QObject
+class RecordFilterTest : public QObject
 {
     Q_OBJECT
 
@@ -32,7 +32,7 @@ public:
         cat010SmrSrvMsg,
         cat010MlatTgtRep,
         cat010MlatSrvMsg,
-        cat021Adsb
+        cat021AdsbTgtRep
     };
 
 private slots:
@@ -40,20 +40,16 @@ private slots:
     void test_data();
     void test();
 
-    /* TODO: Consider adding a test that takes as input a sequence of
-     * records of different nature (resembling a real stream of data).
-     */
-
 private:
     QVector<ModeS> excludedAddresses();
 };
 
-Q_DECLARE_METATYPE(RecordCollatorTest::TestType);
+Q_DECLARE_METATYPE(RecordFilterTest::TestType);
 
-void RecordCollatorTest::initTestCase()
+void RecordFilterTest::initTestCase()
 {
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
-    QCoreApplication::setApplicationName(QLatin1String("astmops-recordcollatortest"));
+    QCoreApplication::setApplicationName(QLatin1String("astmops-recordfiltertest"));
 
     QSettings settings;
     settings.clear();
@@ -63,213 +59,215 @@ void RecordCollatorTest::initTestCase()
     settings.setValue(QLatin1String("ADSB.SIC"), 109);
 }
 
-void RecordCollatorTest::test_data()
+void RecordFilterTest::test_data()
 {
     QTest::addColumn<TestType>("testType");
     QTest::addColumn<QVector<Asterix::Record>>("recordsIn");
-    //QTest::addColumn<QVector<Asterix::Record>>("recordsOut");
-    QTest::addColumn<int>("sizeOut");
+    QTest::addColumn<QVector<Asterix::Record>>("recordsOut");
 
 
     // TARGET REPORTS.
 
     // SMR:
 
-    // Record 1: [ToD: 00:00:00], CAT010 SMR Target Report (Excluded Vehicle).
-    Asterix::Record cat010Smr1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC));
+    // Record 1: [ToD: 00:00:00], CAT010 SMR Target Report.
+    Asterix::Record cat010SmrTgtRep1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC));
 
-    cat010Smr1.dataItems_[QLatin1String("I000")] =
+    cat010SmrTgtRep1.dataItems_[QLatin1String("I000")] =
         Asterix::DataItem(QLatin1String("I000"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("MsgTyp"), QLatin1String("1")));
 
-    cat010Smr1.dataItems_[QLatin1String("I010")] =
+    cat010SmrTgtRep1.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("7")));
 
-    cat010Smr1.dataItems_[QLatin1String("I020")] =
+    cat010SmrTgtRep1.dataItems_[QLatin1String("I020")] =
         Asterix::DataItem(QLatin1String("I020"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("3")));
 
-    cat010Smr1.dataItems_[QLatin1String("I140")] =
+    cat010SmrTgtRep1.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("0.0")));
 
-    cat010Smr1.dataItems_[QLatin1String("I220")] =
-        Asterix::DataItem(QLatin1String("I220"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("3443C3")));
-
     // Record 2: [ToD: 00:00:05], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC));
+    Asterix::Record cat010SmrTgtRep2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC));
 
-    cat010Smr2.dataItems_[QLatin1String("I000")] =
+    cat010SmrTgtRep2.dataItems_[QLatin1String("I000")] =
         Asterix::DataItem(QLatin1String("I000"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("MsgTyp"), QLatin1String("1")));
 
-    cat010Smr2.dataItems_[QLatin1String("I010")] =
+    cat010SmrTgtRep2.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("7")));
 
-    cat010Smr2.dataItems_[QLatin1String("I020")] =
+    cat010SmrTgtRep2.dataItems_[QLatin1String("I020")] =
         Asterix::DataItem(QLatin1String("I020"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("3")));
 
-    cat010Smr2.dataItems_[QLatin1String("I140")] =
+    cat010SmrTgtRep2.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("5.0")));
 
-    cat010Smr2.dataItems_[QLatin1String("I220")] =
-        Asterix::DataItem(QLatin1String("I220"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1")));
-
     // Record 3: [ToD: 00:00:10], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr3(quint8(10), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC));
+    Asterix::Record cat010SmrTgtRep3(quint8(10), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC));
 
-    cat010Smr3.dataItems_[QLatin1String("I000")] =
+    cat010SmrTgtRep3.dataItems_[QLatin1String("I000")] =
         Asterix::DataItem(QLatin1String("I000"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("MsgTyp"), QLatin1String("1")));
 
-    cat010Smr3.dataItems_[QLatin1String("I010")] =
+    cat010SmrTgtRep3.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("7")));
 
-    cat010Smr3.dataItems_[QLatin1String("I020")] =
+    cat010SmrTgtRep3.dataItems_[QLatin1String("I020")] =
         Asterix::DataItem(QLatin1String("I020"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("3")));
 
-    cat010Smr3.dataItems_[QLatin1String("I140")] =
+    cat010SmrTgtRep3.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("10.0")));
-
-    cat010Smr3.dataItems_[QLatin1String("I220")] =
-        Asterix::DataItem(QLatin1String("I220"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1")));
 
 
     // MLAT:
 
-    // Record 1: [ToD: 00:00:00], CAT010 MLAT Target Report (Excluded Vehicle).
-    Asterix::Record cat010Mlat1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC));
+    // Record 1: [ToD: 00:00:00], CAT010 MLAT Target Report (Excluded Address).
+    Asterix::Record cat010MlatTgtRep1(quint8(10), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC));
 
-    cat010Mlat1.dataItems_[QLatin1String("I000")] =
+    cat010MlatTgtRep1.dataItems_[QLatin1String("I000")] =
         Asterix::DataItem(QLatin1String("I000"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("MsgTyp"), QLatin1String("1")));
 
-    cat010Mlat1.dataItems_[QLatin1String("I010")] =
+    cat010MlatTgtRep1.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("107")));
 
-    cat010Mlat1.dataItems_[QLatin1String("I020")] =
+    cat010MlatTgtRep1.dataItems_[QLatin1String("I020")] =
         Asterix::DataItem(QLatin1String("I020"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("1")));
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("1"))
+                                            << Asterix::DataElement(QLatin1String("TOT"), QLatin1String("1")));
 
-    cat010Mlat1.dataItems_[QLatin1String("I140")] =
+    cat010MlatTgtRep1.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("0.0")));
 
-    cat010Mlat1.dataItems_[QLatin1String("I220")] =
+    cat010MlatTgtRep1.dataItems_[QLatin1String("I220")] =
         Asterix::DataItem(QLatin1String("I220"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("3443C4")));
 
-    // Record 2: [ToD: 00:00:05], CAT010 MLAT Target Report.
-    Asterix::Record cat010Mlat2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC));
+    // Record 2: [ToD: 00:00:05], CAT010 MLAT Target Report (Excluded TOT).
+    Asterix::Record cat010MlatTgtRep2(quint8(10), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC));
 
-    cat010Mlat2.dataItems_[QLatin1String("I000")] =
+    cat010MlatTgtRep2.dataItems_[QLatin1String("I000")] =
         Asterix::DataItem(QLatin1String("I000"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("MsgTyp"), QLatin1String("1")));
 
-    cat010Mlat2.dataItems_[QLatin1String("I010")] =
+    cat010MlatTgtRep2.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("107")));
 
-    cat010Mlat2.dataItems_[QLatin1String("I020")] =
+    cat010MlatTgtRep2.dataItems_[QLatin1String("I020")] =
         Asterix::DataItem(QLatin1String("I020"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("1")));
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("1"))
+                                            << Asterix::DataElement(QLatin1String("TOT"), QLatin1String("2")));
 
-    cat010Mlat2.dataItems_[QLatin1String("I140")] =
+    cat010MlatTgtRep2.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("5.0")));
 
-    cat010Mlat2.dataItems_[QLatin1String("I220")] =
+    cat010MlatTgtRep2.dataItems_[QLatin1String("I220")] =
         Asterix::DataItem(QLatin1String("I220"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1")));
 
     // Record 3: [ToD: 00:00:10], CAT010 MLAT Target Report.
-    Asterix::Record cat010Mlat3(quint8(10), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC));
+    Asterix::Record cat010MlatTgtRep3(quint8(10), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC));
 
-    cat010Mlat3.dataItems_[QLatin1String("I000")] =
+    cat010MlatTgtRep3.dataItems_[QLatin1String("I000")] =
         Asterix::DataItem(QLatin1String("I000"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("MsgTyp"), QLatin1String("1")));
 
-    cat010Mlat3.dataItems_[QLatin1String("I010")] =
+    cat010MlatTgtRep3.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("107")));
 
-    cat010Mlat3.dataItems_[QLatin1String("I020")] =
+    cat010MlatTgtRep3.dataItems_[QLatin1String("I020")] =
         Asterix::DataItem(QLatin1String("I020"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("1")));
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TYP"), QLatin1String("1"))
+                                            << Asterix::DataElement(QLatin1String("TOT"), QLatin1String("1")));
 
-    cat010Mlat3.dataItems_[QLatin1String("I140")] =
+    cat010MlatTgtRep3.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("10.0")));
 
-    cat010Mlat3.dataItems_[QLatin1String("I220")] =
+    cat010MlatTgtRep3.dataItems_[QLatin1String("I220")] =
         Asterix::DataItem(QLatin1String("I220"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1")));
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF2")));
 
 
     // ADS-B:
 
-    // Record 1: [ToD: 00:00:00], CAT021 ADS-B Target Report (Excluded Vehicle).
-    Asterix::Record cat021Adsb1(quint8(21), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC));
+    // Record 1: [ToD: 00:00:00], CAT021 ADS-B Target Report (Excluded Address).
+    Asterix::Record cat021AdsbTgtRep1(quint8(21), QDateTime::fromMSecsSinceEpoch(0, Qt::UTC));
 
-    cat021Adsb1.dataItems_[QLatin1String("I010")] =
+    cat021AdsbTgtRep1.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("14"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("219")));
 
-    cat021Adsb1.dataItems_[QLatin1String("I073")] =
+    cat021AdsbTgtRep1.dataItems_[QLatin1String("I020")] =
+        Asterix::DataItem(QLatin1String("I020"),
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ECAT"), QLatin1String("5")));
+
+    cat021AdsbTgtRep1.dataItems_[QLatin1String("I073")] =
         Asterix::DataItem(QLatin1String("I073"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("time_reception_position"), QLatin1String("0.0")));
 
-    cat021Adsb1.dataItems_[QLatin1String("I080")] =
+    cat021AdsbTgtRep1.dataItems_[QLatin1String("I080")] =
         Asterix::DataItem(QLatin1String("I080"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("3443C5")));
 
-    // Record 2: [ToD: 00:00:05], CAT021 ADS-B Target Report.
-    Asterix::Record cat021Adsb2(quint8(21), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC));
+    // Record 2: [ToD: 00:00:05], CAT021 ADS-B Target Report (Excluded ECAT).
+    Asterix::Record cat021AdsbTgtRep2(quint8(21), QDateTime::fromMSecsSinceEpoch(5000, Qt::UTC));
 
-    cat021Adsb2.dataItems_[QLatin1String("I010")] =
+    cat021AdsbTgtRep2.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("14"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("219")));
 
-    cat021Adsb2.dataItems_[QLatin1String("I073")] =
+    cat021AdsbTgtRep2.dataItems_[QLatin1String("I020")] =
+        Asterix::DataItem(QLatin1String("I020"),
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ECAT"), QLatin1String("21")));
+
+    cat021AdsbTgtRep2.dataItems_[QLatin1String("I073")] =
         Asterix::DataItem(QLatin1String("I073"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("time_reception_position"), QLatin1String("5.0")));
 
-    cat021Adsb2.dataItems_[QLatin1String("I080")] =
+    cat021AdsbTgtRep2.dataItems_[QLatin1String("I080")] =
         Asterix::DataItem(QLatin1String("I080"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1")));
 
     // Record 3: [ToD: 00:00:10], CAT021 ADS-B Target Report.
-    Asterix::Record cat021Adsb3(quint8(21), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC));
+    Asterix::Record cat021AdsbTgtRep3(quint8(21), QDateTime::fromMSecsSinceEpoch(10000, Qt::UTC));
 
-    cat021Adsb3.dataItems_[QLatin1String("I010")] =
+    cat021AdsbTgtRep3.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("SAC"), QLatin1String("14"))
                                             << Asterix::DataElement(QLatin1String("SIC"), QLatin1String("219")));
 
-    cat021Adsb3.dataItems_[QLatin1String("I073")] =
+    cat021AdsbTgtRep3.dataItems_[QLatin1String("I020")] =
+        Asterix::DataItem(QLatin1String("I020"),
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ECAT"), QLatin1String("5")));
+
+    cat021AdsbTgtRep3.dataItems_[QLatin1String("I073")] =
         Asterix::DataItem(QLatin1String("I073"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("time_reception_position"), QLatin1String("10.0")));
 
-    cat021Adsb3.dataItems_[QLatin1String("I080")] =
+    cat021AdsbTgtRep3.dataItems_[QLatin1String("I080")] =
         Asterix::DataItem(QLatin1String("I080"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TAddr"), QLatin1String("FFFFF1")));
 
@@ -345,62 +343,62 @@ void RecordCollatorTest::test_data()
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("5.0")));
 
 
-    QVector<Asterix::Record> smrTgtRepRecordsIn({cat010Smr1, cat010Smr3, cat010Smr2});
-    QVector<Asterix::Record> smrSrvMsgRecordsIn({cat010SmrSrvMsg2, cat010SmrSrvMsg1});
-    QVector<Asterix::Record> mlatTgtRepRecordsIn({cat010Mlat1, cat010Mlat3, cat010Mlat2});
-    QVector<Asterix::Record> mlatSrvMsgRecordsIn({cat010MlatSrvMsg2, cat010MlatSrvMsg1});
-    QVector<Asterix::Record> adsbRecordsIn({cat021Adsb1, cat021Adsb3, cat021Adsb2});
+    QVector<Asterix::Record> smrTgtRepRecordsIn({cat010SmrTgtRep1, cat010SmrTgtRep2, cat010SmrTgtRep3});
+    QVector<Asterix::Record> smrSrvMsgRecordsIn({cat010SmrSrvMsg1, cat010SmrSrvMsg2});
+    QVector<Asterix::Record> mlatTgtRepRecordsIn({cat010MlatTgtRep1, cat010MlatTgtRep2, cat010MlatTgtRep3});
+    QVector<Asterix::Record> mlatSrvMsgRecordsIn({cat010MlatSrvMsg1, cat010MlatSrvMsg2});
+    QVector<Asterix::Record> adsbTgtRepRecordsIn({cat021AdsbTgtRep1, cat021AdsbTgtRep2, cat021AdsbTgtRep3});
 
-    //QVector<Asterix::Record> smrRecordsOut({cat010Smr2, cat010Smr3});
-    //QVector<Asterix::Record> mlatRecordsOut({cat010Mlat2, cat010Mlat3});
-    //QVector<Asterix::Record> adsbRecordsOut({cat010Adsb2, cat010Adsb3});
+    QVector<Asterix::Record> smrTgtRepRecordsOut({cat010SmrTgtRep1, cat010SmrTgtRep2, cat010SmrTgtRep3});
+    QVector<Asterix::Record> smrSrvMsgRecordsOut({cat010SmrSrvMsg1, cat010SmrSrvMsg2});
+    QVector<Asterix::Record> mlatTgtRepRecordsOut({cat010MlatTgtRep3});
+    QVector<Asterix::Record> mlatSrvMsgRecordsOut({cat010MlatSrvMsg1, cat010MlatSrvMsg2});
+    QVector<Asterix::Record> adsbTgtRepRecordsOut({cat021AdsbTgtRep3});
 
-    QTest::newRow("CAT010 SMR TgtRep") << cat010SmrTgtRep << smrTgtRepRecordsIn << 2;
-    QTest::newRow("CAT010 SMR SrvMsg") << cat010SmrSrvMsg << smrSrvMsgRecordsIn << 2;
-    QTest::newRow("CAT010 MLAT TgtRep") << cat010MlatTgtRep << mlatTgtRepRecordsIn << 2;
-    QTest::newRow("CAT010 MLAT SrvMsg") << cat010MlatSrvMsg << mlatSrvMsgRecordsIn << 2;
-    QTest::newRow("CAT021 ADS-B") << cat021Adsb << adsbRecordsIn << 2;
+    QTest::newRow("CAT010 SMR TgtRep") << cat010SmrTgtRep << smrTgtRepRecordsIn << smrTgtRepRecordsOut;
+    QTest::newRow("CAT010 SMR SrvMsg") << cat010SmrSrvMsg << smrSrvMsgRecordsIn << smrSrvMsgRecordsOut;
+    QTest::newRow("CAT010 MLAT TgtRep") << cat010MlatTgtRep << mlatTgtRepRecordsIn << mlatTgtRepRecordsOut;
+    QTest::newRow("CAT010 MLAT SrvMsg") << cat010MlatSrvMsg << mlatSrvMsgRecordsIn << mlatSrvMsgRecordsOut;
+    QTest::newRow("CAT021 ADS-B TgtRep") << cat021AdsbTgtRep << adsbTgtRepRecordsIn << adsbTgtRepRecordsOut;
 }
 
-void RecordCollatorTest::test()
+void RecordFilterTest::test()
 {
     // Check that excluded addresses are filtered out correctly.
-    // Check that records are sorted in chronological order.
     // Check that counters are correctly initialized and updated.
 
-    RecordCollator collator;
+    RecordFilter filter;
 
     QFile file(QFINDTESTDATA("excluded.txt"));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
     QFETCH(TestType, testType);
     QFETCH(QVector<Asterix::Record>, recordsIn);
-    //QFETCH(QVector<Asterix::Record>, recordsOut);
-    QFETCH(int, sizeOut);
+    QFETCH(QVector<Asterix::Record>, recordsOut);
 
     // Load list of excluded addresses from text file.
-    collator.loadExcludedAddresses(&file);
-    QCOMPARE(collator.excludedAddresses().size(), 5);
+    filter.loadExcludedAddresses(&file);
+    QCOMPARE(filter.excludedAddresses().size(), 5);
 
     // Check that counters are initialized to zero.
-    RecordCollator::Counter counter;
+    RecordFilter::Counter counter;
 
     switch (testType)
     {
     case cat010SmrTgtRep:
-        counter = collator.smrTgtRepCounter();
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::TargetReport));
         break;
     case cat010SmrSrvMsg:
-        counter = collator.smrSrvMsgCounter();
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::ServiceMessage));
         break;
     case cat010MlatTgtRep:
-        counter = collator.mlatTgtRepCounter();
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::TargetReport));
         break;
     case cat010MlatSrvMsg:
-        counter = collator.mlatSrvMsgCounter();
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::ServiceMessage));
         break;
-    case cat021Adsb:
-        counter = collator.adsbTgtRepCounter();
+    case cat021AdsbTgtRep:
+        counter = filter.counter(RecordType(SystemType::Adsb, MessageType::TargetReport));
         break;
     default:
         QSKIP("Test not implemented for this testType");
@@ -409,139 +407,109 @@ void RecordCollatorTest::test()
     QCOMPARE(counter.in, 0u);
     QCOMPARE(counter.out, 0u);
 
-    // Feed Records to the RecordCollator.
+    // Feed Records to the RecordFilter.
     for (Asterix::Record &rin : recordsIn)
     {
-        collator.processRecord(rin);
+        filter.addData(rin);
     }
 
-    QVector<quint64> msecs;
-    msecs.clear();
     if (testType == cat010SmrTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = collator.smrTgtRepCounter();
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::TargetReport));
         QCOMPARE(counter.in, 3u);
-        QCOMPARE(counter.out, 2u);
+        QCOMPARE(counter.out, 3u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QMultiMap<QDateTime, Asterix::Record> smrTgtRepMultiMap = collator.smrTgtRepMultiMap();
-        QCOMPARE(smrTgtRepMultiMap.size(), sizeOut);
+        QCOMPARE(filter.records().size(), 3u);
 
-        for (const Asterix::Record &rout : smrTgtRepMultiMap)
+        int i = 0;
+        while (filter.hasPendingRecords())
         {
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            // Dequeue record from the filter queue.
+            Asterix::Record rout = filter.record();
 
-            // Check that excluded addresses have been filtered out.
-            QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+            // Check that the records at the other end are exactly as expected.
+            QCOMPARE(rout, recordsOut.at(i));
+            ++i;
         }
     }
     else if (testType == cat010MlatTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = collator.mlatTgtRepCounter();
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::TargetReport));
         QCOMPARE(counter.in, 3u);
-        QCOMPARE(counter.out, 2u);
+        QCOMPARE(counter.out, 1u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QMultiMap<QDateTime, Asterix::Record> mlatTgtRepMultiMap = collator.mlatTgtRepMultiMap();
-        QCOMPARE(mlatTgtRepMultiMap.size(), sizeOut);
+        QCOMPARE(filter.records().size(), 1u);
 
-        for (const Asterix::Record &rout : mlatTgtRepMultiMap)
+        int i = 0;
+        while (filter.hasPendingRecords())
         {
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            // Dequeue record from the filter queue.
+            Asterix::Record rout = filter.record();
 
             // Check that excluded addresses have been filtered out.
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+
+            // Check that the records at the other end are exactly as expected.
+            QCOMPARE(rout, recordsOut.at(i));
+            ++i;
         }
     }
-    else if (testType == cat021Adsb)
+    else if (testType == cat021AdsbTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = collator.adsbTgtRepCounter();
+        counter = filter.counter(RecordType(SystemType::Adsb, MessageType::TargetReport));
         QCOMPARE(counter.in, 3u);
-        QCOMPARE(counter.out, 2u);
+        QCOMPARE(counter.out, 1u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QMultiMap<QDateTime, Asterix::Record> adsbTgtRepMultiMap = collator.adsbTgtRepMultiMap();
-        QCOMPARE(adsbTgtRepMultiMap.size(), sizeOut);
+        QCOMPARE(filter.records().size(), 1u);
 
-        for (const Asterix::Record &rout : adsbTgtRepMultiMap)
+        int i = 0;
+        while (filter.hasPendingRecords())
         {
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
+            // Dequeue record from the filter queue.
+            Asterix::Record rout = filter.record();
 
             // Check that excluded addresses have been filtered out.
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+
+            // Check that the records at the other end are exactly as expected.
+            QCOMPARE(rout, recordsOut.at(i));
+            ++i;
         }
     }
     else if (testType == cat010SmrSrvMsg)
     {
         // Check that counter is correctly updated.
-        counter = collator.smrSrvMsgCounter();
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::ServiceMessage));
         QCOMPARE(counter.in, 2u);
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QMultiMap<QDateTime, Asterix::Record> smrSrvMsgMultiMap = collator.smrSrvMsgMultiMap();
-        QCOMPARE(smrSrvMsgMultiMap.size(), sizeOut);
-
-        for (const Asterix::Record &rout : smrSrvMsgMultiMap)
-        {
-            msecs << rout.datetime_.toMSecsSinceEpoch();
-        }
+        QCOMPARE(filter.records().size(), 2u);
     }
     else if (testType == cat010MlatSrvMsg)
     {
         // Check that counter is correctly updated.
-        counter = collator.mlatSrvMsgCounter();
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::ServiceMessage));
         QCOMPARE(counter.in, 2u);
         QCOMPARE(counter.out, 2u);
 
         // Check that number of Records at the other end matches the expected value.
-        const QMultiMap<QDateTime, Asterix::Record> mlatSrvMsgMultiMap = collator.mlatSrvMsgMultiMap();
-        QCOMPARE(mlatSrvMsgMultiMap.size(), sizeOut);
-
-        for (const Asterix::Record &rout : mlatSrvMsgMultiMap)
-        {
-            msecs << rout.datetime_.toMSecsSinceEpoch();
-        }
+        QCOMPARE(filter.records().size(), 2u);
     }
-
-    // Check that Records are sorted in chronological order.
-    auto it = std::adjacent_find(msecs.begin(), msecs.end(), std::greater<int>());
-    QVERIFY2(it == msecs.end(), "Records are not sorted in chronological order.");
-
-    /*
-    // Check that the Records at the other end are the ones expected.
-    for (Asterix::Record rout : recordsOut)
-    {
-        if (testType == Smr)
-        {
-            QCOMPARE(collator.smrQueue().dequeue(), rout);
-        }
-        else if (testType == Mlat)
-        {
-            QCOMPARE(collator.mlatQueue().dequeue(), rout);
-        }
-        else if (testType == Adsb)
-        {
-            QCOMPARE(collator.adsbQueue().dequeue(), rout);
-        }
-        else if (testType == SrvMsg)
-        {
-            QCOMPARE(collator.srvMsgQueue().dequeue(), rout);
-        }
-    }
-    */
 }
 
-QVector<ModeS> RecordCollatorTest::excludedAddresses()
+QVector<ModeS> RecordFilterTest::excludedAddresses()
 {
     return QVector<ModeS>({0x3443C3, 0x3443C4, 0x3443C5, 0x3443C2, 0x3443C6});
 }
 
-QTEST_GUILESS_MAIN(RecordCollatorTest)
-#include "recordcollatortest.moc"
+QTEST_GUILESS_MAIN(RecordFilterTest)
+#include "recordfiltertest.moc"

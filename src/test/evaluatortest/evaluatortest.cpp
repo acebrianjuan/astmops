@@ -43,7 +43,7 @@ private slots:
     void testPosAccDgps();
 
 private:
-    QMultiMap<QDateTime, Asterix::Record> dgpsTestDataMap(const QMultiMap<QDateTime, Asterix::Record> &testData, IcaoAddr dgpsAddr);
+    QMultiMap<QDateTime, Asterix::Record> dgpsTestDataMap(const QMultiMap<QDateTime, Asterix::Record> &testData, ModeS dgpsAddr);
 };
 
 
@@ -63,7 +63,7 @@ void EvaluatorTest::initTestCase()
 void EvaluatorTest::testPosAccDgps_data()
 {
     QTest::addColumn<QString>("date");
-    QTest::addColumn<IcaoAddr>("targetAddr");
+    QTest::addColumn<ModeS>("targetAddr");
     QTest::addColumn<QString>("refFileName");
     QTest::addColumn<QString>("testFileName");
     QTest::addColumn<double>("result");
@@ -86,7 +86,7 @@ void EvaluatorTest::testPosAccDgps()
     QSettings settings;
 
     QFETCH(QString, date);
-    QFETCH(IcaoAddr, targetAddr);
+    QFETCH(ModeS, targetAddr);
     settings.setValue(QLatin1String("Date"), date);
 
     settings.beginGroup(QLatin1String("DGPS"));
@@ -112,7 +112,7 @@ void EvaluatorTest::testPosAccDgps()
     Evaluator evaluator;
     evaluator.setLocatePointCallback(leblCallback);
 
-    IcaoAddr dgpsAddr = Configuration::dgpsTargetAddress();
+    ModeS dgpsAddr = Configuration::dgpsTargetAddress();
 
     QFETCH(QString, refFileName);
     QFile refFile(QFINDTESTDATA(refFileName));
@@ -143,7 +143,7 @@ void EvaluatorTest::testPosAccDgps()
     QCOMPARE(rpa, result);
 }
 
-QMultiMap<QDateTime, Asterix::Record> EvaluatorTest::dgpsTestDataMap(const QMultiMap<QDateTime, Asterix::Record> &testData, IcaoAddr dgpsAddr)
+QMultiMap<QDateTime, Asterix::Record> EvaluatorTest::dgpsTestDataMap(const QMultiMap<QDateTime, Asterix::Record> &testData, ModeS dgpsAddr)
 {
     QMultiMap<QDateTime, Asterix::Record> mmap;
 
@@ -154,7 +154,7 @@ QMultiMap<QDateTime, Asterix::Record> EvaluatorTest::dgpsTestDataMap(const QMult
         if (!addrStr.isEmpty())
         {
             bool ok;
-            IcaoAddr addr = addrStr.toUInt(&ok, 16);
+            ModeS addr = addrStr.toUInt(&ok, 16);
 
             if (ok && addr == dgpsAddr)
             {

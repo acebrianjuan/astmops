@@ -67,7 +67,7 @@ void RecordCollator::processRecord(Asterix::Record record)
             }
 
             bool ok;
-            IcaoAddr tgtAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
+            ModeS tgtAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
             if (ok)  // Valid Target Address.
             {
@@ -122,7 +122,7 @@ void RecordCollator::processRecord(Asterix::Record record)
         ++m_adsbTgtRepCounter.in;
 
         bool ok;
-        IcaoAddr tgtAddr = Asterix::getElementValue(record, QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
+        ModeS tgtAddr = Asterix::getElementValue(record, QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
 
         if (ok)  // Valid Target Address.
         {
@@ -150,7 +150,7 @@ void RecordCollator::loadExcludedAddresses(QIODevice *device)
     {
         // TODO: Consider ignoring comment lines explicitly.
         bool ok;
-        IcaoAddr addr = line.trimmed().toUInt(&ok, 16);
+        ModeS addr = line.trimmed().toUInt(&ok, 16);
         if (ok)
         {
             m_excludedAddresses.append(addr);
@@ -158,7 +158,7 @@ void RecordCollator::loadExcludedAddresses(QIODevice *device)
     }
 }
 
-void RecordCollator::loadExcludedAddresses(const QVector<IcaoAddr> &excladdr)
+void RecordCollator::loadExcludedAddresses(const QVector<ModeS> &excladdr)
 {
     m_excludedAddresses = excladdr;
 }
@@ -168,17 +168,17 @@ void RecordCollator::clearExcludedAddresses()
     m_excludedAddresses.clear();
 }
 
-void RecordCollator::addExcludedAddress(const IcaoAddr addr)
+void RecordCollator::addExcludedAddress(const ModeS addr)
 {
     m_excludedAddresses.append(addr);
 }
 
-void RecordCollator::removeExcludedAddress(const IcaoAddr addr)
+void RecordCollator::removeExcludedAddress(const ModeS addr)
 {
     m_excludedAddresses.removeOne(addr);
 }
 
-QVector<IcaoAddr> RecordCollator::excludedAddresses() const
+QVector<ModeS> RecordCollator::excludedAddresses() const
 {
     return m_excludedAddresses;
 }

@@ -146,8 +146,8 @@ private:
     QHash<TrackNum, TargetData> m_cat010SmrTgtRepUpdateRateCounters;
     QHash<TrackNum, TargetData> m_cat010SmrTgtRepProbDetectionCounters;
 
-    QHash<IcaoAddr, TargetData> m_cat010MlatTgtRepUpdateRateCounters;
-    QHash<IcaoAddr, TargetData> m_cat010MlatTgtRepProbDetectionCounters;
+    QHash<ModeS, TargetData> m_cat010MlatTgtRepUpdateRateCounters;
+    QHash<ModeS, TargetData> m_cat010MlatTgtRepProbDetectionCounters;
 
     Counters::IntervalCounter m_cat010SmrSrvMsgUpdateRateCounter = Counters::IntervalCounter(1 / m_ed116SrvMsgUpdateRateHz);
     Counters::IntervalCounter m_cat010MlatSrvMsgUpdateRateCounter = Counters::IntervalCounter(1 / m_ed117SrvMsgUpdateRateHz);

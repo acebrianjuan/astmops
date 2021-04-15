@@ -40,6 +40,8 @@ struct DataElement
     DataElement() = default;
     DataElement(const QString &name, const QString &value);
 
+    bool operator==(const DataElement &other) const;
+
     inline bool isNull()
     {
         return name_.isEmpty() || value_.isEmpty();
@@ -60,6 +62,8 @@ struct DataItem
     DataItem() = default;
     DataItem(const QString &name,
         const QVector<DataElement> &data = QVector<DataElement>());
+
+    bool operator==(const DataItem &other) const;
 
     inline bool isNull()
     {
@@ -85,6 +89,8 @@ struct Record
     Record(const quint8 cat, const QDateTime &dateTime,
         const QVector<DataItem> &dataItems = QVector<DataItem>());
 
+    bool operator==(const Record &other) const;
+
     DataItem dataItem(QLatin1String diName) const;
 
     quint8 cat_ = 0;
@@ -94,12 +100,21 @@ struct Record
     QHash<QString, DataItem> dataItems_;
 };
 
+bool containsDataItem(const Record &rec, QLatin1String diName);
+bool containsElement(const Record &rec, QLatin1String diName, QLatin1String deName);
 QString getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
-
-// TODO: Implement streaming operator for debugging.
-//QDebug operator<<(QDebug dbg, const AsterixRecord &record);
+RecordType getRecordType(const Asterix::Record &rec);
 
 };  // namespace Asterix
+
+/*
+bool operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs);
+bool operator==(const Asterix::DataItem &lhs, const Asterix::DataItem &rhs);
+bool operator==(const Asterix::Record &lhs, const Asterix::Record &rhs);
+*/
+
+// TODO: Implement streaming operator for debugging.
+//QDebug operator<<(QDebug dbg, const Asterix::Record &record);
 
 Q_DECLARE_METATYPE(Asterix::Record);
 Q_DECLARE_METATYPE(Asterix::DataItem);

@@ -342,7 +342,7 @@ void MopsProcessor::cat010SmrTgtRepProbDetection(const Asterix::Record &record)
 
     double period = Configuration::probDetectionPeriod(area);
 
-    QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010SmrTgtRepProbDetectionCounters.find(trkNum);
+    QHash<ModeS, TargetData>::iterator itTarget = m_cat010SmrTgtRepProbDetectionCounters.find(trkNum);
 
     if (itTarget == m_cat010SmrTgtRepProbDetectionCounters.end())
     {
@@ -426,7 +426,7 @@ bool MopsProcessor::cat010MlatTgtRepMinDataItems(const Asterix::Record &record)
 void MopsProcessor::cat010MlatTgtRepUpdateRate(const Asterix::Record &record)
 {
     // Update Rate.
-    IcaoAddr icaoAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+    ModeS icaoAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
     double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
@@ -436,7 +436,7 @@ void MopsProcessor::cat010MlatTgtRepUpdateRate(const Asterix::Record &record)
 
     Aerodrome::Area area = m_locatePoint(QPointF(x, y));
 
-    QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
+    QHash<ModeS, TargetData>::iterator itTarget = m_cat010MlatTgtRepUpdateRateCounters.find(icaoAddr);
 
     if (itTarget == m_cat010MlatTgtRepUpdateRateCounters.end())
     {
@@ -475,7 +475,7 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const Asterix::Record &record)
         return;
     }
 
-    IcaoAddr icaoAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+    ModeS icaoAddr = Asterix::getElementValue(record, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
 
     double tod = Asterix::getElementValue(record, QLatin1String("I140"), QLatin1String("ToD")).toDouble();
     QDateTime todDateTime = getDateTimefromTod(tod);
@@ -492,7 +492,7 @@ void MopsProcessor::cat010MlatTgtRepProbDetection(const Asterix::Record &record)
 
     double period = Configuration::probDetectionPeriod(area);
 
-    QHash<IcaoAddr, TargetData>::iterator itTarget = m_cat010MlatTgtRepProbDetectionCounters.find(icaoAddr);
+    QHash<ModeS, TargetData>::iterator itTarget = m_cat010MlatTgtRepProbDetectionCounters.find(icaoAddr);
 
     if (itTarget == m_cat010MlatTgtRepProbDetectionCounters.end())
     {
