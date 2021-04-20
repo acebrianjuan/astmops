@@ -57,9 +57,9 @@ private:
     Asterix::DataElement readDataElement();
     bool isValidDataItem(const QString& di);
 
-    QDate m_startDate;
-    QXmlStreamReader m_xml;
-    QQueue<Asterix::Record> m_recordsQueue;
+    QDate startDate_;
+    QXmlStreamReader xml_;
+    QQueue<Asterix::Record> records_;
 };
 
 #endif  // ASTMOPS_ASTERIXXMLREADER_H

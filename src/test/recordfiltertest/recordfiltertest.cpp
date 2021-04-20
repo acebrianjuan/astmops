@@ -381,24 +381,24 @@ void RecordFilterTest::test()
     QCOMPARE(filter.excludedAddresses().size(), 5);
 
     // Check that counters are initialized to zero.
-    RecordFilter::Counter counter;
+    Counters::InOutCounter counter;
 
     switch (testType)
     {
     case cat010SmrTgtRep:
-        counter = filter.counter(RecordType(SystemType::Smr, MessageType::TargetReport));
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::TargetReport)).value();
         break;
     case cat010SmrSrvMsg:
-        counter = filter.counter(RecordType(SystemType::Smr, MessageType::ServiceMessage));
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::ServiceMessage)).value();
         break;
     case cat010MlatTgtRep:
-        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::TargetReport));
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::TargetReport)).value();
         break;
     case cat010MlatSrvMsg:
-        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::ServiceMessage));
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::ServiceMessage)).value();
         break;
     case cat021AdsbTgtRep:
-        counter = filter.counter(RecordType(SystemType::Adsb, MessageType::TargetReport));
+        counter = filter.counter(RecordType(SystemType::Adsb, MessageType::TargetReport)).value();
         break;
     default:
         QSKIP("Test not implemented for this testType");
@@ -416,7 +416,7 @@ void RecordFilterTest::test()
     if (testType == cat010SmrTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = filter.counter(RecordType(SystemType::Smr, MessageType::TargetReport));
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::TargetReport)).value();
         QCOMPARE(counter.in, 3u);
         QCOMPARE(counter.out, 3u);
 
@@ -437,7 +437,7 @@ void RecordFilterTest::test()
     else if (testType == cat010MlatTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::TargetReport));
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::TargetReport)).value();
         QCOMPARE(counter.in, 3u);
         QCOMPARE(counter.out, 1u);
 
@@ -451,7 +451,7 @@ void RecordFilterTest::test()
             Asterix::Record rout = filter.record();
 
             // Check that excluded addresses have been filtered out.
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).value().toUInt();
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
 
             // Check that the records at the other end are exactly as expected.
@@ -462,7 +462,7 @@ void RecordFilterTest::test()
     else if (testType == cat021AdsbTgtRep)
     {
         // Check that counter is correctly updated.
-        counter = filter.counter(RecordType(SystemType::Adsb, MessageType::TargetReport));
+        counter = filter.counter(RecordType(SystemType::Adsb, MessageType::TargetReport)).value();
         QCOMPARE(counter.in, 3u);
         QCOMPARE(counter.out, 1u);
 
@@ -476,7 +476,7 @@ void RecordFilterTest::test()
             Asterix::Record rout = filter.record();
 
             // Check that excluded addresses have been filtered out.
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).value().toUInt();
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
 
             // Check that the records at the other end are exactly as expected.
@@ -487,7 +487,7 @@ void RecordFilterTest::test()
     else if (testType == cat010SmrSrvMsg)
     {
         // Check that counter is correctly updated.
-        counter = filter.counter(RecordType(SystemType::Smr, MessageType::ServiceMessage));
+        counter = filter.counter(RecordType(SystemType::Smr, MessageType::ServiceMessage)).value();
         QCOMPARE(counter.in, 2u);
         QCOMPARE(counter.out, 2u);
 
@@ -497,7 +497,7 @@ void RecordFilterTest::test()
     else if (testType == cat010MlatSrvMsg)
     {
         // Check that counter is correctly updated.
-        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::ServiceMessage));
+        counter = filter.counter(RecordType(SystemType::Mlat, MessageType::ServiceMessage)).value();
         QCOMPARE(counter.in, 2u);
         QCOMPARE(counter.out, 2u);
 

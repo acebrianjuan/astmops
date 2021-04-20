@@ -21,16 +21,13 @@
 
 #include "asterix.h"
 
+// DataElement:
 Asterix::DataElement::DataElement(const QString &name, const QString &value)
     : name_(name), value_(value)
 {
 }
 
-bool Asterix::DataElement::operator==(const Asterix::DataElement &other) const
-{
-    return this->name_ == other.name_ && this->value_ == other.value_;
-}
-
+// DataItem:
 Asterix::DataItem::DataItem(const QString &name, const QVector<DataElement> &data)
     : name_(name)
 {
@@ -40,19 +37,20 @@ Asterix::DataItem::DataItem(const QString &name, const QVector<DataElement> &dat
     }
 }
 
-bool Asterix::DataItem::operator==(const Asterix::DataItem &other) const
+std::optional<Asterix::DataElement> Asterix::DataItem::element(QLatin1String deName) const
 {
-    return this->name_ == other.name_ && this->data_ == other.data_;
+    if (data_.contains(deName))
+    {
+        return data_.value(deName);
+    }
+
+    return std::nullopt;
 }
 
-Asterix::DataElement Asterix::DataItem::element(QLatin1String elStr) const
-{
-    return data_.value(elStr);
-}
-
+// Record:
 Asterix::Record::Record(const quint8 cat, const QDateTime &dateTime,
     const QVector<Asterix::DataItem> &dataItems)
-    : cat_(cat), datetime_(dateTime)
+    : cat_(cat), timestamp_(dateTime)
 {
     for (const Asterix::DataItem &di : dataItems)
     {
@@ -60,59 +58,55 @@ Asterix::Record::Record(const quint8 cat, const QDateTime &dateTime,
     }
 }
 
-bool Asterix::Record::operator==(const Asterix::Record &other) const
+std::optional<Asterix::DataItem> Asterix::Record::dataItem(QLatin1String diName) const
 {
-    return this->cat_ == other.cat_ && this->len_ == other.len_ && this->crc_ == other.crc_ && this->datetime_ == other.datetime_ && this->dataItems_ == other.dataItems_;
+    if (dataItems_.contains(diName))
+    {
+        return dataItems_.value(diName);
+    }
+
+    return std::nullopt;
 }
 
-Asterix::DataItem Asterix::Record::dataItem(QLatin1String diName) const
-{
-    return dataItems_.value(diName);
-}
-
+// Functions:
 bool Asterix::containsDataItem(const Asterix::Record &rec, QLatin1String diName)
 {
-    return rec.dataItems_.contains(diName);
+    return rec.dataItem(diName).has_value();
+}
+
+bool Asterix::containsDataItem(const Asterix::Record &rec, QVector<QLatin1String> diNames)
+{
+    for (QLatin1String diName : diNames)
+    {
+        if (!containsDataItem(rec, diName))
+        {
+            return false;
+        }
+    }
+
+    // Returns true only if Record contains ALL Data Items.
+    return true;
 }
 
 bool Asterix::containsElement(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName)
 {
-    return rec.dataItems_.contains(diName) && rec.dataItem(diName).data_.contains(deName);
+    return containsDataItem(rec, diName) && rec.dataItem(diName).value().element(deName).has_value();
 }
 
-QString Asterix::getElementValue(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName)
+std::optional<QString> Asterix::getElementValue(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName)
 {
-    Asterix::DataItem di = rec.dataItem(diName);
-    if (di.isNull())
+    std::optional<Asterix::DataItem> di = rec.dataItem(diName);
+    if (di.has_value())  // Data Item exists.
     {
-        return QString();
+        std::optional<Asterix::DataElement> el = di.value().element(deName);
+        if (el.has_value())  // Data Element exists.
+        {
+            return el.value().value_;
+        }
     }
 
-    Asterix::DataElement el = di.element(deName);
-    if (el.isNull())
-    {
-        return QString();
-    }
-
-    return el.value_;
+    return std::nullopt;
 }
-
-/*
-bool operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs)
-{
-    return lhs == rhs;
-}
-
-bool operator==(const Asterix::DataItem &lhs, const Asterix::DataItem &rhs)
-{
-    return lhs == rhs;
-}
-
-bool operator==(const Asterix::Record &lhs, const Asterix::Record &rhs)
-{
-    return lhs == rhs;
-}
-*/
 
 RecordType Asterix::getRecordType(const Asterix::Record &rec)
 {
@@ -144,7 +138,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             break;
         }
 
-        quint8 sic = Asterix::getElementValue(rec, QLatin1String("I010"), QLatin1String("SIC")).toUInt(&ok);
+        quint8 sic = Asterix::getElementValue(rec, QLatin1String("I010"), QLatin1String("SIC")).value().toUInt(&ok);
 
         if (!ok)
         {
@@ -170,7 +164,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             break;
         }
 
-        quint8 msg_typ = Asterix::getElementValue(rec, QLatin1String("I000"), QLatin1String("MsgTyp")).toUInt(&ok);
+        quint8 msg_typ = Asterix::getElementValue(rec, QLatin1String("I000"), QLatin1String("MsgTyp")).value().toUInt(&ok);
 
         if (!ok)
         {
@@ -220,7 +214,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
              * 110 Not defined
              * 111 Other types
              */
-            quint8 sys_typ = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("TYP")).toUInt(&ok);
+            quint8 sys_typ = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("TYP")).value().toUInt(&ok);
 
             if (!ok)
             {
@@ -269,7 +263,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             break;
         }
 
-        quint8 sic = Asterix::getElementValue(rec, QLatin1String("I010"), QLatin1String("SIC")).toUInt(&ok);
+        quint8 sic = Asterix::getElementValue(rec, QLatin1String("I010"), QLatin1String("SIC")).value().toUInt(&ok);
 
         if (!ok)
         {
@@ -298,4 +292,19 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
     }
 
     return RecordType(st, mt);
+}
+
+bool Asterix::operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs)
+{
+    return lhs.name_ == rhs.name_ && lhs.value_ == rhs.value_;
+}
+
+bool Asterix::operator==(const Asterix::DataItem &lhs, const Asterix::DataItem &rhs)
+{
+    return lhs.name_ == rhs.name_ && lhs.data_ == rhs.data_;
+}
+
+bool Asterix::operator==(const Asterix::Record &lhs, const Asterix::Record &rhs)
+{
+    return lhs.cat_ == rhs.cat_ && lhs.len_ == rhs.len_ && lhs.crc_ == rhs.crc_ && lhs.timestamp_ == rhs.timestamp_ && lhs.dataItems_ == rhs.dataItems_;
 }

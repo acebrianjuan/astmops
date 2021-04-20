@@ -18,16 +18,15 @@
  */
 
 #include "recordfilter.h"
-#include <QMetaEnum>
 
 RecordFilter::RecordFilter()
 {
     // Initialize counters.
-    counters_.insert(RecordType(SystemType::Smr, MessageType::TargetReport), Counter());
-    counters_.insert(RecordType(SystemType::Smr, MessageType::ServiceMessage), Counter());
-    counters_.insert(RecordType(SystemType::Mlat, MessageType::TargetReport), Counter());
-    counters_.insert(RecordType(SystemType::Mlat, MessageType::ServiceMessage), Counter());
-    counters_.insert(RecordType(SystemType::Adsb, MessageType::TargetReport), Counter());
+    counters_.insert(RecordType(SystemType::Smr, MessageType::TargetReport), Counters::InOutCounter());
+    counters_.insert(RecordType(SystemType::Smr, MessageType::ServiceMessage), Counters::InOutCounter());
+    counters_.insert(RecordType(SystemType::Mlat, MessageType::TargetReport), Counters::InOutCounter());
+    counters_.insert(RecordType(SystemType::Mlat, MessageType::ServiceMessage), Counters::InOutCounter());
+    counters_.insert(RecordType(SystemType::Adsb, MessageType::TargetReport), Counters::InOutCounter());
 }
 
 void RecordFilter::addData(const Asterix::Record &rec)
@@ -70,12 +69,12 @@ void RecordFilter::loadExcludedAddresses(QIODevice *device)
         ModeS addr = text.toUInt(&ok, 16);
         if (ok)
         {
-            excluded_addresses_.append(addr);
+            excluded_addresses_.insert(addr);
         }
     }
 }
 
-QVector<ModeS> RecordFilter::excludedAddresses() const
+QSet<ModeS> RecordFilter::excludedAddresses() const
 {
     return excluded_addresses_;
 }
@@ -116,7 +115,7 @@ bool RecordFilter::isRecordToBeKept(RecordType rt, const Asterix::Record &rec)
                 return false;
             }
 
-            ModeS tgt_addr = Asterix::getElementValue(rec, QLatin1String("I220"), QLatin1String("TAddr")).toUInt(&ok, 16);
+            ModeS tgt_addr = Asterix::getElementValue(rec, QLatin1String("I220"), QLatin1String("TAddr")).value().toUInt(&ok, 16);
 
             if (!ok)
             {
@@ -139,7 +138,7 @@ bool RecordFilter::isRecordToBeKept(RecordType rt, const Asterix::Record &rec)
                 return false;
             }
 
-            quint8 tot = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("TOT")).toUInt(&ok);
+            quint8 tot = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("TOT")).value().toUInt(&ok);
 
             if (!ok)
             {
@@ -171,7 +170,7 @@ bool RecordFilter::isRecordToBeKept(RecordType rt, const Asterix::Record &rec)
                 return false;
             }
 
-            ModeS tgt_addr = Asterix::getElementValue(rec, QLatin1String("I080"), QLatin1String("TAddr")).toUInt(&ok, 16);
+            ModeS tgt_addr = Asterix::getElementValue(rec, QLatin1String("I080"), QLatin1String("TAddr")).value().toUInt(&ok, 16);
 
             if (!ok)
             {
@@ -194,7 +193,7 @@ bool RecordFilter::isRecordToBeKept(RecordType rt, const Asterix::Record &rec)
                 return false;
             }
 
-            quint8 ecat = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("ECAT")).toUInt(&ok);
+            quint8 ecat = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("ECAT")).value().toUInt(&ok);
 
             if (!ok)
             {
@@ -239,14 +238,19 @@ bool RecordFilter::isRecordToBeKept(RecordType rt, const Asterix::Record &rec)
     return false;
 }
 
-QHash<RecordType, RecordFilter::Counter> RecordFilter::counters() const
+QHash<RecordType, Counters::InOutCounter> RecordFilter::counters() const
 {
     return counters_;
 }
 
-RecordFilter::Counter RecordFilter::counter(RecordType rt) const
+std::optional<Counters::InOutCounter> RecordFilter::counter(RecordType rt) const
 {
-    return counters_.value(rt);
+    if (counters_.contains(rt))
+    {
+        return counters_.value(rt);
+    }
+
+    return std::nullopt;
 }
 
 QQueue<Asterix::Record> RecordFilter::records() const

@@ -25,6 +25,7 @@
 #include "astmops.h"
 #include <QDateTime>
 #include <QString>
+#include <optional>
 
 namespace Asterix
 {
@@ -37,12 +38,11 @@ namespace Asterix
  */
 struct DataElement
 {
+public:
     DataElement() = default;
     DataElement(const QString &name, const QString &value);
 
-    bool operator==(const DataElement &other) const;
-
-    inline bool isNull()
+    inline bool isNull() const
     {
         return name_.isEmpty() || value_.isEmpty();
     }
@@ -59,18 +59,17 @@ struct DataElement
  */
 struct DataItem
 {
+public:
     DataItem() = default;
     DataItem(const QString &name,
         const QVector<DataElement> &data = QVector<DataElement>());
 
-    bool operator==(const DataItem &other) const;
-
-    inline bool isNull()
+    inline bool isNull() const
     {
         return name_.isEmpty() || data_.isEmpty();
     }
 
-    DataElement element(QLatin1String elStr) const;
+    std::optional<DataElement> element(QLatin1String deName) const;
 
     QString name_;
     QHash<QString, DataElement> data_;
@@ -85,33 +84,33 @@ struct DataItem
  */
 struct Record
 {
+public:
     Record() = default;
     Record(const quint8 cat, const QDateTime &dateTime,
         const QVector<DataItem> &dataItems = QVector<DataItem>());
 
-    bool operator==(const Record &other) const;
-
-    DataItem dataItem(QLatin1String diName) const;
+    std::optional<DataItem> dataItem(QLatin1String diName) const;
 
     quint8 cat_ = 0;
     quint16 len_ = 0;
     quint32 crc_ = 0xFFFFFFFF;
-    QDateTime datetime_;
+    QDateTime timestamp_;
+
     QHash<QString, DataItem> dataItems_;
 };
 
 bool containsDataItem(const Record &rec, QLatin1String diName);
+bool containsDataItem(const Record &rec, QVector<QLatin1String> diNames);
 bool containsElement(const Record &rec, QLatin1String diName, QLatin1String deName);
-QString getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
+std::optional<QString> getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
 RecordType getRecordType(const Asterix::Record &rec);
 
-};  // namespace Asterix
-
-/*
+// FREE OPERATORS.
 bool operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs);
 bool operator==(const Asterix::DataItem &lhs, const Asterix::DataItem &rhs);
 bool operator==(const Asterix::Record &lhs, const Asterix::Record &rhs);
-*/
+
+};  // namespace Asterix
 
 // TODO: Implement streaming operator for debugging.
 //QDebug operator<<(QDebug dbg, const Asterix::Record &record);

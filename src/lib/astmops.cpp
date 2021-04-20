@@ -70,6 +70,20 @@ size_t qHash(RecordType rt, size_t seed)
     return seed;
 }
 
+bool isCategorySupported(const quint8 cat)
+{
+    /* SUPPORTED ASTERIX CATEGORIES:
+     * CAT010: Monosensor Surface Movement Data
+     * CAT021: ADS-B Messages
+     */
+    if (cat == 10 || cat == 21)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 quint8 readSic(const QString &key)
 {
     QSettings settings;

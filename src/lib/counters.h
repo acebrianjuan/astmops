@@ -26,6 +26,12 @@
 
 namespace Counters
 {
+struct InOutCounter
+{
+    quint32 in = 0;
+    quint32 out = 0;
+};
+
 struct BasicCounter
 {
     quint32 countValid = 0;

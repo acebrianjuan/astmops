@@ -430,11 +430,11 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : smrTgtRepMultiMap)
         {
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).value().toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+            msecs << rout.timestamp_.toMSecsSinceEpoch();
         }
     }
     else if (testType == cat010MlatTgtRep)
@@ -450,11 +450,11 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : mlatTgtRepMultiMap)
         {
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).toUInt();
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I220"), QLatin1String("TAddr")).value().toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+            msecs << rout.timestamp_.toMSecsSinceEpoch();
         }
     }
     else if (testType == cat021Adsb)
@@ -470,11 +470,11 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : adsbTgtRepMultiMap)
         {
-            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).toUInt();
+            ModeS tgtAddr = Asterix::getElementValue(rout, QLatin1String("I080"), QLatin1String("TAddr")).value().toUInt();
 
             // Check that excluded addresses have been filtered out.
             QVERIFY2(!excludedAddresses().contains(tgtAddr), "Excluded addresses have not been filtered out.");
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+            msecs << rout.timestamp_.toMSecsSinceEpoch();
         }
     }
     else if (testType == cat010SmrSrvMsg)
@@ -490,7 +490,7 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : smrSrvMsgMultiMap)
         {
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+            msecs << rout.timestamp_.toMSecsSinceEpoch();
         }
     }
     else if (testType == cat010MlatSrvMsg)
@@ -506,7 +506,7 @@ void RecordCollatorTest::test()
 
         for (const Asterix::Record &rout : mlatSrvMsgMultiMap)
         {
-            msecs << rout.datetime_.toMSecsSinceEpoch();
+            msecs << rout.timestamp_.toMSecsSinceEpoch();
         }
     }
 

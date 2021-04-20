@@ -22,17 +22,13 @@
 
 #include "asterix.h"
 #include "astmops.h"
+#include "counters.h"
 #include <QQueue>
+#include <optional>
 
 class RecordFilter
 {
 public:
-    struct Counter
-    {
-        quint32 in = 0;
-        quint32 out = 0;
-    };
-
     RecordFilter();
 
     void addData(const Asterix::Record& rec);
@@ -40,20 +36,19 @@ public:
     bool hasPendingRecords() const;
 
     void loadExcludedAddresses(QIODevice* device);
-    QVector<ModeS> excludedAddresses() const;
+    QSet<ModeS> excludedAddresses() const;
 
     QQueue<Asterix::Record> records() const;
 
-    QHash<RecordType, Counter> counters() const;
-    Counter counter(RecordType rt) const;
+    QHash<RecordType, Counters::InOutCounter> counters() const;
+    std::optional<Counters::InOutCounter> counter(RecordType rt) const;
 
 private:
     bool isRecordToBeKept(RecordType rt, const Asterix::Record& rec);
 
     QQueue<Asterix::Record> records_;
-    QVector<ModeS> excluded_addresses_;
-
-    QHash<RecordType, Counter> counters_;
+    QSet<ModeS> excluded_addresses_;
+    QHash<RecordType, Counters::InOutCounter> counters_;
 };
 
 #endif  // ASTMOPS_RECORDFILTER_H

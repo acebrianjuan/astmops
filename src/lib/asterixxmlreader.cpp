@@ -34,66 +34,66 @@ void AsterixXmlReader::addData(const QByteArray& data)
             continue;
         }
 
-        m_xml.addData(line);
+        xml_.addData(line);
 
-        while (!m_xml.atEnd())
+        while (!xml_.atEnd())
         {
-            if (m_xml.readNextStartElement())
+            if (xml_.readNextStartElement())
             {
                 // If the element start that we are in right now is not the one we want,
                 // skip it entirely. Otherwise, "drill down" till the end.
-                if (m_xml.name() != QLatin1String("ASTERIX"))
+                if (xml_.name() != QLatin1String("ASTERIX"))
                 {
-                    m_xml.skipCurrentElement();
+                    xml_.skipCurrentElement();
                     continue;
                 }
 
-                if (m_xml.attributes().hasAttribute(QLatin1String("cat")))
+                if (xml_.attributes().hasAttribute(QLatin1String("cat")))
                 {
                     readRecord();
                     emit readyRead();
                 }
                 else
                 {
-                    m_xml.raiseError(QLatin1String("Invalid ASTERIX file."));
+                    xml_.raiseError(QLatin1String("Invalid ASTERIX file."));
                 }
             }
         }
 
-        m_xml.clear();
+        xml_.clear();
     }
 }
 
 Asterix::Record AsterixXmlReader::record()
 {
-    return m_recordsQueue.dequeue();
+    return records_.dequeue();
 }
 
 bool AsterixXmlReader::hasPendingRecords()
 {
-    return !m_recordsQueue.isEmpty();
+    return !records_.isEmpty();
 }
 
 void AsterixXmlReader::setStartDate(QDate date)
 {
     if (date.isValid())
     {
-        m_startDate = date;
+        startDate_ = date;
     }
 }
 
 void AsterixXmlReader::readRecord()
 {
-    Q_ASSERT(m_xml.isStartElement() &&
-             m_xml.name() == QLatin1String("ASTERIX") &&
-             m_xml.attributes().hasAttribute(QLatin1String("cat")) &&
-             m_xml.attributes().hasAttribute(QLatin1String("crc")) &&
-             m_xml.attributes().hasAttribute(QLatin1String("timestamp")));
+    Q_ASSERT(xml_.isStartElement() &&
+             xml_.name() == QLatin1String("ASTERIX") &&
+             xml_.attributes().hasAttribute(QLatin1String("cat")) &&
+             xml_.attributes().hasAttribute(QLatin1String("crc")) &&
+             xml_.attributes().hasAttribute(QLatin1String("timestamp")));
 
     Asterix::Record record;
     bool catOk, timeStampOk;
-    quint8 cat = m_xml.attributes().value(QLatin1String("cat")).toUInt(&catOk);
-    quint64 timeStamp = m_xml.attributes().value(QLatin1String("timestamp")).toUInt(&timeStampOk);
+    quint8 cat = xml_.attributes().value(QLatin1String("cat")).toUInt(&catOk);
+    quint64 timeStamp = xml_.attributes().value(QLatin1String("timestamp")).toUInt(&timeStampOk);
 
     if (!catOk || !timeStampOk)
     {
@@ -104,11 +104,11 @@ void AsterixXmlReader::readRecord()
     }
 
     record.cat_ = cat;
-    record.datetime_ = QDateTime(m_startDate, QTime::fromMSecsSinceStartOfDay(timeStamp), Qt::UTC);
+    record.timestamp_ = QDateTime(startDate_, QTime::fromMSecsSinceStartOfDay(timeStamp), Qt::UTC);
 
-    while (m_xml.readNextStartElement())
+    while (xml_.readNextStartElement())
     {
-        QString diName = m_xml.name().toString();
+        QString diName = xml_.name().toString();
         if (isValidDataItem(diName))
         {
             //qDebug() << diName;
@@ -116,22 +116,22 @@ void AsterixXmlReader::readRecord()
         }
         else
         {
-            m_xml.skipCurrentElement();
+            xml_.skipCurrentElement();
         }
     }
 
-    m_recordsQueue.enqueue(record);
+    records_.enqueue(record);
 }
 
 Asterix::DataItem AsterixXmlReader::readDataItem()
 {
-    Q_ASSERT(m_xml.isStartElement() && isValidDataItem(m_xml.name().toString()));
+    Q_ASSERT(xml_.isStartElement() && isValidDataItem(xml_.name().toString()));
 
     Asterix::DataItem di;
-    di.name_ = m_xml.name().toString();
+    di.name_ = xml_.name().toString();
 
     Asterix::DataElement de;
-    while (m_xml.readNextStartElement())
+    while (xml_.readNextStartElement())
     {
         de = readDataElement();
         di.data_.insert(de.name_, de);
@@ -142,11 +142,11 @@ Asterix::DataItem AsterixXmlReader::readDataItem()
 
 Asterix::DataElement AsterixXmlReader::readDataElement()
 {
-    Q_ASSERT(m_xml.isStartElement());
+    Q_ASSERT(xml_.isStartElement());
 
     Asterix::DataElement de;
-    de.name_ = m_xml.name().toString();
-    de.value_ = m_xml.readElementText();
+    de.name_ = xml_.name().toString();
+    de.value_ = xml_.readElementText();
 
     return de;
 }

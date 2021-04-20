@@ -23,10 +23,14 @@ add_library(lib
     geofunctions.cpp
     kmlreader.cpp
     message.cpp
-    messageextractor.cpp
+    #messageextractor.cpp
     #mopsprocessor.cpp
-    recordcollator.cpp
-    recordfilter.cpp)
+    #perfevaluator.cpp
+    #recordcollator.cpp
+    recordfilter.cpp
+    #track.cpp
+    #trackextractor.cpp
+    )
 
 target_include_directories(lib PUBLIC .)
 target_link_libraries(lib Qt5::Core Qt5::Gui Qt5::Positioning)

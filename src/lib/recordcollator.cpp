@@ -55,13 +55,13 @@ void RecordCollator::processRecord(Asterix::Record record)
 
             if (sysType == 1)  // Mode S Multilateration.
             {
-                monotonicTimeCheck(m_lastMlatTgtRepDateTime, record.datetime_);
+                monotonicTimeCheck(m_lastMlatTgtRepDateTime, record.timestamp_);
 
                 ++m_mlatTgtRepCounter.in;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                monotonicTimeCheck(m_lastSmrTgtRepDateTime, record.datetime_);
+                monotonicTimeCheck(m_lastSmrTgtRepDateTime, record.timestamp_);
 
                 ++m_smrTgtRepCounter.in;
             }
@@ -83,12 +83,12 @@ void RecordCollator::processRecord(Asterix::Record record)
              */
             if (sysType == 1)  // Mode S Multilateration.
             {
-                m_mlatTgtRepMultiMap.insert(record.datetime_, record);
+                m_mlatTgtRepMultiMap.insert(record.timestamp_, record);
                 ++m_mlatTgtRepCounter.out;
             }
             else if (sysType == 3)  // Primary Surveillance Radar.
             {
-                m_smrTgtRepMultiMap.insert(record.datetime_, record);
+                m_smrTgtRepMultiMap.insert(record.timestamp_, record);
                 ++m_smrTgtRepCounter.out;
             }
         }
@@ -99,25 +99,25 @@ void RecordCollator::processRecord(Asterix::Record record)
 
             if (sic == m_mlatSic)  // Mode S Multilateration.
             {
-                monotonicTimeCheck(m_lastMlatSrvMsgDateTime, record.datetime_);
+                monotonicTimeCheck(m_lastMlatSrvMsgDateTime, record.timestamp_);
                 ++m_mlatSrvMsgCounter.in;
 
-                m_mlatSrvMsgMultiMap.insert(record.datetime_, record);
+                m_mlatSrvMsgMultiMap.insert(record.timestamp_, record);
                 ++m_mlatSrvMsgCounter.out;
             }
             else if (sic == m_smrSic)  // Primary Surveillance Radar.
             {
-                monotonicTimeCheck(m_lastSmrSrvMsgDateTime, record.datetime_);
+                monotonicTimeCheck(m_lastSmrSrvMsgDateTime, record.timestamp_);
                 ++m_smrSrvMsgCounter.in;
 
-                m_smrSrvMsgMultiMap.insert(record.datetime_, record);
+                m_smrSrvMsgMultiMap.insert(record.timestamp_, record);
                 ++m_smrSrvMsgCounter.out;
             }
         }
     }
     else if (record.cat_ == 21)  // ADS-B Reports.
     {
-        monotonicTimeCheck(m_lastAdsbTgtRepDateTime, record.datetime_);
+        monotonicTimeCheck(m_lastAdsbTgtRepDateTime, record.timestamp_);
 
         ++m_adsbTgtRepCounter.in;
 
@@ -136,7 +136,7 @@ void RecordCollator::processRecord(Asterix::Record record)
         /* Continue if address is a valid non-excluded address
          * or if there is no address information at all.
          */
-        m_adsbTgtRepMultiMap.insert(record.datetime_, record);
+        m_adsbTgtRepMultiMap.insert(record.timestamp_, record);
         //std::sort(m_adsbTgtRepMultiMap.begin(), m_adsbTgtRepMultiMap.end(), sorter);
         ++m_adsbTgtRepCounter.out;
     }

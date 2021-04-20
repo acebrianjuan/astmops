@@ -22,11 +22,13 @@
 #define ASTMOPS_ASTMOPS_H
 
 #include "aerodrome.h"
+//#include "track.h"
 #include <QDate>
 #include <QDebug>
 #include <QGeoCircle>
 #include <QGeoPolygon>
 #include <QGeoShape>
+#include <QPair>
 #include <QSettings>
 #include <QtGlobal>
 #include <QtMath>
@@ -36,6 +38,16 @@ using ModeS = quint32;
 using Mode3A = quint16;
 using TrackNum = quint16;
 using Ident = QString;
+
+using Sac = quint8;
+using Sic = quint8;
+
+struct DataSrcId
+{
+    Sac sac_ = 0;
+    Sic sic_ = 0;
+};
+Q_DECLARE_TYPEINFO(DataSrcId, Q_PRIMITIVE_TYPE);
 
 enum class SystemType
 {
@@ -51,6 +63,14 @@ enum class MessageType
     Unknown,
     TargetReport,
     ServiceMessage
+};
+
+enum class ServiceMessageType
+{
+    Unknown,
+    StartOfUpdateCycle,
+    PeriodicStatusMessage,
+    EventTriggeredStatusMessage
 };
 
 struct RecordType
@@ -83,6 +103,8 @@ enum class Layer
     AirborneLayer
 };
 
+//using EvalSet = QPair<Utn, QHash<SystemType, TrackCollection>>;
+
 namespace MOPS
 {
 const double defaultSilencePeriodSeconds = 60.0;  // s
@@ -105,6 +127,7 @@ const double defaultProbDetectionPeriodOther = 2.0;
 }  // namespace ED117
 }  // namespace MOPS
 
+bool isCategorySupported(const quint8 cat);
 
 quint8 readSic(const QString &key);
 
