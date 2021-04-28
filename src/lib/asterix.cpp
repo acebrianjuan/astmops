@@ -296,15 +296,21 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
 bool Asterix::operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs)
 {
-    return lhs.name_ == rhs.name_ && lhs.value_ == rhs.value_;
+    return lhs.name_ == rhs.name_ &&
+           lhs.value_ == rhs.value_;
 }
 
 bool Asterix::operator==(const Asterix::DataItem &lhs, const Asterix::DataItem &rhs)
 {
-    return lhs.name_ == rhs.name_ && lhs.data_ == rhs.data_;
+    return lhs.name_ == rhs.name_ &&
+           lhs.data_ == rhs.data_;
 }
 
 bool Asterix::operator==(const Asterix::Record &lhs, const Asterix::Record &rhs)
 {
-    return lhs.cat_ == rhs.cat_ && lhs.len_ == rhs.len_ && lhs.crc_ == rhs.crc_ && lhs.timestamp_ == rhs.timestamp_ && lhs.dataItems_ == rhs.dataItems_;
+    return lhs.cat_ == rhs.cat_ &&
+           lhs.len_ == rhs.len_ &&
+           lhs.crc_ == rhs.crc_ &&
+           lhs.timestamp_ == rhs.timestamp_ &&
+           lhs.dataItems_ == rhs.dataItems_;
 }

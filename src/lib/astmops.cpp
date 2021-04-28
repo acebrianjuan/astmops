@@ -346,9 +346,10 @@ ModeS Configuration::dgpsTargetAddress()
         qFatal("%s is mandatory.", qPrintable(key));
     }
 
-    quint32 val = settings.value(key).toUInt();
+    bool ok;
+    quint32 val = settings.value(key).toUInt(&ok);
 
-    if (val > 0xFFFFFF)
+    if (!ok || val > 0xFFFFFF)
     {
         qFatal("Invalid %s value.", qPrintable(key));
     }
