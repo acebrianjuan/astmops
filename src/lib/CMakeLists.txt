@@ -19,15 +19,11 @@ add_library(lib
     astmops.cpp
     counters.cpp
     dgpscsvreader.cpp
-    evaluator.cpp
     geofunctions.cpp
     kmlreader.cpp
-    message.cpp
-    #messageextractor.cpp
-    #mopsprocessor.cpp
     #perfevaluator.cpp
-    #recordcollator.cpp
-    recordfilter.cpp
+    targetreport.cpp
+    targetreportextractor.cpp
     #track.cpp
     #trackextractor.cpp
     )

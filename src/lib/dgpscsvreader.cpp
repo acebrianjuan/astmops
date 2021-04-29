@@ -217,9 +217,9 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
     return result;
 }
 
-QMultiMap<QDateTime, Messages::TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo> &posInfo)
+QMultiMap<QDateTime, TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo> &posInfo)
 {
-    QMultiMap<QDateTime, Messages::TargetReport> mmap;
+    QMultiMap<QDateTime, TargetReport> mmap;
 
     // Read from configuration.
     ModeS mode_s = Configuration::dgpsTargetAddress();
@@ -232,7 +232,7 @@ QMultiMap<QDateTime, Messages::TargetReport> makeDgpsTgtRep(const QVector<QGeoPo
     {
         QVector3D cart = geoToLocalEnu(pi.coordinate(), leblArpGeo);
 
-        Messages::TargetReport tr;
+        TargetReport tr;
         tr.rec_typ_ = RecordType(SystemType::Dgps, MessageType::TargetReport);
         tr.tod_ = pi.timestamp();
         tr.mode_S_ = mode_s;
@@ -246,9 +246,9 @@ QMultiMap<QDateTime, Messages::TargetReport> makeDgpsTgtRep(const QVector<QGeoPo
     return mmap;
 }
 
-QMultiMap<QDateTime, Messages::TargetReport> dgpsTgtRep(QIODevice *file, ErrorType *error)
+QMultiMap<QDateTime, TargetReport> dgpsTgtRep(QIODevice *file, ErrorType *error)
 {
-    QMultiMap<QDateTime, Messages::TargetReport> mmap;
+    QMultiMap<QDateTime, TargetReport> mmap;
 
     QVector<QGeoPositionInfo> geo = readDgpsCsv(file, error);
     if (*error != ErrorType::NoError)

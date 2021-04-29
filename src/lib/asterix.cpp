@@ -74,7 +74,7 @@ bool Asterix::containsDataItem(const Asterix::Record &rec, QLatin1String diName)
     return rec.dataItem(diName).has_value();
 }
 
-bool Asterix::containsDataItem(const Asterix::Record &rec, QVector<QLatin1String> diNames)
+bool Asterix::containsDataItem(const Asterix::Record &rec, const QVector<QLatin1String> &diNames)
 {
     for (QLatin1String diName : diNames)
     {
@@ -112,19 +112,18 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 {
     SystemType st = SystemType::Unknown;
     MessageType mt = MessageType::Unknown;
+
+    if (!isCategorySupported(rec.cat_))
+    {
+        return RecordType(st, mt);
+    }
+
+    // Read only once.
+    static const quint8 smrSic = Configuration::smrSic();
+    static const quint8 mlatSic = Configuration::mlatSic();
+    static const quint8 adsbSic = Configuration::adsbSic();
+
     bool ok;
-
-    quint8 smrSic = Configuration::smrSic();
-    quint8 mlatSic = Configuration::mlatSic();
-    quint8 adsbSic = Configuration::adsbSic();
-
-    /* SUPPORTED ASTERIX CATEGORIES:
-     * CAT010: Monosensor Surface Movement Data
-     * CAT020: MLT Messages
-     * CAT021: ADS-B Messages
-     * CAT023: CNS/ATM Ground Station Service Messages
-     */
-
     switch (rec.cat_)
     {
     case 10:  // CAT010: Monosensor Surface Movement Data.
@@ -242,13 +241,6 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         break;
     }
-    case 20:  // CAT020: MLT Messages.
-    {
-        st = SystemType::Mlat;
-        mt = MessageType::TargetReport;
-
-        break;
-    }
     case 21:  // CAT021: ADS-B Messages.
     {
         st = SystemType::Adsb;
@@ -276,13 +268,6 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             qWarning("CAT021 TgtRep with disagreeing SIC");
             break;
         }
-        break;
-    }
-    case 23:  // CAT023: CNS/ATM Ground Station Service Messages.
-    {
-        st = SystemType::Adsb;
-        mt = MessageType::ServiceMessage;
-
         break;
     }
     default:

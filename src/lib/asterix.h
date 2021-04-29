@@ -100,7 +100,7 @@ public:
 };
 
 bool containsDataItem(const Record &rec, QLatin1String diName);
-bool containsDataItem(const Record &rec, QVector<QLatin1String> diNames);
+bool containsDataItem(const Record &rec, const QVector<QLatin1String> &diNames);
 bool containsElement(const Record &rec, QLatin1String diName, QLatin1String deName);
 std::optional<QString> getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
 RecordType getRecordType(const Asterix::Record &rec);

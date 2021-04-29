@@ -20,7 +20,7 @@
 #ifndef ASTMOPS_DGPSCSVREADER_H
 #define ASTMOPS_DGPSCSVREADER_H
 
-#include "message.h"
+#include "targetreport.h"
 #include <QGeoPositionInfo>
 #include <QIODevice>
 
@@ -32,7 +32,7 @@ enum ErrorType
 };
 
 QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error = nullptr);
-QMultiMap<QDateTime, Messages::TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo> &posInfo);
-QMultiMap<QDateTime, Messages::TargetReport> dgpsTgtRep(QIODevice *file, ErrorType *error = nullptr);
+QMultiMap<QDateTime, TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo> &posInfo);
+QMultiMap<QDateTime, TargetReport> dgpsTgtRep(QIODevice *file, ErrorType *error = nullptr);
 
 #endif  // ASTMOPS_DGPSCSVREADER_H

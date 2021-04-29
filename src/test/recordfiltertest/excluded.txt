@@ -1,8 +1,0 @@
-# SPDX-FileCopyrightText: 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
-# SPDX-License-Identifier: GPL-3.0-or-later
-
-3443C3
-3443C4
-3443C5
-3443C2
-3443C6

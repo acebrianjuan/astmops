@@ -39,7 +39,7 @@ private:
     double ft_to_m = 0.3048;
 };
 Q_DECLARE_METATYPE(QVector<QGeoPositionInfo>);
-Q_DECLARE_METATYPE(QVector<Messages::TargetReport>);
+Q_DECLARE_METATYPE(QVector<TargetReport>);
 Q_DECLARE_METATYPE(ErrorType);
 
 void DgpsCsvReaderTest::initTestCase()
@@ -144,9 +144,9 @@ void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
                QDateTime::fromString(QLatin1String("2020-05-05T08:06:14.351Z"), Qt::ISODateWithMs));
 
     // Expected output.
-    QVector<Messages::TargetReport> tgtRep;
+    QVector<TargetReport> tgtRep;
 
-    Messages::TargetReport tr;
+    TargetReport tr;
     tr.rec_typ_ = RecordType(SystemType::Dgps, MessageType::TargetReport);
     tr.mode_S_ = 0x34304F;
     tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:05.351Z"), Qt::ISODateWithMs);
@@ -211,7 +211,7 @@ void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
 
 
     QTest::addColumn<QVector<QGeoPositionInfo>>("posInfo");
-    QTest::addColumn<QVector<Messages::TargetReport>>("tgtRep");
+    QTest::addColumn<QVector<TargetReport>>("tgtRep");
 
     QTest::newRow("DGPS TGTREP") << posInfo << tgtRep;
 }
@@ -219,16 +219,23 @@ void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
 void DgpsCsvReaderTest::testMakeDgpsTgtRep()
 {
     QFETCH(QVector<QGeoPositionInfo>, posInfo);
-    QFETCH(QVector<Messages::TargetReport>, tgtRep);
+    QFETCH(QVector<TargetReport>, tgtRep);
 
-    QMultiMap<QDateTime, Messages::TargetReport> refData = makeDgpsTgtRep(posInfo);
+    QMultiMap<QDateTime, TargetReport> refData = makeDgpsTgtRep(posInfo);
 
     QVERIFY(refData.size() == tgtRep.size());
 
     int i = 0;
-    for (const Messages::TargetReport &p_actual : refData)
+    for (const TargetReport &p_actual : refData)
     {
-        Messages::TargetReport p_expected = tgtRep.at(i);
+        TargetReport p_expected = tgtRep.at(i);
+
+        /*
+        qDebug() << p_actual.tod_ << p_expected.tod_;
+        qDebug() << p_actual.x_ << p_actual.y_ << p_actual.z_;
+        qDebug() << p_expected.x_ << p_expected.y_ << p_expected.z_;
+        */
+
         QCOMPARE(p_actual, p_expected);
 
         ++i;
