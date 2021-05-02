@@ -133,7 +133,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!has_sic)
         {
-            qWarning("CAT010 record without SIC");
+            qWarning("CAT010 record without SIC information");
             break;
         }
 
@@ -159,7 +159,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!has_msg_typ)
         {
-            qWarning("CAT010 record without message type");
+            qWarning("CAT010 record without message type information");
             break;
         }
 
@@ -199,7 +199,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
             if (!has_sys_typ)
             {
-                qWarning("CAT010 TgtRep without system type");
+                qWarning("CAT010 TgtRep without system type information");
                 break;
             }
 
@@ -251,7 +251,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!has_sic)
         {
-            qWarning("CAT010 TgtRep without SIC");
+            qWarning("CAT010 TgtRep without SIC information");
             break;
         }
 
@@ -294,8 +294,8 @@ bool Asterix::operator==(const Asterix::DataItem &lhs, const Asterix::DataItem &
 bool Asterix::operator==(const Asterix::Record &lhs, const Asterix::Record &rhs)
 {
     return lhs.cat_ == rhs.cat_ &&
-           lhs.len_ == rhs.len_ &&
-           lhs.crc_ == rhs.crc_ &&
+           //lhs.len_ == rhs.len_ &&
+           //lhs.crc_ == rhs.crc_ &&
            lhs.timestamp_ == rhs.timestamp_ &&
            lhs.dataItems_ == rhs.dataItems_;
 }

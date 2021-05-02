@@ -121,6 +121,22 @@ QDate Configuration::asterixDate()
     return date;
 }
 
+bool Configuration::useAsterixTodAsTimestamp()
+{
+    QString key = QLatin1String("useAsterixTodAsTimestamp");
+
+    QSettings settings;
+    //settings.beginGroup(QLatin1String("Global"));
+
+    if (!settings.contains(key))
+    {
+        return false;
+    }
+
+    bool b = settings.value(key).toBool();
+    return b;
+}
+
 quint8 Configuration::smrSic()
 {
     QString key = QLatin1String("SMR.SIC");

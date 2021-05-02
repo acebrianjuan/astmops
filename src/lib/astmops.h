@@ -135,6 +135,8 @@ namespace Configuration
 {
 QDate asterixDate();
 
+bool useAsterixTodAsTimestamp();
+
 quint8 smrSic();
 
 quint8 mlatSic();
