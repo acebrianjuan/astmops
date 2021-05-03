@@ -175,14 +175,14 @@ void AsterixXmlReaderTest::test_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<QVector<Asterix::Record>>("recordsIn");
 
-    QTest::newRow("CAT010") << "cat010.xml" << (QVector<Asterix::Record>() << cat010Smr0 << cat010Smr1);
+    QTest::newRow("CAT010") << "cat010_incomplete.xml" << (QVector<Asterix::Record>() << cat010Smr0 << cat010Smr1);
+    QTest::newRow("CAT010 (Incomplete chunk)") << "cat010_incomplete.xml" << (QVector<Asterix::Record>() << cat010Smr0 << cat010Smr1);
     QTest::newRow("CAT010 (MIDNIGHT ROLLOVER)") << "cat010_rollover.xml" << (QVector<Asterix::Record>() << cat010Smr0 << cat010Smr1 << cat010Smr3 << cat010Smr4);
     QTest::newRow("CAT010 (MIDNIGHT ROLLOVER DELAYED SAMPLE)") << "cat010_rollover_delayed.xml" << (QVector<Asterix::Record>() << cat010Smr0 << cat010Smr1 << cat010Smr3 << cat010Smr2 << cat010Smr4);
 
 
     //QTest::newRow("CAT010") << "cat010.xml" << (QVector<int>() << 12 << 12);
     //QTest::newRow("CAT010 (Empty Data Items)") << "cat010_empty.xml" << (QVector<int>() << 12 << 12);
-    //QTest::newRow("CAT010 (Incomplete chunk)") << "cat010_incomplete.xml" << (QVector<int>() << 12 << 2);
     //QTest::newRow("CAT010 (Missing attributes)") << "cat010_missing_attributes.xml" << QVector<int>();
 }
 
@@ -194,11 +194,25 @@ void AsterixXmlReaderTest::test()
     QFile file(QFINDTESTDATA(fileName));
     QVERIFY(file.open(QIODevice::ReadOnly));
 
-    //QFETCH(QVector<int>, items);
     QFETCH(QVector<Asterix::Record>, recordsIn);
 
-    const QByteArray contents = file.readAll();
-    reader.addData(contents);
+    //    const QByteArray contents = file.readAll();
+    //    qDebug() << contents;
+    //    reader.addData(contents);
+
+    do
+    {
+        QByteArray line = file.readLine();
+
+        // Split at EOT control character to simulate a buffer interruption.
+        QByteArrayList list = line.split('\x04');
+
+        for (const auto &l : list)
+        {
+            reader.addData(l);
+        }
+    } while (file.canReadLine());
+
 
     QVector<Asterix::Record> recordsOut;
     while (reader.hasPendingRecords())

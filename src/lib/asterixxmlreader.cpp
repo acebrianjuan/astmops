@@ -27,14 +27,25 @@ AsterixXmlReader::AsterixXmlReader(QObject* parent) : QObject(parent)
 void AsterixXmlReader::addData(const QByteArray& data)
 {
     const QByteArrayList lines = data.split('\n');
-    for (const QByteArray& line : lines)
+
+    for (int i = 0; i < lines.size(); ++i)
     {
+        QByteArray line = lines.at(i);
+
         if (line.isEmpty())
         {
             continue;
         }
 
         xml_.addData(line);
+
+        // Check that last line ends with a newline character.
+        // If it doesn't, it means that data is missing.
+        if (i == lines.size() - 1 && !data.endsWith('\n'))
+        {
+            // Premature end of document!
+            break;
+        }
 
         while (!xml_.atEnd())
         {
@@ -49,16 +60,6 @@ void AsterixXmlReader::addData(const QByteArray& data)
                 }
 
                 readRecord();
-
-                /*
-                if (xml_.hasError())
-                {
-                    if (xml_.error() == QXmlStreamReader::Error::PrematureEndOfDocumentError)
-                    {
-                        buffer_.append(line);
-                    }
-                }
-                */
             }
         }
 
@@ -129,14 +130,17 @@ void AsterixXmlReader::readRecord()
 
     record.cat_ = cat;
 
-    // Read record contents.
+    // Read Data Items.
     while (xml_.readNextStartElement())
     {
         QString diName = xml_.name().toString();
         if (isValidDataItem(diName))
         {
-            //qDebug() << diName;
-            record.dataItems_[diName] = readDataItem();
+            Asterix::DataItem di = readDataItem();
+            if (!di.isNull())
+            {
+                record.dataItems_.insert(diName, di);
+            }
         }
         else
         {
@@ -145,7 +149,7 @@ void AsterixXmlReader::readRecord()
     }
     if (xml_.hasError())
     {
-        qDebug() << xml_.errorString();
+        // Discard corrupt record.
         return;
     }
 
@@ -277,7 +281,10 @@ Asterix::DataItem AsterixXmlReader::readDataItem()
     while (xml_.readNextStartElement())
     {
         de = readDataElement();
-        di.data_.insert(de.name_, de);
+        if (!de.isNull())
+        {
+            di.data_.insert(de.name_, de);
+        }
     }
 
     return di;
