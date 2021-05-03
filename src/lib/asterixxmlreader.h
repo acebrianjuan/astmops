@@ -59,8 +59,8 @@ private:
 
     //QByteArray buffer_;
     QDate startDate_ = Configuration::asterixDate();
-    QHash<SystemType, QDateTime> last_times_;
-    QHash<SystemType, qint64> day_count_;
+    QHash<RecordType, QDateTime> last_times_;
+    QHash<RecordType, qint64> day_count_;
     QXmlStreamReader xml_;
     QQueue<Asterix::Record> records_;
 };

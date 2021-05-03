@@ -161,9 +161,9 @@ void AsterixXmlReader::readRecord()
     QDateTime datetime = QDateTime(startDate_, QTime::fromMSecsSinceStartOfDay(tstamp), Qt::UTC);
 
     // Add ROLLOVER days.
-    if (day_count_.contains(rt.sys_typ_) && day_count_.value(rt.sys_typ_) > 0)
+    if (day_count_.contains(rt) && day_count_.value(rt) > 0)
     {
-        datetime = datetime.addDays(day_count_.value(rt.sys_typ_));
+        datetime = datetime.addDays(day_count_.value(rt));
     }
 
     // Skip invalid timestamps.
@@ -188,9 +188,9 @@ void AsterixXmlReader::readRecord()
     // Keep track of timestamps.
     bool save_tod = true;
     quint32 day_tdiff = 24 * 3600 - 10;
-    if (last_times_.contains(rt.sys_typ_) && last_times_.value(rt.sys_typ_).isValid())
+    if (last_times_.contains(rt) && last_times_.value(rt).isValid())
     {
-        QDateTime lastTod = last_times_.value(rt.sys_typ_);
+        QDateTime lastTod = last_times_.value(rt);
         QDateTime newTod = record.timestamp_;
 
         Q_ASSERT(lastTod.isValid() && newTod.isValid());
@@ -209,8 +209,8 @@ void AsterixXmlReader::readRecord()
                 if (isCloseToMidnight(lastTod))
                 {
                     // MIDNIGHT TOD ROLLOVER! Increase day by one.
-                    ++day_count_[rt.sys_typ_];
-                    record.timestamp_ = record.timestamp_.addDays(day_count_.value(rt.sys_typ_));
+                    ++day_count_[rt];
+                    record.timestamp_ = record.timestamp_.addDays(day_count_.value(rt));
                     // qWarning();
                 }
                 else
@@ -251,15 +251,15 @@ void AsterixXmlReader::readRecord()
     else
     {
         // First timestamp insertion.
-        last_times_.insert(rt.sys_typ_, record.timestamp_);
-        day_count_.insert(rt.sys_typ_, 0);
+        last_times_.insert(rt, record.timestamp_);
+        day_count_.insert(rt, 0);
         // qWarning();
     }
 
     // Save most recent TOD.
     if (save_tod)
     {
-        last_times_.insert(rt.sys_typ_, record.timestamp_);
+        last_times_.insert(rt, record.timestamp_);
     }
 
     records_.enqueue(record);
