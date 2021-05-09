@@ -282,8 +282,10 @@ Asterix::DataItem AsterixXmlReader::readDataItem()
     {
         de = readDataElement();
 
-        // Ignore Field Extension Indicator.
-        if (!de.isNull() && de.name_ != QLatin1String("FX"))
+        // Ignore Field Extension Indicator (FX) and spare bit DataElements.
+        if (!de.isNull() &&
+            de.name_ != QLatin1String("FX") &&
+            de.name_ != QLatin1String("spare"))
         {
             di.data_.insert(de.name_, de);
         }

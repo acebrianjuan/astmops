@@ -99,8 +99,7 @@ void AsterixXmlReaderTest::test_data()
 
     cat010Smr0.dataItems_[QLatin1String("I161")] =
         Asterix::DataItem(QLatin1String("I161"),
-            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("spare"), QLatin1String("0"))
-                                            << Asterix::DataElement(QLatin1String("TrkNb"), QLatin1String("1391")));
+            QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("TrkNb"), QLatin1String("1391")));
 
     cat010Smr0.dataItems_[QLatin1String("I170")] =
         Asterix::DataItem(QLatin1String("I170"),
