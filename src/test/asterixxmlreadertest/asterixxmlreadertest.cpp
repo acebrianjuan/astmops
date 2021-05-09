@@ -71,8 +71,7 @@ void AsterixXmlReaderTest::test_data()
                                             << Asterix::DataElement(QLatin1String("DCR"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("CHN"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("GBS"), QLatin1String("0"))
-                                            << Asterix::DataElement(QLatin1String("CRT"), QLatin1String("0"))
-                                            << Asterix::DataElement(QLatin1String("FX"), QLatin1String("0")));
+                                            << Asterix::DataElement(QLatin1String("CRT"), QLatin1String("0")));
 
     cat010Smr0.dataItems_[QLatin1String("I140")] =
         Asterix::DataItem(QLatin1String("I140"),
@@ -111,20 +110,15 @@ void AsterixXmlReaderTest::test_data()
                                             << Asterix::DataElement(QLatin1String("MAH"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("TCC"), QLatin1String("0"))
                                             << Asterix::DataElement(QLatin1String("STH"), QLatin1String("0"))
-                                            << Asterix::DataElement(QLatin1String("FX"), QLatin1String("1"))
                                             << Asterix::DataElement(QLatin1String("TOM"), QLatin1String("3"))
                                             << Asterix::DataElement(QLatin1String("DOU"), QLatin1String("0"))
-                                            << Asterix::DataElement(QLatin1String("MRS"), QLatin1String("0"))
-                                            << Asterix::DataElement(QLatin1String("FX"), QLatin1String("0")));
+                                            << Asterix::DataElement(QLatin1String("MRS"), QLatin1String("0")));
 
     cat010Smr0.dataItems_[QLatin1String("I270")] =
         Asterix::DataItem(QLatin1String("I270"),
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("Length"), QLatin1String("38.0000000"))
-                                            << Asterix::DataElement(QLatin1String("FX"), QLatin1String("1"))
                                             << Asterix::DataElement(QLatin1String("Ori"), QLatin1String("98.3500000"))
-                                            << Asterix::DataElement(QLatin1String("FX"), QLatin1String("1"))
-                                            << Asterix::DataElement(QLatin1String("Width"), QLatin1String("33.0000000"))
-                                            << Asterix::DataElement(QLatin1String("FX"), QLatin1String("0")));
+                                            << Asterix::DataElement(QLatin1String("Width"), QLatin1String("33.0000000")));
 
     cat010Smr0.dataItems_[QLatin1String("I210")] =
         Asterix::DataItem(QLatin1String("I210"),

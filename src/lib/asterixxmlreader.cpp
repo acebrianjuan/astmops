@@ -281,7 +281,9 @@ Asterix::DataItem AsterixXmlReader::readDataItem()
     while (xml_.readNextStartElement())
     {
         de = readDataElement();
-        if (!de.isNull())
+
+        // Ignore Field Extension Indicator.
+        if (!de.isNull() && de.name_ != QLatin1String("FX"))
         {
             di.data_.insert(de.name_, de);
         }
