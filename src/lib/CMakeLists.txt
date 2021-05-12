@@ -24,8 +24,8 @@ add_library(lib
     #perfevaluator.cpp
     targetreport.cpp
     targetreportextractor.cpp
-    #track.cpp
-    #trackextractor.cpp
+    track.cpp
+    trackextractor.cpp
     )
 
 target_include_directories(lib PUBLIC .)

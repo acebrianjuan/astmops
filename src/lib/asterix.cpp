@@ -113,7 +113,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
     SystemType st = SystemType::Unknown;
     MessageType mt = MessageType::Unknown;
 
-    if (!isCategorySupported(rec.cat_))
+    if (!Asterix::isCategorySupported(rec.cat_))
     {
         return RecordType(st, mt);
     }
@@ -277,6 +277,221 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
     }
 
     return RecordType(st, mt);
+}
+
+bool Asterix::isCategorySupported(const Cat cat)
+{
+    /* SUPPORTED ASTERIX CATEGORIES:
+     * CAT010: Monosensor Surface Movement Data
+     * CAT021: ADS-B Messages
+     */
+    if (cat == 10 || cat == 21)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Asterix::hasMinimumDataItems(const Asterix::Record &rec)
+{
+    Q_ASSERT(Asterix::isCategorySupported(rec.cat_) && !rec.rec_typ_.isUnknown());
+
+    QVector<Asterix::DataItemList> ditems;
+
+    switch (rec.cat_)
+    {
+    case 10:
+    {
+        if (rec.rec_typ_.msg_typ_ == MessageType::ServiceMessage)
+        {
+            Asterix::DataItemList mandatory;
+            mandatory.type_ = Asterix::DataItemListType::Mandatory;
+            mandatory.items_ = QStringList() << QLatin1String("I000")   // Message Type
+                                             << QLatin1String("I010")   // Data Source Identifier
+                                             << QLatin1String("I140")   // Time of Day
+                                             << QLatin1String("I550");  // System Status
+
+            ditems << mandatory;
+        }
+        else if (rec.rec_typ_.msg_typ_ == MessageType::TargetReport)
+        {
+            if (rec.rec_typ_.sys_typ_ == SystemType::Smr)
+            {
+                Asterix::DataItemList mandatory;
+                mandatory.type_ = Asterix::DataItemListType::Mandatory;
+                mandatory.items_ = QStringList() << QLatin1String("I000")   // Message Type
+                                                 << QLatin1String("I010")   // Data Source Identifier
+                                                 << QLatin1String("I020")   // Target Report Descriptor
+                                                 << QLatin1String("I140")   // Time of Day
+                                                 << QLatin1String("I161")   // Track Number
+                                                 << QLatin1String("I270");  // Target Size & Orientation
+
+                Asterix::DataItemList disjunctive;
+                disjunctive.type_ = Asterix::DataItemListType::Disjunctive;
+                disjunctive.items_ = QStringList() << QLatin1String("I040")   // Position in Polar Co-ordinates
+                                                   << QLatin1String("I041")   // Position in WGS-84 Coordinates
+                                                   << QLatin1String("I042");  // Position in Cartesian Coordinates
+
+                ditems << mandatory << disjunctive;
+            }
+            else if (rec.rec_typ_.sys_typ_ == SystemType::Mlat)
+            {
+                Asterix::DataItemList mandatory;
+                mandatory.type_ = Asterix::DataItemListType::Mandatory;
+                mandatory.items_ = QStringList() << QLatin1String("I000")   // Message Type
+                                                 << QLatin1String("I010")   // Data Source Identifier
+                                                 << QLatin1String("I020")   // Target Report Descriptor
+                                                 << QLatin1String("I140")   // Time of Day
+                                                 << QLatin1String("I161")   // Track Number
+                                                 << QLatin1String("I220");  // Mode S Target Address (ICAO)
+
+                Asterix::DataItemList disjunctive1;
+                disjunctive1.type_ = Asterix::DataItemListType::Disjunctive;
+                disjunctive1.items_ = QStringList() << QLatin1String("I041")   // Position in WGS-84 Coordinates
+                                                    << QLatin1String("I042");  // Position in Cartesian Coordinates
+
+                Asterix::DataItemList disjunctive2;
+                disjunctive2.type_ = Asterix::DataItemListType::Disjunctive;
+                disjunctive2.items_ = QStringList() << QLatin1String("I060")   // Mode 3/A Code in Octal (SQUAWK)
+                                                    << QLatin1String("I245");  // Target Identification (CALLSIGN)
+
+                ditems << mandatory << disjunctive1 << disjunctive2;
+            }
+        }
+    }
+    case 21:
+    {
+    }
+    }
+
+    return Asterix::checkDataItems(rec, ditems);
+}
+
+bool Asterix::checkDataItems(const Asterix::Record &rec,
+    const QVector<DataItemList> &col)
+{
+    // Return true if colection of Data Items to be found is empty.
+    if (col.isEmpty())
+    {
+        return true;
+    }
+
+    // Return false if record has no Data Items.
+    if (rec.dataItems_.isEmpty())
+    {
+        return false;
+    }
+
+    int count = col.size();
+    for (const DataItemList &diList : col)
+    {
+        if (checkDataItemsList(rec, diList.items_, diList.type_))
+        {
+            // Check succeeded. Decrease counter.
+            --count;
+        }
+        else
+        {
+            // Check failed. Exit the loop.
+            break;
+        }
+    }
+
+    if (count == 0)
+    {
+        // All checks succeeded.
+        return true;
+    }
+
+    return false;
+}
+
+bool Asterix::checkDataItemsList(const Asterix::Record &rec,
+    const QStringList &list, DataItemListType type)
+{
+    // Return true if list of Data Items to be found is empty.
+    if (list.isEmpty())
+    {
+        return true;
+    }
+
+    // Return false if record has no Data Items.
+    if (rec.dataItems_.isEmpty())
+    {
+        return false;
+    }
+
+    auto makeHash = [](const QStringList &list, bool state = false) {
+        Q_ASSERT(!list.isEmpty());
+
+        QHash<QString, bool> hash;
+
+        for (const QString &key : list)
+        {
+            hash.insert(key, state);
+        }
+
+        return hash;
+    };
+
+    if (type == Asterix::DataItemListType::Disjunctive)
+    {
+        for (const Asterix::DataItem &di : rec.dataItems_)
+        {
+            if (di.isNull())
+            {
+                continue;
+            }
+
+            QString diName = di.name_;
+            if (list.contains(diName))
+            {
+                // One match is enough. Return true.
+                return true;
+            }
+        }
+    }
+    else  // Type is Mandatory.
+    {
+        /* Count how many false there are at the start,
+         * decrement that number when you flip one.
+         * Stop when there's none left.
+         */
+        QHash<QString, bool> hash = makeHash(list);
+        int count = hash.size();
+        if (rec.dataItems_.size() >= count)
+        {
+            for (const Asterix::DataItem &di : rec.dataItems_)
+            {
+                if (count == 0)
+                {
+                    break;
+                }
+
+                if (di.isNull())
+                {
+                    continue;
+                }
+
+                QString diName = di.name_;
+                QHash<QString, bool>::iterator it = hash.find(diName);
+                if (it != hash.end())
+                {
+                    *it = true;
+                    --count;
+                }
+            }
+
+            if (count == 0)
+            {
+                // All items found.
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 bool Asterix::operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs)

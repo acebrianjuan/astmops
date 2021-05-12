@@ -33,12 +33,16 @@
 #include <QtGlobal>
 #include <QtMath>
 
+constexpr double ft_to_m = 0.3048;
+constexpr double FL_to_m = ft_to_m * 100;
+
 using Utn = quint32;
 using ModeS = quint32;
 using Mode3A = quint16;
 using TrackNum = quint16;
 using Ident = QString;
 
+using Cat = quint8;
 using Sac = quint8;
 using Sic = quint8;
 
@@ -49,6 +53,8 @@ struct DataSrcId
 };
 Q_DECLARE_TYPEINFO(DataSrcId, Q_PRIMITIVE_TYPE);
 
+bool operator==(DataSrcId lhs, DataSrcId rhs);
+
 enum class SystemType
 {
     Unknown,
@@ -57,6 +63,7 @@ enum class SystemType
     Adsb,
     Dgps
 };
+Q_DECLARE_METATYPE(SystemType);
 
 enum class MessageType
 {
@@ -64,6 +71,7 @@ enum class MessageType
     TargetReport,
     ServiceMessage
 };
+Q_DECLARE_METATYPE(MessageType);
 
 enum class ServiceMessageType
 {
@@ -72,6 +80,15 @@ enum class ServiceMessageType
     PeriodicStatusMessage,
     EventTriggeredStatusMessage
 };
+Q_DECLARE_METATYPE(ServiceMessageType);
+
+enum class TargetReportType
+{
+    Unknown,
+    Surface,
+    Airborne
+};
+Q_DECLARE_METATYPE(TargetReportType);
 
 struct RecordType
 {
@@ -84,7 +101,7 @@ struct RecordType
     MessageType msg_typ_ = MessageType::Unknown;
 };
 
-bool operator==(RecordType a, RecordType b);
+bool operator==(RecordType lhs, RecordType rhs);
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 uint qHash(const SystemType st, uint seed);
@@ -99,7 +116,7 @@ size_t qHash(const RecordType rt, size_t seed);
 enum class Layer
 {
     UnknownLayer,
-    GroundLayer,
+    SurfaceLayer,
     AirborneLayer
 };
 
@@ -127,7 +144,6 @@ const double defaultProbDetectionPeriodOther = 2.0;
 }  // namespace ED117
 }  // namespace MOPS
 
-bool isCategorySupported(const quint8 cat);
 
 quint8 readSic(const QString &key);
 

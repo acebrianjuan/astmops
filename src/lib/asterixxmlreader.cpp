@@ -122,7 +122,7 @@ void AsterixXmlReader::readRecord()
     }
 
     // Skip unsupported categories.
-    if (!isCategorySupported(cat))
+    if (!Asterix::isCategorySupported(cat))
     {
         // qWarning();
         return;
@@ -150,6 +150,7 @@ void AsterixXmlReader::readRecord()
     if (xml_.hasError())
     {
         // Discard corrupt record.
+        // qWarning();
         return;
     }
 
@@ -161,6 +162,8 @@ void AsterixXmlReader::readRecord()
         // qWarning();
         return;
     }
+
+    record.rec_typ_ = rt;
 
     QDateTime datetime = QDateTime(startDate_, QTime::fromMSecsSinceStartOfDay(tstamp), Qt::UTC);
 

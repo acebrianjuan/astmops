@@ -30,16 +30,22 @@ bool operator==(const TargetReport &lhs, const TargetReport &rhs)
     };
 #endif
 
-    auto closeEnough = [tol](double x1, double y1, double z1,
-                           double x2, double y2, double z2) {
+    auto closeEnough = [tol](double x1, double y1, /*double z1,*/
+                           double x2, double y2 /*, double z2*/) {
         return qSqrt(qPow(x1 - x2, 2) +
-                     qPow(y1 - y2, 2) +
-                     qPow(z1 - z2, 2)) < tol;
+                     qPow(y1 - y2, 2) /*+
+                     qPow(z1 - z2, 2)*/
+                   ) < tol;
     };
 
-    return closeEnough(lhs.x_, lhs.y_, lhs.z_, rhs.x_, rhs.y_, rhs.z_) &&
-           lhs.on_gnd_ == rhs.on_gnd_ &&
+    return lhs.ds_id_ == rhs.ds_id_ &&
+           lhs.sys_typ_ == rhs.sys_typ_ &&
+           lhs.tod_ == rhs.tod_ &&
+           lhs.trk_nb_ == rhs.trk_nb_ &&
            lhs.mode_3A_ == rhs.mode_3A_ &&
            lhs.mode_S_ == rhs.mode_S_ &&
-           lhs.ident_ == rhs.ident_;
+           lhs.ident_ == rhs.ident_ &&
+           lhs.on_gnd_ == rhs.on_gnd_ &&
+           closeEnough(lhs.x_, lhs.y_, /*lhs.z_,*/ rhs.x_, rhs.y_ /*, rhs.z_*/) &&
+           lhs.z_ == rhs.z_;
 }

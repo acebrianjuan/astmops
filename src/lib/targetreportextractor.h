@@ -30,7 +30,8 @@
 class TargetReportExtractor
 {
 public:
-    TargetReportExtractor();
+    TargetReportExtractor(const QGeoCoordinate& arp = QGeoCoordinate(),
+        const QGeoCoordinate& smr = QGeoCoordinate());
 
     void addData(const Asterix::Record& rec);
     QQueue<TargetReport> targetReports(SystemType st) const;
@@ -38,12 +39,17 @@ public:
 
     void loadExcludedAddresses(QIODevice* device);
 
+    void setArp(const QGeoCoordinate& arp);
+    void setSmr(const QGeoCoordinate& smr);
+
 private:
-    bool isRecordToBeKept(RecordType rt, const Asterix::Record& rec) const;
-    TargetReport makeTargetReport(const Asterix::Record& rec) const;
+    bool isRecordToBeKept(const Asterix::Record& rec) const;
+    std::optional<TargetReport> makeTargetReport(const Asterix::Record& rec) const;
+
+    QGeoCoordinate arp_;
+    QGeoCoordinate smr_;
 
     QSet<ModeS> excluded_addresses_;
-    QHash<SystemType, QDateTime> last_times_;
     QHash<SystemType, Counters::InOutCounter> counters_;
     QHash<SystemType, QQueue<TargetReport>> tgt_reports_;
 };

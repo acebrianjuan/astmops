@@ -20,6 +20,12 @@
 
 #include "astmops.h"
 
+bool operator==(DataSrcId lhs, DataSrcId rhs)
+{
+    return lhs.sac_ == rhs.sac_ &&
+           lhs.sic_ == rhs.sic_;
+}
+
 RecordType::RecordType() {}
 
 RecordType::RecordType(SystemType st, MessageType mt) : sys_typ_(st), msg_typ_(mt){};
@@ -29,10 +35,10 @@ bool RecordType::isUnknown() const
     return sys_typ_ == SystemType::Unknown || msg_typ_ == MessageType::Unknown;
 }
 
-bool operator==(RecordType a, RecordType b)
+bool operator==(RecordType lhs, RecordType rhs)
 {
-    return a.sys_typ_ == b.sys_typ_ &&
-           a.msg_typ_ == b.msg_typ_;
+    return lhs.sys_typ_ == rhs.sys_typ_ &&
+           lhs.msg_typ_ == rhs.msg_typ_;
 }
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -57,7 +63,6 @@ size_t qHash(MessageType mt, size_t seed)
     return seed;
 }
 
-
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 uint qHash(RecordType rt, uint seed)
 #else
@@ -68,20 +73,6 @@ size_t qHash(RecordType rt, size_t seed)
     seed = hash(seed, static_cast<int>(rt.sys_typ_));
     seed = hash(seed, static_cast<int>(rt.msg_typ_));
     return seed;
-}
-
-bool isCategorySupported(const quint8 cat)
-{
-    /* SUPPORTED ASTERIX CATEGORIES:
-     * CAT010: Monosensor Surface Movement Data
-     * CAT021: ADS-B Messages
-     */
-    if (cat == 10 || cat == 21)
-    {
-        return true;
-    }
-
-    return false;
 }
 
 quint8 readSic(const QString &key)

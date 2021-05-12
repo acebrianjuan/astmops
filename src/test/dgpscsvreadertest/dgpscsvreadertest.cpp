@@ -34,10 +34,8 @@ private slots:
 
     void testMakeDgpsTgtRep_data();
     void testMakeDgpsTgtRep();
-
-private:
-    double ft_to_m = 0.3048;
 };
+
 Q_DECLARE_METATYPE(QVector<QGeoPositionInfo>);
 Q_DECLARE_METATYPE(QVector<TargetReport>);
 Q_DECLARE_METATYPE(ErrorType);
@@ -147,7 +145,7 @@ void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
     QVector<TargetReport> tgtRep;
 
     TargetReport tr;
-    tr.rec_typ_ = RecordType(SystemType::Dgps, MessageType::TargetReport);
+    tr.sys_typ_ = SystemType::Dgps;
     tr.mode_S_ = 0x34304F;
     tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:05.351Z"), Qt::ISODateWithMs);
     tr.x_ = 422.796423;

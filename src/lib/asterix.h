@@ -96,6 +96,9 @@ public:
     quint32 crc_ = 0xFFFFFFFF;
     QDateTime timestamp_;
 
+    DataSrcId ds_id_;
+    RecordType rec_typ_;
+
     QHash<QString, DataItem> dataItems_;
 };
 
@@ -104,6 +107,24 @@ bool containsDataItem(const Record &rec, const QVector<QLatin1String> &diNames);
 bool containsElement(const Record &rec, QLatin1String diName, QLatin1String deName);
 std::optional<QString> getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
 RecordType getRecordType(const Asterix::Record &rec);
+
+bool isCategorySupported(const Cat cat);
+
+enum DataItemListType
+{
+    Mandatory,
+    Disjunctive
+};
+
+struct DataItemList
+{
+    QStringList items_;
+    DataItemListType type_;
+};
+
+bool hasMinimumDataItems(const Asterix::Record &rec);
+bool checkDataItems(const Asterix::Record &rec, const QVector<DataItemList> &col);
+bool checkDataItemsList(const Asterix::Record &rec, const QStringList &list, DataItemListType type);
 
 // FREE OPERATORS.
 bool operator==(const Asterix::DataElement &lhs, const Asterix::DataElement &rhs);

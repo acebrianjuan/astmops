@@ -28,19 +28,20 @@
 struct TargetReport
 {
     DataSrcId ds_id_;
-    RecordType rec_typ_;
+    SystemType sys_typ_ = SystemType::Unknown;
     QDateTime tod_;
 
-    TrackNum trk_nb_;
+    TrackNum trk_nb_ = 0;
 
-    std::optional<Mode3A> mode_3A_;
     std::optional<ModeS> mode_S_;
+    std::optional<Mode3A> mode_3A_;
     std::optional<Ident> ident_;
 
-    std::optional<bool> on_gnd_;
-    double x_;
-    double y_;
-    double z_;
+    bool on_gnd_ = false;
+
+    double x_ = qSNaN();
+    double y_ = qSNaN();
+    std::optional<double> z_;
 };
 
 Q_DECLARE_METATYPE(TargetReport);

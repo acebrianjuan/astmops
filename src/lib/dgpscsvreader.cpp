@@ -233,7 +233,7 @@ QMultiMap<QDateTime, TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo
         QVector3D cart = geoToLocalEnu(pi.coordinate(), leblArpGeo);
 
         TargetReport tr;
-        tr.rec_typ_ = RecordType(SystemType::Dgps, MessageType::TargetReport);
+        tr.sys_typ_ = SystemType::Dgps;
         tr.tod_ = pi.timestamp();
         tr.mode_S_ = mode_s;
         tr.x_ = cart.x();
