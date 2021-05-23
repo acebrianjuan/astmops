@@ -260,7 +260,7 @@ void TrackExtractorTest::test_data()
 
 void TrackExtractorTest::test()
 {
-    TrackExtractor trackex;
+    TrackExtractor trackExtr;
 
     QFETCH(SystemType, sysType);
     QFETCH(QVector<TargetReport>, tgtRepsIn);
@@ -269,10 +269,10 @@ void TrackExtractorTest::test()
     // Feed Target Reports.
     for (const TargetReport &tr : tgtRepsIn)
     {
-        trackex.addData(tr);
+        trackExtr.addData(tr);
     }
 
-    QVector<Track> tracks = trackex.tracks(sysType);
+    QVector<Track> tracks = trackExtr.tracks(sysType);
 
     QVERIFY(tracks.size() == tracksOut.size());
 

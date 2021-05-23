@@ -27,6 +27,14 @@ TargetReportExtractor::TargetReportExtractor(const QGeoCoordinate &arp, const QG
     counters_.insert(SystemType::Smr, Counters::InOutCounter());
     counters_.insert(SystemType::Mlat, Counters::InOutCounter());
     counters_.insert(SystemType::Adsb, Counters::InOutCounter());
+
+    // Cartesian offset from SMR origin to ARP.
+    QVector3D arpCart = geoToLocalEnu(arp_, arp_);
+    QVector3D smrCart = geoToLocalEnu(smr_, arp_);
+
+    smrToArp_ = {smrCart.x() - arpCart.x(),
+        smrCart.y() - arpCart.y(),
+        smrCart.z() - arpCart.z()};
 }
 
 void TargetReportExtractor::addData(const Asterix::Record &rec)
@@ -62,6 +70,32 @@ QQueue<TargetReport> TargetReportExtractor::targetReports(SystemType st) const
 Counters::InOutCounter TargetReportExtractor::counters(SystemType st) const
 {
     return counters_.value(st);
+}
+
+bool TargetReportExtractor::hasPendingData() const
+{
+    for (const QQueue<TargetReport> &q : tgt_reports_)
+    {
+        if (!q.isEmpty())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::optional<TargetReport> TargetReportExtractor::takeData()
+{
+    for (QQueue<TargetReport> &q : tgt_reports_)
+    {
+        if (!q.isEmpty())
+        {
+            return q.dequeue();
+        }
+    }
+
+    return std::nullopt;
 }
 
 void TargetReportExtractor::loadExcludedAddresses(QIODevice *device)
@@ -261,7 +295,12 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
     }
 
     TargetReport tr;
+
+    // SystemType.
     tr.sys_typ_ = rec.rec_typ_.sys_typ_;
+
+    // TOD.
+    tr.tod_ = rec.timestamp_;
 
     // System Area Code (SAC).
     bool has_sac = Asterix::containsElement(rec, QLatin1String("I010"), QLatin1String("SAC"));
@@ -299,23 +338,6 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
     {
     case 10:
     {
-        // TOD.
-        bool has_tod = Asterix::containsElement(rec, QLatin1String("I140"), QLatin1String("ToD"));
-        if (!has_tod)
-        {
-            return std::nullopt;
-        }
-
-        bool tod_ok = false;
-        double tod = Asterix::getElementValue(rec, QLatin1String("I140"), QLatin1String("ToD")).value().toDouble(&tod_ok);
-        Q_UNUSED(tod);
-        if (!tod_ok)
-        {
-            return std::nullopt;
-        }
-
-        tr.tod_ = rec.timestamp_;
-
         // Track Number.
         bool has_trknb = Asterix::containsElement(rec, QLatin1String("I161"), QLatin1String("TrkNb"));
         if (!has_trknb)
@@ -347,7 +369,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             }
 
             bool gbs_ok = false;
-            TrackNum gbs = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("GBS")).value().toUInt(&gbs_ok);
+            bool gbs = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("GBS")).value().toUInt(&gbs_ok);
             if (!gbs_ok)
             {
                 return std::nullopt;
@@ -370,7 +392,8 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             return std::nullopt;
         }
 
-        tr.x_ = x;
+        tr.x_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? x + smrToArp_.x()
+                                                         : x;
 
         // Y
         bool has_y = Asterix::containsElement(rec, QLatin1String("I042"), QLatin1String("Y"));
@@ -386,7 +409,8 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             return std::nullopt;
         }
 
-        tr.y_ = y;
+        tr.y_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? y + smrToArp_.y()
+                                                         : y;
 
         // Z
 
@@ -465,7 +489,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
         }
 
         bool gbs_ok = false;
-        TrackNum gbs = Asterix::getElementValue(rec, QLatin1String("I040"), QLatin1String("GBS")).value().toUInt(&gbs_ok);
+        bool gbs = Asterix::getElementValue(rec, QLatin1String("I040"), QLatin1String("GBS")).value().toUInt(&gbs_ok);
         if (!gbs_ok)
         {
             return std::nullopt;
@@ -555,7 +579,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
         {
             bool fl_ok = false;
             bool has_fl = Asterix::containsElement(rec, QLatin1String("I145"), QLatin1String("FL"));
-            if (!has_fl)
+            if (has_fl)
             {
                 double fl = Asterix::getElementValue(rec, QLatin1String("I145"), QLatin1String("FL")).value().toDouble(&fl_ok);
                 if (fl_ok)
@@ -611,7 +635,6 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
         }
     }
     }
-
 
     return tr;
 }

@@ -30,10 +30,36 @@ void TrackExtractor::addData(const TargetReport &tr)
         tracks_[tr.sys_typ_].insert(tr.trk_nb_, Track(tr.sys_typ_, tr.trk_nb_));
     }
 
-    tracks_[tr.sys_typ_][tr.trk_nb_].add(tr);
+    tracks_[tr.sys_typ_][tr.trk_nb_] << tr;
 }
 
 QVector<Track> TrackExtractor::tracks(SystemType st) const
 {
     return tracks_.value(st).values().toVector();
+}
+
+bool TrackExtractor::hasPendingData() const
+{
+    for (const QMap<TrackNum, Track> &m : tracks_)
+    {
+        if (!m.isEmpty())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::optional<Track> TrackExtractor::takeData()
+{
+    for (QMap<TrackNum, Track> &m : tracks_)
+    {
+        if (!m.isEmpty())
+        {
+            return m.take(m.begin().key());
+        }
+    }
+
+    return std::nullopt;
 }

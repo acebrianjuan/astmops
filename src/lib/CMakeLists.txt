@@ -25,6 +25,7 @@ add_library(lib
     targetreport.cpp
     targetreportextractor.cpp
     track.cpp
+    trackassociator.cpp
     trackextractor.cpp
     )
 

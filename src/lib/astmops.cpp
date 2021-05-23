@@ -112,9 +112,9 @@ QDate Configuration::asterixDate()
     return date;
 }
 
-bool Configuration::useAsterixTodAsTimestamp()
+bool Configuration::useXmlTimestamp()
 {
-    QString key = QLatin1String("useAsterixTodAsTimestamp");
+    QString key = QLatin1String("useXmlTimestamp");
 
     QSettings settings;
     //settings.beginGroup(QLatin1String("Global"));

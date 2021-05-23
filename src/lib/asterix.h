@@ -102,11 +102,12 @@ public:
     QHash<QString, DataItem> dataItems_;
 };
 
-bool containsDataItem(const Record &rec, QLatin1String diName);
-bool containsDataItem(const Record &rec, const QVector<QLatin1String> &diNames);
-bool containsElement(const Record &rec, QLatin1String diName, QLatin1String deName);
-std::optional<QString> getElementValue(const Record &rec, QLatin1String diName, QLatin1String deName);
+bool containsDataItem(const Asterix::Record &rec, QLatin1String diName);
+bool containsDataItem(const Asterix::Record &rec, const QVector<QLatin1String> &diNames);
+bool containsElement(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName);
+std::optional<QString> getElementValue(const Asterix::Record &rec, QLatin1String diName, QLatin1String deName);
 RecordType getRecordType(const Asterix::Record &rec);
+QTime getTimeOfDay(const Asterix::Record &rec);
 
 bool isCategorySupported(const Cat cat);
 

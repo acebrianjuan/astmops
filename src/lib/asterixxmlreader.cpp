@@ -67,22 +67,27 @@ void AsterixXmlReader::addData(const QByteArray& data)
     }
 }
 
-Asterix::Record AsterixXmlReader::record()
-{
-    return records_.dequeue();
-}
-
-bool AsterixXmlReader::hasPendingRecords()
-{
-    return !records_.isEmpty();
-}
-
 void AsterixXmlReader::setStartDate(QDate date)
 {
     if (date.isValid())
     {
         startDate_ = date;
     }
+}
+
+bool AsterixXmlReader::hasPendingData() const
+{
+    return !records_.isEmpty();
+}
+
+std::optional<Asterix::Record> AsterixXmlReader::takeData()
+{
+    if (!records_.isEmpty())
+    {
+        return records_.dequeue();
+    }
+
+    return std::nullopt;
 }
 
 void AsterixXmlReader::readRecord()
@@ -165,7 +170,15 @@ void AsterixXmlReader::readRecord()
 
     record.rec_typ_ = rt;
 
-    QDateTime datetime = QDateTime(startDate_, QTime::fromMSecsSinceStartOfDay(tstamp), Qt::UTC);
+    QDateTime datetime;
+    if (useXmlTimestamp_)
+    {
+        datetime = QDateTime(startDate_, QTime::fromMSecsSinceStartOfDay(tstamp), Qt::UTC);
+    }
+    else  // Use ASTERIX TOD for timestamp.
+    {
+        datetime = QDateTime(startDate_, Asterix::getTimeOfDay(record), Qt::UTC);
+    }
 
     // Add ROLLOVER days.
     if (day_count_.contains(rt) && day_count_.value(rt) > 0)

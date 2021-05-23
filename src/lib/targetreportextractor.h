@@ -34,8 +34,12 @@ public:
         const QGeoCoordinate& smr = QGeoCoordinate());
 
     void addData(const Asterix::Record& rec);
+
     QQueue<TargetReport> targetReports(SystemType st) const;
     Counters::InOutCounter counters(SystemType st) const;
+    bool hasPendingData() const;
+
+    std::optional<TargetReport> takeData();
 
     void loadExcludedAddresses(QIODevice* device);
 
@@ -48,6 +52,8 @@ private:
 
     QGeoCoordinate arp_;
     QGeoCoordinate smr_;
+
+    QVector3D smrToArp_;
 
     QSet<ModeS> excluded_addresses_;
     QHash<SystemType, Counters::InOutCounter> counters_;

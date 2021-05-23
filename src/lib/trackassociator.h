@@ -1,6 +1,6 @@
 /*!
- * \file trackextractor.h
- * \brief Interface of the TrackExtractor class.
+ * \file trackassociator.h
+ * \brief Interface of the TrackAssociator class.
  * \author Álvaro Cebrián Juan, 2020. acebrianjuan(at)gmail.com
  *
  * -----------------------------------------------------------------------
@@ -17,27 +17,30 @@
  * -----------------------------------------------------------------------
  */
 
-#ifndef ASTMOPS_TRACKEXTRACTOR_H
-#define ASTMOPS_TRACKEXTRACTOR_H
+#ifndef ASTMOPS_TRACKASSOCIATOR_H
+#define ASTMOPS_TRACKASSOCIATOR_H
 
+#include "asterix.h"
 #include "astmops.h"
-#include "targetreport.h"
 #include "track.h"
+#include <QMap>
 
-class TrackExtractor
+class TrackAssociator
 {
 public:
-    TrackExtractor();
+    TrackAssociator();
 
-    void addData(const TargetReport& tr);
+    void addData(const Track &t);
+    void run();
 
-    QVector<Track> tracks(SystemType st) const;
     bool hasPendingData() const;
-
-    std::optional<Track> takeData();
+    std::optional<TrackCollectionSet> takeData();
 
 private:
-    QHash<SystemType, QMap<TrackNum, Track>> tracks_;
+    QHash<TrackNum, Track> tstTracks_;
+    QHash<ModeS, TrackCollection> refTracks_;
+
+    QHash<ModeS, TrackCollectionSet> sets_;
 };
 
-#endif  // ASTMOPS_TRACKEXTRACTOR_H
+#endif  // ASTMOPS_TRACKASSOCIATOR_H

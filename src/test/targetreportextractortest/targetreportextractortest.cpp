@@ -407,8 +407,8 @@ void TargetReportExtractorTest::test_data()
     trSmr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs);
     trSmr.trk_nb_ = 1391;
     trSmr.on_gnd_ = true;
-    trSmr.x_ = 565.0000000;
-    trSmr.y_ = -295.0000000;
+    trSmr.x_ = 565.0000000 + 1394.655251;
+    trSmr.y_ = -295.0000000 - 161.695809;
 
     TargetReport trMlat;
     trMlat.ds_id_.sac_ = 0;
@@ -469,7 +469,7 @@ void TargetReportExtractorTest::test()
     QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
     QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
 
-    TargetReportExtractor trepex(leblArpGeo, leblSmrGeo);
+    TargetReportExtractor tgtRepExtr(leblArpGeo, leblSmrGeo);
 
     QFETCH(SystemType, sysType);
     QFETCH(QVector<Asterix::Record>, recsIn);
@@ -478,11 +478,11 @@ void TargetReportExtractorTest::test()
     // Feed Records.
     for (Asterix::Record &rin : recsIn)
     {
-        trepex.addData(rin);
+        tgtRepExtr.addData(rin);
     }
 
-    QQueue<TargetReport> trqueue = trepex.targetReports(sysType);
-    Counters::InOutCounter counter = trepex.counters(sysType);
+    QQueue<TargetReport> trqueue = tgtRepExtr.targetReports(sysType);
+    Counters::InOutCounter counter = tgtRepExtr.counters(sysType);
 
     QVERIFY(trqueue.size() == tgtRepsOut.size());
 

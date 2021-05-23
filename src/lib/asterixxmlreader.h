@@ -42,9 +42,10 @@ public:
     explicit AsterixXmlReader(QObject* parent = nullptr);
 
     void addData(const QByteArray& data);
-    Asterix::Record record();
-    bool hasPendingRecords();
     void setStartDate(QDate date);
+
+    bool hasPendingData() const;
+    std::optional<Asterix::Record> takeData();
 
 public slots:
 
@@ -57,7 +58,8 @@ private:
     Asterix::DataElement readDataElement();
     bool isValidDataItem(const QString& di);
 
-    //QByteArray buffer_;
+    bool useXmlTimestamp_ = Configuration::useXmlTimestamp();
+
     QDate startDate_ = Configuration::asterixDate();
     QHash<RecordType, QDateTime> last_times_;
     QHash<RecordType, qint64> day_count_;

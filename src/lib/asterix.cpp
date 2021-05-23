@@ -21,13 +21,15 @@
 
 #include "asterix.h"
 
-// DataElement:
+/* ----------------------------- DataElement ------------------------------ */
+
 Asterix::DataElement::DataElement(const QString &name, const QString &value)
     : name_(name), value_(value)
 {
 }
 
-// DataItem:
+/* ------------------------------ DataItem -------------------------------- */
+
 Asterix::DataItem::DataItem(const QString &name, const QVector<DataElement> &data)
     : name_(name)
 {
@@ -47,7 +49,8 @@ std::optional<Asterix::DataElement> Asterix::DataItem::element(QLatin1String deN
     return std::nullopt;
 }
 
-// Record:
+/* ------------------------------- Record --------------------------------- */
+
 Asterix::Record::Record(const quint8 cat, const QDateTime &dateTime,
     const QVector<Asterix::DataItem> &dataItems)
     : cat_(cat), timestamp_(dateTime)
@@ -68,7 +71,8 @@ std::optional<Asterix::DataItem> Asterix::Record::dataItem(QLatin1String diName)
     return std::nullopt;
 }
 
-// Functions:
+/* --------------------------- Free functions ----------------------------- */
+
 bool Asterix::containsDataItem(const Asterix::Record &rec, QLatin1String diName)
 {
     return rec.dataItem(diName).has_value();
@@ -277,6 +281,71 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
     }
 
     return RecordType(st, mt);
+}
+
+QTime Asterix::getTimeOfDay(const Asterix::Record &rec)
+{
+    if (!Asterix::isCategorySupported(rec.cat_))
+    {
+        return QTime();
+    }
+
+    switch (rec.cat_)
+    {
+    case 10:  // CAT010: Monosensor Surface Movement Data.
+    {
+        bool has_tod = Asterix::containsElement(rec, QLatin1String("I140"), QLatin1String("ToD"));
+        if (!has_tod)
+        {
+            return QTime();
+        }
+
+        bool tod_ok = false;
+        double tod = Asterix::getElementValue(rec, QLatin1String("I140"), QLatin1String("ToD")).value().toDouble(&tod_ok);
+        if (!tod_ok)
+        {
+            return QTime();
+        }
+
+        return QTime::fromMSecsSinceStartOfDay(tod * 1000);
+    }
+    case 21:  // CAT021: ADS-B Messages.
+    {
+        std::function<std::optional<QString>()> tod_cb;
+
+        if (Asterix::containsElement(rec, QLatin1String("I071"), QLatin1String("time_applicability_position")))
+        {
+            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I071"), QLatin1String("time_applicability_position")); };
+        }
+        else if (Asterix::containsElement(rec, QLatin1String("I074"), QLatin1String("time_reception_position_highprecision")))
+        {
+            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I074"), QLatin1String("time_reception_position_highprecision")); };
+        }
+        else if (Asterix::containsElement(rec, QLatin1String("I073"), QLatin1String("time_reception_position")))
+        {
+            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I073"), QLatin1String("time_reception_position")); };
+        }
+        else if (Asterix::containsElement(rec, QLatin1String("I077"), QLatin1String("time_report_transmission")))
+        {
+            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I077"), QLatin1String("time_report_transmission")); };
+        }
+        else
+        {
+            return QTime();
+        }
+
+        bool tod_ok = false;
+        double tod = tod_cb().value().toDouble(&tod_ok);
+        if (!tod_ok)
+        {
+            return QTime();
+        }
+
+        return QTime::fromMSecsSinceStartOfDay(tod * 1000);
+    }
+    }
+
+    return QTime();
 }
 
 bool Asterix::isCategorySupported(const Cat cat)

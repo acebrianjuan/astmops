@@ -181,7 +181,7 @@ void AsterixXmlReaderTest::test_data()
 
 void AsterixXmlReaderTest::test()
 {
-    AsterixXmlReader reader;
+    AsterixXmlReader astXmlRdr;
 
     QFETCH(QString, fileName);
     QFile file(QFINDTESTDATA(fileName));
@@ -202,15 +202,15 @@ void AsterixXmlReaderTest::test()
 
         for (const auto &l : list)
         {
-            reader.addData(l);
+            astXmlRdr.addData(l);
         }
     } while (file.canReadLine());
 
 
     QVector<Asterix::Record> recordsOut;
-    while (reader.hasPendingRecords())
+    while (astXmlRdr.hasPendingData())
     {
-        recordsOut.append(reader.record());
+        recordsOut.append(astXmlRdr.takeData().value());
     }
 
     QCOMPARE(recordsOut.size(), recordsIn.size());
