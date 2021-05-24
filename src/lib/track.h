@@ -129,7 +129,7 @@ private:
     SystemType system_type_;
 
     QVector<TrackNum> track_numbers_;
-    QVector<Track> tracks_;
+    QMultiMap<QDateTime, Track> tracks_;
 
     QDateTime startDateTime_;
     QDateTime endDateTime_;

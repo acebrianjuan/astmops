@@ -312,7 +312,7 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
         }
 
         // Insert Track and register track number.
-        tracks_ << t;
+        tracks_.insert(t.startDateTime(), t);
         track_numbers_ << t.track_number();
     }
 
@@ -341,7 +341,7 @@ QVector<TrackNum> TrackCollection::track_numbers() const
 
 QVector<Track> TrackCollection::tracks() const
 {
-    return tracks_;
+    return tracks_.values().toVector();
 }
 
 bool TrackCollection::isEmpty() const
