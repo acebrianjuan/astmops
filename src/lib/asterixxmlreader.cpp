@@ -323,7 +323,9 @@ Asterix::DataElement AsterixXmlReader::readDataElement()
 
 bool AsterixXmlReader::isValidDataItem(const QString& di)
 {
-    QRegularExpression re(QLatin1String("I(\\d{3}|RE|SP)\\b"));
+    // Creating a QRegularExpression object is expensive.
+    // Making it static solves the performance cost.
+    static QRegularExpression re(QLatin1String("I(\\d{3}|RE|SP)\\b"));
     QRegularExpressionMatch match = re.match(di);
     return match.hasMatch();
 }
