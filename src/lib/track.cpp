@@ -540,12 +540,12 @@ std::optional<Track> intersect(const Track &intersectee, const Track &intersecto
     }
 
     QMultiMap<QDateTime, TargetReport> data = intersectee.data();
-    QMultiMap<QDateTime, TargetReport>::const_iterator it_from = data.lowerBound(intersector.startDateTime());
-    QMultiMap<QDateTime, TargetReport>::const_iterator it_to = data.upperBound(intersector.endDateTime());
+    QMultiMap<QDateTime, TargetReport>::iterator it_from = data.lowerBound(intersector.startDateTime());
+    QMultiMap<QDateTime, TargetReport>::iterator it_to = data.upperBound(intersector.endDateTime());
 
     // Only insert elements of intersectee that satisfy intersection with
     // intersector.
-    QMultiMap<QDateTime, TargetReport>::const_iterator it;
+    QMultiMap<QDateTime, TargetReport>::iterator it;
     for (it = it_from; it != it_to; ++it)
     {
         t << it.value();
