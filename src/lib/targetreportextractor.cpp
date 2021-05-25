@@ -633,6 +633,38 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
                 tr.ident_ = ident;
             }
         }
+
+        // MOPS version.
+        bool ver_ok = false;
+        bool has_ver = Asterix::containsElement(rec, QLatin1String("I210"), QLatin1String("VN"));
+        if (!has_ver)
+        {
+            return std::nullopt;
+        }
+
+        quint8 ver = Asterix::getElementValue(rec, QLatin1String("I210"), QLatin1String("VN")).value().toUInt(&ver_ok);
+        if (!ver_ok)
+        {
+            return std::nullopt;
+        }
+
+        tr.ver_ = ver;
+
+        // PIC.
+        bool pic_ok = false;
+        bool has_pic = Asterix::containsElement(rec, QLatin1String("I090"), QLatin1String("PIC"));
+        if (!has_pic)
+        {
+            return std::nullopt;
+        }
+
+        quint8 pic = Asterix::getElementValue(rec, QLatin1String("I090"), QLatin1String("PIC")).value().toUInt(&pic_ok);
+        if (!pic_ok)
+        {
+            return std::nullopt;
+        }
+
+        tr.pic_ = pic;
     }
     }
 

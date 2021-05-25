@@ -42,6 +42,11 @@ struct TargetReport
     double x_ = qSNaN();
     double y_ = qSNaN();
     std::optional<double> z_;
+
+    Aerodrome::Area area_ = Aerodrome::Area::None;
+
+    std::optional<quint8> ver_;
+    std::optional<quint8> pic_;
 };
 
 Q_DECLARE_METATYPE(TargetReport);
