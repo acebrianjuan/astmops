@@ -41,7 +41,7 @@ void AsterixXmlReaderTest::initTestCase()
 
     settings.setValue(QLatin1String("SMR.SIC"), 7);
     settings.setValue(QLatin1String("MLAT.SIC"), 107);
-    settings.setValue(QLatin1String("ADSB.SIC"), 109);
+    settings.setValue(QLatin1String("ADSB.SIC"), 219);
 
     settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));
 }

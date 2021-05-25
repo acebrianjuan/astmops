@@ -59,7 +59,7 @@ void TargetReportExtractorTest::initTestCase()
 
     settings.setValue(QLatin1String("SMR.SIC"), 7);
     settings.setValue(QLatin1String("MLAT.SIC"), 107);
-    settings.setValue(QLatin1String("ADSB.SIC"), 109);
+    settings.setValue(QLatin1String("ADSB.SIC"), 219);
 }
 
 void TargetReportExtractorTest::test_data()
