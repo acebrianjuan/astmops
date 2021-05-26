@@ -35,7 +35,15 @@ void TrackExtractor::addData(const TargetReport &tr)
 
 QVector<Track> TrackExtractor::tracks(SystemType st) const
 {
-    return tracks_.value(st).values().toVector();
+    QVector<Track> vec;
+    vec.reserve(tracks_[st].size());
+
+    for (const Track &t : tracks_[st])
+    {
+        vec << t;
+    }
+
+    return vec;
 }
 
 bool TrackExtractor::hasPendingData() const

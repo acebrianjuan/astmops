@@ -341,7 +341,15 @@ QVector<TrackNum> TrackCollection::track_numbers() const
 
 QVector<Track> TrackCollection::tracks() const
 {
-    return tracks_.values().toVector();
+    QVector<Track> vec;
+    vec.reserve(tracks_.size());
+
+    for (const Track &t : tracks_)
+    {
+        vec << t;
+    }
+
+    return vec;
 }
 
 bool TrackCollection::isEmpty() const

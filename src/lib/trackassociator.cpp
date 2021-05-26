@@ -104,7 +104,7 @@ void TrackAssociator::run()
         sets_.insert(mode_s, TrackCollectionSet(mode_s));
 
         // Iterate for each REF track in the track collection.
-        for (const Track &t_ref : tc.tracks())
+        for (const Track &t_ref : tc.tracks())  // clazy:exclude=range-loop,range-loop-detach
         {
             // If track is empty, skip it.
             if (t_ref.isEmpty())
