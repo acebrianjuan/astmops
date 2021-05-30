@@ -105,7 +105,6 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
                         : Layer::GroundLayer;
     }*/
 
-    // TODO: Consider returning a NamedArea instead of an Aerodrome::Area.
     if (layer == Layer::SurfaceLayer)
     {
         if (auto name = areaContainsPoint(m_runwayElements, pos2D))
@@ -141,7 +140,7 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
         }
     }
 
-    return Area::None;
+    return NamedArea();
 }
 
 bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point)

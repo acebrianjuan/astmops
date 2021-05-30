@@ -58,5 +58,8 @@ bool operator==(const TargetReport &lhs, const TargetReport &rhs)
            lhs.mode_S_ == rhs.mode_S_ &&
            lhs.ident_ == rhs.ident_ &&
            lhs.on_gnd_ == rhs.on_gnd_ &&
-           closeEnough(lhs.x_, lhs.y_, lhs.z_, rhs.x_, rhs.y_, rhs.z_);
+           closeEnough(lhs.x_, lhs.y_, lhs.z_, rhs.x_, rhs.y_, rhs.z_) &&
+           lhs.ver_ == rhs.ver_ &&
+           lhs.pic_ == rhs.pic_ &&
+           lhs.area_ == rhs.area_;
 }

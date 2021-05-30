@@ -45,10 +45,14 @@ public:
 
     void setArp(const QGeoCoordinate& arp);
     void setSmr(const QGeoCoordinate& smr);
+    void setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D&, const bool)>& cb);
 
 private:
     bool isRecordToBeKept(const Asterix::Record& rec) const;
     std::optional<TargetReport> makeTargetReport(const Asterix::Record& rec) const;
+    Aerodrome::NamedArea locatePoint(const QVector3D pos, const bool gbs) const;
+
+    std::function<Aerodrome::NamedArea(const QVector3D&, const bool)> locatePoint_cb_;
 
     QGeoCoordinate arp_;
     QGeoCoordinate smr_;

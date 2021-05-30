@@ -43,7 +43,7 @@ struct TargetReport
     double y_ = qSNaN();
     std::optional<double> z_;
 
-    Aerodrome::Area area_ = Aerodrome::Area::None;
+    Aerodrome::NamedArea area_;
 
     std::optional<quint8> ver_;
     std::optional<quint8> pic_;

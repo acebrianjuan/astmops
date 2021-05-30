@@ -409,6 +409,7 @@ void TargetReportExtractorTest::test_data()
     trSmr.on_gnd_ = true;
     trSmr.x_ = 565.0000000 + 1394.655251;
     trSmr.y_ = -295.0000000 - 161.695809;
+    trSmr.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport trMlat;
     trMlat.ds_id_.sac_ = 0;
@@ -422,6 +423,7 @@ void TargetReportExtractorTest::test_data()
     trMlat.on_gnd_ = true;
     trMlat.x_ = 565.0000000;
     trMlat.y_ = -295.0000000;
+    trMlat.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport trAdsb;
     trAdsb.ds_id_.sac_ = 0;
@@ -436,6 +438,7 @@ void TargetReportExtractorTest::test_data()
     trAdsb.x_ = 565.0000000;
     trAdsb.y_ = -295.0000000;
     trAdsb.z_ = 0;
+    trAdsb.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     QVector<Asterix::Record> smrRecsIn;
     smrRecsIn << cat010Smr0;
@@ -466,14 +469,21 @@ void TargetReportExtractorTest::test_data()
 
 void TargetReportExtractorTest::test()
 {
-    QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
-    QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
-
-    TargetReportExtractor tgtRepExtr(leblArpGeo, leblSmrGeo);
-
     QFETCH(SystemType, sysType);
     QFETCH(QVector<Asterix::Record>, recsIn);
     QFETCH(QVector<TargetReport>, tgtRepsOut);
+
+    QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
+    QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
+
+    auto runwayCallback = [](const QVector3D cartPos, const bool gndBit) {
+        Q_UNUSED(cartPos);
+        Q_UNUSED(gndBit);
+        return Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    };
+
+    TargetReportExtractor tgtRepExtr(leblArpGeo, leblSmrGeo);
+    tgtRepExtr.setLocatePointCallback(runwayCallback);
 
     // Feed Records.
     for (Asterix::Record &rin : recsIn)

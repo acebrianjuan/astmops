@@ -121,6 +121,21 @@ void TargetReportExtractor::loadExcludedAddresses(QIODevice *device)
     }
 }
 
+void TargetReportExtractor::setArp(const QGeoCoordinate &arp)
+{
+    arp_ = arp;
+}
+
+void TargetReportExtractor::setSmr(const QGeoCoordinate &smr)
+{
+    smr_ = smr;
+}
+
+void TargetReportExtractor::setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> &cb)
+{
+    locatePoint_cb_ = cb;
+}
+
 bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 {
     // Discard records of unknown type.
@@ -668,15 +683,14 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
     }
     }
 
+    // Area.
+    QVector3D pos(tr.x_, tr.y_, tr.z_.value_or(0.0));  // <-- TODO: Beware of criteria for missing altitude information.
+    tr.area_ = locatePoint(pos, tr.on_gnd_);
+
     return tr;
 }
 
-void TargetReportExtractor::setSmr(const QGeoCoordinate &smr)
+Aerodrome::NamedArea TargetReportExtractor::locatePoint(const QVector3D pos, const bool gbs) const
 {
-    smr_ = smr;
-}
-
-void TargetReportExtractor::setArp(const QGeoCoordinate &arp)
-{
-    arp_ = arp;
+    return locatePoint_cb_(pos, gbs);
 }
