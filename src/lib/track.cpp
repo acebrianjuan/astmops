@@ -52,13 +52,13 @@ Track &Track::operator<<(const TargetReport &tr)
     {
         // Start/End DateTimes.
         QDateTime tod = tr.tod_;
-        if (startDateTime_.isNull())
+        if (beginDateTime_.isNull())
         {
-            startDateTime_ = tod;
+            beginDateTime_ = tod;
         }
-        else if (tod < startDateTime_)
+        else if (tod < beginDateTime_)
         {
-            startDateTime_ = tod;
+            beginDateTime_ = tod;
         }
 
         if (endDateTime_.isNull())
@@ -181,9 +181,22 @@ int Track::size() const
     return data_.size();
 }
 
-QDateTime Track::startDateTime() const
+QVector<QDateTime> Track::timestamps() const
 {
-    return startDateTime_;
+    QVector<QDateTime> tstamps;
+
+    TgtRepMap::const_iterator it;
+    for (it = data_.begin(); it != data_.end(); ++it)
+    {
+        tstamps << it.key();
+    }
+
+    return tstamps;
+}
+
+QDateTime Track::beginDateTime() const
+{
+    return beginDateTime_;
 }
 
 QDateTime Track::endDateTime() const
@@ -195,12 +208,12 @@ double Track::duration() const
 {
     double dur = qSNaN();
 
-    QDateTime tstart = startDateTime();
-    QDateTime tend = endDateTime();
+    QDateTime tbegin = beginDateTime_;
+    QDateTime tend = endDateTime_;
 
-    if (tstart.isValid() && tend.isValid())
+    if (tbegin.isValid() && tend.isValid())
     {
-        dur = tstart.msecsTo(tend) / 1000;
+        dur = tbegin.msecsTo(tend) / 1000;
     }
 
     return dur;
@@ -208,12 +221,12 @@ double Track::duration() const
 
 bool Track::coversDateTime(const QDateTime &tod) const
 {
-    QDateTime tstart = startDateTime();
-    QDateTime tend = endDateTime();
+    QDateTime tbegin = beginDateTime_;
+    QDateTime tend = endDateTime_;
 
-    if (tstart.isValid() && tend.isValid())
+    if (tbegin.isValid() && tend.isValid())
     {
-        if (tod >= tstart && tod <= tend)
+        if (tod >= tbegin && tod <= tend)
         {
             return true;
         }
@@ -225,7 +238,7 @@ bool Track::coversDateTime(const QDateTime &tod) const
 void Track::intersect(const Track &other)
 {
     QMap<QDateTime, TargetReport>::iterator it = data_.begin();
-    while (it != data_.lowerBound(other.startDateTime()))
+    while (it != data_.lowerBound(other.beginDateTime()))
     {
         data_.erase(it);
         ++it;
@@ -291,14 +304,14 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
     if (t.system_type() == system_type_)
     {
         // Start/End DateTimes.
-        QDateTime startTod = t.startDateTime();
-        if (startDateTime_.isNull())
+        QDateTime beginTod = t.beginDateTime();
+        if (beginDateTime_.isNull())
         {
-            startDateTime_ = startTod;
+            beginDateTime_ = beginTod;
         }
-        else if (startTod.isValid() && startTod < startDateTime_)
+        else if (beginTod.isValid() && beginTod < beginDateTime_)
         {
-            startDateTime_ = startTod;
+            beginDateTime_ = beginTod;
         }
 
         QDateTime endTod = t.endDateTime();
@@ -312,7 +325,7 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
         }
 
         // Insert Track and register track number.
-        tracks_.insert(t.startDateTime(), t);
+        tracks_.insert(t.beginDateTime(), t);
         track_numbers_ << t.track_number();
     }
 
@@ -378,14 +391,31 @@ std::optional<Track> TrackCollection::track(const TrackNum tn) const
     return std::nullopt;
 }
 
+TrackCollection TrackCollection::tracks(const QVector<TrackNum> &v) const
+{
+    TrackCollection col = mode_s_.has_value()
+                              ? TrackCollection(mode_s_.value(), system_type_)
+                              : TrackCollection(system_type_);
+
+    for (TrackNum tn : v)
+    {
+        if (containsTrackNumber(tn))
+        {
+            col << track(tn).value();
+        }
+    }
+
+    return col;
+}
+
 bool TrackCollection::containsTrackNumber(const TrackNum tn) const
 {
     return track_numbers_.contains(tn);
 }
 
-QDateTime TrackCollection::startDateTime() const
+QDateTime TrackCollection::beginDateTime() const
 {
-    return startDateTime_;
+    return beginDateTime_;
 }
 
 QDateTime TrackCollection::endDateTime() const
@@ -421,13 +451,13 @@ void TrackCollection::setMode_s(ModeS ms)
 
 /* -------------------------- TrackCollectionSet -------------------------- */
 
-TrackCollectionSet::TrackCollectionSet(ModeS mode_s)
-    : mode_s_(mode_s)
+TrackCollectionSet::TrackCollectionSet(ModeS mode_s, SystemType ref_st)
+    : mode_s_(mode_s), ref_sys_type_(ref_st), ref_col_(ref_st)
 {
 }
 
-TrackCollectionSet::TrackCollectionSet(ModeS mode_s, const QVector<TrackCollection> &cols)
-    : mode_s_(mode_s)
+TrackCollectionSet::TrackCollectionSet(ModeS mode_s, SystemType ref_st, const QVector<TrackCollection> &cols)
+    : mode_s_(mode_s), ref_sys_type_(ref_st), ref_col_(ref_st)
 {
     for (const TrackCollection &c : cols)
     {
@@ -439,33 +469,212 @@ TrackCollectionSet &TrackCollectionSet::operator<<(const Track &t)
 {
     SystemType st = t.system_type();
 
-    if (!cols_.contains(st))
+    if (st == SystemType::Unknown)
     {
-        // Insert a new track collection containing the given track.
-        cols_.insert(st, TrackCollection(st, t));
+        return *this;
+    }
+
+    TrackNum tn = t.track_number();
+
+    if (st == ref_sys_type_)
+    {
+        if (!ref_col_.containsTrackNumber(tn))
+        {
+            ref_col_ << t;
+        }
     }
     else
     {
-        // Append track to already existing collection.
-        cols_[st] << t;
+        if (!tst_cols_.contains(st))
+        {
+            // Insert a new track collection containing the given track.
+            tst_cols_.insert(st, TrackCollection(st, t));
+        }
+        else
+        {
+            if (!tst_cols_[st].containsTrackNumber(tn))
+            {
+                // Append track to already existing collection.
+                tst_cols_[st] << t;
+            }
+        }
     }
 
     return *this;
+}
+
+void TrackCollectionSet::addMatch(const Track &t_ref, const Track &t_tst)
+{
+    if (containsMatch(t_ref, t_tst))
+    {
+        // This match is already registered. Skip to avoid duplication.
+        return;
+    }
+
+    // Insert reference and test tracks. If any of the tracks already exists
+    // in the collection it will not be added to avoid duplication.
+    *this << t_ref << t_tst;
+
+    // Register match.
+    SystemType st = t_tst.system_type();
+    TrackNum ref_tn = t_ref.track_number();
+    TrackNum tst_tn = t_tst.track_number();
+
+    QVector<TrackNum> &match_vec = matches_[st][ref_tn];
+    match_vec << tst_tn;
+
+    // Sort vector of matched track numbers based on first timestamp:
+    TrackCollection col = collection(st).value();
+
+    auto sortfun = [col](TrackNum lhs, TrackNum rhs) {
+        Q_ASSERT(col.track(lhs).has_value());
+        Q_ASSERT(col.track(rhs).has_value());
+
+        return col.track(lhs).value().beginDateTime() <
+               col.track(rhs).value().beginDateTime();
+    };
+
+    std::sort(match_vec.begin(), match_vec.end(), sortfun);
+}
+
+QVector<TrackCollection> TrackCollectionSet::tstTrackCols() const
+{
+    QVector<TrackCollection> cols;
+
+    for (const TrackCollection &c : tst_cols_)
+    {
+        cols << c;
+    }
+
+    return cols;
+}
+
+TrackCollection TrackCollectionSet::refTrackCol() const
+{
+    return ref_col_;
+}
+
+QVector<TrackCollection> TrackCollectionSet::getMatches(TrackNum ref_tn) const
+{
+    QVector<TrackCollection> vec;
+
+    QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>>::const_iterator it;
+    for (it = matches_.begin(); it != matches_.end(); ++it)
+    {
+        SystemType st = it.key();
+        QHash<TrackNum, QVector<TrackNum>> hash = it.value();
+
+        if (hash.contains(ref_tn))
+        {
+            vec << tst_cols_[st].tracks(hash[ref_tn]);
+        }
+    }
+
+    return vec;
+}
+
+bool TrackCollectionSet::containsTrack(SystemType st, TrackNum tn) const
+{
+    if (st == SystemType::Unknown)
+    {
+        return false;
+    }
+
+    if (st == ref_sys_type_)
+    {
+        if (ref_col_.containsTrackNumber(tn))
+        {
+            return true;
+        }
+    }
+    else
+    {
+        if (tst_cols_.contains(st))
+        {
+            if (tst_cols_[st].containsTrackNumber(tn))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool TrackCollectionSet::containsMatch(SystemType st, TrackNum ref_tn, TrackNum tst_tn)
+{
+    if (matches_.contains(st))
+    {
+        if (matches_[st].contains(ref_tn))
+        {
+            if (matches_[st][ref_tn].contains(tst_tn))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool TrackCollectionSet::containsMatch(const Track &t_ref, const Track &t_tst)
+{
+    SystemType st = t_tst.system_type();
+    return containsMatch(st, t_ref.track_number(), t_tst.track_number());
+}
+
+std::optional<TrackCollection> TrackCollectionSet::collection(SystemType st) const
+{
+    if (st == ref_sys_type_)
+    {
+        return ref_col_;
+    }
+    else if (tst_cols_.contains(st))
+    {
+        return tst_cols_.value(st);
+    }
+
+    return std::nullopt;
+}
+
+bool TrackCollectionSet::hasCollection(SystemType st) const
+{
+    return tst_cols_.contains(st);
+}
+
+bool TrackCollectionSet::hasRefData() const
+{
+    return !ref_col_.isEmpty();
+}
+
+bool TrackCollectionSet::hasTestData() const
+{
+    return !tst_cols_.isEmpty();
+}
+
+bool TrackCollectionSet::isValid() const
+{
+    // For a set to be considered valid, it must have a reference
+    // TrackCollection of known SystemType and at least a test TrackCollection.
+
+    return (ref_sys_type_ == SystemType::Adsb ||
+               ref_sys_type_ == SystemType::Dgps) &&
+           hasRefData() && hasTestData();
 }
 
 TrackCollectionSet &TrackCollectionSet::operator<<(const TrackCollection &c)
 {
     SystemType st = c.system_type();
 
-    if (!cols_.contains(st))
+    if (!tst_cols_.contains(st))
     {
         // Insert collection to the set.
-        cols_.insert(st, c);
+        tst_cols_.insert(st, c);
     }
     else
     {
         // Append tracks to already existing collection in the set.
-        cols_[st] << c.tracks();
+        tst_cols_[st] << c.tracks();
     }
 
     return *this;
@@ -473,18 +682,34 @@ TrackCollectionSet &TrackCollectionSet::operator<<(const TrackCollection &c)
 
 bool TrackCollectionSet::isEmpty() const
 {
-    return cols_.isEmpty();
+    return ref_col_.isEmpty() && tst_cols_.isEmpty();
 }
 
 int TrackCollectionSet::size() const
 {
-    return cols_.size();
+    return tst_cols_.size();
 }
 
 ModeS TrackCollectionSet::mode_s() const
 {
     return mode_s_;
 }
+
+SystemType TrackCollectionSet::ref_sys_type() const
+{
+    return ref_sys_type_;
+}
+
+void TrackCollectionSet::setMode_s(ModeS mode_s)
+{
+    mode_s_ = mode_s;
+}
+
+void TrackCollectionSet::setRef_sys_type(SystemType ref_sys_type)
+{
+    ref_sys_type_ = ref_sys_type;
+}
+
 
 /* ---------------------------- Free functions ---------------------------- */
 
@@ -504,8 +729,8 @@ bool operator==(const TrackCollection &lhs, const TrackCollection &rhs)
 
 bool haveTimeIntersection(const Track &lhs, const Track &rhs)
 {
-    return lhs.startDateTime() < rhs.endDateTime() &&
-           rhs.startDateTime() < lhs.endDateTime();
+    return lhs.beginDateTime() < rhs.endDateTime() &&
+           rhs.beginDateTime() < lhs.endDateTime();
 }
 
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs)
@@ -548,7 +773,7 @@ std::optional<Track> intersect(const Track &intersectee, const Track &intersecto
     }
 
     QMultiMap<QDateTime, TargetReport> data = intersectee.data();
-    QMultiMap<QDateTime, TargetReport>::iterator it_from = data.lowerBound(intersector.startDateTime());
+    QMultiMap<QDateTime, TargetReport>::iterator it_from = data.lowerBound(intersector.beginDateTime());
     QMultiMap<QDateTime, TargetReport>::iterator it_to = data.upperBound(intersector.endDateTime());
 
     // Only insert elements of intersectee that satisfy intersection with

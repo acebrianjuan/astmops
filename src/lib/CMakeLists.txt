@@ -19,9 +19,10 @@ add_library(lib
     astmops.cpp
     counters.cpp
     dgpscsvreader.cpp
+    functions.cpp
     geofunctions.cpp
     kmlreader.cpp
-    #perfevaluator.cpp
+    perfevaluator.cpp
     targetreport.cpp
     targetreportextractor.cpp
     track.cpp

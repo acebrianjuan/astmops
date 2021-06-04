@@ -89,6 +89,7 @@ void TrackAssociator::run()
             }
         }
 
+        Q_ASSERT(n_tot > 0);
         return static_cast<double>(n_ok) / static_cast<double>(n_tot);
     };
 
@@ -101,7 +102,8 @@ void TrackAssociator::run()
         }
 
         ModeS mode_s = tc.mode_s().value();
-        sets_.insert(mode_s, TrackCollectionSet(mode_s));
+        SystemType ref_sys_type = tc.system_type();
+        sets_.insert(mode_s, TrackCollectionSet(mode_s, ref_sys_type));
 
         // Iterate for each REF track in the track collection.
         for (const Track &t_ref : tc.tracks())  // clazy:exclude=range-loop,range-loop-detach
@@ -112,9 +114,6 @@ void TrackAssociator::run()
                 // qWarning();
                 continue;
             }
-
-            // Add REF Track to set.
-            sets_[mode_s] << t_ref;
 
             // Iterate for each TST track.
             QHash<TrackNum, Track>::iterator it = tstTracks_.begin();
@@ -129,12 +128,13 @@ void TrackAssociator::run()
                     continue;
                 }
 
+                // For MLAT, track association is done with the Mode-S address.
                 if (t_tst.system_type() == SystemType::Mlat &&
                     t_tst.mode_s().has_value())
                 {
                     if (t_tst.mode_s().value() == mode_s)
                     {
-                        sets_[mode_s] << t_tst;
+                        sets_[mode_s].addMatch(t_ref, t_tst);
                         it = tstTracks_.erase(it);
                     }
                     else
@@ -159,13 +159,13 @@ void TrackAssociator::run()
 
                     // Interpolate the reference track at the times of the
                     // TST track points.
-                    Track t_r = resample(t_ref, t_t.data().keys().toVector());
+                    Track t_r = resample(t_ref, t_t.timestamps());
 
                     // TST and REF trajectories should match in size.
-                    //Q_ASSERT(t_tst.size() == t_ref.size());
+                    //Q_ASSERT(t_t.size() == t_r.size());
 
                     // TST and REF pairs should have exact same times.
-                    //Q_ASSERT(t_tst.data().keys() == t_ref.data().keys());
+                    //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
 
                     // Calculate Euclidean distance between TST-REF pairs.
                     QVector<double> dist = euclideanDistance(t_t.data(), t_r.data());
@@ -178,7 +178,7 @@ void TrackAssociator::run()
                     // If score satisfies the threshold we have a match.
                     if (score >= threshold)
                     {
-                        sets_[mode_s] << t_tst;
+                        sets_[mode_s].addMatch(t_ref, t_tst);
                         it = tstTracks_.erase(it);
                     }
                 }
@@ -192,7 +192,7 @@ void TrackAssociator::run()
     while (it != sets_.end())
     {
         TrackCollectionSet s = it.value();
-        if (s.size() <= 1)
+        if (!s.isValid())
         {
             it = sets_.erase(it);
         }
@@ -213,8 +213,9 @@ std::optional<TrackCollectionSet> TrackAssociator::takeData()
     QHash<ModeS, TrackCollectionSet>::iterator it = sets_.begin();
     if (it != sets_.end())
     {
-        sets_.erase(it);
-        return it.value();
+        //sets_.erase(it);
+        //return it.value();
+        return sets_.take(it.key());
     }
 
     return std::nullopt;
