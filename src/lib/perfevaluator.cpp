@@ -36,6 +36,9 @@ void PerfEvaluator::addData(const TrackCollectionSet &s)
 
 void PerfEvaluator::run()
 {
+    // Set PIC threshold value.
+    computePicThreshold(95);
+
     // Iterate through each target set.
     for (const TrackCollectionSet &s : qAsConst(sets_))
     {
@@ -101,6 +104,29 @@ void PerfEvaluator::printPosAccResults() const
              << "\t" << smrErrors_.size();
 }
 
+void PerfEvaluator::computePicThreshold(double prctl)
+{
+    QVector<double> vec;
+    for (const TrackCollectionSet &s : qAsConst(sets_))
+    {
+        for (const Track &t : s.refTrackCol())
+        {
+            for (const TargetReport &tr : t)
+            {
+                if (tr.ver_.has_value() && tr.pic_.has_value())
+                {
+                    if (tr.ver_ == 2)
+                    {
+                        vec << tr.pic_.value();
+                    }
+                }
+            }
+        }
+    }
+
+    pic_p95 = percentile(vec, prctl);
+}
+
 void PerfEvaluator::evalED116RPA(const Track &t_ref, const Track &t_tst)
 {
     if (!haveSpaceIntersection(t_tst, t_ref))
@@ -130,13 +156,39 @@ void PerfEvaluator::evalED116RPA(const Track &t_ref, const Track &t_tst)
         return dist;
     };
 
+    // Make a copy of the reference track.
+    Track t_r = t_ref;
+
+    qDebug() << "Before:" << t_r.data().size();
+    TgtRepMap::iterator it = t_r.begin();
+    while (it != t_r.end())
+    {
+        TargetReport tr = it.value();
+
+        if (tr.ver_.has_value() && tr.pic_.has_value())
+        {
+            if (tr.ver_.value() < 2 || tr.pic_.value() < pic_p95)
+            {
+                it = t_r.rdata().erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+        else
+        {
+            it = t_r.rdata().erase(it);
+        }
+    }
+    qDebug() << "After:" << t_r.data().size();
+
     // Extract TST track portion that matches in time with the
     // reference track.
-    Track t_t = intersect(t_tst, t_ref).value();
+    //Track t_t = intersect(t_tst, t_ref).value();
 
-    // Interpolate the reference track at the times of the
-    // TST track points.
-    Track t_r = resample(t_ref, t_t.timestamps());
+    // Interpolate the TST track at the times of the REF track points.
+    Track t_t = resample(t_tst, t_r.timestamps());
 
     // TST and REF trajectories should match in size.
     //Q_ASSERT(t_t.size() == t_r.size());
@@ -145,7 +197,7 @@ void PerfEvaluator::evalED116RPA(const Track &t_ref, const Track &t_tst)
     //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
 
     // Calculate Euclidean distance between TST-REF pairs.
-    QVector<double> dist = euclideanDistance(t_t.data(), t_r.data());
+    QVector<double> dist = euclideanDistance(t_r.rdata(), t_t.rdata());
 
     smrErrors_ << dist;
 }

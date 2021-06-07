@@ -22,7 +22,7 @@
 
 #include <QVector>
 
-double percentile(QVector<double> vec, const double percent);
+double percentile(QVector<double> v, double percent);
 double mean(const QVector<double> &v);
 double stdDev(const QVector<double> &v);
 

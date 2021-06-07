@@ -146,7 +146,12 @@ TrackNum Track::track_number() const
     return track_number_;
 }
 
-TgtRepMap Track::data() const
+TgtRepMap &Track::rdata()
+{
+    return data_;
+}
+
+const TgtRepMap &Track::data() const
 {
     return data_;
 }
@@ -772,13 +777,13 @@ std::optional<Track> intersect(const Track &intersectee, const Track &intersecto
         t.mode_s() = intersectee.mode_s();
     }
 
-    QMultiMap<QDateTime, TargetReport> data = intersectee.data();
-    QMultiMap<QDateTime, TargetReport>::iterator it_from = data.lowerBound(intersector.beginDateTime());
-    QMultiMap<QDateTime, TargetReport>::iterator it_to = data.upperBound(intersector.endDateTime());
+    const QMultiMap<QDateTime, TargetReport> &data = intersectee.data();
+    QMultiMap<QDateTime, TargetReport>::const_iterator it_from = data.lowerBound(intersector.beginDateTime());
+    QMultiMap<QDateTime, TargetReport>::const_iterator it_to = data.upperBound(intersector.endDateTime());
 
     // Only insert elements of intersectee that satisfy intersection with
     // intersector.
-    QMultiMap<QDateTime, TargetReport>::iterator it;
+    QMultiMap<QDateTime, TargetReport>::const_iterator it;
     for (it = it_from; it != it_to; ++it)
     {
         t << it.value();
@@ -795,7 +800,7 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
     // input track.
     Track t(track.system_type(), track.track_number());
 
-    QMultiMap<QDateTime, TargetReport> data = track.data();
+    const QMultiMap<QDateTime, TargetReport> &data = track.data();
     for (const QDateTime &tod : dtimes)
     {
         if (track.coversDateTime(tod))
@@ -807,10 +812,10 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
             }
             else  // Linear interpolation.
             {
-                QMultiMap<QDateTime, TargetReport>::iterator it_u;  // Upper.
-                QMultiMap<QDateTime, TargetReport>::iterator it_l;  // Lower.
+                QMultiMap<QDateTime, TargetReport>::const_iterator it_u;  // Upper.
+                QMultiMap<QDateTime, TargetReport>::const_iterator it_l;  // Lower.
 
-                QMultiMap<QDateTime, TargetReport>::iterator it = data.lowerBound(tod);
+                QMultiMap<QDateTime, TargetReport>::const_iterator it = data.lowerBound(tod);
                 if (it != data.end())  // Upper TOD found.
                 {
                     Q_ASSERT(it.key() >= tod);

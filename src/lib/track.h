@@ -48,9 +48,15 @@ public:
     Track &operator<<(const TargetReport &tr);
     Track &operator<<(const QVector<TargetReport> &l);
 
+    TgtRepMap::iterator begin() { return data_.begin(); }
+    TgtRepMap::iterator end() { return data_.end(); }
+    TgtRepMap::const_iterator begin() const { return data_.constBegin(); }
+    TgtRepMap::const_iterator end() const { return data_.constEnd(); }
+
     SystemType system_type() const;
     TrackNum track_number() const;
-    TgtRepMap data() const;
+    TgtRepMap &rdata();
+    const TgtRepMap &data() const;
     std::optional<ModeS> mode_s() const;
 
     QPair<double, double> x_bounds() const;

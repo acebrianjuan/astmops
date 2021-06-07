@@ -36,6 +36,8 @@ public:
     void printPosAccResults() const;
 
 private:
+    void computePicThreshold(double prctl);
+
     void evalED116RPA(const Track &t_ref, const Track &t_tst);
     void evalED116PD(const Track &t_ref, const Track &t_tst);
 
@@ -44,7 +46,7 @@ private:
     void evalED117PID(const Track &t_ref, const Track &t_tst);
     void evalED117PLG(const Track &t_ref, const Track &t_tst);
 
-    quint8 pic_p95;
+    quint8 pic_p95 = 0;
     QHash<ModeS, TrackCollectionSet> sets_;
     AreaHash<QVector<double>> errors_;
 

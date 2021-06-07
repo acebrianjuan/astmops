@@ -21,37 +21,37 @@
 #include <cmath>
 #include <numeric>
 
-double percentile(QVector<double> vec, const double percent)
+double percentile(QVector<double> v, double percent)
 {
-    //Q_ASSERT(!vec.isEmpty() && percent <= 100);
+    //Q_ASSERT(!v.isEmpty() && percent <= 100);
 
-    if (vec.isEmpty() || percent < 0 || percent > 100)
+    if (v.isEmpty() || percent < 0 || percent > 100)
     {
         return qSNaN();  // TODO: Should throw a warning here.
     }
 
-    if (vec.size() == 1)
+    if (v.size() == 1)
     {
-        return vec.first();
+        return v.first();
     }
 
-    std::sort(vec.begin(), vec.end());
+    std::sort(v.begin(), v.end());
 
     if (percent == 0)
     {
-        return vec.first();
+        return v.first();
     }
     if (percent == 100)
     {
-        return vec.last();
+        return v.last();
     }
 
-    const int numRecords = vec.size();
+    const int numRecords = v.size();
     double rank = percent / 100.0 * numRecords;
 
     if (rank >= numRecords - 1)
     {
-        return vec.last();
+        return v.last();
     }
 
     double intPart;
@@ -61,11 +61,11 @@ double percentile(QVector<double> vec, const double percent)
 
     if (fractPart != 0)
     {
-        return vec.at(idx + 1);
+        return v.at(idx + 1);
     }
     else
     {
-        return (vec.at(idx) + vec.at(idx + 1)) / 2.0;
+        return (v.at(idx) + v.at(idx + 1)) / 2.0;
     }
 }
 

@@ -168,7 +168,7 @@ void TrackAssociator::run()
                     //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
 
                     // Calculate Euclidean distance between TST-REF pairs.
-                    QVector<double> dist = euclideanDistance(t_t.data(), t_r.data());
+                    QVector<double> dist = euclideanDistance(t_t.rdata(), t_r.rdata());
 
                     // Check if distances are within the maximum allowed value.
                     // Compute the overall matching score as the ratio between
@@ -213,8 +213,6 @@ std::optional<TrackCollectionSet> TrackAssociator::takeData()
     QHash<ModeS, TrackCollectionSet>::iterator it = sets_.begin();
     if (it != sets_.end())
     {
-        //sets_.erase(it);
-        //return it.value();
         return sets_.take(it.key());
     }
 
