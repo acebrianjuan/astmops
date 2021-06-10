@@ -639,10 +639,10 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
         }
 
         // Identification.
-        bool has_ident = Asterix::containsElement(rec, QLatin1String("I245"), QLatin1String("TId"));
+        bool has_ident = Asterix::containsElement(rec, QLatin1String("I170"), QLatin1String("TId"));
         if (has_ident)
         {
-            Ident ident = Asterix::getElementValue(rec, QLatin1String("I245"), QLatin1String("TId")).value();
+            Ident ident = Asterix::getElementValue(rec, QLatin1String("I170"), QLatin1String("TId")).value();
             if (!ident.isNull())
             {
                 tr.ident_ = ident;
