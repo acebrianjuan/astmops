@@ -50,7 +50,7 @@ void TrackAssociator::addData(const Track &t)
     }
 }
 
-void TrackAssociator::run()
+int TrackAssociator::run()
 {
     double dmax = 30.0;
     double threshold = 0.7;
@@ -115,6 +115,9 @@ void TrackAssociator::run()
                 continue;
             }
 
+            // Insert REF track in the set.
+            sets_[mode_s] << t_ref;
+
             // Iterate for each TST track.
             QHash<TrackNum, Track>::iterator it = tstTracks_.begin();
             while (it != tstTracks_.end())
@@ -134,21 +137,22 @@ void TrackAssociator::run()
                 {
                     if (t_tst.mode_s().value() == mode_s)
                     {
-                        sets_[mode_s].addMatch(t_ref, t_tst);
-                        it = tstTracks_.erase(it);
-                    }
-                    else
-                    {
-                        ++it;
-                    }
+                        // Insert MLAT TST track in the set.
+                        sets_[mode_s] << t_tst;
 
-                    continue;
+                        // Only register a match if a space-time intersection
+                        // exists between TST and REF tracks.
+                        if (haveSpaceTimeIntersection(t_tst, t_ref))
+                        {
+                            sets_[mode_s].addMatch(t_ref, t_tst);
+                        }
+                    }
                 }
-
-                // Check if there is space-time overlap between reference
-                // track and test track.
-                if (haveSpaceTimeIntersection(t_tst, t_ref))
+                else if (haveSpaceTimeIntersection(t_tst, t_ref))
                 {
+                    // Otherwise check if there is space-time overlap between
+                    // reference track and test track.
+
                     // Extract TST track portion that matches in time with the
                     // reference track.
                     Track t_t = intersect(t_tst, t_ref).value();
@@ -179,7 +183,6 @@ void TrackAssociator::run()
                     if (score >= threshold)
                     {
                         sets_[mode_s].addMatch(t_ref, t_tst);
-                        it = tstTracks_.erase(it);
                     }
                 }
 
@@ -201,6 +204,8 @@ void TrackAssociator::run()
             ++it;
         }
     }
+
+    return sets_.size();
 }
 
 bool TrackAssociator::hasPendingData() const

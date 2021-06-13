@@ -16,5 +16,6 @@ add_subdirectory(dgpscsvreadertest)
 add_subdirectory(geofunctionstest)
 add_subdirectory(kmlreadertest)
 add_subdirectory(targetreportextractortest)
+add_subdirectory(trackassociatortest)
 add_subdirectory(trackextractortest)
 

@@ -31,7 +31,7 @@ public:
     TrackAssociator();
 
     void addData(const Track &t);
-    void run();
+    int run();
 
     bool hasPendingData() const;
     std::optional<TrackCollectionSet> takeData();

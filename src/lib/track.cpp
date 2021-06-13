@@ -352,7 +352,7 @@ SystemType TrackCollection::system_type() const
     return system_type_;
 }
 
-QVector<TrackNum> TrackCollection::track_numbers() const
+QSet<TrackNum> TrackCollection::track_numbers() const
 {
     return track_numbers_;
 }
@@ -544,14 +544,19 @@ void TrackCollectionSet::addMatch(const Track &t_ref, const Track &t_tst)
 
 QVector<TrackCollection> TrackCollectionSet::tstTrackCols() const
 {
-    QVector<TrackCollection> cols;
-
+    QVector<TrackCollection> vec;
     for (const TrackCollection &c : tst_cols_)
     {
-        cols << c;
+        vec << c;
     }
 
-    return cols;
+    auto sortfun = [](const TrackCollection &lhs, const TrackCollection &rhs) {
+        return lhs.beginDateTime() < rhs.beginDateTime();
+    };
+
+    std::sort(vec.begin(), vec.end(), sortfun);
+
+    return vec;
 }
 
 TrackCollection TrackCollectionSet::refTrackCol() const
@@ -559,7 +564,12 @@ TrackCollection TrackCollectionSet::refTrackCol() const
     return ref_col_;
 }
 
-QVector<TrackCollection> TrackCollectionSet::getMatches(TrackNum ref_tn) const
+QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>> TrackCollectionSet::matches() const
+{
+    return matches_;
+}
+
+QVector<TrackCollection> TrackCollectionSet::matchesForRefTrack(TrackNum ref_tn) const
 {
     QVector<TrackCollection> vec;
 
@@ -732,27 +742,36 @@ bool operator==(const TrackCollection &lhs, const TrackCollection &rhs)
            lhs.tracks() == rhs.tracks();
 }
 
+bool operator==(const TrackCollectionSet &lhs, const TrackCollectionSet &rhs)
+{
+    return lhs.mode_s() == rhs.mode_s() &&
+           lhs.ref_sys_type() == rhs.ref_sys_type() &&
+           lhs.refTrackCol() == rhs.refTrackCol() &&
+           lhs.tstTrackCols() == rhs.tstTrackCols() &&
+           lhs.matches() == rhs.matches();
+}
+
 bool haveTimeIntersection(const Track &lhs, const Track &rhs)
 {
-    return lhs.beginDateTime() < rhs.endDateTime() &&
-           rhs.beginDateTime() < lhs.endDateTime();
+    return lhs.beginDateTime() <= rhs.endDateTime() &&
+           rhs.beginDateTime() <= lhs.endDateTime();
 }
 
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs)
 {
     /*
-    return lhs.x_bounds().first < rhs.x_bounds().second &&
-           rhs.x_bounds().first < lhs.x_bounds().second &&
-           lhs.y_bounds().first < rhs.y_bounds().second &&
-           rhs.y_bounds().first < lhs.y_bounds().second &&
-           lhs.z_bounds().first < rhs.z_bounds().second &&
-           rhs.z_bounds().first < lhs.z_bounds().second;
+    return lhs.x_bounds().first <= rhs.x_bounds().second &&
+           rhs.x_bounds().first <= lhs.x_bounds().second &&
+           lhs.y_bounds().first <= rhs.y_bounds().second &&
+           rhs.y_bounds().first <= lhs.y_bounds().second &&
+           lhs.z_bounds().first <= rhs.z_bounds().second &&
+           rhs.z_bounds().first <= lhs.z_bounds().second;
     */
 
-    return lhs.x_bounds().first < rhs.x_bounds().second &&
-           rhs.x_bounds().first < lhs.x_bounds().second &&
-           lhs.y_bounds().first < rhs.y_bounds().second &&
-           rhs.y_bounds().first < lhs.y_bounds().second;
+    return lhs.x_bounds().first <= rhs.x_bounds().second &&
+           rhs.x_bounds().first <= lhs.x_bounds().second &&
+           lhs.y_bounds().first <= rhs.y_bounds().second &&
+           rhs.y_bounds().first <= lhs.y_bounds().second;
 }
 
 bool haveSpaceTimeIntersection(const Track &lhs, const Track &rhs)
@@ -812,8 +831,8 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
             }
             else  // Linear interpolation.
             {
-                QMultiMap<QDateTime, TargetReport>::const_iterator it_u;  // Upper.
-                QMultiMap<QDateTime, TargetReport>::const_iterator it_l;  // Lower.
+                QMultiMap<QDateTime, TargetReport>::const_iterator it_u = data.end();  // Upper.
+                QMultiMap<QDateTime, TargetReport>::const_iterator it_l = data.end();  // Lower.
 
                 QMultiMap<QDateTime, TargetReport>::const_iterator it = data.lowerBound(tod);
                 if (it != data.end())  // Upper TOD found.
@@ -847,7 +866,7 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
                         it_l = it;
                     }
 
-                    if (it_u != data.end() && it_l != data.end())
+                    if (it_l != data.end() && it_u != data.end())
                     {
                         Q_ASSERT(it_u.key() > it_l.key());
 

@@ -123,7 +123,7 @@ public:
     QMultiMap<QDateTime, Track>::const_iterator end() const { return tracks_.constEnd(); }
 
     SystemType system_type() const;
-    QVector<TrackNum> track_numbers() const;
+    QSet<TrackNum> track_numbers() const;
     QVector<Track> tracks() const;
 
     bool isEmpty() const;
@@ -143,7 +143,7 @@ public:
 private:
     SystemType system_type_;
 
-    QVector<TrackNum> track_numbers_;
+    QSet<TrackNum> track_numbers_;
     QMultiMap<QDateTime, Track> tracks_;
 
     QDateTime beginDateTime_;
@@ -175,7 +175,8 @@ public:
     QVector<TrackCollection> tstTrackCols() const;
     TrackCollection refTrackCol() const;
 
-    QVector<TrackCollection> getMatches(TrackNum ref_tn) const;
+    QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>> matches() const;
+    QVector<TrackCollection> matchesForRefTrack(TrackNum ref_tn) const;
 
     std::optional<TrackCollection> collection(SystemType st) const;
     bool hasCollection(SystemType st) const;
@@ -211,6 +212,7 @@ Q_DECLARE_METATYPE(QVector<TrackCollectionSet>);
 
 bool operator==(const Track &lhs, const Track &rhs);
 bool operator==(const TrackCollection &lhs, const TrackCollection &rhs);
+bool operator==(const TrackCollectionSet &lhs, const TrackCollectionSet &rhs);
 
 bool haveTimeIntersection(const Track &lhs, const Track &rhs);
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs);
