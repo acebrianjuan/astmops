@@ -46,8 +46,6 @@ private slots:
 };
 
 Q_DECLARE_METATYPE(TargetReportExtractorTest::TestType);
-Q_DECLARE_METATYPE(QVector<Asterix::Record>);
-Q_DECLARE_METATYPE(QVector<TargetReport>);
 
 void TargetReportExtractorTest::initTestCase()
 {

@@ -37,8 +37,6 @@ private slots:
 };
 
 Q_DECLARE_METATYPE(QVector<QGeoPositionInfo>);
-Q_DECLARE_METATYPE(QVector<TargetReport>);
-Q_DECLARE_METATYPE(ErrorType);
 
 void DgpsCsvReaderTest::initTestCase()
 {

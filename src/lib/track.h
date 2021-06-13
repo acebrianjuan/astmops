@@ -93,6 +93,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(Track);
+Q_DECLARE_METATYPE(QVector<Track>);
 
 /*!
  * \brief The TrackCollection class is an abstraction for collecting a series
@@ -152,6 +153,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(TrackCollection);
+Q_DECLARE_METATYPE(QVector<TrackCollection>);
 
 /*!
  * \brief The TrackCollectionSet class is an abstraction for grouping a
@@ -204,6 +206,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(TrackCollectionSet);
+Q_DECLARE_METATYPE(QVector<TrackCollectionSet>);
 
 
 bool operator==(const Track &lhs, const Track &rhs);

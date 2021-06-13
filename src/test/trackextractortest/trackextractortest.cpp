@@ -31,9 +31,6 @@ private slots:
     void test();
 };
 
-Q_DECLARE_METATYPE(QVector<TargetReport>);
-Q_DECLARE_METATYPE(QVector<Track>);
-
 void TrackExtractorTest::initTestCase()
 {
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));

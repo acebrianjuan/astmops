@@ -50,6 +50,7 @@ struct TargetReport
 };
 
 Q_DECLARE_METATYPE(TargetReport);
+Q_DECLARE_METATYPE(QVector<TargetReport>);
 
 // FREE OPERATORS.
 bool operator==(const TargetReport &lhs, const TargetReport &rhs);

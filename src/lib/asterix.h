@@ -138,8 +138,13 @@ bool operator==(const Asterix::Record &lhs, const Asterix::Record &rhs);
 //QDebug operator<<(QDebug dbg, const Asterix::Record &record);
 
 Q_DECLARE_METATYPE(Asterix::Record);
+Q_DECLARE_METATYPE(QVector<Asterix::Record>);
+
 Q_DECLARE_METATYPE(Asterix::DataItem);
+Q_DECLARE_METATYPE(QVector<Asterix::DataItem>);
+
 Q_DECLARE_METATYPE(Asterix::DataElement);
+Q_DECLARE_METATYPE(QVector<Asterix::DataElement>);
 
 
 #endif  // ASTMOPS_ASTERIX_H
