@@ -26,15 +26,16 @@
 template <typename T>
 struct AreaHash : public QHash<Aerodrome::NamedArea, T>
 {
-    QVector<typename AreaHash::iterator> findByArea(Aerodrome::Area wantedArea)
+    QVector<typename AreaHash::const_iterator> findByArea(Aerodrome::Area wantedArea) const
     {
-        QVector<typename AreaHash::iterator> result;
+        QVector<typename AreaHash::const_iterator> result;
 
         for (auto it = this->begin(), last = this->end(); it != last; ++it)
         {
             const Aerodrome::Area itArea = it.key().area_;
 
-            if ((itArea | wantedArea) == wantedArea)
+            if (itArea != Aerodrome::Area::None &&
+                (itArea | wantedArea) == wantedArea)
             {
                 result.append(it);
             }

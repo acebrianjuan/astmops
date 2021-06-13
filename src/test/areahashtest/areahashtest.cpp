@@ -33,6 +33,7 @@ void AreaHashTest::test()
 {
     AreaHash<int> areaHash;
 
+    Aerodrome::NamedArea none = Aerodrome::NamedArea(Aerodrome::Area::None);
     Aerodrome::NamedArea runway1 = Aerodrome::NamedArea(Aerodrome::Area::Runway, QLatin1String("18/36"));
     Aerodrome::NamedArea runway2 = Aerodrome::NamedArea(Aerodrome::Area::Runway, QLatin1String("09/27"));
     Aerodrome::NamedArea taxiway = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
@@ -41,6 +42,7 @@ void AreaHashTest::test()
     Aerodrome::NamedArea airborne1 = Aerodrome::NamedArea(Aerodrome::Area::Airborne1);
     Aerodrome::NamedArea airborne2 = Aerodrome::NamedArea(Aerodrome::Area::Airborne2);
 
+    areaHash.insert(none, 100);
     areaHash.insert(runway1, 100);
     QVERIFY(areaHash.findByArea(Aerodrome::Area::All).size() == 1);
     QVERIFY(areaHash.findByArea(Aerodrome::Area::Airborne).size() == 0);
