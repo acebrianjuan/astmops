@@ -77,9 +77,9 @@ public:
     void setMode_s(ModeS ms);
 
 private:
-    SystemType system_type_;
+    SystemType system_type_ = SystemType::Unknown;
 
-    TrackNum track_number_;
+    TrackNum track_number_ = 0;
     TgtRepMap data_;
 
     QDateTime beginDateTime_;

@@ -52,7 +52,7 @@ Track &Track::operator<<(const TargetReport &tr)
     {
         // Start/End DateTimes.
         QDateTime tod = tr.tod_;
-        if (beginDateTime_.isNull())
+        if (!beginDateTime_.isValid())
         {
             beginDateTime_ = tod;
         }
@@ -61,7 +61,7 @@ Track &Track::operator<<(const TargetReport &tr)
             beginDateTime_ = tod;
         }
 
-        if (endDateTime_.isNull())
+        if (!endDateTime_.isValid())
         {
             endDateTime_ = tod;
         }
@@ -111,6 +111,32 @@ Track &Track::operator<<(const TargetReport &tr)
             else if (tr.y_ > y_bounds_.second)
             {
                 y_bounds_.second = tr.y_;
+            }
+
+            // Z min.
+            if (tr.z_.has_value())
+            {
+                if (qIsNaN(z_bounds_.first))
+                {
+                    z_bounds_.first = tr.z_.value();
+                }
+                else if (tr.z_.value() < z_bounds_.first)
+                {
+                    z_bounds_.first = tr.z_.value();
+                }
+            }
+
+            // Z max.
+            if (tr.z_.has_value())
+            {
+                if (qIsNaN(z_bounds_.second))
+                {
+                    z_bounds_.second = tr.z_.value();
+                }
+                else if (tr.z_.value() > y_bounds_.second)
+                {
+                    z_bounds_.second = tr.z_.value();
+                }
             }
         }
 
@@ -226,6 +252,11 @@ double Track::duration() const
 
 bool Track::coversDateTime(const QDateTime &tod) const
 {
+    if (!tod.isValid())
+    {
+        return false;
+    }
+
     QDateTime tbegin = beginDateTime_;
     QDateTime tend = endDateTime_;
 
@@ -245,15 +276,13 @@ void Track::intersect(const Track &other)
     QMap<QDateTime, TargetReport>::iterator it = data_.begin();
     while (it != data_.lowerBound(other.beginDateTime()))
     {
-        data_.erase(it);
-        ++it;
+        it = data_.erase(it);
     }
 
     it = data_.upperBound(other.endDateTime());
     while (it != data_.end())
     {
-        data_.erase(it);
-        ++it;
+        it = data_.erase(it);
     }
 }
 
