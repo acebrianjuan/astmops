@@ -428,3 +428,11 @@ QGeoShape Configuration::evalSector()
 
     return QGeoPolygon(list);
 }
+
+namespace Literals
+{
+QDateTime operator""_ts(const char *text, size_t size)
+{
+    return QDateTime::fromString(QLatin1String(text, size), Qt::ISODateWithMs);
+}
+}  // namespace Literals

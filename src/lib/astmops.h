@@ -145,7 +145,7 @@ const double defaultProbDetectionPeriodOther = 2.0;
 }  // namespace MOPS
 
 
-quint8 readSic(const QString &key);
+quint8 readSic(const QString& key);
 
 namespace Configuration
 {
@@ -182,5 +182,10 @@ ModeS dgpsTargetAddress();
 QGeoShape evalSector();
 
 };  // namespace Configuration
+
+namespace Literals
+{
+QDateTime operator"" _ts(const char* text, size_t size);
+}  // namespace Literals
 
 #endif  // ASTMOPS_ASTMOPS_H

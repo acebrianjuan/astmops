@@ -48,13 +48,14 @@ void AsterixXmlReaderTest::initTestCase()
 
 void AsterixXmlReaderTest::test_data()
 {
+    using namespace Literals;
+
     // TARGET REPORTS.
 
     // SMR:
 
     // Record 0: [ToD: 23:59:58.000], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr0(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Smr0(quint8(10), "2020-05-05T23:59:58.000Z"_ts);
 
     cat010Smr0.dataItems_[QLatin1String("I010")] =
         Asterix::DataItem(QLatin1String("I010"),
@@ -125,8 +126,7 @@ void AsterixXmlReaderTest::test_data()
                                             << Asterix::DataElement(QLatin1String("Ay"), QLatin1String("0.0000000")));
 
     // Record 1: [ToD: 23:59:59.000], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr1(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-05T23:59:59.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Smr1(quint8(10), "2020-05-05T23:59:59.000Z"_ts);
 
     cat010Smr1.dataItems_ = cat010Smr0.dataItems_;
 
@@ -135,8 +135,7 @@ void AsterixXmlReaderTest::test_data()
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("86399.0000000")));
 
     // Record 2: [ToD: 23:59:59.500], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr2(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-05T23:59:59.500Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Smr2(quint8(10), "2020-05-05T23:59:59.500Z"_ts);
 
     cat010Smr2.dataItems_ = cat010Smr0.dataItems_;
 
@@ -145,8 +144,7 @@ void AsterixXmlReaderTest::test_data()
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("86399.5000000")));
 
     // Record 3: [ToD: 00:00:00.000], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr3(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-06T00:00:00.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Smr3(quint8(10), "2020-05-06T00:00:00.000Z"_ts);
 
     cat010Smr3.dataItems_ = cat010Smr0.dataItems_;
 
@@ -155,8 +153,7 @@ void AsterixXmlReaderTest::test_data()
             QVector<Asterix::DataElement>() << Asterix::DataElement(QLatin1String("ToD"), QLatin1String("00000.0000000")));
 
     // Record 4: [ToD: 00:00:01.000], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr4(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-06T00:00:01.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Smr4(quint8(10), "2020-05-06T00:00:01.000Z"_ts);
 
     cat010Smr4.dataItems_ = cat010Smr0.dataItems_;
 

@@ -62,13 +62,14 @@ void TargetReportExtractorTest::initTestCase()
 
 void TargetReportExtractorTest::test_data()
 {
+    using namespace Literals;
+
     // TARGET REPORTS.
 
     // SMR:
 
     // Record 0: [ToD: 23:59:58.000], CAT010 SMR Target Report.
-    Asterix::Record cat010Smr0(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Smr0(quint8(10), "2020-05-05T23:59:58.000Z"_ts);
 
     cat010Smr0.rec_typ_ = RecordType(SystemType::Smr, MessageType::TargetReport);
 
@@ -143,8 +144,7 @@ void TargetReportExtractorTest::test_data()
     // MLAT:
 
     // Record 0: [ToD: 23:59:58.000], CAT010 MLAT Target Report.
-    Asterix::Record cat010Mlat0(quint8(10),
-        QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat010Mlat0(quint8(10), "2020-05-05T23:59:58.000Z"_ts);
 
     cat010Mlat0.rec_typ_ = RecordType(SystemType::Mlat, MessageType::TargetReport);
 
@@ -227,8 +227,7 @@ void TargetReportExtractorTest::test_data()
     // ADS-B:
 
     // Record 0: [ToD: 23:59:58.000], CAT010 ADS-B Target Report.
-    Asterix::Record cat021Adsb0(quint8(21),
-        QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs));
+    Asterix::Record cat021Adsb0(quint8(21), "2020-05-05T23:59:58.000Z"_ts);
 
     cat021Adsb0.rec_typ_ = RecordType(SystemType::Adsb, MessageType::TargetReport);
 
@@ -402,7 +401,7 @@ void TargetReportExtractorTest::test_data()
     trSmr.ds_id_.sac_ = 0;
     trSmr.ds_id_.sic_ = 7;
     trSmr.sys_typ_ = SystemType::Smr;
-    trSmr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs);
+    trSmr.tod_ = "2020-05-05T23:59:58.000Z"_ts;
     trSmr.trk_nb_ = 1391;
     trSmr.on_gnd_ = true;
     trSmr.x_ = 565.0000000 + 1394.655251;
@@ -413,7 +412,7 @@ void TargetReportExtractorTest::test_data()
     trMlat.ds_id_.sac_ = 0;
     trMlat.ds_id_.sic_ = 107;
     trMlat.sys_typ_ = SystemType::Mlat;
-    trMlat.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs);
+    trMlat.tod_ = "2020-05-05T23:59:58.000Z"_ts;
     trMlat.trk_nb_ = 1391;
     trMlat.mode_S_ = 0x34304F;
     trMlat.mode_3A_ = 0246;
@@ -427,7 +426,7 @@ void TargetReportExtractorTest::test_data()
     trAdsb.ds_id_.sac_ = 0;
     trAdsb.ds_id_.sic_ = 219;
     trAdsb.sys_typ_ = SystemType::Adsb;
-    trAdsb.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T23:59:58.000Z"), Qt::ISODateWithMs);
+    trAdsb.tod_ = "2020-05-05T23:59:58.000Z"_ts;
     trAdsb.trk_nb_ = 1391;
     trAdsb.mode_S_ = 0x70605A;
     trAdsb.mode_3A_ = 4553;

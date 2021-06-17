@@ -47,6 +47,8 @@ void TrackAssociatorTest::initTestCase()
 
 void TrackAssociatorTest::test_data()
 {
+    using namespace Literals;
+
     QTest::addColumn<QVector<Track>>("tracksIn");
     QTest::addColumn<QVector<TrackCollectionSet>>("setsOut");
 
@@ -57,7 +59,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_1.ds_id_.sac_ = 0;
     tr_adsb_101_1.ds_id_.sic_ = 219;
     tr_adsb_101_1.sys_typ_ = SystemType::Adsb;
-    tr_adsb_101_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:00.000Z"), Qt::ISODateWithMs);
+    tr_adsb_101_1.tod_ = "2020-05-05T10:00:00.000Z"_ts;
     tr_adsb_101_1.trk_nb_ = 101;
     tr_adsb_101_1.mode_S_ = 0x000001;
     tr_adsb_101_1.mode_3A_ = 0001;
@@ -72,7 +74,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_2.ds_id_.sac_ = 0;
     tr_adsb_101_2.ds_id_.sic_ = 219;
     tr_adsb_101_2.sys_typ_ = SystemType::Adsb;
-    tr_adsb_101_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:01.000Z"), Qt::ISODateWithMs);
+    tr_adsb_101_2.tod_ = "2020-05-05T10:00:01.000Z"_ts;
     tr_adsb_101_2.trk_nb_ = 101;
     tr_adsb_101_2.mode_S_ = 0x000001;
     tr_adsb_101_2.mode_3A_ = 0001;
@@ -87,7 +89,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_3.ds_id_.sac_ = 0;
     tr_adsb_101_3.ds_id_.sic_ = 219;
     tr_adsb_101_3.sys_typ_ = SystemType::Adsb;
-    tr_adsb_101_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:02.000Z"), Qt::ISODateWithMs);
+    tr_adsb_101_3.tod_ = "2020-05-05T10:00:02.000Z"_ts;
     tr_adsb_101_3.trk_nb_ = 101;
     tr_adsb_101_3.mode_S_ = 0x000001;
     tr_adsb_101_3.mode_3A_ = 0001;
@@ -102,7 +104,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_4.ds_id_.sac_ = 0;
     tr_adsb_101_4.ds_id_.sic_ = 219;
     tr_adsb_101_4.sys_typ_ = SystemType::Adsb;
-    tr_adsb_101_4.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:03.000Z"), Qt::ISODateWithMs);
+    tr_adsb_101_4.tod_ = "2020-05-05T10:00:03.000Z"_ts;
     tr_adsb_101_4.trk_nb_ = 101;
     tr_adsb_101_4.mode_S_ = 0x000001;
     tr_adsb_101_4.mode_3A_ = 0001;
@@ -117,7 +119,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_5.ds_id_.sac_ = 0;
     tr_adsb_101_5.ds_id_.sic_ = 219;
     tr_adsb_101_5.sys_typ_ = SystemType::Adsb;
-    tr_adsb_101_5.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:04.000Z"), Qt::ISODateWithMs);
+    tr_adsb_101_5.tod_ = "2020-05-05T10:00:04.000Z"_ts;
     tr_adsb_101_5.trk_nb_ = 101;
     tr_adsb_101_5.mode_S_ = 0x000001;
     tr_adsb_101_5.mode_3A_ = 0001;
@@ -138,7 +140,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_1.ds_id_.sac_ = 0;
     tr_adsb_102_1.ds_id_.sic_ = 219;
     tr_adsb_102_1.sys_typ_ = SystemType::Adsb;
-    tr_adsb_102_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:08.000Z"), Qt::ISODateWithMs);
+    tr_adsb_102_1.tod_ = "2020-05-05T10:00:08.000Z"_ts;
     tr_adsb_102_1.trk_nb_ = 102;
     tr_adsb_102_1.mode_S_ = 0x000001;
     tr_adsb_102_1.mode_3A_ = 0001;
@@ -153,7 +155,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_2.ds_id_.sac_ = 0;
     tr_adsb_102_2.ds_id_.sic_ = 219;
     tr_adsb_102_2.sys_typ_ = SystemType::Adsb;
-    tr_adsb_102_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:09.000Z"), Qt::ISODateWithMs);
+    tr_adsb_102_2.tod_ = "2020-05-05T10:00:09.000Z"_ts;
     tr_adsb_102_2.trk_nb_ = 102;
     tr_adsb_102_2.mode_S_ = 0x000001;
     tr_adsb_102_2.mode_3A_ = 0001;
@@ -168,7 +170,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_3.ds_id_.sac_ = 0;
     tr_adsb_102_3.ds_id_.sic_ = 219;
     tr_adsb_102_3.sys_typ_ = SystemType::Adsb;
-    tr_adsb_102_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:10.000Z"), Qt::ISODateWithMs);
+    tr_adsb_102_3.tod_ = "2020-05-05T10:00:10.000Z"_ts;
     tr_adsb_102_3.trk_nb_ = 102;
     tr_adsb_102_3.mode_S_ = 0x000001;
     tr_adsb_102_3.mode_3A_ = 0001;
@@ -183,7 +185,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_4.ds_id_.sac_ = 0;
     tr_adsb_102_4.ds_id_.sic_ = 219;
     tr_adsb_102_4.sys_typ_ = SystemType::Adsb;
-    tr_adsb_102_4.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:11.000Z"), Qt::ISODateWithMs);
+    tr_adsb_102_4.tod_ = "2020-05-05T10:00:11.000Z"_ts;
     tr_adsb_102_4.trk_nb_ = 102;
     tr_adsb_102_4.mode_S_ = 0x000001;
     tr_adsb_102_4.mode_3A_ = 0001;
@@ -198,7 +200,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_5.ds_id_.sac_ = 0;
     tr_adsb_102_5.ds_id_.sic_ = 219;
     tr_adsb_102_5.sys_typ_ = SystemType::Adsb;
-    tr_adsb_102_5.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:12.000Z"), Qt::ISODateWithMs);
+    tr_adsb_102_5.tod_ = "2020-05-05T10:00:12.000Z"_ts;
     tr_adsb_102_5.trk_nb_ = 102;
     tr_adsb_102_5.mode_S_ = 0x000001;
     tr_adsb_102_5.mode_3A_ = 0001;
@@ -219,7 +221,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_1.ds_id_.sac_ = 0;
     tr_mlat_201_1.ds_id_.sic_ = 107;
     tr_mlat_201_1.sys_typ_ = SystemType::Mlat;
-    tr_mlat_201_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T09:59:59.000Z"), Qt::ISODateWithMs);
+    tr_mlat_201_1.tod_ = "2020-05-05T09:59:59.000Z"_ts;
     tr_mlat_201_1.trk_nb_ = 201;
     tr_mlat_201_1.mode_S_ = 0x000001;
     tr_mlat_201_1.mode_3A_ = 0001;
@@ -233,7 +235,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_2.ds_id_.sac_ = 0;
     tr_mlat_201_2.ds_id_.sic_ = 107;
     tr_mlat_201_2.sys_typ_ = SystemType::Mlat;
-    tr_mlat_201_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:00.000Z"), Qt::ISODateWithMs);
+    tr_mlat_201_2.tod_ = "2020-05-05T10:00:00.000Z"_ts;
     tr_mlat_201_2.trk_nb_ = 201;
     tr_mlat_201_2.mode_S_ = 0x000001;
     tr_mlat_201_2.mode_3A_ = 0001;
@@ -247,7 +249,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_3.ds_id_.sac_ = 0;
     tr_mlat_201_3.ds_id_.sic_ = 107;
     tr_mlat_201_3.sys_typ_ = SystemType::Mlat;
-    tr_mlat_201_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:01.000Z"), Qt::ISODateWithMs);
+    tr_mlat_201_3.tod_ = "2020-05-05T10:00:01.000Z"_ts;
     tr_mlat_201_3.trk_nb_ = 201;
     tr_mlat_201_3.mode_S_ = 0x000001;
     tr_mlat_201_3.mode_3A_ = 0001;
@@ -261,7 +263,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_4.ds_id_.sac_ = 0;
     tr_mlat_201_4.ds_id_.sic_ = 107;
     tr_mlat_201_4.sys_typ_ = SystemType::Mlat;
-    tr_mlat_201_4.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:02.000Z"), Qt::ISODateWithMs);
+    tr_mlat_201_4.tod_ = "2020-05-05T10:00:02.000Z"_ts;
     tr_mlat_201_4.trk_nb_ = 201;
     tr_mlat_201_4.mode_S_ = 0x000001;
     tr_mlat_201_4.mode_3A_ = 0001;
@@ -281,7 +283,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_202_1.ds_id_.sac_ = 0;
     tr_mlat_202_1.ds_id_.sic_ = 107;
     tr_mlat_202_1.sys_typ_ = SystemType::Mlat;
-    tr_mlat_202_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:05.000Z"), Qt::ISODateWithMs);
+    tr_mlat_202_1.tod_ = "2020-05-05T10:00:05.000Z"_ts;
     tr_mlat_202_1.trk_nb_ = 202;
     tr_mlat_202_1.mode_S_ = 0x000001;
     tr_mlat_202_1.mode_3A_ = 0001;
@@ -295,7 +297,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_202_2.ds_id_.sac_ = 0;
     tr_mlat_202_2.ds_id_.sic_ = 107;
     tr_mlat_202_2.sys_typ_ = SystemType::Mlat;
-    tr_mlat_202_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:06.000Z"), Qt::ISODateWithMs);
+    tr_mlat_202_2.tod_ = "2020-05-05T10:00:06.000Z"_ts;
     tr_mlat_202_2.trk_nb_ = 202;
     tr_mlat_202_2.mode_S_ = 0x000001;
     tr_mlat_202_2.mode_3A_ = 0001;
@@ -309,7 +311,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_202_3.ds_id_.sac_ = 0;
     tr_mlat_202_3.ds_id_.sic_ = 107;
     tr_mlat_202_3.sys_typ_ = SystemType::Mlat;
-    tr_mlat_202_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:07.000Z"), Qt::ISODateWithMs);
+    tr_mlat_202_3.tod_ = "2020-05-05T10:00:07.000Z"_ts;
     tr_mlat_202_3.trk_nb_ = 202;
     tr_mlat_202_3.mode_S_ = 0x000001;
     tr_mlat_202_3.mode_3A_ = 0001;
@@ -329,7 +331,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_1.ds_id_.sac_ = 0;
     tr_mlat_203_1.ds_id_.sic_ = 107;
     tr_mlat_203_1.sys_typ_ = SystemType::Mlat;
-    tr_mlat_203_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:10.000Z"), Qt::ISODateWithMs);
+    tr_mlat_203_1.tod_ = "2020-05-05T10:00:10.000Z"_ts;
     tr_mlat_203_1.trk_nb_ = 203;
     tr_mlat_203_1.mode_S_ = 0x000001;
     tr_mlat_203_1.mode_3A_ = 0001;
@@ -343,7 +345,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_2.ds_id_.sac_ = 0;
     tr_mlat_203_2.ds_id_.sic_ = 107;
     tr_mlat_203_2.sys_typ_ = SystemType::Mlat;
-    tr_mlat_203_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:11.000Z"), Qt::ISODateWithMs);
+    tr_mlat_203_2.tod_ = "2020-05-05T10:00:11.000Z"_ts;
     tr_mlat_203_2.trk_nb_ = 203;
     tr_mlat_203_2.mode_S_ = 0x000001;
     tr_mlat_203_2.mode_3A_ = 0001;
@@ -357,7 +359,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_3.ds_id_.sac_ = 0;
     tr_mlat_203_3.ds_id_.sic_ = 107;
     tr_mlat_203_3.sys_typ_ = SystemType::Mlat;
-    tr_mlat_203_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:12.000Z"), Qt::ISODateWithMs);
+    tr_mlat_203_3.tod_ = "2020-05-05T10:00:12.000Z"_ts;
     tr_mlat_203_3.trk_nb_ = 203;
     tr_mlat_203_3.mode_S_ = 0x000001;
     tr_mlat_203_3.mode_3A_ = 0001;
@@ -371,7 +373,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_4.ds_id_.sac_ = 0;
     tr_mlat_203_4.ds_id_.sic_ = 107;
     tr_mlat_203_4.sys_typ_ = SystemType::Mlat;
-    tr_mlat_203_4.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:13.000Z"), Qt::ISODateWithMs);
+    tr_mlat_203_4.tod_ = "2020-05-05T10:00:13.000Z"_ts;
     tr_mlat_203_4.trk_nb_ = 203;
     tr_mlat_203_4.mode_S_ = 0x000001;
     tr_mlat_203_4.mode_3A_ = 0001;
@@ -391,7 +393,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_301_1.ds_id_.sac_ = 0;
     tr_smr_301_1.ds_id_.sic_ = 7;
     tr_smr_301_1.sys_typ_ = SystemType::Smr;
-    tr_smr_301_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T09:59:57.000Z"), Qt::ISODateWithMs);
+    tr_smr_301_1.tod_ = "2020-05-05T09:59:57.000Z"_ts;
     tr_smr_301_1.trk_nb_ = 301;
     tr_smr_301_1.on_gnd_ = true;
     tr_smr_301_1.x_ = -150.0;
@@ -402,7 +404,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_301_2.ds_id_.sac_ = 0;
     tr_smr_301_2.ds_id_.sic_ = 7;
     tr_smr_301_2.sys_typ_ = SystemType::Smr;
-    tr_smr_301_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T09:59:58.000Z"), Qt::ISODateWithMs);
+    tr_smr_301_2.tod_ = "2020-05-05T09:59:58.000Z"_ts;
     tr_smr_301_2.trk_nb_ = 301;
     tr_smr_301_2.on_gnd_ = true;
     tr_smr_301_2.x_ = -100.0;
@@ -413,7 +415,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_301_3.ds_id_.sac_ = 0;
     tr_smr_301_3.ds_id_.sic_ = 7;
     tr_smr_301_3.sys_typ_ = SystemType::Smr;
-    tr_smr_301_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T09:59:59.000Z"), Qt::ISODateWithMs);
+    tr_smr_301_3.tod_ = "2020-05-05T09:59:59.000Z"_ts;
     tr_smr_301_3.trk_nb_ = 301;
     tr_smr_301_3.on_gnd_ = true;
     tr_smr_301_3.x_ = -50.0;
@@ -430,7 +432,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_1.ds_id_.sac_ = 0;
     tr_smr_302_1.ds_id_.sic_ = 7;
     tr_smr_302_1.sys_typ_ = SystemType::Smr;
-    tr_smr_302_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:02.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_1.tod_ = "2020-05-05T10:00:02.000Z"_ts;
     tr_smr_302_1.trk_nb_ = 302;
     tr_smr_302_1.on_gnd_ = true;
     tr_smr_302_1.x_ = 100.0;
@@ -441,7 +443,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_2.ds_id_.sac_ = 0;
     tr_smr_302_2.ds_id_.sic_ = 7;
     tr_smr_302_2.sys_typ_ = SystemType::Smr;
-    tr_smr_302_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:03.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_2.tod_ = "2020-05-05T10:00:03.000Z"_ts;
     tr_smr_302_2.trk_nb_ = 302;
     tr_smr_302_2.on_gnd_ = true;
     tr_smr_302_2.x_ = 150.0;
@@ -452,7 +454,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_3.ds_id_.sac_ = 0;
     tr_smr_302_3.ds_id_.sic_ = 7;
     tr_smr_302_3.sys_typ_ = SystemType::Smr;
-    tr_smr_302_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:04.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_3.tod_ = "2020-05-05T10:00:04.000Z"_ts;
     tr_smr_302_3.trk_nb_ = 302;
     tr_smr_302_3.on_gnd_ = true;
     tr_smr_302_3.x_ = 200.0;
@@ -463,7 +465,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_4.ds_id_.sac_ = 0;
     tr_smr_302_4.ds_id_.sic_ = 7;
     tr_smr_302_4.sys_typ_ = SystemType::Smr;
-    tr_smr_302_4.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:05.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_4.tod_ = "2020-05-05T10:00:05.000Z"_ts;
     tr_smr_302_4.trk_nb_ = 302;
     tr_smr_302_4.on_gnd_ = true;
     tr_smr_302_4.x_ = 250.0;
@@ -474,7 +476,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_5.ds_id_.sac_ = 0;
     tr_smr_302_5.ds_id_.sic_ = 7;
     tr_smr_302_5.sys_typ_ = SystemType::Smr;
-    tr_smr_302_5.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:06.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_5.tod_ = "2020-05-05T10:00:06.000Z"_ts;
     tr_smr_302_5.trk_nb_ = 302;
     tr_smr_302_5.on_gnd_ = true;
     tr_smr_302_5.x_ = 300.0;
@@ -485,7 +487,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_6.ds_id_.sac_ = 0;
     tr_smr_302_6.ds_id_.sic_ = 7;
     tr_smr_302_6.sys_typ_ = SystemType::Smr;
-    tr_smr_302_6.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:07.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_6.tod_ = "2020-05-05T10:00:07.000Z"_ts;
     tr_smr_302_6.trk_nb_ = 302;
     tr_smr_302_6.on_gnd_ = true;
     tr_smr_302_6.x_ = 350.0;
@@ -496,7 +498,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_7.ds_id_.sac_ = 0;
     tr_smr_302_7.ds_id_.sic_ = 7;
     tr_smr_302_7.sys_typ_ = SystemType::Smr;
-    tr_smr_302_7.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:08.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_7.tod_ = "2020-05-05T10:00:08.000Z"_ts;
     tr_smr_302_7.trk_nb_ = 302;
     tr_smr_302_7.on_gnd_ = true;
     tr_smr_302_7.x_ = 400.0;
@@ -507,7 +509,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_8.ds_id_.sac_ = 0;
     tr_smr_302_8.ds_id_.sic_ = 7;
     tr_smr_302_8.sys_typ_ = SystemType::Smr;
-    tr_smr_302_8.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:09.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_8.tod_ = "2020-05-05T10:00:09.000Z"_ts;
     tr_smr_302_8.trk_nb_ = 302;
     tr_smr_302_8.on_gnd_ = true;
     tr_smr_302_8.x_ = 450.0;
@@ -518,7 +520,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_9.ds_id_.sac_ = 0;
     tr_smr_302_9.ds_id_.sic_ = 7;
     tr_smr_302_9.sys_typ_ = SystemType::Smr;
-    tr_smr_302_9.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:10.000Z"), Qt::ISODateWithMs);
+    tr_smr_302_9.tod_ = "2020-05-05T10:00:10.000Z"_ts;
     tr_smr_302_9.trk_nb_ = 302;
     tr_smr_302_9.on_gnd_ = true;
     tr_smr_302_9.x_ = 500.0;
@@ -537,7 +539,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_303_1.ds_id_.sac_ = 0;
     tr_smr_303_1.ds_id_.sic_ = 7;
     tr_smr_303_1.sys_typ_ = SystemType::Smr;
-    tr_smr_303_1.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:13.000Z"), Qt::ISODateWithMs);
+    tr_smr_303_1.tod_ = "2020-05-05T10:00:13.000Z"_ts;
     tr_smr_303_1.trk_nb_ = 303;
     tr_smr_303_1.on_gnd_ = true;
     tr_smr_303_1.x_ = 650.0;
@@ -548,7 +550,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_303_2.ds_id_.sac_ = 0;
     tr_smr_303_2.ds_id_.sic_ = 7;
     tr_smr_303_2.sys_typ_ = SystemType::Smr;
-    tr_smr_303_2.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:14.000Z"), Qt::ISODateWithMs);
+    tr_smr_303_2.tod_ = "2020-05-05T10:00:14.000Z"_ts;
     tr_smr_303_2.trk_nb_ = 303;
     tr_smr_303_2.on_gnd_ = true;
     tr_smr_303_2.x_ = 700.0;
@@ -559,7 +561,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_303_3.ds_id_.sac_ = 0;
     tr_smr_303_3.ds_id_.sic_ = 7;
     tr_smr_303_3.sys_typ_ = SystemType::Smr;
-    tr_smr_303_3.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T10:00:15.000Z"), Qt::ISODateWithMs);
+    tr_smr_303_3.tod_ = "2020-05-05T10:00:15.000Z"_ts;
     tr_smr_303_3.trk_nb_ = 303;
     tr_smr_303_3.on_gnd_ = true;
     tr_smr_303_3.x_ = 750.0;

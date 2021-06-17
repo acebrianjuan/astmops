@@ -53,29 +53,31 @@ void DgpsCsvReaderTest::initTestCase()
 
 void DgpsCsvReaderTest::testReadDgpsCsv_data()
 {
+    using namespace Literals;
+
     // Expected output.
     QVector<QGeoPositionInfo> posInfo;
     posInfo
         << QGeoPositionInfo(QGeoCoordinate(41.2854687222, 2.0835099167, 188.6163796653 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:05.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:05.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2857005833, 2.0841903056, 189.9052917801 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:06.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:06.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2859409167, 2.0848886667, 193.4340869974 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:07.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:07.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2861901389, 2.0856012778, 198.6026889070 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:08.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:08.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2864456111, 2.0863271389, 206.4554209471 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:09.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:09.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2867038333, 2.0870648056, 218.5923658957 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:10.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:10.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2869634167, 2.0878136667, 232.5341582611 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:11.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:11.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2872252778, 2.0885727222, 246.6456595994 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:12.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:12.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2874895278, 2.0893413889, 261.7956146481 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:13.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:13.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2877548889, 2.0901189722, 278.9660826756 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:14.351Z"), Qt::ISODateWithMs));
+               "2020-05-05T08:06:14.351Z"_ts);
 
 
     QTest::addColumn<QString>("fileName");
@@ -115,29 +117,31 @@ void DgpsCsvReaderTest::testReadDgpsCsv()
 
 void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
 {
+    using namespace Literals;
+
     // Input.
     QVector<QGeoPositionInfo> posInfo;
     posInfo
         << QGeoPositionInfo(QGeoCoordinate(41.2854687222, 2.0835099167, 188.6163796653 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:05.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:05.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2857005833, 2.0841903056, 189.9052917801 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:06.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:06.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2859409167, 2.0848886667, 193.4340869974 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:07.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:07.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2861901389, 2.0856012778, 198.6026889070 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:08.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:08.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2864456111, 2.0863271389, 206.4554209471 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:09.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:09.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2867038333, 2.0870648056, 218.5923658957 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:10.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:10.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2869634167, 2.0878136667, 232.5341582611 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:11.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:11.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2872252778, 2.0885727222, 246.6456595994 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:12.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:12.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2874895278, 2.0893413889, 261.7956146481 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:13.351Z"), Qt::ISODateWithMs))
+               "2020-05-05T08:06:13.351Z"_ts)
         << QGeoPositionInfo(QGeoCoordinate(41.2877548889, 2.0901189722, 278.9660826756 * ft_to_m),
-               QDateTime::fromString(QLatin1String("2020-05-05T08:06:14.351Z"), Qt::ISODateWithMs));
+               "2020-05-05T08:06:14.351Z"_ts);
 
     // Expected output.
     QVector<TargetReport> tgtRep;
@@ -145,61 +149,61 @@ void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
     TargetReport tr;
     tr.sys_typ_ = SystemType::Dgps;
     tr.mode_S_ = 0x34304F;
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:05.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:05.351Z"_ts;
     tr.x_ = 422.796423;
     tr.y_ = -1289.162720;
     tr.z_ = 53.025692;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:06.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:06.351Z"_ts;
     tr.x_ = 479.792215;
     tr.y_ = -1263.408667;
     tr.z_ = 53.419691;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:07.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:07.351Z"_ts;
     tr.x_ = 538.293154;
     tr.y_ = -1236.713247;
     tr.z_ = 54.495850;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:08.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:08.351Z"_ts;
     tr.x_ = 597.987385;
     tr.y_ = -1209.030149;
     tr.z_ = 56.071250;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:09.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:09.351Z"_ts;
     tr.x_ = 658.791174;
     tr.y_ = -1180.652468;
     tr.z_ = 58.464110;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:10.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:10.351Z"_ts;
     tr.x_ = 720.583612;
     tr.y_ = -1151.968979;
     tr.z_ = 62.162036;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:11.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:11.351Z"_ts;
     tr.x_ = 783.313441;
     tr.y_ = -1123.133751;
     tr.z_ = 66.409265;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:12.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:12.351Z"_ts;
     tr.x_ = 846.896818;
     tr.y_ = -1094.044887;
     tr.z_ = 70.707404;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:13.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:13.351Z"_ts;
     tr.x_ = 911.284910;
     tr.y_ = -1064.690067;
     tr.z_ = 75.321228;
     tgtRep << tr;
 
-    tr.tod_ = QDateTime::fromString(QLatin1String("2020-05-05T08:06:14.351Z"), Qt::ISODateWithMs);
+    tr.tod_ = "2020-05-05T08:06:14.351Z"_ts;
     tr.x_ = 976.419590;
     tr.y_ = -1035.211232;
     tr.z_ = 80.550027;
