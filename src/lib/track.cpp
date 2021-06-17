@@ -50,27 +50,27 @@ Track &Track::operator<<(const TargetReport &tr)
     if (tr.sys_typ_ == system_type_ && tr.trk_nb_ == track_number_ &&
         tr.tod_.isValid())
     {
-        // Start/End DateTimes.
+        // Begin/end timestamps.
         QDateTime tod = tr.tod_;
-        if (!beginDateTime_.isValid())
+        if (!beginTimestamp_.isValid())
         {
-            beginDateTime_ = tod;
+            beginTimestamp_ = tod;
         }
-        else if (tod < beginDateTime_)
+        else if (tod < beginTimestamp_)
         {
-            beginDateTime_ = tod;
-        }
-
-        if (!endDateTime_.isValid())
-        {
-            endDateTime_ = tod;
-        }
-        else if (tod > endDateTime_)
-        {
-            endDateTime_ = tod;
+            beginTimestamp_ = tod;
         }
 
-        // XYZ Bounds.
+        if (!endTimestamp_.isValid())
+        {
+            endTimestamp_ = tod;
+        }
+        else if (tod > endTimestamp_)
+        {
+            endTimestamp_ = tod;
+        }
+
+        // XYZ bounds.
         if (!qIsNaN(tr.x_) && !qIsNaN(tr.y_))
         {
             // X min.
@@ -225,22 +225,22 @@ QVector<QDateTime> Track::timestamps() const
     return tstamps;
 }
 
-QDateTime Track::beginDateTime() const
+QDateTime Track::beginTimestamp() const
 {
-    return beginDateTime_;
+    return beginTimestamp_;
 }
 
-QDateTime Track::endDateTime() const
+QDateTime Track::endTimestamp() const
 {
-    return endDateTime_;
+    return endTimestamp_;
 }
 
 double Track::duration() const
 {
     double dur = qSNaN();
 
-    QDateTime tbegin = beginDateTime_;
-    QDateTime tend = endDateTime_;
+    QDateTime tbegin = beginTimestamp_;
+    QDateTime tend = endTimestamp_;
 
     if (tbegin.isValid() && tend.isValid())
     {
@@ -250,15 +250,15 @@ double Track::duration() const
     return dur;
 }
 
-bool Track::coversDateTime(const QDateTime &tod) const
+bool Track::coversTimestamp(const QDateTime &tod) const
 {
     if (!tod.isValid())
     {
         return false;
     }
 
-    QDateTime tbegin = beginDateTime_;
-    QDateTime tend = endDateTime_;
+    QDateTime tbegin = beginTimestamp_;
+    QDateTime tend = endTimestamp_;
 
     if (tbegin.isValid() && tend.isValid())
     {
@@ -274,12 +274,12 @@ bool Track::coversDateTime(const QDateTime &tod) const
 void Track::intersect(const Track &other)
 {
     QMap<QDateTime, TargetReport>::iterator it = data_.begin();
-    while (it != data_.lowerBound(other.beginDateTime()))
+    while (it != data_.lowerBound(other.beginTimestamp()))
     {
         it = data_.erase(it);
     }
 
-    it = data_.upperBound(other.endDateTime());
+    it = data_.upperBound(other.endTimestamp());
     while (it != data_.end())
     {
         it = data_.erase(it);
@@ -337,29 +337,29 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
 {
     if (t.system_type() == system_type_)
     {
-        // Start/End DateTimes.
-        QDateTime beginTod = t.beginDateTime();
-        if (beginDateTime_.isNull())
+        // Begin/end timestamps.
+        QDateTime beginTod = t.beginTimestamp();
+        if (beginTimestamp_.isNull())
         {
-            beginDateTime_ = beginTod;
+            beginTimestamp_ = beginTod;
         }
-        else if (beginTod.isValid() && beginTod < beginDateTime_)
+        else if (beginTod.isValid() && beginTod < beginTimestamp_)
         {
-            beginDateTime_ = beginTod;
+            beginTimestamp_ = beginTod;
         }
 
-        QDateTime endTod = t.endDateTime();
-        if (endDateTime_.isNull())
+        QDateTime endTod = t.endTimestamp();
+        if (endTimestamp_.isNull())
         {
-            endDateTime_ = endTod;
+            endTimestamp_ = endTod;
         }
-        else if (endTod.isValid() && endTod > endDateTime_)
+        else if (endTod.isValid() && endTod > endTimestamp_)
         {
-            endDateTime_ = endTod;
+            endTimestamp_ = endTod;
         }
 
         // Insert Track and register track number.
-        tracks_.insert(t.beginDateTime(), t);
+        tracks_.insert(t.beginTimestamp(), t);
         track_numbers_ << t.track_number();
     }
 
@@ -447,21 +447,21 @@ bool TrackCollection::containsTrackNumber(const TrackNum tn) const
     return track_numbers_.contains(tn);
 }
 
-QDateTime TrackCollection::beginDateTime() const
+QDateTime TrackCollection::beginTimestamp() const
 {
-    return beginDateTime_;
+    return beginTimestamp_;
 }
 
-QDateTime TrackCollection::endDateTime() const
+QDateTime TrackCollection::endTimestamp() const
 {
-    return endDateTime_;
+    return endTimestamp_;
 }
 
-bool TrackCollection::coversDateTime(const QDateTime &tod) const
+bool TrackCollection::coversTimestamp(const QDateTime &tod) const
 {
     for (const Track &t : tracks_)
     {
-        if (t.coversDateTime(tod))
+        if (t.coversTimestamp(tod))
         {
             return true;
         }
@@ -564,8 +564,8 @@ void TrackCollectionSet::addMatch(const Track &t_ref, const Track &t_tst)
         Q_ASSERT(col.track(lhs).has_value());
         Q_ASSERT(col.track(rhs).has_value());
 
-        return col.track(lhs).value().beginDateTime() <
-               col.track(rhs).value().beginDateTime();
+        return col.track(lhs).value().beginTimestamp() <
+               col.track(rhs).value().beginTimestamp();
     };
 
     std::sort(match_vec.begin(), match_vec.end(), sortfun);
@@ -580,7 +580,7 @@ QVector<TrackCollection> TrackCollectionSet::tstTrackCols() const
     }
 
     auto sortfun = [](const TrackCollection &lhs, const TrackCollection &rhs) {
-        return lhs.beginDateTime() < rhs.beginDateTime();
+        return lhs.beginTimestamp() < rhs.beginTimestamp();
     };
 
     std::sort(vec.begin(), vec.end(), sortfun);
@@ -782,8 +782,8 @@ bool operator==(const TrackCollectionSet &lhs, const TrackCollectionSet &rhs)
 
 bool haveTimeIntersection(const Track &lhs, const Track &rhs)
 {
-    return lhs.beginDateTime() <= rhs.endDateTime() &&
-           rhs.beginDateTime() <= lhs.endDateTime();
+    return lhs.beginTimestamp() <= rhs.endTimestamp() &&
+           rhs.beginTimestamp() <= lhs.endTimestamp();
 }
 
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs)
@@ -826,8 +826,8 @@ std::optional<Track> intersect(const Track &intersectee, const Track &intersecto
     }
 
     const QMultiMap<QDateTime, TargetReport> &data = intersectee.data();
-    QMultiMap<QDateTime, TargetReport>::const_iterator it_from = data.lowerBound(intersector.beginDateTime());
-    QMultiMap<QDateTime, TargetReport>::const_iterator it_to = data.upperBound(intersector.endDateTime());
+    QMultiMap<QDateTime, TargetReport>::const_iterator it_from = data.lowerBound(intersector.beginTimestamp());
+    QMultiMap<QDateTime, TargetReport>::const_iterator it_to = data.upperBound(intersector.endTimestamp());
 
     // Only insert elements of intersectee that satisfy intersection with
     // intersector.
@@ -851,7 +851,7 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
     const QMultiMap<QDateTime, TargetReport> &data = track.data();
     for (const QDateTime &tod : dtimes)
     {
-        if (track.coversDateTime(tod))
+        if (track.coversTimestamp(tod))
         {
             if (data.contains(tod))
             {

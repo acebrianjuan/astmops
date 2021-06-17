@@ -67,10 +67,10 @@ public:
     int size() const;
 
     QVector<QDateTime> timestamps() const;
-    QDateTime beginDateTime() const;
-    QDateTime endDateTime() const;
+    QDateTime beginTimestamp() const;
+    QDateTime endTimestamp() const;
     double duration() const;
-    bool coversDateTime(const QDateTime &tod) const;
+    bool coversTimestamp(const QDateTime &tod) const;
 
     void intersect(const Track &other);
 
@@ -82,8 +82,8 @@ private:
     TrackNum track_number_ = 0;
     TgtRepMap data_;
 
-    QDateTime beginDateTime_;
-    QDateTime endDateTime_;
+    QDateTime beginTimestamp_;
+    QDateTime endTimestamp_;
 
     QPair<double, double> x_bounds_ = {qSNaN(), qSNaN()};
     QPair<double, double> y_bounds_ = {qSNaN(), qSNaN()};
@@ -133,21 +133,21 @@ public:
     TrackCollection tracks(const QVector<TrackNum> &v) const;
     bool containsTrackNumber(const TrackNum tn) const;
 
-    QDateTime beginDateTime() const;
-    QDateTime endDateTime() const;
-    bool coversDateTime(const QDateTime &tod) const;
+    QDateTime beginTimestamp() const;
+    QDateTime endTimestamp() const;
+    bool coversTimestamp(const QDateTime &tod) const;
 
     std::optional<ModeS> mode_s() const;
     void setMode_s(ModeS ms);
 
 private:
-    SystemType system_type_;
+    SystemType system_type_ = SystemType::Unknown;
 
     QSet<TrackNum> track_numbers_;
     QMultiMap<QDateTime, Track> tracks_;
 
-    QDateTime beginDateTime_;
-    QDateTime endDateTime_;
+    QDateTime beginTimestamp_;
+    QDateTime endTimestamp_;
 
     std::optional<ModeS> mode_s_;
 };
