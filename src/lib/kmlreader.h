@@ -55,16 +55,16 @@ private:
     static QStringList pointCoordinatesXmlPath();
     static QStringList polygonCoordinatesXmlPath();
 
-    QXmlStreamReader m_xml;
+    QXmlStreamReader xml_;
 
-    QGeoCoordinate m_arp;
+    QGeoCoordinate arp_;
 
-    QHash<QString, Collection> m_runwayElements;
-    QHash<QString, Collection> m_taxiwayElements;
-    QHash<QString, Collection> m_apronLaneElements;
-    QHash<QString, Collection> m_standElements;
-    QHash<QString, Collection> m_airborne1Elements;
-    QHash<QString, Collection> m_airborne2Elements;
+    QHash<QString, Collection> runwayElements_;
+    QHash<QString, Collection> taxiwayElements_;
+    QHash<QString, Collection> apronLaneElements_;
+    QHash<QString, Collection> standElements_;
+    QHash<QString, Collection> airborne1Elements_;
+    QHash<QString, Collection> airborne2Elements_;
 };
 
 #endif  // ASTMOPS_KMLREADER_H

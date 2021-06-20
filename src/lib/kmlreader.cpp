@@ -23,21 +23,21 @@
 
 bool KmlReader::read(QIODevice *device)
 {
-    m_xml.setDevice(device);
+    xml_.setDevice(device);
 
-    if (m_xml.readNextStartElement())
+    if (xml_.readNextStartElement())
     {
-        if (m_xml.name() == QLatin1String("kml"))
+        if (xml_.name() == QLatin1String("kml"))
         {
             readKml();
         }
         else
         {
-            m_xml.raiseError(QLatin1String("The file is not a KML file."));
+            xml_.raiseError(QLatin1String("The file is not a KML file."));
         }
     }
 
-    return !m_xml.error();
+    return !xml_.error();
 }
 
 /*!
@@ -48,13 +48,13 @@ Aerodrome KmlReader::makeAerodrome() const
     Aerodrome aerodrome;
 
     // Coordinates of the local tangent plane origin.
-    QGeoCoordinate geoOrigin = m_arp;
+    QGeoCoordinate geoOrigin = arp_;
 
     // Airport Reference Point.
-    aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
+    aerodrome.setArp(geoToLocalEnu(arp_, geoOrigin));
 
     // Runway elements.
-    for (auto it = m_runwayElements.begin(); it != m_runwayElements.end(); ++it)
+    for (auto it = runwayElements_.begin(); it != runwayElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection rwyElements = it.value();
@@ -74,7 +74,7 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Taxiway elements.
-    for (auto it = m_taxiwayElements.begin(); it != m_taxiwayElements.end(); ++it)
+    for (auto it = taxiwayElements_.begin(); it != taxiwayElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection twyElements = it.value();
@@ -94,7 +94,7 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // ApronLane elements.
-    for (auto it = m_apronLaneElements.begin(); it != m_apronLaneElements.end(); ++it)
+    for (auto it = apronLaneElements_.begin(); it != apronLaneElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection apronLaneElements = it.value();
@@ -114,7 +114,7 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Stand elements.
-    for (auto it = m_standElements.begin(); it != m_standElements.end(); ++it)
+    for (auto it = standElements_.begin(); it != standElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection standElements = it.value();
@@ -134,7 +134,7 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Airborne 1 elements.
-    for (auto it = m_airborne1Elements.begin(); it != m_airborne1Elements.end(); ++it)
+    for (auto it = airborne1Elements_.begin(); it != airborne1Elements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection airborne1Elements = it.value();
@@ -154,7 +154,7 @@ Aerodrome KmlReader::makeAerodrome() const
     }
 
     // Airborne 2 elements.
-    for (auto it = m_airborne2Elements.begin(); it != m_airborne2Elements.end(); ++it)
+    for (auto it = airborne2Elements_.begin(); it != airborne2Elements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection airborne2Elements = it.value();
@@ -178,31 +178,31 @@ Aerodrome KmlReader::makeAerodrome() const
 
 void KmlReader::readKml()
 {
-    Q_ASSERT(m_xml.isStartElement() &&
-             m_xml.name() == QLatin1String("kml"));
+    Q_ASSERT(xml_.isStartElement() &&
+             xml_.name() == QLatin1String("kml"));
 
-    if (m_xml.readNextStartElement())
+    if (xml_.readNextStartElement())
     {
-        if (m_xml.name() != QLatin1String("Document"))
+        if (xml_.name() != QLatin1String("Document"))
         {
-            m_xml.raiseError(QLatin1String("Missing <Document> root element."));
+            xml_.raiseError(QLatin1String("Missing <Document> root element."));
         }
     }
 
-    while (!m_xml.atEnd())
+    while (!xml_.atEnd())
     {
-        if (m_xml.readNextStartElement())
+        if (xml_.readNextStartElement())
         {
-            if (m_xml.name() == QLatin1String("Folder"))
+            if (xml_.name() == QLatin1String("Folder"))
             {
                 continue;
             }
 
             // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
-            if (m_xml.name() != QLatin1String("Placemark"))
+            if (xml_.name() != QLatin1String("Placemark"))
             {
-                m_xml.skipCurrentElement();
+                xml_.skipCurrentElement();
                 continue;
             }
 
@@ -213,36 +213,36 @@ void KmlReader::readKml()
 
 void KmlReader::readPlacemark()
 {
-    Q_ASSERT(m_xml.isStartElement() &&
-             m_xml.name() == QLatin1String("Placemark"));
+    Q_ASSERT(xml_.isStartElement() &&
+             xml_.name() == QLatin1String("Placemark"));
 
     bool readDescription = false;
     bool readCoordinates = false;
     QString desc;
     QVector<QGeoCoordinate> coords;
 
-    while (!m_xml.atEnd() && (!readDescription || !readCoordinates))
+    while (!xml_.atEnd() && (!readDescription || !readCoordinates))
     {
-        if (m_xml.readNextStartElement())
+        if (xml_.readNextStartElement())
         {
-            if (m_xml.name() == QLatin1String("description"))
+            if (xml_.name() == QLatin1String("description"))
             {
-                desc = m_xml.readElementText();
+                desc = xml_.readElementText();
                 readDescription = true;
             }
-            else if (m_xml.name() == QLatin1String("Polygon"))
+            else if (xml_.name() == QLatin1String("Polygon"))
             {
                 coords << posListToCoordVector(getPosList(polygonCoordinatesXmlPath()));
                 readCoordinates = true;
             }
-            else if (m_xml.name() == QLatin1String("Point"))
+            else if (xml_.name() == QLatin1String("Point"))
             {
                 coords << posListToCoord(getPosList(pointCoordinatesXmlPath()));
                 readCoordinates = true;
             }
             else
             {
-                m_xml.skipCurrentElement();
+                xml_.skipCurrentElement();
             }
         }
     }
@@ -271,31 +271,31 @@ void KmlReader::readPlacemark()
 
         if (token == QLatin1String("ARP"))
         {
-            m_arp = coords.first();
+            arp_ = coords.first();
         }
         else if (token == QLatin1String("RunwayElement"))
         {
-            m_runwayElements[name] << coords;
+            runwayElements_[name] << coords;
         }
         else if (token == QLatin1String("TaxiwayElement"))
         {
-            m_taxiwayElements[name] << coords;
+            taxiwayElements_[name] << coords;
         }
         else if (token == QLatin1String("ApronElement"))
         {
-            m_apronLaneElements[name] << coords;
+            apronLaneElements_[name] << coords;
         }
         else if (token == QLatin1String("AircraftStand"))
         {
-            m_standElements[name] << coords;
+            standElements_[name] << coords;
         }
         else if (token == QLatin1String("Airborne1Element"))
         {
-            m_airborne1Elements[name] << coords;
+            airborne1Elements_[name] << coords;
         }
         else if (token == QLatin1String("Airborne2Element"))
         {
-            m_airborne2Elements[name] << coords;
+            airborne2Elements_[name] << coords;
         }
     }
 }
@@ -303,15 +303,15 @@ void KmlReader::readPlacemark()
 QStringList KmlReader::getPosList(const QStringList &tokens)
 {
     int level = 0;
-    while (!m_xml.atEnd())
+    while (!xml_.atEnd())
     {
-        if (m_xml.readNextStartElement())
+        if (xml_.readNextStartElement())
         {
             // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
-            if (m_xml.name() != tokens[level])
+            if (xml_.name() != tokens[level])
             {
-                m_xml.skipCurrentElement();
+                xml_.skipCurrentElement();
                 continue;
             }
             ++level;
@@ -319,13 +319,13 @@ QStringList KmlReader::getPosList(const QStringList &tokens)
             // We are at the wanted DocFileRef element.
             if (level >= tokens.size())
             {
-                QStringList list = m_xml.readElementText().split(QRegularExpression(QLatin1String(",|\\s")));
+                QStringList list = xml_.readElementText().split(QRegularExpression(QLatin1String(",|\\s")));
                 list.removeAll(QLatin1String(""));
                 return list;
             }
         }
 
-        if (m_xml.hasError())
+        if (xml_.hasError())
         {
             break;
         }
