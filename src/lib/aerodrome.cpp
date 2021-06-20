@@ -27,9 +27,9 @@ Aerodrome::Aerodrome()
 
 bool Aerodrome::hasAnyElements()
 {
-    if (!m_runwayElements.isEmpty() || !m_taxiwayElements.isEmpty() ||
-        !m_apronLaneElements.isEmpty() || !m_standElements.isEmpty() ||
-        !m_airborne1Elements.isEmpty() || !m_airborne2Elements.isEmpty())
+    if (!runwayElements_.isEmpty() || !taxiwayElements_.isEmpty() ||
+        !apronLaneElements_.isEmpty() || !standElements_.isEmpty() ||
+        !airborne1Elements_.isEmpty() || !airborne2Elements_.isEmpty())
     {
         return true;
     }
@@ -38,9 +38,9 @@ bool Aerodrome::hasAnyElements()
 
 bool Aerodrome::hasAllElements()
 {
-    if (!m_runwayElements.isEmpty() && !m_taxiwayElements.isEmpty() &&
-        !m_apronLaneElements.isEmpty() && !m_standElements.isEmpty() &&
-        !m_airborne1Elements.isEmpty() && !m_airborne2Elements.isEmpty())
+    if (!runwayElements_.isEmpty() && !taxiwayElements_.isEmpty() &&
+        !apronLaneElements_.isEmpty() && !standElements_.isEmpty() &&
+        !airborne1Elements_.isEmpty() && !airborne2Elements_.isEmpty())
     {
         return true;
     }
@@ -49,43 +49,43 @@ bool Aerodrome::hasAllElements()
 
 void Aerodrome::setArp(QVector3D point)
 {
-    m_arp = point;
+    arp_ = point;
 }
 
 void Aerodrome::addRunwayElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_runwayElements[name] << polygon;
+    runwayElements_[name] << polygon;
 }
 
 void Aerodrome::addTaxiwayElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_taxiwayElements[name] << polygon;
+    taxiwayElements_[name] << polygon;
 }
 
 void Aerodrome::addApronLaneElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_apronLaneElements[name] << polygon;
+    apronLaneElements_[name] << polygon;
 }
 
 void Aerodrome::addStandElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_standElements[name] << polygon;
+    standElements_[name] << polygon;
 }
 
 void Aerodrome::addAirborne1Element(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_airborne1Elements[name] << polygon;
+    airborne1Elements_[name] << polygon;
 }
 
 void Aerodrome::addAirborne2Element(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
-    m_airborne2Elements[name] << polygon;
+    airborne2Elements_[name] << polygon;
 }
 
 Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool gndBit)
@@ -107,34 +107,34 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
 
     if (layer == Layer::SurfaceLayer)
     {
-        if (auto name = areaContainsPoint(m_runwayElements, pos2D))
+        if (auto name = areaContainsPoint(runwayElements_, pos2D))
         {
             return NamedArea(Area::Runway, name.value());
         }
 
-        if (auto name = areaContainsPoint(m_taxiwayElements, pos2D))
+        if (auto name = areaContainsPoint(taxiwayElements_, pos2D))
         {
             return NamedArea(Area::Taxiway, name.value());
         }
 
-        if (auto name = areaContainsPoint(m_apronLaneElements, pos2D))
+        if (auto name = areaContainsPoint(apronLaneElements_, pos2D))
         {
             return NamedArea(Area::ApronLane, name.value());
         }
 
-        if (auto name = areaContainsPoint(m_standElements, pos2D))
+        if (auto name = areaContainsPoint(standElements_, pos2D))
         {
             return NamedArea(Area::Stand, name.value());
         }
     }
     else if (layer == Layer::AirborneLayer)
     {
-        if (auto name = areaContainsPoint(m_airborne1Elements, pos2D); name && alt <= 762)
+        if (auto name = areaContainsPoint(airborne1Elements_, pos2D); name && alt <= 762)
         {
             return NamedArea(Area::Airborne1, name.value());
         }
 
-        if (auto name = areaContainsPoint(m_airborne2Elements, pos2D); name && alt <= 762)
+        if (auto name = areaContainsPoint(airborne2Elements_, pos2D); name && alt <= 762)
         {
             return NamedArea(Area::Airborne2, name.value());
         }

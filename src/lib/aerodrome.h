@@ -115,15 +115,15 @@ private:
     bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
     std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
 
-    QVector3D m_arp;
-    QVector3D m_smr;
+    QVector3D arp_;
+    QVector3D smr_;
 
-    QHash<QString, QVector<QPolygonF>> m_runwayElements;
-    QHash<QString, QVector<QPolygonF>> m_taxiwayElements;
-    QHash<QString, QVector<QPolygonF>> m_apronLaneElements;
-    QHash<QString, QVector<QPolygonF>> m_standElements;
-    QHash<QString, QVector<QPolygonF>> m_airborne1Elements;
-    QHash<QString, QVector<QPolygonF>> m_airborne2Elements;
+    QHash<QString, QVector<QPolygonF>> runwayElements_;
+    QHash<QString, QVector<QPolygonF>> taxiwayElements_;
+    QHash<QString, QVector<QPolygonF>> apronLaneElements_;
+    QHash<QString, QVector<QPolygonF>> standElements_;
+    QHash<QString, QVector<QPolygonF>> airborne1Elements_;
+    QHash<QString, QVector<QPolygonF>> airborne2Elements_;
 };
 Q_DECLARE_METATYPE(Aerodrome);
 Q_DECLARE_METATYPE(Aerodrome::NamedArea);
