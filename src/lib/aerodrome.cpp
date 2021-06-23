@@ -25,7 +25,7 @@ Aerodrome::Aerodrome()
 {
 }
 
-bool Aerodrome::hasAnyElements()
+bool Aerodrome::hasAnyElements() const
 {
     if (!runwayElements_.isEmpty() || !taxiwayElements_.isEmpty() ||
         !apronLaneElements_.isEmpty() || !standElements_.isEmpty() ||
@@ -36,7 +36,7 @@ bool Aerodrome::hasAnyElements()
     return false;
 }
 
-bool Aerodrome::hasAllElements()
+bool Aerodrome::hasAllElements() const
 {
     if (!runwayElements_.isEmpty() && !taxiwayElements_.isEmpty() &&
         !apronLaneElements_.isEmpty() && !standElements_.isEmpty() &&
@@ -143,7 +143,7 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
     return NamedArea();
 }
 
-bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point)
+bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point) const
 {
     for (const QPolygonF &element : collection)
     {
@@ -156,7 +156,7 @@ bool Aerodrome::collectionContainsPoint(const QVector<QPolygonF> &collection, QP
     return false;
 }
 
-bool Aerodrome::collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point)
+bool Aerodrome::collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const
 {
     for (auto it = collection.begin(); it != collection.end(); ++it)
     {
@@ -171,7 +171,7 @@ bool Aerodrome::collectionContainsPoint(const QHash<QString, QVector<QPolygonF>>
     return false;
 }
 
-std::optional<QString> Aerodrome::areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point)
+std::optional<QString> Aerodrome::areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const
 {
     for (auto it = collection.begin(); it != collection.end(); ++it)
     {

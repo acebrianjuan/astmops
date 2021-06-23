@@ -97,8 +97,8 @@ public:
 
     Aerodrome();
 
-    bool hasAnyElements();
-    bool hasAllElements();
+    bool hasAnyElements() const;
+    bool hasAllElements() const;
 
     void setArp(QVector3D point);
     void addRunwayElement(const QString &name, const QPolygonF &polygon);
@@ -111,9 +111,9 @@ public:
     NamedArea locatePoint(const QVector3D cartPos, const bool gndBit);
 
 private:
-    bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point);
-    bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
-    std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point);
+    bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point) const;
+    bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
+    std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
 
     QVector3D arp_;
     QVector3D smr_;
@@ -125,6 +125,7 @@ private:
     QHash<QString, QVector<QPolygonF>> airborne1Elements_;
     QHash<QString, QVector<QPolygonF>> airborne2Elements_;
 };
+
 Q_DECLARE_METATYPE(Aerodrome);
 Q_DECLARE_METATYPE(Aerodrome::NamedArea);
 
