@@ -54,8 +54,8 @@ bool operator==(const TargetReport &lhs, const TargetReport &rhs)
            lhs.sys_typ_ == rhs.sys_typ_ &&
            lhs.tod_ == rhs.tod_ &&
            lhs.trk_nb_ == rhs.trk_nb_ &&
-           lhs.mode_3A_ == rhs.mode_3A_ &&
-           lhs.mode_S_ == rhs.mode_S_ &&
+           lhs.mode_3a_ == rhs.mode_3a_ &&
+           lhs.mode_s_ == rhs.mode_s_ &&
            lhs.ident_ == rhs.ident_ &&
            lhs.on_gnd_ == rhs.on_gnd_ &&
            closeEnough(lhs.x_, lhs.y_, lhs.z_, rhs.x_, rhs.y_, rhs.z_) &&

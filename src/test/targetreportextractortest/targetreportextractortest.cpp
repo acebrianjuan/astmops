@@ -414,8 +414,8 @@ void TargetReportExtractorTest::test_data()
     trMlat.sys_typ_ = SystemType::Mlat;
     trMlat.tod_ = "2020-05-05T23:59:58.000Z"_ts;
     trMlat.trk_nb_ = 1391;
-    trMlat.mode_S_ = 0x34304F;
-    trMlat.mode_3A_ = 0246;
+    trMlat.mode_s_ = 0x34304F;
+    trMlat.mode_3a_ = 0246;
     trMlat.ident_ = QLatin1String("ECKJQ   ");
     trMlat.on_gnd_ = true;
     trMlat.x_ = 565.0000000;
@@ -428,8 +428,8 @@ void TargetReportExtractorTest::test_data()
     trAdsb.sys_typ_ = SystemType::Adsb;
     trAdsb.tod_ = "2020-05-05T23:59:58.000Z"_ts;
     trAdsb.trk_nb_ = 1391;
-    trAdsb.mode_S_ = 0x70605A;
-    trAdsb.mode_3A_ = 4553;
+    trAdsb.mode_s_ = 0x70605A;
+    trAdsb.mode_3a_ = 4553;
     trAdsb.ident_ = QLatin1String("KAC1412 ");
     trAdsb.on_gnd_ = false;
     trAdsb.x_ = 565.0000000;

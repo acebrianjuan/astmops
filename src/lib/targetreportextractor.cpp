@@ -445,7 +445,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
                 return std::nullopt;
             }
 
-            tr.mode_S_ = mode_s;
+            tr.mode_s_ = mode_s;
 
             // Mode 3A.
             bool has_mode_3a = Asterix::containsElement(rec, QLatin1String("I060"), QLatin1String("Mod3A"));
@@ -455,7 +455,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
                 Mode3A mode_3a = Asterix::getElementValue(rec, QLatin1String("I060"), QLatin1String("Mod3A")).value().toUInt(&mode_3a_ok, 8);
                 if (mode_3a_ok)
                 {
-                    tr.mode_3A_ = mode_3a;
+                    tr.mode_3a_ = mode_3a;
                 }
             }
 
@@ -624,7 +624,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             return std::nullopt;
         }
 
-        tr.mode_S_ = mode_s;
+        tr.mode_s_ = mode_s;
 
         // Mode 3A.
         bool mode_a_ok = false;
@@ -634,7 +634,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             Mode3A mode_3a = Asterix::getElementValue(rec, QLatin1String("I070"), QLatin1String("Mode3A")).value().toUInt(&mode_a_ok, 8);
             if (mode_a_ok)
             {
-                tr.mode_3A_ = mode_3a;
+                tr.mode_3a_ = mode_3a;
             }
         }
 

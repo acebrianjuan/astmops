@@ -33,8 +33,8 @@ struct TargetReport
 
     TrackNum trk_nb_ = 0;
 
-    std::optional<ModeS> mode_S_;
-    std::optional<Mode3A> mode_3A_;
+    std::optional<ModeS> mode_s_;
+    std::optional<Mode3A> mode_3a_;
     std::optional<Ident> ident_;
 
     bool on_gnd_ = false;

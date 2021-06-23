@@ -148,7 +148,7 @@ void DgpsCsvReaderTest::testMakeDgpsTgtRep_data()
 
     TargetReport tr;
     tr.sys_typ_ = SystemType::Dgps;
-    tr.mode_S_ = 0x34304F;
+    tr.mode_s_ = 0x34304F;
     tr.tod_ = "2020-05-05T08:06:05.351Z"_ts;
     tr.x_ = 422.796423;
     tr.y_ = -1289.162720;

@@ -235,7 +235,7 @@ QMultiMap<QDateTime, TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo
         TargetReport tr;
         tr.sys_typ_ = SystemType::Dgps;
         tr.tod_ = pi.timestamp();
-        tr.mode_S_ = mode_s;
+        tr.mode_s_ = mode_s;
         tr.x_ = cart.x();
         tr.y_ = cart.y();
         tr.z_ = cart.z();
