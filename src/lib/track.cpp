@@ -143,9 +143,9 @@ Track &Track::operator<<(const TargetReport &tr)
         data_.insert(tr.tod_, tr);
 
         // Asign first detected Mode-S address to Track object.
-        if (!mode_s_.has_value() && tr.mode_S_.has_value())
+        if (!mode_s_.has_value() && tr.mode_s_.has_value())
         {
-            mode_s_ = tr.mode_S_;
+            mode_s_ = tr.mode_s_;
         }
     }
 
@@ -335,11 +335,17 @@ TrackCollection::TrackCollection(ModeS ms, SystemType st, const QVector<Track> &
 
 TrackCollection &TrackCollection::operator<<(const Track &t)
 {
+    if (system_type_ == SystemType::Unknown ||
+        t.system_type() == SystemType::Unknown || t.isEmpty())
+    {
+        return *this;
+    }
+
     if (t.system_type() == system_type_)
     {
         // Begin/end timestamps.
         QDateTime beginTod = t.beginTimestamp();
-        if (beginTimestamp_.isNull())
+        if (!beginTimestamp_.isValid())
         {
             beginTimestamp_ = beginTod;
         }
@@ -349,7 +355,7 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
         }
 
         QDateTime endTod = t.endTimestamp();
-        if (endTimestamp_.isNull())
+        if (!endTimestamp_.isValid())
         {
             endTimestamp_ = endTod;
         }
@@ -361,6 +367,12 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
         // Insert Track and register track number.
         tracks_.insert(t.beginTimestamp(), t);
         track_numbers_ << t.track_number();
+
+        // Asign first detected Mode-S address to Collection object.
+        if (!mode_s_.has_value() && t.mode_s().has_value())
+        {
+            mode_s_ = t.mode_s();
+        }
     }
 
     return *this;
@@ -399,16 +411,6 @@ QVector<Track> TrackCollection::tracks() const
     return vec;
 }
 
-bool TrackCollection::isEmpty() const
-{
-    return tracks_.isEmpty();
-}
-
-int TrackCollection::size() const
-{
-    return tracks_.size();
-}
-
 std::optional<Track> TrackCollection::track(const TrackNum tn) const
 {
     if (containsTrackNumber(tn))
@@ -425,7 +427,7 @@ std::optional<Track> TrackCollection::track(const TrackNum tn) const
     return std::nullopt;
 }
 
-TrackCollection TrackCollection::tracks(const QVector<TrackNum> &v) const
+TrackCollection TrackCollection::makeSubColForTracks(const QVector<TrackNum> &v) const
 {
     TrackCollection col = mode_s_.has_value()
                               ? TrackCollection(mode_s_.value(), system_type_)
@@ -447,6 +449,16 @@ bool TrackCollection::containsTrackNumber(const TrackNum tn) const
     return track_numbers_.contains(tn);
 }
 
+bool TrackCollection::isEmpty() const
+{
+    return tracks_.isEmpty();
+}
+
+int TrackCollection::size() const
+{
+    return tracks_.size();
+}
+
 QDateTime TrackCollection::beginTimestamp() const
 {
     return beginTimestamp_;
@@ -459,6 +471,11 @@ QDateTime TrackCollection::endTimestamp() const
 
 bool TrackCollection::coversTimestamp(const QDateTime &tod) const
 {
+    if (!tod.isValid())
+    {
+        return false;
+    }
+
     for (const Track &t : tracks_)
     {
         if (t.coversTimestamp(tod))
@@ -490,24 +507,15 @@ TrackCollectionSet::TrackCollectionSet(ModeS mode_s, SystemType ref_st)
 {
 }
 
-TrackCollectionSet::TrackCollectionSet(ModeS mode_s, SystemType ref_st, const QVector<TrackCollection> &cols)
-    : mode_s_(mode_s), ref_sys_type_(ref_st), ref_col_(ref_st)
-{
-    for (const TrackCollection &c : cols)
-    {
-        *this << c;
-    }
-}
-
 TrackCollectionSet &TrackCollectionSet::operator<<(const Track &t)
 {
-    SystemType st = t.system_type();
-
-    if (st == SystemType::Unknown)
+    if (ref_sys_type_ == SystemType::Unknown ||
+        t.system_type() == SystemType::Unknown || t.isEmpty())
     {
         return *this;
     }
 
+    SystemType st = t.system_type();
     TrackNum tn = t.track_number();
 
     if (st == ref_sys_type_)
@@ -537,8 +545,30 @@ TrackCollectionSet &TrackCollectionSet::operator<<(const Track &t)
     return *this;
 }
 
+TrackCollectionSet &TrackCollectionSet::operator<<(const TrackCollection &c)
+{
+    if (c.system_type() != SystemType::Unknown)
+    {
+        for (const Track &trk : c)
+        {
+            *this << trk;
+        }
+    }
+
+    return *this;
+}
+
 void TrackCollectionSet::addMatch(const Track &t_ref, const Track &t_tst)
 {
+    if (ref_sys_type_ == SystemType::Unknown ||
+        t_ref.system_type() == SystemType::Unknown || t_ref.isEmpty() ||
+        t_tst.system_type() == SystemType::Unknown || t_tst.isEmpty() ||
+        t_ref.system_type() != ref_sys_type_ ||
+        t_ref.system_type() == t_tst.system_type())
+    {
+        return;
+    }
+
     if (containsMatch(t_ref, t_tst))
     {
         // This match is already registered. Skip to avoid duplication.
@@ -579,11 +609,7 @@ QVector<TrackCollection> TrackCollectionSet::tstTrackCols() const
         vec << c;
     }
 
-    auto sortfun = [](const TrackCollection &lhs, const TrackCollection &rhs) {
-        return lhs.beginTimestamp() < rhs.beginTimestamp();
-    };
-
-    std::sort(vec.begin(), vec.end(), sortfun);
+    std::sort(vec.begin(), vec.end());
 
     return vec;
 }
@@ -593,7 +619,7 @@ TrackCollection TrackCollectionSet::refTrackCol() const
     return ref_col_;
 }
 
-QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>> TrackCollectionSet::matches() const
+MatchHash TrackCollectionSet::matches() const
 {
     return matches_;
 }
@@ -602,7 +628,7 @@ QVector<TrackCollection> TrackCollectionSet::matchesForRefTrack(TrackNum ref_tn)
 {
     QVector<TrackCollection> vec;
 
-    QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>>::const_iterator it;
+    MatchHash::const_iterator it;
     for (it = matches_.begin(); it != matches_.end(); ++it)
     {
         SystemType st = it.key();
@@ -610,9 +636,11 @@ QVector<TrackCollection> TrackCollectionSet::matchesForRefTrack(TrackNum ref_tn)
 
         if (hash.contains(ref_tn))
         {
-            vec << tst_cols_[st].tracks(hash[ref_tn]);
+            vec << tst_cols_[st].makeSubColForTracks(hash[ref_tn]);
         }
     }
+
+    std::sort(vec.begin(), vec.end());
 
     return vec;
 }
@@ -663,6 +691,11 @@ bool TrackCollectionSet::containsMatch(SystemType st, TrackNum ref_tn, TrackNum 
 
 bool TrackCollectionSet::containsMatch(const Track &t_ref, const Track &t_tst)
 {
+    if (t_ref.system_type() != ref_sys_type_)
+    {
+        return false;
+    }
+
     SystemType st = t_tst.system_type();
     return containsMatch(st, t_ref.track_number(), t_tst.track_number());
 }
@@ -699,29 +732,9 @@ bool TrackCollectionSet::hasTestData() const
 bool TrackCollectionSet::isValid() const
 {
     // For a set to be considered valid, it must have a reference
-    // TrackCollection of known SystemType and at least a test TrackCollection.
+    // TrackCollection of known SystemType.
 
-    return (ref_sys_type_ == SystemType::Adsb ||
-               ref_sys_type_ == SystemType::Dgps) &&
-           hasRefData() && hasTestData();
-}
-
-TrackCollectionSet &TrackCollectionSet::operator<<(const TrackCollection &c)
-{
-    SystemType st = c.system_type();
-
-    if (!tst_cols_.contains(st))
-    {
-        // Insert collection to the set.
-        tst_cols_.insert(st, c);
-    }
-    else
-    {
-        // Append tracks to already existing collection in the set.
-        tst_cols_[st] << c.tracks();
-    }
-
-    return *this;
+    return (ref_sys_type_ != SystemType::Unknown && hasRefData());
 }
 
 bool TrackCollectionSet::isEmpty() const
@@ -778,6 +791,16 @@ bool operator==(const TrackCollectionSet &lhs, const TrackCollectionSet &rhs)
            lhs.refTrackCol() == rhs.refTrackCol() &&
            lhs.tstTrackCols() == rhs.tstTrackCols() &&
            lhs.matches() == rhs.matches();
+}
+
+bool operator<(const Track &lhs, const Track &rhs)
+{
+    return lhs.beginTimestamp() < rhs.beginTimestamp();
+}
+
+bool operator<(const TrackCollection &lhs, const TrackCollection &rhs)
+{
+    return lhs.beginTimestamp() < rhs.beginTimestamp();
 }
 
 bool haveTimeIntersection(const Track &lhs, const Track &rhs)
@@ -907,8 +930,8 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
                         tr_i.sys_typ_ = tr_l.sys_typ_;
                         tr_i.tod_ = tod;
                         tr_i.trk_nb_ = tr_l.trk_nb_;
-                        tr_i.mode_S_ = tr_l.mode_S_;
-                        tr_i.mode_3A_ = tr_l.mode_3A_;
+                        tr_i.mode_s_ = tr_l.mode_s_;
+                        tr_i.mode_3a_ = tr_l.mode_3a_;
                         tr_i.ident_ = tr_l.ident_;
                         tr_i.on_gnd_ = tr_l.on_gnd_;
 

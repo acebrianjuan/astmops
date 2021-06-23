@@ -125,13 +125,12 @@ public:
     SystemType system_type() const;
     QSet<TrackNum> track_numbers() const;
     QVector<Track> tracks() const;
+    std::optional<Track> track(const TrackNum tn) const;
+    TrackCollection makeSubColForTracks(const QVector<TrackNum> &v) const;
+    bool containsTrackNumber(const TrackNum tn) const;
 
     bool isEmpty() const;
     int size() const;
-
-    std::optional<Track> track(const TrackNum tn) const;
-    TrackCollection tracks(const QVector<TrackNum> &v) const;
-    bool containsTrackNumber(const TrackNum tn) const;
 
     QDateTime beginTimestamp() const;
     QDateTime endTimestamp() const;
@@ -155,6 +154,8 @@ private:
 Q_DECLARE_METATYPE(TrackCollection);
 Q_DECLARE_METATYPE(QVector<TrackCollection>);
 
+using MatchHash = QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>>;
+
 /*!
  * \brief The TrackCollectionSet class is an abstraction for grouping a
  * reference TrackCollection object with the associated test TrackCollection
@@ -165,7 +166,6 @@ class TrackCollectionSet
 public:
     TrackCollectionSet() = default;
     TrackCollectionSet(ModeS mode_s, SystemType ref_st);
-    TrackCollectionSet(ModeS mode_s, SystemType ref_st, const QVector<TrackCollection> &cols);
 
     TrackCollectionSet &operator<<(const Track &t);
     TrackCollectionSet &operator<<(const TrackCollection &c);
@@ -175,7 +175,7 @@ public:
     QVector<TrackCollection> tstTrackCols() const;
     TrackCollection refTrackCol() const;
 
-    QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>> matches() const;
+    MatchHash matches() const;
     QVector<TrackCollection> matchesForRefTrack(TrackNum ref_tn) const;
 
     std::optional<TrackCollection> collection(SystemType st) const;
@@ -203,7 +203,7 @@ private:
     QHash<SystemType, TrackCollection> tst_cols_;
     TrackCollection ref_col_;
 
-    QHash<SystemType, QHash<TrackNum, QVector<TrackNum>>> matches_;
+    MatchHash matches_;
 };
 
 Q_DECLARE_METATYPE(TrackCollectionSet);
@@ -213,6 +213,9 @@ Q_DECLARE_METATYPE(QVector<TrackCollectionSet>);
 bool operator==(const Track &lhs, const Track &rhs);
 bool operator==(const TrackCollection &lhs, const TrackCollection &rhs);
 bool operator==(const TrackCollectionSet &lhs, const TrackCollectionSet &rhs);
+
+bool operator<(const Track &lhs, const Track &rhs);
+bool operator<(const TrackCollection &lhs, const TrackCollection &rhs);
 
 bool haveTimeIntersection(const Track &lhs, const Track &rhs);
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs);
