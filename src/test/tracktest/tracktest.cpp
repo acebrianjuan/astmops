@@ -1139,6 +1139,50 @@ void TrackTest::testTrackCollectionSet()
             QCOMPARE(set_dflt.matchesForRefTrack(tn), QVector<TrackCollection>());
         }
     }
+
+
+    // INVALID MATCH ATTEMPT:
+    // Attempting to add an already existing match should have no effect so
+    // all the previous checks should still hold.
+    set_0x000001.addMatch(trk_adsb_102, trk_smr_301);
+
+    QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
+    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+
+    QVERIFY(set_0x000001.hasRefData() == true);
+    QVERIFY(set_0x000001.hasTestData() == true);
+    QVERIFY(set_0x000001.isValid() == true);
+    QVERIFY(set_0x000001.isEmpty() == false);
+    QCOMPARE(set_0x000001.size(), 2);
+
+    QCOMPARE(set_0x000001.refTrackCol(),
+        TrackCollection(SystemType::Adsb, {trk_adsb_101, trk_adsb_102}));
+    QCOMPARE(set_0x000001.tstTrackCols(),
+        QVector<TrackCollection>(
+            {TrackCollection(SystemType::Mlat, trk_mlat_201),
+                TrackCollection(SystemType::Smr, trk_smr_301)}));
+
+    QVERIFY(set_0x000001.matches().isEmpty() == false);
+
+    for (TrackNum tn = 0; tn <= 4095; ++tn)
+    {
+        if (tn == 101)
+        {
+            QCOMPARE(set_0x000001.matchesForRefTrack(tn),
+                QVector<TrackCollection>({TrackCollection(SystemType::Mlat, trk_mlat_201)}));
+        }
+        else if (tn == 102)
+        {
+            QCOMPARE(set_0x000001.matchesForRefTrack(tn),
+                QVector<TrackCollection>(
+                    {TrackCollection(SystemType::Mlat, trk_mlat_201),
+                        TrackCollection(SystemType::Smr, trk_smr_301)}));
+        }
+        else
+        {
+            QCOMPARE(set_dflt.matchesForRefTrack(tn), QVector<TrackCollection>());
+        }
+    }
 }
 
 QTEST_GUILESS_MAIN(TrackTest);
