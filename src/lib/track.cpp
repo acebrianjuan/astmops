@@ -294,6 +294,18 @@ void Track::setMode_s(ModeS ms)
     }
 }
 
+void Track::clear()
+{
+    data_.clear();
+
+    beginTimestamp_ = QDateTime();
+    endTimestamp_ = QDateTime();
+
+    x_bounds_ = {qSNaN(), qSNaN()};
+    y_bounds_ = {qSNaN(), qSNaN()};
+    z_bounds_ = {qSNaN(), qSNaN()};
+}
+
 /* --------------------------- TrackCollection ---------------------------- */
 
 TrackCollection::TrackCollection(SystemType st)
@@ -972,4 +984,70 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
     }
 
     return t;
+}
+
+
+QVector<Track> splitTrackByArea(const Track &trk, TrackSplitMode mode)
+{
+    auto areaChanged = [mode](const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs) {
+        if (mode == TrackSplitMode::SplitByNamedArea)
+        {
+            if (lhs != rhs)
+            {
+                return true;
+            }
+        }
+        else if (mode == TrackSplitMode::SplitByArea)
+        {
+            if (lhs.area_ != rhs.area_)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    QVector<Track> vec;
+
+    Track sub_trk = trk.mode_s().has_value()
+                        ? Track(trk.mode_s().value(), trk.system_type(), trk.track_number())
+                        : Track(trk.system_type(), trk.track_number());
+
+    Aerodrome::NamedArea last_na;
+
+    bool first = true;
+    for (const TargetReport &tr : trk)
+    {
+        if (first)
+        {
+            sub_trk << tr;
+            last_na = tr.area_;
+
+            first = false;
+            continue;
+        }
+
+        if (areaChanged(tr.area_, last_na))
+        {
+            vec << sub_trk;
+            sub_trk.clear();
+        }
+
+        sub_trk << tr;
+        last_na = tr.area_;
+    }
+
+    // Manual insertion of the last subtrack.
+    vec << sub_trk;
+
+    int n_tr = 0;
+    for (const Track &sub_trk : qAsConst(vec))
+    {
+        n_tr += sub_trk.size();
+    }
+
+    Q_ASSERT(n_tr == trk.size());
+
+    return vec;
 }

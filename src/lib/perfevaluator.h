@@ -22,8 +22,21 @@
 
 #include "areahash.h"
 #include "astmops.h"
+#include "counters.h"
 #include "functions.h"
 #include "track.h"
+
+struct PlgCounter
+{
+    quint32 n_gaps = 0;
+    quint32 n_tr = 0;
+};
+
+struct PidCounter
+{
+    quint32 correct = 0;
+    quint32 total = 0;
+};
 
 class PerfEvaluator
 {
@@ -33,24 +46,30 @@ public:
     void addData(const TrackCollectionSet &s);
     void run();
 
-    void printPosAccResults() const;
+    void printPosAccResultsSmr() const;
+    void printPosAccResultsMlat() const;
 
 private:
     void computePicThreshold(double prctl);
+    QVector<QPair<TargetReport, double>> euclideanDistance(const TgtRepMap &ref, const TgtRepMap &tst) const;
 
-    void evalED116RPA(const Track &t_ref, const Track &t_tst);
-    void evalED116PD(const Track &t_ref, const Track &t_tst);
+    void evalED116RPA(const Track &trk_ref, const Track &trk_tst);
+    void evalED116PD(const Track &trk_ref, const TrackCollection &col_tst);
 
-    void evalED117RPA(const Track &t_ref, const Track &t_tst);
-    void evalED117PD(const Track &t_ref, const Track &t_tst);
-    void evalED117PID(const Track &t_ref, const Track &t_tst);
-    void evalED117PLG(const Track &t_ref, const Track &t_tst);
+    void evalED117RPA(const Track &trk_ref, const Track &trk_tst);
+    void evalED117PD(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED117PID(const Track &trk_ref, const Track &trk_tst);
+    void evalED117PFID(const Track &trk_ref, const Track &trk_tst);
+    void evalED117PLG(const TrackCollection &col_tst);
 
     quint8 pic_p95 = 0;
     QHash<ModeS, TrackCollectionSet> sets_;
-    AreaHash<QVector<double>> errors_;
 
-    QVector<double> smrErrors_;
+    AreaHash<QVector<double>> smrRpaErrors_;
+    AreaHash<QVector<double>> mlatRpaErrors_;
+    AreaHash<PlgCounter> plg_;
+
+    PidCounter mlatPidCounter_;
 };
 
 #endif  // ASTMOPS_PERFEVALUATOR_H

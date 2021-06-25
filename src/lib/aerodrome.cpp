@@ -198,8 +198,13 @@ size_t qHash(const Aerodrome::NamedArea &narea, size_t seed)
     return seed;
 }
 
-bool operator==(const Aerodrome::NamedArea &a, const Aerodrome::NamedArea &b)
+bool operator==(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs)
 {
-    return a.area_ == b.area_ &&
-           a.name_ == b.name_;
+    return lhs.area_ == rhs.area_ &&
+           lhs.name_ == rhs.name_;
+}
+
+bool operator!=(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs)
+{
+    return !(lhs == rhs);
 }

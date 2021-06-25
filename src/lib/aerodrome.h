@@ -136,7 +136,8 @@ uint qHash(const Aerodrome::NamedArea &narea, uint seed);
 size_t qHash(const Aerodrome::NamedArea &narea, size_t seed);
 #endif
 
-bool operator==(const Aerodrome::NamedArea &a, const Aerodrome::NamedArea &b);
+bool operator==(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs);
+bool operator!=(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs);
 
 
 #endif  // ASTMOPS_AERODROME_H

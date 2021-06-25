@@ -76,10 +76,12 @@ public:
 
     void setMode_s(ModeS ms);
 
+    void clear();
+
 private:
     SystemType system_type_ = SystemType::Unknown;
-
     TrackNum track_number_ = 0;
+
     TgtRepMap data_;
 
     QDateTime beginTimestamp_;
@@ -222,5 +224,14 @@ bool haveSpaceIntersection(const Track &lhs, const Track &rhs);
 bool haveSpaceTimeIntersection(const Track &lhs, const Track &rhs);
 std::optional<Track> intersect(const Track &intersectee, const Track &intersector);
 Track resample(const Track &track, const QVector<QDateTime> &dtimes);
+
+enum class TrackSplitMode
+{
+    SplitByArea,
+    SplitByNamedArea
+};
+
+QVector<Track> splitTrackByArea(const Track &trk,
+    TrackSplitMode mode = TrackSplitMode::SplitByArea);
 
 #endif  // ASTMOPS_TRACK_H
