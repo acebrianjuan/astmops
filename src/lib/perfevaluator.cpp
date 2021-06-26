@@ -417,8 +417,9 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
 
     for (const TargetReport &tr_tst : trk_tst)
     {
-        if (!tr_tst.ident_.has_value())
+        if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
         {
+            // Skip if target report has no identification and no mode 3/A code.
             continue;
         }
 
@@ -470,22 +471,46 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
                     continue;
                 }
 
-                bool value_ok = false;
-
-                if (tr_l.ident_.has_value())
+                if (tr_tst.ident_.has_value())
                 {
-                    value_ok = tr_tst.ident_.value() == tr_l.ident_.value();
+                    bool ident_ok = false;
+
+                    if (tr_l.ident_.has_value())
+                    {
+                        ident_ok = tr_tst.ident_.value() == tr_l.ident_.value();
+                    }
+
+                    if (!ident_ok && tr_u.ident_.has_value())
+                    {
+                        ident_ok = tr_tst.ident_.value() == tr_u.ident_.value();
+                    }
+
+                    ++mlatPidIdentCounter_.total;
+                    if (ident_ok)
+                    {
+                        ++mlatPidIdentCounter_.correct;
+                    }
                 }
 
-                if (!value_ok && tr_u.ident_.has_value())
+                if (tr_tst.mode_3a_.has_value())
                 {
-                    value_ok = tr_tst.ident_.value() == tr_u.ident_.value();
-                }
+                    bool mode_3a_ok = false;
 
-                ++mlatPidCounter_.total;
-                if (value_ok)
-                {
-                    ++mlatPidCounter_.correct;
+                    if (tr_l.mode_3a_.has_value())
+                    {
+                        mode_3a_ok = tr_tst.mode_3a_.value() == tr_l.mode_3a_.value();
+                    }
+
+                    if (!mode_3a_ok && tr_u.mode_3a_.has_value())
+                    {
+                        mode_3a_ok = tr_tst.mode_3a_.value() == tr_u.mode_3a_.value();
+                    }
+
+                    ++mlatPidMode3ACounter_.total;
+                    if (mode_3a_ok)
+                    {
+                        ++mlatPidMode3ACounter_.correct;
+                    }
                 }
             }
         }

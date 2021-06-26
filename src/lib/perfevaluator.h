@@ -69,7 +69,8 @@ private:
     AreaHash<QVector<double>> mlatRpaErrors_;
     AreaHash<PlgCounter> plg_;
 
-    PidCounter mlatPidCounter_;
+    PidCounter mlatPidIdentCounter_;
+    PidCounter mlatPidMode3ACounter_;
 };
 
 #endif  // ASTMOPS_PERFEVALUATOR_H
