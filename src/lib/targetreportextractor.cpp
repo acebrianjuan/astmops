@@ -44,7 +44,7 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
         return;
     }
 
-    ++counters_[rec.rec_typ_.sys_typ_].in;
+    ++counters_[rec.rec_typ_.sys_typ_].in_;
     if (Asterix::hasMinimumDataItems(rec) && isRecordToBeKept(rec))
     {
         std::optional<TargetReport> tr_opt = makeTargetReport(rec);
@@ -58,7 +58,7 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
         Q_ASSERT(rec.rec_typ_.sys_typ_ == tr.sys_typ_);
 
         tgt_reports_[tr.sys_typ_].enqueue(tr);
-        ++counters_[rec.rec_typ_.sys_typ_].out;
+        ++counters_[rec.rec_typ_.sys_typ_].out_;
     }
 }
 

@@ -140,4 +140,7 @@ bool operator==(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs
 bool operator!=(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs);
 
 
+bool areaBelongsToAreaGroup(Aerodrome::Area area, Aerodrome::Area group);
+bool areaBelongsToAreaGroup(const Aerodrome::NamedArea &narea, Aerodrome::Area group);
+
 #endif  // ASTMOPS_AERODROME_H

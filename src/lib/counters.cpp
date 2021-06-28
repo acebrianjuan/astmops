@@ -20,11 +20,15 @@
 
 #include "counters.h"
 
+/* ----------------------------- BasicCounter ----------------------------- */
+
 void Counters::BasicCounter::reset()
 {
-    countValid = 0;
-    countTotal = 0;
+    valid_ = 0;
+    total_ = 0;
 }
+
+/* ---------------------------- IntervalCounter --------------------------- */
 
 Counters::IntervalCounter::IntervalCounter(double period)
 {
@@ -37,12 +41,24 @@ Counters::IntervalCounter::IntervalCounter(double period, const QDateTime &tod)
     init(tod);
 }
 
-bool Counters::IntervalCounter::isInitialized() const { return m_intervalStart.isValid(); }
-
-void Counters::IntervalCounter::reset()
+bool Counters::IntervalCounter::isInitialized() const
 {
-    m_intervalStart = QDateTime();
-    m_counter.reset();
+    return intervalStart_.isValid();
+}
+
+QDateTime Counters::IntervalCounter::intervalStart() const
+{
+    return intervalStart_;
+}
+
+QDateTime Counters::IntervalCounter::intervalEnd() const
+{
+    return intervalStart_.addMSecs(period_ * 1000.0);
+}
+
+Counters::IntervalCounter::operator bool() const
+{
+    return isInitialized();
 }
 
 void Counters::IntervalCounter::setPeriod(double period)
@@ -52,20 +68,63 @@ void Counters::IntervalCounter::setPeriod(double period)
         return;
     }
 
-    m_period = period;
+    period_ = period;
 }
 
 void Counters::IntervalCounter::init(const QDateTime &tod)
 {
-    m_intervalStart = tod;
-    ++m_counter.countValid;
-    advance();
+    intervalStart_ = tod;
 }
 
-void Counters::IntervalCounter::advance()
+void Counters::IntervalCounter::update(const QDateTime &tod)
 {
-    m_intervalStart = intervalEnd();
-    ++m_counter.countTotal;
+    if (!isInitialized())
+    {
+        // qWarning();
+        return;
+    }
+
+    if (tod >= intervalStart())
+    {
+        while (!contains(tod))
+        {
+            advance();
+        }
+
+        ++counter_.valid_;
+        advance();
+    }
+}
+
+void Counters::IntervalCounter::finish(const QDateTime &tod)
+{
+    if (!isInitialized())
+    {
+        // qWarning();
+        return;
+    }
+
+    if (tod >= intervalStart())
+    {
+        while (!contains(tod))
+        {
+            advance();
+        }
+    }
+}
+
+void Counters::IntervalCounter::reset()
+{
+    intervalStart_ = QDateTime();
+    counter_.reset();
+}
+
+Counters::BasicCounter Counters::IntervalCounter::read()
+{
+    BasicCounter counter = counter_;
+    counter_.reset();
+
+    return counter;
 }
 
 bool Counters::IntervalCounter::contains(const QDateTime &tod) const
@@ -74,48 +133,12 @@ bool Counters::IntervalCounter::contains(const QDateTime &tod) const
     {
         return true;
     }
+
     return false;
 }
 
-void Counters::IntervalCounter::update(const QDateTime &newTod)
+void Counters::IntervalCounter::advance()
 {
-    if (!isInitialized())
-    {
-        init(newTod);
-        return;
-    }
-
-    if (newTod >= intervalStart())
-    {
-        while (!contains(newTod))
-        {
-            advance();
-        }
-        ++m_counter.countValid;
-
-        advance();
-    }
-}
-
-Counters::BasicCounter Counters::IntervalCounter::read()
-{
-    BasicCounter counter = m_counter;
-    m_counter.reset();
-
-    return counter;
-}
-
-QDateTime Counters::IntervalCounter::intervalStart() const
-{
-    return m_intervalStart;
-}
-
-QDateTime Counters::IntervalCounter::intervalEnd() const
-{
-    return m_intervalStart.addMSecs(m_period * 1000);
-}
-
-Counters::IntervalCounter::operator bool() const
-{
-    return isInitialized();
+    intervalStart_ = intervalEnd();
+    ++counter_.total_;
 }

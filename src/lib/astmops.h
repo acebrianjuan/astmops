@@ -100,6 +100,7 @@ struct RecordType
     SystemType sys_typ_ = SystemType::Unknown;
     MessageType msg_typ_ = MessageType::Unknown;
 };
+Q_DECLARE_METATYPE(RecordType);
 
 bool operator==(RecordType lhs, RecordType rhs);
 

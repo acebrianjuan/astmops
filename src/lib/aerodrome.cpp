@@ -208,3 +208,19 @@ bool operator!=(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs
 {
     return !(lhs == rhs);
 }
+
+bool areaBelongsToAreaGroup(Aerodrome::Area area, Aerodrome::Area group)
+{
+    if (area != Aerodrome::Area::None &&
+        (area | group) == group)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool areaBelongsToAreaGroup(const Aerodrome::NamedArea &narea, Aerodrome::Area group)
+{
+    return areaBelongsToAreaGroup(narea.area_, group);
+}

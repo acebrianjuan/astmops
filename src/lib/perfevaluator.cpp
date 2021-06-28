@@ -59,23 +59,29 @@ void PerfEvaluator::run()
                 {
                     // SMR ED-116.
 
+                    evalED116PD(t_ref, c_tst_i);
+                    //evalED116PFD(t_ref, t_tst);
+
                     // Iterate through each test track in the collection.
                     for (const Track &t_tst : c_tst_i)
                     {
                         evalED116RPA(t_ref, t_tst);
-                        //evalED116PD(t_ref, t_tst);
                     }
                 }
                 else if (c_tst_i.system_type() == SystemType::Mlat)
                 {
                     // MLAT ED-117.
 
+                    evalED117PD(t_ref, c_tst_i);
+                    //evalED117PFD(t_ref, t_tst);
+
                     // Iterate through each test track in the collection.
                     for (const Track &t_tst : c_tst_i)
                     {
                         evalED117RPA(t_ref, t_tst);
-                        //evalED117PD(t_ref, t_tst);
+
                         evalED117PID(t_ref, t_tst);
+                        evalED117PFID(t_ref, t_tst);
                     }
                 }
             }
@@ -314,20 +320,56 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const Track &trk_tst)
 
 void PerfEvaluator::evalED116PD(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    if (trk_ref.duration() < 1.0)
-    {
-        return;
-    }
+    auto hasPosition = [](const TargetReport &tr) {
+        return !qIsNaN(tr.x_) && !qIsNaN(tr.y_);
+    };
 
-    //
+    QVector<Track> trk_ref_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-    for (const Track &trk_tst : col_tst)
+    for (const Track &trk_ref_i : trk_ref_vec)
     {
-        if (!haveSpaceIntersection(trk_tst, trk_ref))
+        if (trk_ref_i.duration() < 1.0)
         {
             return;
         }
+
+        Aerodrome::NamedArea narea = trk_ref_i.begin()->area_;
+
+        double period = 1.0;
+
+        Counters::IntervalCounter intervalCtr(period, trk_ref_i.beginTimestamp());
+
+        for (const Track &trk_tst : col_tst)
+        {
+            if (!haveSpaceTimeIntersection(trk_tst, trk_ref_i))
+            {
+                return;
+            }
+
+            Track trk_tst_i = intersect(trk_tst, trk_ref_i).value();
+
+            for (const TargetReport &tr : trk_tst_i)
+            {
+                if (hasPosition(tr))
+                {
+                    intervalCtr.update(tr.tod_);
+                }
+            }
+
+            intervalCtr.finish(trk_ref_i.endTimestamp());
+
+            Counters::BasicCounter ctr = intervalCtr.read();
+
+            smrPd_[narea].valid_ += ctr.valid_;
+            smrPd_[narea].total_ += ctr.total_;
+        }
     }
+}
+
+void PerfEvaluator::evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst)
+{
+    Q_UNUSED(trk_ref);
+    Q_UNUSED(col_tst);
 }
 
 void PerfEvaluator::evalED117RPA(const Track &trk_ref, const Track &trk_tst)
@@ -390,20 +432,68 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const Track &trk_tst)
 
 void PerfEvaluator::evalED117PD(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    if (trk_ref.duration() < 1.0)
-    {
-        return;
-    }
+    auto hasPosition = [](const TargetReport &tr) {
+        return !qIsNaN(tr.x_) && !qIsNaN(tr.y_);
+    };
 
-    //
+    QVector<Track> trk_ref_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-    for (const Track &trk_tst : col_tst)
+    for (const Track &trk_ref_i : trk_ref_vec)
     {
-        if (!haveSpaceIntersection(trk_tst, trk_ref))
+        if (trk_ref_i.duration() < 1.0)
         {
             return;
         }
+
+        Aerodrome::NamedArea narea = trk_ref_i.begin()->area_;
+
+        double period = 1.0;
+        if (narea.area_ == Aerodrome::Area::Runway)
+        {
+            period = 1.0;
+        }
+        else if (narea.area_ == Aerodrome::Area::Taxiway)
+        {
+            period = 2.0;
+        }
+        else if (narea.area_ == Aerodrome::Area::Stand)
+        {
+            period = 5.0;
+        }
+
+        Counters::IntervalCounter intervalCtr(period, trk_ref_i.beginTimestamp());
+
+        for (const Track &trk_tst : col_tst)
+        {
+            if (!haveSpaceTimeIntersection(trk_tst, trk_ref_i))
+            {
+                return;
+            }
+
+            Track trk_tst_i = intersect(trk_tst, trk_ref_i).value();
+
+            for (const TargetReport &tr : trk_tst_i)
+            {
+                if (hasPosition(tr))
+                {
+                    intervalCtr.update(tr.tod_);
+                }
+            }
+
+            intervalCtr.finish(trk_ref_i.endTimestamp());
+
+            Counters::BasicCounter ctr = intervalCtr.read();
+
+            mlatPd_[narea].valid_ += ctr.valid_;
+            mlatPd_[narea].total_ += ctr.total_;
+        }
     }
+}
+
+void PerfEvaluator::evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst)
+{
+    Q_UNUSED(trk_ref);
+    Q_UNUSED(col_tst);
 }
 
 void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
@@ -425,10 +515,10 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
 
         QDateTime tod = tr_tst.tod_;
 
-        QMultiMap<QDateTime, TargetReport>::const_iterator it_u = ref_data.end();  // Upper.
-        QMultiMap<QDateTime, TargetReport>::const_iterator it_l = ref_data.end();  // Lower.
+        TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
+        TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
 
-        QMultiMap<QDateTime, TargetReport>::const_iterator it = ref_data.lowerBound(tod);
+        TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
         if (it != ref_data.end())  // Upper TOD found.
         {
             Q_ASSERT(it.key() >= tod);
@@ -523,6 +613,109 @@ void PerfEvaluator::evalED117PFID(const Track &trk_ref, const Track &trk_tst)
     {
         return;
     }
+
+    const QMultiMap<QDateTime, TargetReport> &ref_data = trk_ref.data();
+
+    for (const TargetReport &tr_tst : trk_tst)
+    {
+        if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
+        {
+            // Skip if target report has no identification and no mode 3/A code.
+            continue;
+        }
+
+        QDateTime tod = tr_tst.tod_;
+
+        TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
+        TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
+
+        TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
+        if (it != ref_data.end())  // Upper TOD found.
+        {
+            Q_ASSERT(it.key() >= tod);
+
+            // Save upper value.
+            it_u = it;
+
+            // Search lower values by decrementing iterator.
+            while (it != ref_data.end() && tod < it.key())
+            {
+                if (it == ref_data.begin())  // Exit condition on first value.
+                {
+                    if (tod < it.key())  // Set as not found.
+                    {
+                        it = ref_data.end();
+                    }
+
+                    break;
+                }
+
+                it--;
+            }
+
+            if (it != ref_data.end())  // Lower TOD found.
+            {
+                Q_ASSERT(tod >= it.key());
+
+                // Save lower value.
+                it_l = it;
+            }
+
+            if (it_l != ref_data.end() && it_u != ref_data.end())
+            {
+                TargetReport tr_l = it_l.value();
+                TargetReport tr_u = it_u.value();
+
+                if (!tr_l.ident_.has_value() &&
+                    !tr_u.ident_.has_value())
+                {
+                    continue;
+                }
+
+                if (tr_tst.ident_.has_value())
+                {
+                    bool ident_nok = false;
+
+                    if (tr_l.ident_.has_value())
+                    {
+                        ident_nok = tr_tst.ident_.value() != tr_l.ident_.value();
+                    }
+
+                    if (!ident_nok && tr_u.ident_.has_value())
+                    {
+                        ident_nok = tr_tst.ident_.value() != tr_u.ident_.value();
+                    }
+
+                    ++mlatPfidIdentCounter_.total;
+                    if (ident_nok)
+                    {
+                        ++mlatPfidIdentCounter_.erroneous;
+                    }
+                }
+
+                if (tr_tst.mode_3a_.has_value())
+                {
+                    bool mode_3a_nok = false;
+
+                    if (tr_l.mode_3a_.has_value())
+                    {
+                        mode_3a_nok = tr_tst.mode_3a_.value() != tr_l.mode_3a_.value();
+                    }
+
+                    if (!mode_3a_nok && tr_u.mode_3a_.has_value())
+                    {
+                        mode_3a_nok = tr_tst.mode_3a_.value() != tr_u.mode_3a_.value();
+                    }
+
+                    ++mlatPfidMode3ACounter_.total;
+                    if (mode_3a_nok)
+                    {
+                        ++mlatPfidMode3ACounter_.erroneous;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
@@ -531,7 +724,7 @@ void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
     bool first = true;
     for (const Track &trk : col_tst)
     {
-        QVector<Track> sub_trk_vec = splitTrackByArea(trk);
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk, TrackSplitMode::SplitByNamedArea);
 
         for (const Track &sub_trk : sub_trk_vec)
         {

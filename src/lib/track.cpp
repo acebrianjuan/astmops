@@ -860,13 +860,13 @@ std::optional<Track> intersect(const Track &intersectee, const Track &intersecto
         t.mode_s() = intersectee.mode_s();
     }
 
-    const QMultiMap<QDateTime, TargetReport> &data = intersectee.data();
-    QMultiMap<QDateTime, TargetReport>::const_iterator it_from = data.lowerBound(intersector.beginTimestamp());
-    QMultiMap<QDateTime, TargetReport>::const_iterator it_to = data.upperBound(intersector.endTimestamp());
+    const TgtRepMap &data = intersectee.data();
+    TgtRepMap::const_iterator it_from = data.lowerBound(intersector.beginTimestamp());
+    TgtRepMap::const_iterator it_to = data.upperBound(intersector.endTimestamp());
 
     // Only insert elements of intersectee that satisfy intersection with
     // intersector.
-    QMultiMap<QDateTime, TargetReport>::const_iterator it;
+    TgtRepMap::const_iterator it;
     for (it = it_from; it != it_to; ++it)
     {
         t << it.value();
@@ -883,7 +883,7 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
     // input track.
     Track t(track.system_type(), track.track_number());
 
-    const QMultiMap<QDateTime, TargetReport> &data = track.data();
+    const TgtRepMap &data = track.data();
     for (const QDateTime &tod : dtimes)
     {
         if (track.coversTimestamp(tod))
@@ -895,10 +895,10 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
             }
             else  // Linear interpolation.
             {
-                QMultiMap<QDateTime, TargetReport>::const_iterator it_u = data.end();  // Upper.
-                QMultiMap<QDateTime, TargetReport>::const_iterator it_l = data.end();  // Lower.
+                TgtRepMap::const_iterator it_u = data.end();  // Upper.
+                TgtRepMap::const_iterator it_l = data.end();  // Lower.
 
-                QMultiMap<QDateTime, TargetReport>::const_iterator it = data.lowerBound(tod);
+                TgtRepMap::const_iterator it = data.lowerBound(tod);
                 if (it != data.end())  // Upper TOD found.
                 {
                     Q_ASSERT(it.key() >= tod);

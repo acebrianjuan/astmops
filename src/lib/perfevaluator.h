@@ -38,6 +38,12 @@ struct PidCounter
     quint32 total = 0;
 };
 
+struct PfidCounter
+{
+    quint32 erroneous = 0;
+    quint32 total = 0;
+};
+
 class PerfEvaluator
 {
 public:
@@ -55,9 +61,11 @@ private:
 
     void evalED116RPA(const Track &trk_ref, const Track &trk_tst);
     void evalED116PD(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst);
 
     void evalED117RPA(const Track &trk_ref, const Track &trk_tst);
     void evalED117PD(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PID(const Track &trk_ref, const Track &trk_tst);
     void evalED117PFID(const Track &trk_ref, const Track &trk_tst);
     void evalED117PLG(const TrackCollection &col_tst);
@@ -71,6 +79,12 @@ private:
 
     PidCounter mlatPidIdentCounter_;
     PidCounter mlatPidMode3ACounter_;
+
+    PfidCounter mlatPfidIdentCounter_;
+    PfidCounter mlatPfidMode3ACounter_;
+
+    AreaHash<Counters::BasicCounter> smrPd_;
+    AreaHash<Counters::BasicCounter> mlatPd_;
 };
 
 #endif  // ASTMOPS_PERFEVALUATOR_H

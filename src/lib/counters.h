@@ -28,14 +28,14 @@ namespace Counters
 {
 struct InOutCounter
 {
-    quint32 in = 0;
-    quint32 out = 0;
+    quint32 in_ = 0;
+    quint32 out_ = 0;
 };
 
 struct BasicCounter
 {
-    quint32 countValid = 0;
-    quint32 countTotal = 0;
+    quint32 valid_ = 0;
+    quint32 total_ = 0;
 
     void reset();
 };
@@ -48,23 +48,27 @@ public:
     IntervalCounter(double period, const QDateTime &tod);
 
     bool isInitialized() const;
-    void reset();
-    void setPeriod(double period);
-    void init(const QDateTime &tod);
-    void advance();
-    bool contains(const QDateTime &tod) const;
-    void update(const QDateTime &newTod);
-    BasicCounter read();
-
     QDateTime intervalStart() const;
     QDateTime intervalEnd() const;
 
     operator bool() const;
 
+    void setPeriod(double period);
+    void init(const QDateTime &tod);
+    void update(const QDateTime &tod);
+    void finish(const QDateTime &tod);
+
+    void reset();
+
+    BasicCounter read();
+
 private:
-    double m_period = 1.0;
-    QDateTime m_intervalStart;
-    BasicCounter m_counter;
+    bool contains(const QDateTime &tod) const;
+    void advance();
+
+    double period_ = 1.0;
+    QDateTime intervalStart_;
+    BasicCounter counter_;
 };
 
 }  // namespace Counters

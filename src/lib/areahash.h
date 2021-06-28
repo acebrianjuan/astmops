@@ -32,10 +32,10 @@ struct AreaHash : public QHash<Aerodrome::NamedArea, T>
 
         for (auto it = this->begin(), last = this->end(); it != last; ++it)
         {
-            const Aerodrome::Area itArea = it.key().area_;
+            const Aerodrome::Area area = it.key().area_;
 
-            if (itArea != Aerodrome::Area::None &&
-                (itArea | wantedArea) == wantedArea)
+            if (area != Aerodrome::Area::None &&
+                (area | wantedArea) == wantedArea)
             {
                 result.append(it);
             }
