@@ -312,7 +312,7 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const Track &trk_tst)
 
     for (const QPair<TargetReport, double> &p : dists)
     {
-        Aerodrome::NamedArea narea = p.first.area_;
+        Aerodrome::NamedArea narea = p.first.narea_;
         double dist = p.second;
         smrRpaErrors_[narea] << dist;
     }
@@ -333,7 +333,7 @@ void PerfEvaluator::evalED116PD(const Track &trk_ref, const TrackCollection &col
             return;
         }
 
-        Aerodrome::NamedArea narea = trk_ref_i.begin()->area_;
+        Aerodrome::NamedArea narea = trk_ref_i.begin()->narea_;
 
         double period = 1.0;
 
@@ -424,7 +424,7 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const Track &trk_tst)
 
     for (const QPair<TargetReport, double> &p : dists)
     {
-        Aerodrome::NamedArea narea = p.first.area_;
+        Aerodrome::NamedArea narea = p.first.narea_;
         double dist = p.second;
         mlatRpaErrors_[narea] << dist;
     }
@@ -445,7 +445,7 @@ void PerfEvaluator::evalED117PD(const Track &trk_ref, const TrackCollection &col
             return;
         }
 
-        Aerodrome::NamedArea narea = trk_ref_i.begin()->area_;
+        Aerodrome::NamedArea narea = trk_ref_i.begin()->narea_;
 
         double period = 1.0;
         if (narea.area_ == Aerodrome::Area::Runway)
@@ -730,7 +730,7 @@ void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
         {
             for (const TargetReport &tr : sub_trk)
             {
-                Aerodrome::NamedArea narea = tr.area_;
+                Aerodrome::NamedArea narea = tr.narea_;
                 QDateTime new_tod = tr.tod_;
 
                 if (first)

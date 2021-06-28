@@ -68,7 +68,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_1.x_ = 0.0;
     tr_adsb_101_1.y_ = 0.0;
     tr_adsb_101_1.z_ = 0.0;
-    tr_adsb_101_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_101_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_101_2;
     tr_adsb_101_2.ds_id_.sac_ = 0;
@@ -83,7 +83,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_2.x_ = 50.0;
     tr_adsb_101_2.y_ = 0.0;
     tr_adsb_101_2.z_ = 0.0;
-    tr_adsb_101_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_101_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_101_3;
     tr_adsb_101_3.ds_id_.sac_ = 0;
@@ -98,7 +98,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_3.x_ = 100.0;
     tr_adsb_101_3.y_ = 0.0;
     tr_adsb_101_3.z_ = 0.0;
-    tr_adsb_101_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_101_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_101_4;
     tr_adsb_101_4.ds_id_.sac_ = 0;
@@ -113,7 +113,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_4.x_ = 150.0;
     tr_adsb_101_4.y_ = 0.0;
     tr_adsb_101_4.z_ = 0.0;
-    tr_adsb_101_4.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_101_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_101_5;
     tr_adsb_101_5.ds_id_.sac_ = 0;
@@ -128,7 +128,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_5.x_ = 200.0;
     tr_adsb_101_5.y_ = 0.0;
     tr_adsb_101_5.z_ = 0.0;
-    tr_adsb_101_5.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_101_5.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_adsb_101 << tr_adsb_101_1 << tr_adsb_101_2 << tr_adsb_101_3 << tr_adsb_101_4 << tr_adsb_101_5;
 
@@ -149,7 +149,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_1.x_ = 400.0;
     tr_adsb_102_1.y_ = 0.0;
     tr_adsb_102_1.z_ = 0.0;
-    tr_adsb_102_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_102_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_102_2;
     tr_adsb_102_2.ds_id_.sac_ = 0;
@@ -164,7 +164,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_2.x_ = 450.0;
     tr_adsb_102_2.y_ = 0.0;
     tr_adsb_102_2.z_ = 0.0;
-    tr_adsb_102_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_102_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_102_3;
     tr_adsb_102_3.ds_id_.sac_ = 0;
@@ -179,7 +179,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_3.x_ = 500.0;
     tr_adsb_102_3.y_ = 0.0;
     tr_adsb_102_3.z_ = 0.0;
-    tr_adsb_102_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_102_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_102_4;
     tr_adsb_102_4.ds_id_.sac_ = 0;
@@ -194,7 +194,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_4.x_ = 550.0;
     tr_adsb_102_4.y_ = 0.0;
     tr_adsb_102_4.z_ = 0.0;
-    tr_adsb_102_4.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_102_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_102_5;
     tr_adsb_102_5.ds_id_.sac_ = 0;
@@ -209,7 +209,7 @@ void TrackAssociatorTest::test_data()
     tr_adsb_102_5.x_ = 600.0;
     tr_adsb_102_5.y_ = 0.0;
     tr_adsb_102_5.z_ = 0.0;
-    tr_adsb_102_5.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_adsb_102_5.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_adsb_102 << tr_adsb_102_1 << tr_adsb_102_2 << tr_adsb_102_3 << tr_adsb_102_4 << tr_adsb_102_5;
 
@@ -229,7 +229,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_1.on_gnd_ = true;
     tr_mlat_201_1.x_ = -50.0;
     tr_mlat_201_1.y_ = 0.0;
-    tr_mlat_201_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_201_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_201_2;
     tr_mlat_201_2.ds_id_.sac_ = 0;
@@ -243,7 +243,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_2.on_gnd_ = true;
     tr_mlat_201_2.x_ = 0.0;
     tr_mlat_201_2.y_ = 0.0;
-    tr_mlat_201_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_201_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_201_3;
     tr_mlat_201_3.ds_id_.sac_ = 0;
@@ -257,7 +257,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_3.on_gnd_ = true;
     tr_mlat_201_3.x_ = 50.0;
     tr_mlat_201_3.y_ = 0.0;
-    tr_mlat_201_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_201_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_201_4;
     tr_mlat_201_4.ds_id_.sac_ = 0;
@@ -271,7 +271,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_201_4.on_gnd_ = true;
     tr_mlat_201_4.x_ = 100.0;
     tr_mlat_201_4.y_ = 0.0;
-    tr_mlat_201_4.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_201_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_mlat_201 << tr_mlat_201_1 << tr_mlat_201_2 << tr_mlat_201_3 << tr_mlat_201_4;
 
@@ -291,7 +291,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_202_1.on_gnd_ = true;
     tr_mlat_202_1.x_ = 250.0;
     tr_mlat_202_1.y_ = 0.0;
-    tr_mlat_202_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_202_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_202_2;
     tr_mlat_202_2.ds_id_.sac_ = 0;
@@ -305,7 +305,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_202_2.on_gnd_ = true;
     tr_mlat_202_2.x_ = 300.0;
     tr_mlat_202_2.y_ = 0.0;
-    tr_mlat_202_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_202_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_202_3;
     tr_mlat_202_3.ds_id_.sac_ = 0;
@@ -319,7 +319,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_202_3.on_gnd_ = true;
     tr_mlat_202_3.x_ = 350.0;
     tr_mlat_202_3.y_ = 0.0;
-    tr_mlat_202_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_202_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_mlat_202 << tr_mlat_202_1 << tr_mlat_202_2 << tr_mlat_202_3;
 
@@ -339,7 +339,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_1.on_gnd_ = true;
     tr_mlat_203_1.x_ = 500.0;
     tr_mlat_203_1.y_ = 0.0;
-    tr_mlat_203_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_203_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_203_2;
     tr_mlat_203_2.ds_id_.sac_ = 0;
@@ -353,7 +353,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_2.on_gnd_ = true;
     tr_mlat_203_2.x_ = 550.0;
     tr_mlat_203_2.y_ = 0.0;
-    tr_mlat_203_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_203_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_203_3;
     tr_mlat_203_3.ds_id_.sac_ = 0;
@@ -367,7 +367,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_3.on_gnd_ = true;
     tr_mlat_203_3.x_ = 600.0;
     tr_mlat_203_3.y_ = 0.0;
-    tr_mlat_203_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_203_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_203_4;
     tr_mlat_203_4.ds_id_.sac_ = 0;
@@ -381,7 +381,7 @@ void TrackAssociatorTest::test_data()
     tr_mlat_203_4.on_gnd_ = true;
     tr_mlat_203_4.x_ = 650.0;
     tr_mlat_203_4.y_ = 0.0;
-    tr_mlat_203_4.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_mlat_203_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_mlat_203 << tr_mlat_203_1 << tr_mlat_203_2 << tr_mlat_203_3 << tr_mlat_203_4;
 
@@ -398,7 +398,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_301_1.on_gnd_ = true;
     tr_smr_301_1.x_ = -150.0;
     tr_smr_301_1.y_ = 0.0;
-    tr_smr_301_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_301_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_301_2;
     tr_smr_301_2.ds_id_.sac_ = 0;
@@ -409,7 +409,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_301_2.on_gnd_ = true;
     tr_smr_301_2.x_ = -100.0;
     tr_smr_301_2.y_ = 0.0;
-    tr_smr_301_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_301_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_301_3;
     tr_smr_301_3.ds_id_.sac_ = 0;
@@ -420,7 +420,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_301_3.on_gnd_ = true;
     tr_smr_301_3.x_ = -50.0;
     tr_smr_301_3.y_ = 0.0;
-    tr_smr_301_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_301_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_smr_301 << tr_smr_301_1 << tr_smr_301_2 << tr_smr_301_3;
 
@@ -437,7 +437,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_1.on_gnd_ = true;
     tr_smr_302_1.x_ = 100.0;
     tr_smr_302_1.y_ = 0.0;
-    tr_smr_302_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_2;
     tr_smr_302_2.ds_id_.sac_ = 0;
@@ -448,7 +448,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_2.on_gnd_ = true;
     tr_smr_302_2.x_ = 150.0;
     tr_smr_302_2.y_ = 0.0;
-    tr_smr_302_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_3;
     tr_smr_302_3.ds_id_.sac_ = 0;
@@ -459,7 +459,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_3.on_gnd_ = true;
     tr_smr_302_3.x_ = 200.0;
     tr_smr_302_3.y_ = 0.0;
-    tr_smr_302_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_4;
     tr_smr_302_4.ds_id_.sac_ = 0;
@@ -470,7 +470,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_4.on_gnd_ = true;
     tr_smr_302_4.x_ = 250.0;
     tr_smr_302_4.y_ = 0.0;
-    tr_smr_302_4.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_5;
     tr_smr_302_5.ds_id_.sac_ = 0;
@@ -481,7 +481,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_5.on_gnd_ = true;
     tr_smr_302_5.x_ = 300.0;
     tr_smr_302_5.y_ = 0.0;
-    tr_smr_302_5.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_5.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_6;
     tr_smr_302_6.ds_id_.sac_ = 0;
@@ -492,7 +492,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_6.on_gnd_ = true;
     tr_smr_302_6.x_ = 350.0;
     tr_smr_302_6.y_ = 0.0;
-    tr_smr_302_6.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_6.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_7;
     tr_smr_302_7.ds_id_.sac_ = 0;
@@ -503,7 +503,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_7.on_gnd_ = true;
     tr_smr_302_7.x_ = 400.0;
     tr_smr_302_7.y_ = 0.0;
-    tr_smr_302_7.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_7.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_8;
     tr_smr_302_8.ds_id_.sac_ = 0;
@@ -514,7 +514,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_8.on_gnd_ = true;
     tr_smr_302_8.x_ = 450.0;
     tr_smr_302_8.y_ = 0.0;
-    tr_smr_302_8.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_8.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_302_9;
     tr_smr_302_9.ds_id_.sac_ = 0;
@@ -525,7 +525,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_302_9.on_gnd_ = true;
     tr_smr_302_9.x_ = 500.0;
     tr_smr_302_9.y_ = 0.0;
-    tr_smr_302_9.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_302_9.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_smr_302 << tr_smr_302_1 << tr_smr_302_2 << tr_smr_302_3
                 << tr_smr_302_4 << tr_smr_302_5 << tr_smr_302_6
@@ -544,7 +544,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_303_1.on_gnd_ = true;
     tr_smr_303_1.x_ = 650.0;
     tr_smr_303_1.y_ = 0.0;
-    tr_smr_303_1.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_303_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_303_2;
     tr_smr_303_2.ds_id_.sac_ = 0;
@@ -555,7 +555,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_303_2.on_gnd_ = true;
     tr_smr_303_2.x_ = 700.0;
     tr_smr_303_2.y_ = 0.0;
-    tr_smr_303_2.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_303_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_smr_303_3;
     tr_smr_303_3.ds_id_.sac_ = 0;
@@ -566,7 +566,7 @@ void TrackAssociatorTest::test_data()
     tr_smr_303_3.on_gnd_ = true;
     tr_smr_303_3.x_ = 750.0;
     tr_smr_303_3.y_ = 0.0;
-    tr_smr_303_3.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    tr_smr_303_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     trk_smr_303 << tr_smr_303_1 << tr_smr_303_2 << tr_smr_303_3;
 

@@ -61,5 +61,5 @@ bool operator==(const TargetReport &lhs, const TargetReport &rhs)
            closeEnough(lhs.x_, lhs.y_, lhs.z_, rhs.x_, rhs.y_, rhs.z_) &&
            lhs.ver_ == rhs.ver_ &&
            lhs.pic_ == rhs.pic_ &&
-           lhs.area_ == rhs.area_;
+           lhs.narea_ == rhs.narea_;
 }

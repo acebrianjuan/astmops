@@ -1022,20 +1022,20 @@ QVector<Track> splitTrackByArea(const Track &trk, TrackSplitMode mode)
         if (first)
         {
             sub_trk << tr;
-            last_na = tr.area_;
+            last_na = tr.narea_;
 
             first = false;
             continue;
         }
 
-        if (areaChanged(tr.area_, last_na))
+        if (areaChanged(tr.narea_, last_na))
         {
             vec << sub_trk;
             sub_trk.clear();
         }
 
         sub_trk << tr;
-        last_na = tr.area_;
+        last_na = tr.narea_;
     }
 
     // Manual insertion of the last subtrack.

@@ -685,7 +685,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
 
     // Area.
     QVector3D pos(tr.x_, tr.y_, tr.z_.value_or(0.0));  // <-- TODO: Beware of criteria for missing altitude information.
-    tr.area_ = locatePoint(pos, tr.on_gnd_);
+    tr.narea_ = locatePoint(pos, tr.on_gnd_);
 
     return tr;
 }

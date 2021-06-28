@@ -406,7 +406,7 @@ void TargetReportExtractorTest::test_data()
     trSmr.on_gnd_ = true;
     trSmr.x_ = 565.0000000 + 1394.655251;
     trSmr.y_ = -295.0000000 - 161.695809;
-    trSmr.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    trSmr.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport trMlat;
     trMlat.ds_id_.sac_ = 0;
@@ -420,7 +420,7 @@ void TargetReportExtractorTest::test_data()
     trMlat.on_gnd_ = true;
     trMlat.x_ = 565.0000000;
     trMlat.y_ = -295.0000000;
-    trMlat.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    trMlat.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport trAdsb;
     trAdsb.ds_id_.sac_ = 0;
@@ -435,7 +435,7 @@ void TargetReportExtractorTest::test_data()
     trAdsb.x_ = 565.0000000;
     trAdsb.y_ = -295.0000000;
     trAdsb.z_ = 0;
-    trAdsb.area_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    trAdsb.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     QVector<Asterix::Record> smrRecsIn;
     smrRecsIn << cat010Smr0;
