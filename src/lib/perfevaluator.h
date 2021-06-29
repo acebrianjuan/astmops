@@ -26,22 +26,34 @@
 #include "functions.h"
 #include "track.h"
 
-struct PlgCounter
+struct PdCounter
 {
-    quint32 n_gaps = 0;
-    quint32 n_tr = 0;
+    quint32 n_trp_ = 0;
+    quint32 n_up_ = 0;
+};
+
+struct PfdCounter
+{
+    quint32 n_ftr_ = 0;
+    quint32 n_tr_ = 0;
 };
 
 struct PidCounter
 {
-    quint32 correct = 0;
-    quint32 total = 0;
+    quint32 n_citr_ = 0;
+    quint32 n_itr_ = 0;
 };
 
 struct PfidCounter
 {
-    quint32 erroneous = 0;
-    quint32 total = 0;
+    quint32 n_eitr_ = 0;
+    quint32 n_itr_ = 0;
+};
+
+struct PlgCounter
+{
+    quint32 n_g_ = 0;
+    quint32 n_tr_ = 0;
 };
 
 class PerfEvaluator
@@ -75,16 +87,17 @@ private:
 
     AreaHash<QVector<double>> smrRpaErrors_;
     AreaHash<QVector<double>> mlatRpaErrors_;
-    AreaHash<PlgCounter> plg_;
 
-    PidCounter mlatPidIdentCounter_;
-    PidCounter mlatPidMode3ACounter_;
+    AreaHash<PdCounter> smrPd_;
+    AreaHash<PdCounter> mlatPd_;
 
-    PfidCounter mlatPfidIdentCounter_;
-    PfidCounter mlatPfidMode3ACounter_;
+    AreaHash<PidCounter> mlatPidIdent_;
+    AreaHash<PidCounter> mlatPidMode3A_;
 
-    AreaHash<Counters::BasicCounter> smrPd_;
-    AreaHash<Counters::BasicCounter> mlatPd_;
+    AreaHash<PfidCounter> mlatPfidIdent_;
+    AreaHash<PfidCounter> mlatPfidMode3A_;
+
+    AreaHash<PlgCounter> mlatPlg_;
 };
 
 #endif  // ASTMOPS_PERFEVALUATOR_H

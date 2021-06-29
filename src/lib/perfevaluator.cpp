@@ -360,8 +360,8 @@ void PerfEvaluator::evalED116PD(const Track &trk_ref, const TrackCollection &col
 
             Counters::BasicCounter ctr = intervalCtr.read();
 
-            smrPd_[narea].valid_ += ctr.valid_;
-            smrPd_[narea].total_ += ctr.total_;
+            smrPd_[narea].n_trp_ += ctr.valid_;
+            smrPd_[narea].n_up_ += ctr.total_;
         }
     }
 }
@@ -484,8 +484,8 @@ void PerfEvaluator::evalED117PD(const Track &trk_ref, const TrackCollection &col
 
             Counters::BasicCounter ctr = intervalCtr.read();
 
-            mlatPd_[narea].valid_ += ctr.valid_;
-            mlatPd_[narea].total_ += ctr.total_;
+            mlatPd_[narea].n_trp_ += ctr.valid_;
+            mlatPd_[narea].n_up_ += ctr.total_;
         }
     }
 }
@@ -561,6 +561,8 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
                     continue;
                 }
 
+                Aerodrome::NamedArea narea = tr_tst.narea_;
+
                 if (tr_tst.ident_.has_value())
                 {
                     bool ident_ok = false;
@@ -575,10 +577,10 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
                         ident_ok = tr_tst.ident_.value() == tr_u.ident_.value();
                     }
 
-                    ++mlatPidIdentCounter_.total;
+                    ++mlatPidIdent_[narea].n_itr_;
                     if (ident_ok)
                     {
-                        ++mlatPidIdentCounter_.correct;
+                        ++mlatPidIdent_[narea].n_citr_;
                     }
                 }
 
@@ -596,10 +598,10 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
                         mode_3a_ok = tr_tst.mode_3a_.value() == tr_u.mode_3a_.value();
                     }
 
-                    ++mlatPidMode3ACounter_.total;
+                    ++mlatPidMode3A_[narea].n_itr_;
                     if (mode_3a_ok)
                     {
-                        ++mlatPidMode3ACounter_.correct;
+                        ++mlatPidMode3A_[narea].n_citr_;
                     }
                 }
             }
@@ -672,6 +674,8 @@ void PerfEvaluator::evalED117PFID(const Track &trk_ref, const Track &trk_tst)
                     continue;
                 }
 
+                Aerodrome::NamedArea narea = tr_tst.narea_;
+
                 if (tr_tst.ident_.has_value())
                 {
                     bool ident_nok = false;
@@ -686,10 +690,10 @@ void PerfEvaluator::evalED117PFID(const Track &trk_ref, const Track &trk_tst)
                         ident_nok = tr_tst.ident_.value() != tr_u.ident_.value();
                     }
 
-                    ++mlatPfidIdentCounter_.total;
+                    ++mlatPfidIdent_[narea].n_itr_;
                     if (ident_nok)
                     {
-                        ++mlatPfidIdentCounter_.erroneous;
+                        ++mlatPfidIdent_[narea].n_eitr_;
                     }
                 }
 
@@ -707,10 +711,10 @@ void PerfEvaluator::evalED117PFID(const Track &trk_ref, const Track &trk_tst)
                         mode_3a_nok = tr_tst.mode_3a_.value() != tr_u.mode_3a_.value();
                     }
 
-                    ++mlatPfidMode3ACounter_.total;
+                    ++mlatPfidMode3A_[narea].n_itr_;
                     if (mode_3a_nok)
                     {
-                        ++mlatPfidMode3ACounter_.erroneous;
+                        ++mlatPfidMode3A_[narea].n_eitr_;
                     }
                 }
             }
@@ -736,7 +740,7 @@ void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
                 if (first)
                 {
                     last_tod = new_tod;
-                    ++plg_[narea].n_tr;
+                    ++mlatPlg_[narea].n_tr_;
 
                     first = false;
                     continue;
@@ -751,11 +755,11 @@ void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
                 double tdiff = last_tod.msecsTo(new_tod) / 1000.0;
                 if (tdiff >= threshold)
                 {
-                    ++plg_[narea].n_gaps;
+                    ++mlatPlg_[narea].n_g_;
                 }
 
                 last_tod = new_tod;
-                ++plg_[narea].n_tr;
+                ++mlatPlg_[narea].n_tr_;
             }
         }
     }
