@@ -249,6 +249,40 @@ QVector<QPair<TargetReport, double>> PerfEvaluator::euclideanDistance(const TgtR
     return v;
 }
 
+Track PerfEvaluator::filterTrackByQuality(const Track &trk, quint8 ver, quint8 pic) const
+{
+    // Make a copy of the input track.
+    Track trk_out = trk;
+
+    qDebug() << "Before:" << trk_out.data().size();
+
+    TgtRepMap::iterator it = trk_out.begin();
+    while (it != trk_out.end())
+    {
+        TargetReport tr = it.value();
+
+        if (tr.ver_.has_value() && tr.pic_.has_value())
+        {
+            if (tr.ver_.value() != ver || tr.pic_.value() < pic)
+            {
+                it = trk_out.rdata().erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+        else
+        {
+            it = trk_out.rdata().erase(it);
+        }
+    }
+
+    qDebug() << "After:" << trk_out.data().size();
+
+    return trk_out;
+}
+
 void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &col_tst)
 {
     // Iterate through each test track in the collection.
@@ -259,32 +293,9 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &co
             return;
         }
 
-        // Make a copy of the reference track.
-        Track t_r = trk_ref;
-
-        qDebug() << "Before:" << t_r.data().size();
-        TgtRepMap::iterator it = t_r.begin();
-        while (it != t_r.end())
-        {
-            TargetReport tr = it.value();
-
-            if (tr.ver_.has_value() && tr.pic_.has_value())
-            {
-                if (tr.ver_.value() != 2 || tr.pic_.value() < pic_p95)
-                {
-                    it = t_r.rdata().erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-            else
-            {
-                it = t_r.rdata().erase(it);
-            }
-        }
-        qDebug() << "After:" << t_r.data().size();
+        // Only keep target reports with MOPS version 2 and PIC above the
+        // 95th percentile threshold.
+        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95);
 
         // Extract TST track portion that matches in time with the
         // reference track.
@@ -375,32 +386,9 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &co
             return;
         }
 
-        // Make a copy of the reference track.
-        Track t_r = trk_ref;
-
-        qDebug() << "Before:" << t_r.data().size();
-        TgtRepMap::iterator it = t_r.begin();
-        while (it != t_r.end())
-        {
-            TargetReport tr = it.value();
-
-            if (tr.ver_.has_value() && tr.pic_.has_value())
-            {
-                if (tr.ver_.value() != 2 || tr.pic_.value() < pic_p95)
-                {
-                    it = t_r.rdata().erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-            else
-            {
-                it = t_r.rdata().erase(it);
-            }
-        }
-        qDebug() << "After:" << t_r.data().size();
+        // Only keep target reports with MOPS version 2 and PIC above the
+        // 95th percentile threshold.
+        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95);
 
         // Extract TST track portion that matches in time with the
         // reference track.
