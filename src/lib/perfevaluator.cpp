@@ -59,30 +59,19 @@ void PerfEvaluator::run()
                 {
                     // SMR ED-116.
 
+                    evalED116RPA(t_ref, c_tst_i);
                     evalED116PD(t_ref, c_tst_i);
-                    //evalED116PFD(t_ref, t_tst);
-
-                    // Iterate through each test track in the collection.
-                    for (const Track &t_tst : c_tst_i)
-                    {
-                        evalED116RPA(t_ref, t_tst);
-                    }
+                    //evalED116PFD(t_ref, c_tst_i);
                 }
                 else if (c_tst_i.system_type() == SystemType::Mlat)
                 {
                     // MLAT ED-117.
 
+                    evalED117RPA(t_ref, c_tst_i);
                     evalED117PD(t_ref, c_tst_i);
                     evalED117PFD(t_ref, c_tst_i);
-
-                    // Iterate through each test track in the collection.
-                    for (const Track &t_tst : c_tst_i)
-                    {
-                        evalED117RPA(t_ref, t_tst);
-
-                        evalED117PID(t_ref, t_tst);
-                        evalED117PFID(t_ref, t_tst);
-                    }
+                    evalED117PID(t_ref, c_tst_i);
+                    evalED117PFID(t_ref, c_tst_i);
                 }
             }
         }
@@ -260,61 +249,65 @@ QVector<QPair<TargetReport, double>> PerfEvaluator::euclideanDistance(const TgtR
     return v;
 }
 
-void PerfEvaluator::evalED116RPA(const Track &trk_ref, const Track &trk_tst)
+void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    if (!haveSpaceIntersection(trk_tst, trk_ref))
+    // Iterate through each test track in the collection.
+    for (const Track &trk_tst : col_tst)
     {
-        return;
-    }
-
-    // Make a copy of the reference track.
-    Track t_r = trk_ref;
-
-    qDebug() << "Before:" << t_r.data().size();
-    TgtRepMap::iterator it = t_r.begin();
-    while (it != t_r.end())
-    {
-        TargetReport tr = it.value();
-
-        if (tr.ver_.has_value() && tr.pic_.has_value())
+        if (!haveSpaceIntersection(trk_tst, trk_ref))
         {
-            if (tr.ver_.value() != 2 || tr.pic_.value() < pic_p95)
+            return;
+        }
+
+        // Make a copy of the reference track.
+        Track t_r = trk_ref;
+
+        qDebug() << "Before:" << t_r.data().size();
+        TgtRepMap::iterator it = t_r.begin();
+        while (it != t_r.end())
+        {
+            TargetReport tr = it.value();
+
+            if (tr.ver_.has_value() && tr.pic_.has_value())
             {
-                it = t_r.rdata().erase(it);
+                if (tr.ver_.value() != 2 || tr.pic_.value() < pic_p95)
+                {
+                    it = t_r.rdata().erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
             }
             else
             {
-                ++it;
+                it = t_r.rdata().erase(it);
             }
         }
-        else
+        qDebug() << "After:" << t_r.data().size();
+
+        // Extract TST track portion that matches in time with the
+        // reference track.
+        //Track t_t = intersect(t_tst, t_r).value();
+
+        // Interpolate the TST track at the times of the REF track points.
+        Track t_t = resample(trk_tst, t_r.timestamps());
+
+        // TST and REF trajectories should match in size.
+        //Q_ASSERT(t_t.size() == t_r.size());
+
+        // TST and REF pairs should have exact same times.
+        //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
+
+        // Calculate Euclidean distance between TST-REF pairs.
+        QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
+
+        for (const QPair<TargetReport, double> &p : dists)
         {
-            it = t_r.rdata().erase(it);
+            Aerodrome::NamedArea narea = p.first.narea_;
+            double dist = p.second;
+            smrRpaErrors_[narea] << dist;
         }
-    }
-    qDebug() << "After:" << t_r.data().size();
-
-    // Extract TST track portion that matches in time with the
-    // reference track.
-    //Track t_t = intersect(t_tst, t_r).value();
-
-    // Interpolate the TST track at the times of the REF track points.
-    Track t_t = resample(trk_tst, t_r.timestamps());
-
-    // TST and REF trajectories should match in size.
-    //Q_ASSERT(t_t.size() == t_r.size());
-
-    // TST and REF pairs should have exact same times.
-    //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
-
-    // Calculate Euclidean distance between TST-REF pairs.
-    QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
-
-    for (const QPair<TargetReport, double> &p : dists)
-    {
-        Aerodrome::NamedArea narea = p.first.narea_;
-        double dist = p.second;
-        smrRpaErrors_[narea] << dist;
     }
 }
 
@@ -372,61 +365,65 @@ void PerfEvaluator::evalED116PFD(const Track &trk_ref, const TrackCollection &co
     Q_UNUSED(col_tst);
 }
 
-void PerfEvaluator::evalED117RPA(const Track &trk_ref, const Track &trk_tst)
+void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    if (!haveSpaceIntersection(trk_tst, trk_ref))
+    // Iterate through each test track in the collection.
+    for (const Track &trk_tst : col_tst)
     {
-        return;
-    }
-
-    // Make a copy of the reference track.
-    Track t_r = trk_ref;
-
-    qDebug() << "Before:" << t_r.data().size();
-    TgtRepMap::iterator it = t_r.begin();
-    while (it != t_r.end())
-    {
-        TargetReport tr = it.value();
-
-        if (tr.ver_.has_value() && tr.pic_.has_value())
+        if (!haveSpaceIntersection(trk_tst, trk_ref))
         {
-            if (tr.ver_.value() != 2 || tr.pic_.value() < pic_p95)
+            return;
+        }
+
+        // Make a copy of the reference track.
+        Track t_r = trk_ref;
+
+        qDebug() << "Before:" << t_r.data().size();
+        TgtRepMap::iterator it = t_r.begin();
+        while (it != t_r.end())
+        {
+            TargetReport tr = it.value();
+
+            if (tr.ver_.has_value() && tr.pic_.has_value())
             {
-                it = t_r.rdata().erase(it);
+                if (tr.ver_.value() != 2 || tr.pic_.value() < pic_p95)
+                {
+                    it = t_r.rdata().erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
             }
             else
             {
-                ++it;
+                it = t_r.rdata().erase(it);
             }
         }
-        else
+        qDebug() << "After:" << t_r.data().size();
+
+        // Extract TST track portion that matches in time with the
+        // reference track.
+        //Track t_t = intersect(t_tst, t_r).value();
+
+        // Interpolate the TST track at the times of the REF track points.
+        Track t_t = resample(trk_tst, t_r.timestamps());
+
+        // TST and REF trajectories should match in size.
+        //Q_ASSERT(t_t.size() == t_r.size());
+
+        // TST and REF pairs should have exact same times.
+        //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
+
+        // Calculate Euclidean distance between TST-REF pairs.
+        QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
+
+        for (const QPair<TargetReport, double> &p : dists)
         {
-            it = t_r.rdata().erase(it);
+            Aerodrome::NamedArea narea = p.first.narea_;
+            double dist = p.second;
+            mlatRpaErrors_[narea] << dist;
         }
-    }
-    qDebug() << "After:" << t_r.data().size();
-
-    // Extract TST track portion that matches in time with the
-    // reference track.
-    //Track t_t = intersect(t_tst, t_r).value();
-
-    // Interpolate the TST track at the times of the REF track points.
-    Track t_t = resample(trk_tst, t_r.timestamps());
-
-    // TST and REF trajectories should match in size.
-    //Q_ASSERT(t_t.size() == t_r.size());
-
-    // TST and REF pairs should have exact same times.
-    //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
-
-    // Calculate Euclidean distance between TST-REF pairs.
-    QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
-
-    for (const QPair<TargetReport, double> &p : dists)
-    {
-        Aerodrome::NamedArea narea = p.first.narea_;
-        double dist = p.second;
-        mlatRpaErrors_[narea] << dist;
     }
 }
 
@@ -527,112 +524,116 @@ void PerfEvaluator::evalED117PFD(const Track &trk_ref, const TrackCollection &co
     }
 }
 
-void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
+void PerfEvaluator::evalED117PID(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    if (!haveSpaceIntersection(trk_tst, trk_ref))
+    // Iterate through each test track in the collection.
+    for (const Track &trk_tst : col_tst)
     {
-        return;
-    }
-
-    const QMultiMap<QDateTime, TargetReport> &ref_data = trk_ref.data();
-
-    for (const TargetReport &tr_tst : trk_tst)
-    {
-        if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
+        if (!haveSpaceIntersection(trk_tst, trk_ref))
         {
-            // Skip if target report has no identification and no mode 3/A code.
-            continue;
+            return;
         }
 
-        QDateTime tod = tr_tst.tod_;
+        const QMultiMap<QDateTime, TargetReport> &ref_data = trk_ref.data();
 
-        TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
-        TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
-
-        TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
-        if (it != ref_data.end())  // Upper TOD found.
+        for (const TargetReport &tr_tst : trk_tst)
         {
-            Q_ASSERT(it.key() >= tod);
-
-            // Save upper value.
-            it_u = it;
-
-            // Search lower values by decrementing iterator.
-            while (it != ref_data.end() && tod < it.key())
+            if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
             {
-                if (it == ref_data.begin())  // Exit condition on first value.
-                {
-                    if (tod < it.key())  // Set as not found.
-                    {
-                        it = ref_data.end();
-                    }
-
-                    break;
-                }
-
-                it--;
+                // Skip if target report has no identification and no mode 3/A code.
+                continue;
             }
 
-            if (it != ref_data.end())  // Lower TOD found.
+            QDateTime tod = tr_tst.tod_;
+
+            TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
+            TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
+
+            TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
+            if (it != ref_data.end())  // Upper TOD found.
             {
-                Q_ASSERT(tod >= it.key());
+                Q_ASSERT(it.key() >= tod);
 
-                // Save lower value.
-                it_l = it;
-            }
+                // Save upper value.
+                it_u = it;
 
-            if (it_l != ref_data.end() && it_u != ref_data.end())
-            {
-                TargetReport tr_l = it_l.value();
-                TargetReport tr_u = it_u.value();
-
-                if (!tr_l.ident_.has_value() &&
-                    !tr_u.ident_.has_value())
+                // Search lower values by decrementing iterator.
+                while (it != ref_data.end() && tod < it.key())
                 {
-                    continue;
+                    if (it == ref_data.begin())  // Exit condition on first value.
+                    {
+                        if (tod < it.key())  // Set as not found.
+                        {
+                            it = ref_data.end();
+                        }
+
+                        break;
+                    }
+
+                    it--;
                 }
 
-                Aerodrome::NamedArea narea = tr_tst.narea_;
-
-                if (tr_tst.ident_.has_value())
+                if (it != ref_data.end())  // Lower TOD found.
                 {
-                    bool ident_ok = false;
+                    Q_ASSERT(tod >= it.key());
 
-                    if (tr_l.ident_.has_value())
-                    {
-                        ident_ok = tr_tst.ident_.value() == tr_l.ident_.value();
-                    }
-
-                    if (!ident_ok && tr_u.ident_.has_value())
-                    {
-                        ident_ok = tr_tst.ident_.value() == tr_u.ident_.value();
-                    }
-
-                    ++mlatPidIdent_[narea].n_itr_;
-                    if (ident_ok)
-                    {
-                        ++mlatPidIdent_[narea].n_citr_;
-                    }
+                    // Save lower value.
+                    it_l = it;
                 }
 
-                if (tr_tst.mode_3a_.has_value())
+                if (it_l != ref_data.end() && it_u != ref_data.end())
                 {
-                    bool mode_3a_ok = false;
+                    TargetReport tr_l = it_l.value();
+                    TargetReport tr_u = it_u.value();
 
-                    if (tr_l.mode_3a_.has_value())
+                    if (!tr_l.ident_.has_value() &&
+                        !tr_u.ident_.has_value())
                     {
-                        mode_3a_ok = tr_tst.mode_3a_.value() == tr_l.mode_3a_.value();
+                        continue;
                     }
 
-                    if (!mode_3a_ok && tr_u.mode_3a_.has_value())
+                    Aerodrome::NamedArea narea = tr_tst.narea_;
+
+                    if (tr_tst.ident_.has_value())
                     {
-                        mode_3a_ok = tr_tst.mode_3a_.value() == tr_u.mode_3a_.value();
+                        bool ident_ok = false;
+
+                        if (tr_l.ident_.has_value())
+                        {
+                            ident_ok = tr_tst.ident_.value() == tr_l.ident_.value();
+                        }
+
+                        if (!ident_ok && tr_u.ident_.has_value())
+                        {
+                            ident_ok = tr_tst.ident_.value() == tr_u.ident_.value();
+                        }
+
+                        ++mlatPidIdent_[narea].n_itr_;
+                        if (ident_ok)
+                        {
+                            ++mlatPidIdent_[narea].n_citr_;
+                        }
                     }
 
-                    ++mlatPidMode3A_[narea].n_itr_;
-                    if (mode_3a_ok)
+                    if (tr_tst.mode_3a_.has_value())
                     {
-                        ++mlatPidMode3A_[narea].n_citr_;
+                        bool mode_3a_ok = false;
+
+                        if (tr_l.mode_3a_.has_value())
+                        {
+                            mode_3a_ok = tr_tst.mode_3a_.value() == tr_l.mode_3a_.value();
+                        }
+
+                        if (!mode_3a_ok && tr_u.mode_3a_.has_value())
+                        {
+                            mode_3a_ok = tr_tst.mode_3a_.value() == tr_u.mode_3a_.value();
+                        }
+
+                        ++mlatPidMode3A_[narea].n_itr_;
+                        if (mode_3a_ok)
+                        {
+                            ++mlatPidMode3A_[narea].n_citr_;
+                        }
                     }
                 }
             }
@@ -640,112 +641,116 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
     }
 }
 
-void PerfEvaluator::evalED117PFID(const Track &trk_ref, const Track &trk_tst)
+void PerfEvaluator::evalED117PFID(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    if (!haveSpaceIntersection(trk_tst, trk_ref))
+    // Iterate through each test track in the collection.
+    for (const Track &trk_tst : col_tst)
     {
-        return;
-    }
-
-    const QMultiMap<QDateTime, TargetReport> &ref_data = trk_ref.data();
-
-    for (const TargetReport &tr_tst : trk_tst)
-    {
-        if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
+        if (!haveSpaceIntersection(trk_tst, trk_ref))
         {
-            // Skip if target report has no identification and no mode 3/A code.
-            continue;
+            return;
         }
 
-        QDateTime tod = tr_tst.tod_;
+        const QMultiMap<QDateTime, TargetReport> &ref_data = trk_ref.data();
 
-        TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
-        TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
-
-        TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
-        if (it != ref_data.end())  // Upper TOD found.
+        for (const TargetReport &tr_tst : trk_tst)
         {
-            Q_ASSERT(it.key() >= tod);
-
-            // Save upper value.
-            it_u = it;
-
-            // Search lower values by decrementing iterator.
-            while (it != ref_data.end() && tod < it.key())
+            if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
             {
-                if (it == ref_data.begin())  // Exit condition on first value.
-                {
-                    if (tod < it.key())  // Set as not found.
-                    {
-                        it = ref_data.end();
-                    }
-
-                    break;
-                }
-
-                it--;
+                // Skip if target report has no identification and no mode 3/A code.
+                continue;
             }
 
-            if (it != ref_data.end())  // Lower TOD found.
+            QDateTime tod = tr_tst.tod_;
+
+            TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
+            TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
+
+            TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
+            if (it != ref_data.end())  // Upper TOD found.
             {
-                Q_ASSERT(tod >= it.key());
+                Q_ASSERT(it.key() >= tod);
 
-                // Save lower value.
-                it_l = it;
-            }
+                // Save upper value.
+                it_u = it;
 
-            if (it_l != ref_data.end() && it_u != ref_data.end())
-            {
-                TargetReport tr_l = it_l.value();
-                TargetReport tr_u = it_u.value();
-
-                if (!tr_l.ident_.has_value() &&
-                    !tr_u.ident_.has_value())
+                // Search lower values by decrementing iterator.
+                while (it != ref_data.end() && tod < it.key())
                 {
-                    continue;
+                    if (it == ref_data.begin())  // Exit condition on first value.
+                    {
+                        if (tod < it.key())  // Set as not found.
+                        {
+                            it = ref_data.end();
+                        }
+
+                        break;
+                    }
+
+                    it--;
                 }
 
-                Aerodrome::NamedArea narea = tr_tst.narea_;
-
-                if (tr_tst.ident_.has_value())
+                if (it != ref_data.end())  // Lower TOD found.
                 {
-                    bool ident_nok = false;
+                    Q_ASSERT(tod >= it.key());
 
-                    if (tr_l.ident_.has_value())
-                    {
-                        ident_nok = tr_tst.ident_.value() != tr_l.ident_.value();
-                    }
-
-                    if (!ident_nok && tr_u.ident_.has_value())
-                    {
-                        ident_nok = tr_tst.ident_.value() != tr_u.ident_.value();
-                    }
-
-                    ++mlatPfidIdent_[narea].n_itr_;
-                    if (ident_nok)
-                    {
-                        ++mlatPfidIdent_[narea].n_eitr_;
-                    }
+                    // Save lower value.
+                    it_l = it;
                 }
 
-                if (tr_tst.mode_3a_.has_value())
+                if (it_l != ref_data.end() && it_u != ref_data.end())
                 {
-                    bool mode_3a_nok = false;
+                    TargetReport tr_l = it_l.value();
+                    TargetReport tr_u = it_u.value();
 
-                    if (tr_l.mode_3a_.has_value())
+                    if (!tr_l.ident_.has_value() &&
+                        !tr_u.ident_.has_value())
                     {
-                        mode_3a_nok = tr_tst.mode_3a_.value() != tr_l.mode_3a_.value();
+                        continue;
                     }
 
-                    if (!mode_3a_nok && tr_u.mode_3a_.has_value())
+                    Aerodrome::NamedArea narea = tr_tst.narea_;
+
+                    if (tr_tst.ident_.has_value())
                     {
-                        mode_3a_nok = tr_tst.mode_3a_.value() != tr_u.mode_3a_.value();
+                        bool ident_nok = false;
+
+                        if (tr_l.ident_.has_value())
+                        {
+                            ident_nok = tr_tst.ident_.value() != tr_l.ident_.value();
+                        }
+
+                        if (!ident_nok && tr_u.ident_.has_value())
+                        {
+                            ident_nok = tr_tst.ident_.value() != tr_u.ident_.value();
+                        }
+
+                        ++mlatPfidIdent_[narea].n_itr_;
+                        if (ident_nok)
+                        {
+                            ++mlatPfidIdent_[narea].n_eitr_;
+                        }
                     }
 
-                    ++mlatPfidMode3A_[narea].n_itr_;
-                    if (mode_3a_nok)
+                    if (tr_tst.mode_3a_.has_value())
                     {
-                        ++mlatPfidMode3A_[narea].n_eitr_;
+                        bool mode_3a_nok = false;
+
+                        if (tr_l.mode_3a_.has_value())
+                        {
+                            mode_3a_nok = tr_tst.mode_3a_.value() != tr_l.mode_3a_.value();
+                        }
+
+                        if (!mode_3a_nok && tr_u.mode_3a_.has_value())
+                        {
+                            mode_3a_nok = tr_tst.mode_3a_.value() != tr_u.mode_3a_.value();
+                        }
+
+                        ++mlatPfidMode3A_[narea].n_itr_;
+                        if (mode_3a_nok)
+                        {
+                            ++mlatPfidMode3A_[narea].n_eitr_;
+                        }
                     }
                 }
             }

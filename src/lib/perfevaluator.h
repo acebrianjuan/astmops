@@ -71,15 +71,15 @@ private:
     void computePicThreshold(double prctl);
     QVector<QPair<TargetReport, double>> euclideanDistance(const TgtRepMap &ref, const TgtRepMap &tst) const;
 
-    void evalED116RPA(const Track &trk_ref, const Track &trk_tst);
+    void evalED116RPA(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED116PD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst);
 
-    void evalED117RPA(const Track &trk_ref, const Track &trk_tst);
+    void evalED117RPA(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst);
-    void evalED117PID(const Track &trk_ref, const Track &trk_tst);
-    void evalED117PFID(const Track &trk_ref, const Track &trk_tst);
+    void evalED117PID(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED117PFID(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PLG(const TrackCollection &col_tst);
 
     quint8 pic_p95 = 0;
