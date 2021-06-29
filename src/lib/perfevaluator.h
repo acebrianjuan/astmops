@@ -91,6 +91,8 @@ private:
     AreaHash<PdCounter> smrPd_;
     AreaHash<PdCounter> mlatPd_;
 
+    AreaHash<PfdCounter> mlatPfd_;
+
     AreaHash<PidCounter> mlatPidIdent_;
     AreaHash<PidCounter> mlatPidMode3A_;
 

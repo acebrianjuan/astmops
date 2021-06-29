@@ -73,7 +73,7 @@ void PerfEvaluator::run()
                     // MLAT ED-117.
 
                     evalED117PD(t_ref, c_tst_i);
-                    //evalED117PFD(t_ref, t_tst);
+                    evalED117PFD(t_ref, c_tst_i);
 
                     // Iterate through each test track in the collection.
                     for (const Track &t_tst : c_tst_i)
@@ -492,8 +492,39 @@ void PerfEvaluator::evalED117PD(const Track &trk_ref, const TrackCollection &col
 
 void PerfEvaluator::evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    Q_UNUSED(trk_ref);
-    Q_UNUSED(col_tst);
+    QVector<Track> trk_ref_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+    for (const Track &trk_ref_i : trk_ref_vec)
+    {
+        Aerodrome::NamedArea narea = trk_ref_i.begin()->narea_;
+
+        for (const Track &trk_tst : col_tst)
+        {
+            if (!haveSpaceTimeIntersection(trk_tst, trk_ref_i))
+            {
+                return;
+            }
+
+            //Track trk_tst_i = intersect(trk_tst, trk_ref_i).value();
+
+            // Interpolate the REF track at the times of the TST track plots.
+            const Track t_r = resample(trk_ref_i, trk_tst.timestamps());
+
+            // Calculate Euclidean distance between TST-REF pairs.
+            QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.data(), trk_tst.data());
+
+            for (const QPair<TargetReport, double> &p : dists)
+            {
+                double dist = p.second;
+
+                if (dist >= 50.0)
+                {
+                    ++mlatPfd_[narea].n_ftr_;
+                }
+                ++mlatPfd_[narea].n_tr_;
+            }
+        }
+    }
 }
 
 void PerfEvaluator::evalED117PID(const Track &trk_ref, const Track &trk_tst)
