@@ -25,11 +25,12 @@ TrackAssociator::TrackAssociator()
 
 void TrackAssociator::addData(const Track &t)
 {
+    SystemType st = t.system_type();
+
     // Test tracks.
-    if (t.system_type() == SystemType::Smr ||
-        t.system_type() == SystemType::Mlat)
+    if (st == SystemType::Smr || st == SystemType::Mlat)
     {
-        tstTracks_.insert(t.track_number(), t);
+        tstTracks_[st][t.track_number()] = t;
     }
 
     // Reference tracks.
@@ -119,74 +120,75 @@ int TrackAssociator::run()
             sets_[mode_s] << t_ref;
 
             // Iterate for each TST track.
-            QHash<TrackNum, Track>::iterator it = tstTracks_.begin();
-            while (it != tstTracks_.end())
+            for (QHash<TrackNum, Track> hash : qAsConst(tstTracks_))
             {
-                Track t_tst = it.value();
-
-                // If track is empty, skip it.
-                if (t_tst.isEmpty())
+                QHash<TrackNum, Track>::iterator it = hash.begin();
+                while (it != hash.end())
                 {
-                    it = tstTracks_.erase(it);
-                    continue;
-                }
+                    Track t_tst = it.value();
 
-                // For MLAT, track association is done with the Mode-S address.
-                if (t_tst.system_type() == SystemType::Mlat &&
-                    t_tst.mode_s().has_value())
-                {
-                    if (t_tst.mode_s().value() == mode_s)
+                    // If track is empty, skip it.
+                    if (t_tst.isEmpty())
                     {
-                        // Insert MLAT TST track in the set.
-                        sets_[mode_s] << t_tst;
+                        it = hash.erase(it);
+                        continue;
+                    }
 
-                        // Only register a match if a space-time intersection
-                        // exists between TST and REF tracks.
-                        if (haveSpaceTimeIntersection(t_tst, t_ref))
+                    // For MLAT, track association is done with the Mode-S address.
+                    if (t_tst.system_type() == SystemType::Mlat &&
+                        t_tst.mode_s().has_value())
+                    {
+                        if (t_tst.mode_s().value() == mode_s)
                         {
-                            sets_[mode_s].addMatch(t_ref, t_tst);
+                            // Insert MLAT TST track in the set.
+                            sets_[mode_s] << t_tst;
+                            tn2ms_[t_tst.system_type()][t_tst.track_number()] << mode_s;
+
+                            // Only register a match if a space-time intersection
+                            // exists between TST and REF tracks.
+                            if (haveSpaceTimeIntersection(t_tst, t_ref))
+                            {
+                                sets_[mode_s].addMatch(t_ref, t_tst);
+                            }
                         }
                     }
-                }
-                else if (haveSpaceTimeIntersection(t_tst, t_ref))
-                {
-                    // Otherwise check if there is space-time overlap between
-                    // reference track and test track.
-
-                    // Extract TST track portion that matches in time with the
-                    // reference track.
-                    Track t_t = intersect(t_tst, t_ref).value();
-
-                    // Simplify track by extracting feature points with the
-                    // Ramer-Douglas-Peucker algorithm. (Use only for very
-                    // densely populated tracks).
-
-                    // Interpolate the reference track at the times of the
-                    // TST track points.
-                    Track t_r = resample(t_ref, t_t.timestamps());
-
-                    // TST and REF trajectories should match in size.
-                    //Q_ASSERT(t_t.size() == t_r.size());
-
-                    // TST and REF pairs should have exact same times.
-                    //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
-
-                    // Calculate Euclidean distance between TST-REF pairs.
-                    QVector<double> dist = euclideanDistance(t_t.rdata(), t_r.rdata());
-
-                    // Check if distances are within the maximum allowed value.
-                    // Compute the overall matching score as the ratio between
-                    // the number of positive matches and the total elements.
-                    double score = calculateScore(dist);
-
-                    // If score satisfies the threshold we have a match.
-                    if (score >= threshold)
+                    else if (haveSpaceTimeIntersection(t_tst, t_ref))
                     {
-                        sets_[mode_s].addMatch(t_ref, t_tst);
-                    }
-                }
+                        // Otherwise check if there is space-time overlap between
+                        // reference track and test track.
 
-                ++it;
+                        // Extract TST track portion that matches in time with the
+                        // reference track.
+                        Track t_t = intersect(t_tst, t_ref).value();
+
+                        // Interpolate the reference track at the times of the
+                        // TST track points.
+                        Track t_r = resample(t_ref, t_t.timestamps());
+
+                        // TST and REF trajectories should match in size.
+                        //Q_ASSERT(t_t.size() == t_r.size());
+
+                        // TST and REF pairs should have exact same times.
+                        //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
+
+                        // Calculate Euclidean distance between TST-REF pairs.
+                        QVector<double> dist = euclideanDistance(t_t.rdata(), t_r.rdata());
+
+                        // Check if distances are within the maximum allowed value.
+                        // Compute the overall matching score as the ratio between
+                        // the number of positive matches and the total elements.
+                        double score = calculateScore(dist);
+
+                        // If score satisfies the threshold we have a match.
+                        if (score >= threshold)
+                        {
+                            sets_[mode_s].addMatch(t_ref, t_tst);
+                            tn2ms_[t_tst.system_type()][t_tst.track_number()] << mode_s;
+                        }
+                    }
+
+                    ++it;
+                }
             }
         }
     }
@@ -222,4 +224,19 @@ std::optional<TrackCollectionSet> TrackAssociator::takeData()
     }
 
     return std::nullopt;
+}
+
+const QHash<SystemType, QHash<TrackNum, Track>> &TrackAssociator::tstTracks() const
+{
+    return tstTracks_;
+}
+
+const QHash<ModeS, TrackCollection> &TrackAssociator::refTracks() const
+{
+    return refTracks_;
+}
+
+const QHash<ModeS, TrackCollectionSet> &TrackAssociator::sets() const
+{
+    return sets_;
 }

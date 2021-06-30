@@ -36,8 +36,14 @@ public:
     bool hasPendingData() const;
     std::optional<TrackCollectionSet> takeData();
 
+    const QHash<SystemType, QHash<TrackNum, Track>> &tstTracks() const;
+    const QHash<ModeS, TrackCollection> &refTracks() const;
+    const QHash<ModeS, TrackCollectionSet> &sets() const;
+
 private:
-    QHash<TrackNum, Track> tstTracks_;
+    QHash<SystemType, QMap<TrackNum, QSet<ModeS>>> tn2ms_;
+
+    QHash<SystemType, QHash<TrackNum, Track>> tstTracks_;
     QHash<ModeS, TrackCollection> refTracks_;
 
     QHash<ModeS, TrackCollectionSet> sets_;

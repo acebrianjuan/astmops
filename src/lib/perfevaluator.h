@@ -25,6 +25,7 @@
 #include "counters.h"
 #include "functions.h"
 #include "track.h"
+#include "trackassociator.h"
 
 struct PdCounter
 {
@@ -61,7 +62,7 @@ class PerfEvaluator
 public:
     PerfEvaluator();
 
-    void addData(const TrackCollectionSet &s);
+    void addData(const Track &t);
     void run();
 
     void printPosAccResultsSmr() const;
@@ -83,8 +84,9 @@ private:
     void evalED117PFID(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PLG(const TrackCollection &col_tst);
 
+    TrackAssociator trkAssoc;
+
     quint8 pic_p95 = 0;
-    QHash<ModeS, TrackCollectionSet> sets_;
 
     AreaHash<QVector<double>> smrRpaErrors_;
     AreaHash<QVector<double>> mlatRpaErrors_;

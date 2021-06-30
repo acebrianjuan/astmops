@@ -23,24 +23,21 @@ PerfEvaluator::PerfEvaluator()
 {
 }
 
-void PerfEvaluator::addData(const TrackCollectionSet &s)
+void PerfEvaluator::addData(const Track &t)
 {
-    if (!s.isValid())
-    {
-        return;
-    }
-
-    ModeS mode_s = s.mode_s();
-    sets_.insert(mode_s, s);
+    trkAssoc.addData(t);
 }
 
 void PerfEvaluator::run()
 {
+    // Run track association.
+    trkAssoc.run();
+
     // Set PIC threshold value.
     computePicThreshold(95);
 
     // Iterate through each target set.
-    for (const TrackCollectionSet &s : qAsConst(sets_))
+    for (const TrackCollectionSet &s : qAsConst(trkAssoc.sets()))
     {
         //ModeS mode_s = s.mode_s();
         TrackCollection c_ref = s.refTrackCol();
@@ -202,7 +199,7 @@ void PerfEvaluator::printPosAccResultsMlat() const
 void PerfEvaluator::computePicThreshold(double prctl)
 {
     QVector<double> vec;
-    for (const TrackCollectionSet &s : qAsConst(sets_))
+    for (const TrackCollectionSet &s : qAsConst(trkAssoc.sets()))
     {
         for (const Track &t : s.refTrackCol())
         {
