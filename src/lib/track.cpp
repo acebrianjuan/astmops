@@ -50,6 +50,9 @@ Track &Track::operator<<(const TargetReport &tr)
     if (tr.sys_typ_ == system_type_ && tr.trk_nb_ == track_number_ &&
         tr.tod_.isValid())
     {
+        // Insert target report into the track.
+        data_.insert(tr.tod_, tr);
+
         // Begin/end timestamps.
         QDateTime tod = tr.tod_;
         if (!beginTimestamp_.isValid())
@@ -140,7 +143,11 @@ Track &Track::operator<<(const TargetReport &tr)
             }
         }
 
-        data_.insert(tr.tod_, tr);
+        // Crossed areas.
+        if (!nareas_.contains(tr.narea_))
+        {
+            nareas_ << tr.narea_;
+        }
 
         // Asign first detected Mode-S address to Track object.
         if (!mode_s_.has_value() && tr.mode_s_.has_value())
@@ -185,6 +192,11 @@ const TgtRepMap &Track::data() const
 std::optional<ModeS> Track::mode_s() const
 {
     return mode_s_;
+}
+
+QSet<Aerodrome::NamedArea> Track::nareas() const
+{
+    return nareas_;
 }
 
 QPair<double, double> Track::x_bounds() const
@@ -301,6 +313,8 @@ void Track::clear()
     beginTimestamp_ = QDateTime();
     endTimestamp_ = QDateTime();
 
+    nareas_.clear();
+
     x_bounds_ = {qSNaN(), qSNaN()};
     y_bounds_ = {qSNaN(), qSNaN()};
     z_bounds_ = {qSNaN(), qSNaN()};
@@ -355,6 +369,10 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
 
     if (t.system_type() == system_type_)
     {
+        // Insert Track and register track number.
+        tracks_.insert(t.beginTimestamp(), t);
+        track_numbers_ << t.track_number();
+
         // Begin/end timestamps.
         QDateTime beginTod = t.beginTimestamp();
         if (!beginTimestamp_.isValid())
@@ -376,9 +394,14 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
             endTimestamp_ = endTod;
         }
 
-        // Insert Track and register track number.
-        tracks_.insert(t.beginTimestamp(), t);
-        track_numbers_ << t.track_number();
+        // Crossed areas.
+        for (const Aerodrome::NamedArea &narea : t.nareas())
+        {
+            if (!nareas_.contains(narea))
+            {
+                nareas_ << narea;
+            }
+        }
 
         // Asign first detected Mode-S address to Collection object.
         if (!mode_s_.has_value() && t.mode_s().has_value())
@@ -497,6 +520,11 @@ bool TrackCollection::coversTimestamp(const QDateTime &tod) const
     }
 
     return false;
+}
+
+QSet<Aerodrome::NamedArea> TrackCollection::nareas() const
+{
+    return nareas_;
 }
 
 std::optional<ModeS> TrackCollection::mode_s() const
@@ -1008,7 +1036,7 @@ QVector<Track> splitTrackByArea(const Track &trk, TrackSplitMode mode)
         return false;
     };
 
-    QVector<Track> vec;
+    QVector<Track> sub_trk_vec;
 
     Track sub_trk = trk.mode_s().has_value()
                         ? Track(trk.mode_s().value(), trk.system_type(), trk.track_number())
@@ -1030,7 +1058,7 @@ QVector<Track> splitTrackByArea(const Track &trk, TrackSplitMode mode)
 
         if (areaChanged(tr.narea_, last_na))
         {
-            vec << sub_trk;
+            sub_trk_vec << sub_trk;
             sub_trk.clear();
         }
 
@@ -1039,15 +1067,16 @@ QVector<Track> splitTrackByArea(const Track &trk, TrackSplitMode mode)
     }
 
     // Manual insertion of the last subtrack.
-    vec << sub_trk;
+    sub_trk_vec << sub_trk;
 
     int n_tr = 0;
-    for (const Track &sub_trk : qAsConst(vec))
+    for (const Track &sub_trk : qAsConst(sub_trk_vec))
     {
+        Q_ASSERT(sub_trk.nareas().size() == 1);
         n_tr += sub_trk.size();
     }
 
     Q_ASSERT(n_tr == trk.size());
 
-    return vec;
+    return sub_trk_vec;
 }

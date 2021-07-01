@@ -59,6 +59,8 @@ public:
     const TgtRepMap &data() const;
     std::optional<ModeS> mode_s() const;
 
+    QSet<Aerodrome::NamedArea> nareas() const;
+
     QPair<double, double> x_bounds() const;
     QPair<double, double> y_bounds() const;
     QPair<double, double> z_bounds() const;
@@ -86,6 +88,8 @@ private:
 
     QDateTime beginTimestamp_;
     QDateTime endTimestamp_;
+
+    QSet<Aerodrome::NamedArea> nareas_;
 
     QPair<double, double> x_bounds_ = {qSNaN(), qSNaN()};
     QPair<double, double> y_bounds_ = {qSNaN(), qSNaN()};
@@ -138,6 +142,8 @@ public:
     QDateTime endTimestamp() const;
     bool coversTimestamp(const QDateTime &tod) const;
 
+    QSet<Aerodrome::NamedArea> nareas() const;
+
     std::optional<ModeS> mode_s() const;
     void setMode_s(ModeS ms);
 
@@ -149,6 +155,8 @@ private:
 
     QDateTime beginTimestamp_;
     QDateTime endTimestamp_;
+
+    QSet<Aerodrome::NamedArea> nareas_;
 
     std::optional<ModeS> mode_s_;
 };
