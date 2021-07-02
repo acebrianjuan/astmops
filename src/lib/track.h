@@ -141,6 +141,7 @@ public:
     QDateTime beginTimestamp() const;
     QDateTime endTimestamp() const;
     bool coversTimestamp(const QDateTime &tod) const;
+    std::optional<Track> getTrackAtTimestamp(const QDateTime &tod) const;
 
     QSet<Aerodrome::NamedArea> nareas() const;
 

@@ -522,6 +522,24 @@ bool TrackCollection::coversTimestamp(const QDateTime &tod) const
     return false;
 }
 
+std::optional<Track> TrackCollection::getTrackAtTimestamp(const QDateTime &tod) const
+{
+    if (!tod.isValid())
+    {
+        return std::nullopt;
+    }
+
+    for (const Track &t : tracks_)
+    {
+        if (t.coversTimestamp(tod))
+        {
+            return t;
+        }
+    }
+
+    return std::nullopt;
+}
+
 QSet<Aerodrome::NamedArea> TrackCollection::nareas() const
 {
     return nareas_;
