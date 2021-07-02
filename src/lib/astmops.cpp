@@ -146,6 +146,23 @@ quint8 Configuration::adsbSic()
     return readSic(key);
 }
 
+QString Configuration::kmlFile()
+{
+    QString key = QLatin1String("filepath");
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("KML"));
+
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
+
+    QString pathStr = settings.value(key).toString();
+
+    return pathStr;
+}
+
 double Configuration::ed116TgtRepUpdateRate()
 {
     QString key = QLatin1String("TgtRepUpdateRate");

@@ -22,7 +22,6 @@
 #define ASTMOPS_ASTMOPS_H
 
 #include "aerodrome.h"
-//#include "track.h"
 #include <QDate>
 #include <QDebug>
 #include <QGeoCircle>
@@ -121,8 +120,6 @@ enum class Layer
     AirborneLayer
 };
 
-//using EvalSet = QPair<Utn, QHash<SystemType, TrackCollection>>;
-
 namespace MOPS
 {
 const double defaultSilencePeriodSeconds = 60.0;  // s
@@ -159,6 +156,8 @@ quint8 smrSic();
 quint8 mlatSic();
 
 quint8 adsbSic();
+
+QString kmlFile();
 
 double ed116TgtRepUpdateRate();
 
