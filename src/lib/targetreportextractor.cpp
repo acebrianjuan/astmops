@@ -59,6 +59,8 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
 
         tgt_reports_[tr.sys_typ_].enqueue(tr);
         ++counters_[rec.rec_typ_.sys_typ_].out_;
+
+        emit readyRead();
     }
 }
 

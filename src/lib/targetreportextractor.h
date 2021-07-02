@@ -24,11 +24,14 @@
 #include "astmops.h"
 #include "counters.h"
 #include "targetreport.h"
+#include <QObject>
 #include <QQueue>
 #include <optional>
 
-class TargetReportExtractor
+class TargetReportExtractor : public QObject
 {
+    Q_OBJECT
+
 public:
     TargetReportExtractor(const QGeoCoordinate& arp = QGeoCoordinate(),
         const QGeoCoordinate& smr = QGeoCoordinate());
@@ -46,6 +49,11 @@ public:
     void setArp(const QGeoCoordinate& arp);
     void setSmr(const QGeoCoordinate& smr);
     void setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D&, const bool)>& cb);
+
+public slots:
+
+signals:
+    void readyRead();
 
 private:
     bool isRecordToBeKept(const Asterix::Record& rec) const;
