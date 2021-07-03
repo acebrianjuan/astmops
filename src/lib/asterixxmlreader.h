@@ -21,6 +21,7 @@
 #define ASTMOPS_ASTERIXXMLREADER_H
 
 #include "asterix.h"
+#include "config.h"
 #include <QMultiMap>
 #include <QObject>
 #include <QQueue>

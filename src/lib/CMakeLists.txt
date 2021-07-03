@@ -17,6 +17,7 @@ add_library(lib
     asterix.cpp
     asterixxmlreader.cpp
     astmops.cpp
+    config.cpp
     counters.cpp
     dgpscsvreader.cpp
     functions.cpp

@@ -21,12 +21,8 @@
 #ifndef ASTMOPS_ASTMOPS_H
 #define ASTMOPS_ASTMOPS_H
 
-#include "aerodrome.h"
 #include <QDate>
 #include <QDebug>
-#include <QGeoCircle>
-#include <QGeoPolygon>
-#include <QGeoShape>
 #include <QPair>
 #include <QSettings>
 #include <QtGlobal>
@@ -141,47 +137,6 @@ const double defaultProbDetectionPeriodApron = 5.0;
 const double defaultProbDetectionPeriodOther = 2.0;
 }  // namespace ED117
 }  // namespace MOPS
-
-
-quint8 readSic(const QString& key);
-
-namespace Configuration
-{
-QDate asterixDate();
-
-bool useXmlTimestamp();
-
-quint8 smrSic();
-
-quint8 mlatSic();
-
-quint8 adsbSic();
-
-QString kmlFile();
-
-double ed116TgtRepUpdateRate();
-
-double ed116SrvMsgUpdateRate();
-
-double ed117TgtRepUpdateRate();
-
-double ed117SrvMsgUpdateRate();
-
-double silencePeriod();
-
-double probDetectionPeriod(Aerodrome::Area area);
-
-qint32 dgpsTimeOfDayOffset();
-
-//Mode3A dgpsMode3ACode();
-
-ModeS dgpsTargetAddress();
-
-//Ident dgpsIdentification();
-
-QGeoShape evalSector();
-
-};  // namespace Configuration
 
 namespace Literals
 {

@@ -20,6 +20,7 @@
  */
 
 #include "asterix.h"
+#include "config.h"
 
 /* ----------------------------- DataElement ------------------------------ */
 

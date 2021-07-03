@@ -20,6 +20,7 @@
 #ifndef ASTMOPS_TARGETREPORT_H
 #define ASTMOPS_TARGETREPORT_H
 
+#include "aerodrome.h"
 #include "asterix.h"
 #include "astmops.h"
 #include <QDateTime>

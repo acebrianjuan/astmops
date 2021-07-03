@@ -24,6 +24,7 @@
 #include "astmops.h"
 #include "counters.h"
 #include "targetreport.h"
+#include <QGeoCoordinate>
 #include <QObject>
 #include <QQueue>
 #include <optional>

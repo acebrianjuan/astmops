@@ -18,6 +18,7 @@
  */
 
 #include "dgpscsvreader.h"
+#include "config.h"
 #include "geofunctions.h"
 #include <QDebug>
 
