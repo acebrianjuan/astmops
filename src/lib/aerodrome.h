@@ -75,7 +75,9 @@ public:
         All = 0b0011'0011'0000'0111,
         //    All               = Airborne|Ground,
     };
-    Q_ENUM(Area)
+    //Q_ENUM(Area)
+    Q_DECLARE_FLAGS(Areas, Area)
+    Q_FLAG(Areas)
 
     struct NamedArea
     {
