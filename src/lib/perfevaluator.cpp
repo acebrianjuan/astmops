@@ -70,13 +70,9 @@ void PerfEvaluator::run()
                     evalED117PFD(t_ref, c_tst_i);
                     evalED117PID(t_ref, c_tst_i);
                     evalED117PFID(t_ref, c_tst_i);
+                    evalED117PLG(t_ref, c_tst_i);
                 }
             }
-        }
-
-        if (s.collection(SystemType::Mlat).has_value())
-        {
-            evalED117PLG(s.collection(SystemType::Mlat).value());
         }
     }
 }
@@ -810,19 +806,43 @@ void PerfEvaluator::evalED117PFID(const Track &trk_ref, const TrackCollection &c
     }
 }
 
-void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
+void PerfEvaluator::evalED117PLG(const Track &trk_ref, const TrackCollection &col_tst)
 {
-    QDateTime last_tod;
-    bool first = true;
-    for (const Track &trk : col_tst)
-    {
-        QVector<Track> sub_trk_vec = splitTrackByArea(trk, TrackSplitMode::SplitByNamedArea);
+    QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-        for (const Track &sub_trk : sub_trk_vec)
+    // Iterate through each REF sub track.
+    for (const Track &sub_trk_ref : sub_trk_vec)
+    {
+        if (sub_trk_ref.size() < 2)
         {
-            for (const TargetReport &tr : sub_trk)
+            continue;
+        }
+
+        Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+        double threshold = 3.0;
+        if (narea.area_ == Aerodrome::Area::Stand)
+        {
+            threshold = 15.0;
+        }
+
+        QDateTime last_tod;
+        bool first = true;
+
+        // Iterate through each TST track in the collection.
+        for (const Track &trk_tst : col_tst)
+        {
+            if (!haveTimeIntersection(trk_tst, sub_trk_ref))
             {
-                Aerodrome::NamedArea narea = tr.narea_;
+                return;
+            }
+
+            // Extract TST sub track that matches in time with the REF sub track.
+            Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+            // Iterate through each target report in the TST sub track.
+            for (const TargetReport &tr : sub_trk_tst)
+            {
                 QDateTime new_tod = tr.tod_;
 
                 if (first)
@@ -832,12 +852,6 @@ void PerfEvaluator::evalED117PLG(const TrackCollection &col_tst)
 
                     first = false;
                     continue;
-                }
-
-                double threshold = 3.0;
-                if (narea.area_ == Aerodrome::Area::Stand)
-                {
-                    threshold = 15.0;
                 }
 
                 double tdiff = last_tod.msecsTo(new_tod) / 1000.0;

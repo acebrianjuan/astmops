@@ -90,7 +90,7 @@ private:
     void evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PID(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PFID(const Track &trk_ref, const TrackCollection &col_tst);
-    void evalED117PLG(const TrackCollection &col_tst);
+    void evalED117PLG(const Track &trk_ref, const TrackCollection &col_tst);
 
     TrackAssociator trkAssoc;
 
