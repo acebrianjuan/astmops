@@ -252,8 +252,6 @@ Track PerfEvaluator::filterTrackByQuality(const Track &trk, quint8 ver, quint8 p
     // Make a copy of the input track.
     Track trk_out = trk;
 
-    qDebug() << "Before:" << trk_out.data().size();
-
     TgtRepMap::iterator it = trk_out.begin();
     while (it != trk_out.end())
     {
@@ -276,8 +274,6 @@ Track PerfEvaluator::filterTrackByQuality(const Track &trk, quint8 ver, quint8 p
         }
     }
 
-    qDebug() << "After:" << trk_out.data().size();
-
     return trk_out;
 }
 
@@ -286,7 +282,7 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &co
     // Iterate through each test track in the collection.
     for (const Track &trk_tst : col_tst)
     {
-        if (!haveSpaceIntersection(trk_tst, trk_ref))
+        if (!haveSpaceTimeIntersection(trk_tst, trk_ref))
         {
             return;
         }
@@ -378,7 +374,7 @@ void PerfEvaluator::evalED116PD(const Track &trk_ref, const TrackCollection &col
 
         for (const Track &trk_tst : col_tst)
         {
-            if (!haveSpaceTimeIntersection(trk_tst, trk_ref_i))
+            if (!haveTimeIntersection(trk_tst, trk_ref_i))
             {
                 return;
             }
@@ -414,7 +410,7 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &co
     // Iterate through each test track in the collection.
     for (const Track &trk_tst : col_tst)
     {
-        if (!haveSpaceIntersection(trk_tst, trk_ref))
+        if (!haveSpaceTimeIntersection(trk_tst, trk_ref))
         {
             return;
         }
@@ -518,7 +514,7 @@ void PerfEvaluator::evalED117PD(const Track &trk_ref, const TrackCollection &col
 
         for (const Track &trk_tst : col_tst)
         {
-            if (!haveSpaceTimeIntersection(trk_tst, trk_ref_i))
+            if (!haveTimeIntersection(trk_tst, trk_ref_i))
             {
                 return;
             }
@@ -553,7 +549,7 @@ void PerfEvaluator::evalED117PFD(const Track &trk_ref, const TrackCollection &co
 
         for (const Track &trk_tst : col_tst)
         {
-            if (!haveSpaceTimeIntersection(trk_tst, trk_ref_i))
+            if (!haveTimeIntersection(trk_tst, trk_ref_i))
             {
                 return;
             }
@@ -585,7 +581,7 @@ void PerfEvaluator::evalED117PID(const Track &trk_ref, const TrackCollection &co
     // Iterate through each test track in the collection.
     for (const Track &trk_tst : col_tst)
     {
-        if (!haveSpaceIntersection(trk_tst, trk_ref))
+        if (!haveTimeIntersection(trk_tst, trk_ref))
         {
             return;
         }
@@ -702,7 +698,7 @@ void PerfEvaluator::evalED117PFID(const Track &trk_ref, const TrackCollection &c
     // Iterate through each test track in the collection.
     for (const Track &trk_tst : col_tst)
     {
-        if (!haveSpaceIntersection(trk_tst, trk_ref))
+        if (!haveTimeIntersection(trk_tst, trk_ref))
         {
             return;
         }
