@@ -395,7 +395,8 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
         }
 
         // Crossed areas.
-        for (const Aerodrome::NamedArea &narea : t.nareas())
+        QSet<Aerodrome::NamedArea> nareas = t.nareas();
+        for (const Aerodrome::NamedArea &narea : nareas)
         {
             if (!nareas_.contains(narea))
             {
