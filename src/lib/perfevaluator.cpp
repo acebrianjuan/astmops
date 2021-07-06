@@ -57,14 +57,15 @@ void PerfEvaluator::run()
                     // SMR ED-116.
 
                     evalED116RPA(t_ref, c_tst_i);
+                    evalED116UR(t_ref, c_tst_i);
                     evalED116PD(t_ref, c_tst_i);
-                    //evalED116PFD(t_ref, c_tst_i);
                 }
                 else if (c_tst_i.system_type() == SystemType::Mlat)
                 {
                     // MLAT ED-117.
 
                     evalED117RPA(t_ref, c_tst_i);
+                    evalED117UR(t_ref, c_tst_i);
                     evalED117PD(t_ref, c_tst_i);
                     evalED117PFD(t_ref, c_tst_i);
                     evalED117PID(t_ref, c_tst_i);
@@ -319,6 +320,41 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &co
     }
 }
 
+void PerfEvaluator::evalED116UR(const Track &trk_ref, const TrackCollection &col_tst)
+{
+    QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+    for (const Track &sub_trk_ref : sub_trk_vec)
+    {
+        if (sub_trk_ref.size() < 2)
+        {
+            continue;
+        }
+
+        // Iterate through each test track in the collection.
+        for (const Track &trk_tst : col_tst)
+        {
+            if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+            {
+                return;
+            }
+
+            // Extract TST track portion that matches in time with the
+            // reference track.
+            Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+            double dur = sub_trk_tst.duration();
+            double freq = 1.0;
+            int n_etrp = qFloor(dur * freq);
+
+            smrUr_[narea].n_trp_ += sub_trk_tst.size();
+            smrUr_[narea].n_etrp_ += n_etrp;
+        }
+    }
+}
+
 void PerfEvaluator::evalED116PD(const Track &trk_ref, const TrackCollection &col_tst)
 {
     auto hasPosition = [](const TargetReport &tr) {
@@ -408,6 +444,41 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &co
             Aerodrome::NamedArea narea = p.first.narea_;
             double dist = p.second;
             mlatRpaErrors_[narea] << dist;
+        }
+    }
+}
+
+void PerfEvaluator::evalED117UR(const Track &trk_ref, const TrackCollection &col_tst)
+{
+    QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+    for (const Track &sub_trk_ref : sub_trk_vec)
+    {
+        if (sub_trk_ref.size() < 2)
+        {
+            continue;
+        }
+
+        // Iterate through each test track in the collection.
+        for (const Track &trk_tst : col_tst)
+        {
+            if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+            {
+                return;
+            }
+
+            // Extract TST track portion that matches in time with the
+            // reference track.
+            Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+            double dur = sub_trk_tst.duration();
+            double freq = 1.0;
+            int n_etrp = qFloor(dur * freq);
+
+            mlatUr_[narea].n_trp_ += sub_trk_tst.size();
+            mlatUr_[narea].n_etrp_ += n_etrp;
         }
     }
 }

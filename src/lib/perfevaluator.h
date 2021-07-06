@@ -27,6 +27,12 @@
 #include "track.h"
 #include "trackassociator.h"
 
+struct UrCounter
+{
+    quint32 n_trp_ = 0;
+    quint32 n_etrp_ = 0;
+};
+
 struct PdCounter
 {
     quint32 n_trp_ = 0;
@@ -74,10 +80,12 @@ private:
     Track filterTrackByQuality(const Track &trk, quint8 ver, quint8 pic) const;
 
     void evalED116RPA(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED116UR(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED116PD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst);
 
     void evalED117RPA(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED117UR(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117PID(const Track &trk_ref, const TrackCollection &col_tst);
@@ -90,6 +98,9 @@ private:
 
     AreaHash<QVector<double>> smrRpaErrors_;
     AreaHash<QVector<double>> mlatRpaErrors_;
+
+    AreaHash<UrCounter> smrUr_;
+    AreaHash<UrCounter> mlatUr_;
 
     AreaHash<PdCounter> smrPd_;
     AreaHash<PdCounter> mlatPd_;

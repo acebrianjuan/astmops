@@ -256,7 +256,7 @@ double Track::duration() const
 
     if (tbegin.isValid() && tend.isValid())
     {
-        dur = tbegin.msecsTo(tend) / 1000;
+        dur = tbegin.msecsTo(tend) / 1000.0;
     }
 
     return dur;
@@ -863,8 +863,8 @@ bool operator<(const TrackCollection &lhs, const TrackCollection &rhs)
 
 bool haveTimeIntersection(const Track &lhs, const Track &rhs)
 {
-    return lhs.beginTimestamp() <= rhs.endTimestamp() &&
-           rhs.beginTimestamp() <= lhs.endTimestamp();
+    return lhs.beginTimestamp() < rhs.endTimestamp() &&
+           rhs.beginTimestamp() < lhs.endTimestamp();
 }
 
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs)
@@ -892,7 +892,8 @@ bool haveSpaceTimeIntersection(const Track &lhs, const Track &rhs)
 
 std::optional<Track> intersect(const Track &intersectee, const Track &intersector)
 {
-    if (!haveSpaceTimeIntersection(intersectee, intersector))
+    if (!haveTimeIntersection(intersectee, intersector) ||
+        intersector.size() < 2)
     {
         return std::nullopt;
     }
