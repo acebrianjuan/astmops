@@ -14,4 +14,7 @@ set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 add_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII -Wall -Werror -Wextra -Wmisleading-indentation)
 
+# Use GNU standard installation directories.
+include(GNUInstallDirs)
+
 add_subdirectory(src)

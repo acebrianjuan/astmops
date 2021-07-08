@@ -8,6 +8,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
-#add_subdirectory(app)
+add_subdirectory(app)
 add_subdirectory(lib)
 add_subdirectory(test)
