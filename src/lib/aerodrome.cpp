@@ -52,6 +52,11 @@ void Aerodrome::setArp(QVector3D point)
     arp_ = point;
 }
 
+void Aerodrome::addSmr(Sic sic, QVector3D point)
+{
+    smr_.insert(sic, point);
+}
+
 void Aerodrome::addRunwayElement(const QString &name, const QPolygonF &polygon)
 {
     Q_ASSERT(!polygon.isEmpty() && polygon.isClosed());
@@ -211,8 +216,7 @@ bool operator!=(const Aerodrome::NamedArea &lhs, const Aerodrome::NamedArea &rhs
 
 bool areaBelongsToAreaGroup(Aerodrome::Area area, Aerodrome::Area group)
 {
-    if (area != Aerodrome::Area::None &&
-        (area | group) == group)
+    if (area != Aerodrome::Area::None && (area | group) == group)
     {
         return true;
     }

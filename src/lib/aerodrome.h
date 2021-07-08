@@ -20,12 +20,12 @@
 #ifndef ASTMOPS_AERODROME_H
 #define ASTMOPS_AERODROME_H
 
+#include "astmops.h"
 #include <QHash>
 #include <QPolygonF>
 #include <QVector3D>
 #include <QVector>
 #include <optional>
-
 
 /*!
  * \brief The Aerodrome class contains the assets of an aerodrome.
@@ -103,6 +103,7 @@ public:
     bool hasAllElements() const;
 
     void setArp(QVector3D point);
+    void addSmr(Sic sic, QVector3D point);
     void addRunwayElement(const QString &name, const QPolygonF &polygon);
     void addTaxiwayElement(const QString &name, const QPolygonF &polygon);
     void addApronLaneElement(const QString &name, const QPolygonF &polygon);
@@ -118,7 +119,7 @@ private:
     std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
 
     QVector3D arp_;
-    QVector3D smr_;
+    QHash<Sic, QVector3D> smr_;
 
     QHash<QString, QVector<QPolygonF>> runwayElements_;
     QHash<QString, QVector<QPolygonF>> taxiwayElements_;

@@ -41,17 +41,27 @@ bool KmlReader::read(QIODevice *device)
 }
 
 /*!
- * Generates an Aerodrome projected in local tangent plane coordinates.
+ * Generates an Aerodrome projected in local tangent plane coordinates
+ * centered at the ARP.
  */
 Aerodrome KmlReader::makeAerodrome() const
 {
     Aerodrome aerodrome;
 
     // Coordinates of the local tangent plane origin.
-    QGeoCoordinate geoOrigin = arp_;
+    QGeoCoordinate originGeo = arp_;
 
-    // Airport Reference Point.
-    aerodrome.setArp(geoToLocalEnu(arp_, geoOrigin));
+    // Airport Reference Point (ARP).
+    aerodrome.setArp(geoToLocalEnu(arp_, originGeo));
+
+    // SMR origins.
+    for (auto it = smr_.begin(); it != smr_.end(); ++it)
+    {
+        Sic sic = it.key();
+        QGeoCoordinate smrGeo = it.value();
+
+        aerodrome.addSmr(sic, geoToLocalEnu(smrGeo, originGeo));
+    }
 
     // Runway elements.
     for (auto it = runwayElements_.begin(); it != runwayElements_.end(); ++it)
@@ -66,7 +76,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
             for (const QGeoCoordinate &coord : rwyEleGeo)
             {
-                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+                polygon << geoToLocalEnu(coord, originGeo).toPointF();
             }
 
             aerodrome.addRunwayElement(idStr, polygon);
@@ -86,7 +96,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
             for (const QGeoCoordinate &coord : twyEleGeo)
             {
-                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+                polygon << geoToLocalEnu(coord, originGeo).toPointF();
             }
 
             aerodrome.addTaxiwayElement(idStr, polygon);
@@ -106,7 +116,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
             for (const QGeoCoordinate &coord : apronLaneEleGeo)
             {
-                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+                polygon << geoToLocalEnu(coord, originGeo).toPointF();
             }
 
             aerodrome.addApronLaneElement(idStr, polygon);
@@ -126,7 +136,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
             for (const QGeoCoordinate &coord : standEleGeo)
             {
-                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+                polygon << geoToLocalEnu(coord, originGeo).toPointF();
             }
 
             aerodrome.addStandElement(idStr, polygon);
@@ -146,7 +156,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
             for (const QGeoCoordinate &coord : airborne1EleGeo)
             {
-                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+                polygon << geoToLocalEnu(coord, originGeo).toPointF();
             }
 
             aerodrome.addAirborne1Element(idStr, polygon);
@@ -166,7 +176,7 @@ Aerodrome KmlReader::makeAerodrome() const
 
             for (const QGeoCoordinate &coord : airborne2EleGeo)
             {
-                polygon << geoToLocalEnu(coord, geoOrigin).toPointF();
+                polygon << geoToLocalEnu(coord, originGeo).toPointF();
             }
 
             aerodrome.addAirborne2Element(idStr, polygon);
@@ -249,53 +259,78 @@ void KmlReader::readPlacemark()
 
     // Finished reading the Placemark contents.
     // Found description and coordinates?
-    if (!desc.isNull() && !coords.isEmpty())
+    if (!desc.isEmpty() && !coords.isEmpty())
     {
         // Example 1:
         // desc: RunwayElement_07R/25L
         //     -> token: RunwayElement
-        //     -> name: 07R/25L
+        //     -> suffix: 07R/25L
 
         // Example 2:
         // desc: TaxiwayElement
         //     -> token: TaxiwayElement
-        //     -> name: (empty)
+        //     -> suffix: (empty)
+
+        // Example 3:
+        // desc: SMR_7
+        //     -> token: SMR
+        //     -> suffix: 7
 
         QStringList descParts = desc.split(QLatin1Char('_'));
         QString token = descParts.first();
-        QString name;  // name is empty by default.
+        QString suffix;  // suffix is an empty string by default.
         if (descParts.size() == 2)
         {
-            name = descParts.at(1);
+            suffix = descParts.at(1);
         }
 
         if (token == QLatin1String("ARP"))
         {
+            Q_ASSERT(coords.size() == 1);
             arp_ = coords.first();
+        }
+        else if (token == QLatin1String("SMR"))
+        {
+            // SMR is required to have the SIC as suffix.
+            if (suffix.isEmpty())
+            {
+                //qWarning();
+                return;
+            }
+
+            Q_ASSERT(coords.size() == 1);
+
+            bool ok = false;
+            Sic sic = suffix.toUInt(&ok);
+
+            if (ok)
+            {
+                smr_[sic] = coords.first();
+            }
         }
         else if (token == QLatin1String("RunwayElement"))
         {
-            runwayElements_[name] << coords;
+            runwayElements_[suffix] << coords;
         }
         else if (token == QLatin1String("TaxiwayElement"))
         {
-            taxiwayElements_[name] << coords;
+            taxiwayElements_[suffix] << coords;
         }
         else if (token == QLatin1String("ApronElement"))
         {
-            apronLaneElements_[name] << coords;
+            apronLaneElements_[suffix] << coords;
         }
         else if (token == QLatin1String("AircraftStand"))
         {
-            standElements_[name] << coords;
+            standElements_[suffix] << coords;
         }
         else if (token == QLatin1String("Airborne1Element"))
         {
-            airborne1Elements_[name] << coords;
+            airborne1Elements_[suffix] << coords;
         }
         else if (token == QLatin1String("Airborne2Element"))
         {
-            airborne2Elements_[name] << coords;
+            airborne2Elements_[suffix] << coords;
         }
     }
 }

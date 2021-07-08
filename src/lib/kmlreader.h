@@ -58,6 +58,7 @@ private:
     QXmlStreamReader xml_;
 
     QGeoCoordinate arp_;
+    QHash<Sic, QGeoCoordinate> smr_;
 
     QHash<QString, Collection> runwayElements_;
     QHash<QString, Collection> taxiwayElements_;
