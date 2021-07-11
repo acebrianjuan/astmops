@@ -46,9 +46,17 @@ int main(int argc, char *argv[])
     KmlReader kmlReader;
     kmlReader.read(&kmlFile);
 
-    Aerodrome lebl = kmlReader.makeAerodrome();
-    auto leblCallback = [&lebl](const QVector3D cartPos, const bool gndBit) {
-        return lebl.locatePoint(cartPos, gndBit);
+    std::optional<Aerodrome> ad_opt = kmlReader.makeAerodrome();
+
+    if (!ad_opt.has_value())
+    {
+        qFatal("Error creating Aerodrome!");
+    }
+
+    Aerodrome aerodrome = ad_opt.value();
+
+    auto leblCallback = [&aerodrome](const QVector3D cartPos, const bool gndBit) {
+        return aerodrome.locatePoint(cartPos, gndBit);
     };
 
     AsterixXmlReader astXmlReader;
@@ -98,5 +106,5 @@ int main(int argc, char *argv[])
 
     perfEval.run();
 
-    qDebug() << "Finished!";
+    qDebug() << "\nFinished!";
 }

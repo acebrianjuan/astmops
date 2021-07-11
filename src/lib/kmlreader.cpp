@@ -44,15 +44,17 @@ bool KmlReader::read(QIODevice *device)
  * Generates an Aerodrome projected in local tangent plane coordinates
  * centered at the ARP.
  */
-Aerodrome KmlReader::makeAerodrome() const
+std::optional<Aerodrome> KmlReader::makeAerodrome() const
 {
-    Aerodrome aerodrome;
+    if (!arp_.isValid() || qIsNaN(arp_.altitude()))
+    {
+        return std::nullopt;
+    }
+
+    Aerodrome aerodrome(arp_);
 
     // Coordinates of the local tangent plane origin.
     QGeoCoordinate originGeo = arp_;
-
-    // Airport Reference Point (ARP).
-    aerodrome.setArp(geoToLocalEnu(arp_, originGeo));
 
     // SMR origins.
     for (auto it = smr_.begin(); it != smr_.end(); ++it)

@@ -23,38 +23,40 @@
 
 bool AixmReader::read(QIODevice *device)
 {
-    m_xml.setDevice(device);
+    xml_.setDevice(device);
 
-    if (m_xml.readNextStartElement())
+    if (xml_.readNextStartElement())
     {
-        if (m_xml.name() == QLatin1String("AIXMBasicMessage"))
+        if (xml_.name() == QLatin1String("AIXMBasicMessage"))
         {
             readAixm();
         }
         else
         {
-            m_xml.raiseError(QLatin1String("The file is not an AIXM file."));
+            xml_.raiseError(QLatin1String("The file is not an AIXM file."));
         }
     }
 
-    return !m_xml.error();
+    return !xml_.error();
 }
 
 /*!
  * Generates an Aerodrome projected in local tangent plane coordinates.
  */
-Aerodrome AixmReader::makeAerodrome() const
+std::optional<Aerodrome> AixmReader::makeAerodrome() const
 {
-    Aerodrome aerodrome;
+    if (!arp_.isValid() || qIsNaN(arp_.altitude()))
+    {
+        return std::nullopt;
+    }
+
+    Aerodrome aerodrome(arp_);
 
     // Coordinates of the local tangent plane origin.
-    QGeoCoordinate geoOrigin = m_arp;
-
-    // Airport Reference Point.
-    aerodrome.setArp(geoToLocalEnu(m_arp, geoOrigin));
+    QGeoCoordinate geoOrigin = arp_;
 
     // Runway elements.
-    for (auto it = m_runwayElements.begin(); it != m_runwayElements.end(); ++it)
+    for (auto it = runwayElements_.begin(); it != runwayElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection rwyElements = it.value();
@@ -74,7 +76,7 @@ Aerodrome AixmReader::makeAerodrome() const
     }
 
     // Taxiway elements.
-    for (auto it = m_taxiwayElements.begin(); it != m_taxiwayElements.end(); ++it)
+    for (auto it = taxiwayElements_.begin(); it != taxiwayElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection twyElements = it.value();
@@ -94,7 +96,7 @@ Aerodrome AixmReader::makeAerodrome() const
     }
 
     // Apron elements.
-    for (auto it = m_apronLaneElements.begin(); it != m_apronLaneElements.end(); ++it)
+    for (auto it = apronLaneElements_.begin(); it != apronLaneElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection apronLaneElements = it.value();
@@ -114,7 +116,7 @@ Aerodrome AixmReader::makeAerodrome() const
     }
 
     // Stand elements.
-    for (auto it = m_standElements.begin(); it != m_standElements.end(); ++it)
+    for (auto it = standElements_.begin(); it != standElements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection standElements = it.value();
@@ -134,7 +136,7 @@ Aerodrome AixmReader::makeAerodrome() const
     }
 
     // Airborne 1 elements.
-    for (auto it = m_airborne1Elements.begin(); it != m_airborne1Elements.end(); ++it)
+    for (auto it = airborne1Elements_.begin(); it != airborne1Elements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection airborne1Elements = it.value();
@@ -154,7 +156,7 @@ Aerodrome AixmReader::makeAerodrome() const
     }
 
     // Airborne 2 elements.
-    for (auto it = m_airborne2Elements.begin(); it != m_airborne2Elements.end(); ++it)
+    for (auto it = airborne2Elements_.begin(); it != airborne2Elements_.end(); ++it)
     {
         QString idStr = it.key();
         Collection airborne2Elements = it.value();
@@ -178,48 +180,48 @@ Aerodrome AixmReader::makeAerodrome() const
 
 void AixmReader::readAixm()
 {
-    Q_ASSERT(m_xml.isStartElement() &&
-             m_xml.name() == QLatin1String("AIXMBasicMessage"));
+    Q_ASSERT(xml_.isStartElement() &&
+             xml_.name() == QLatin1String("AIXMBasicMessage"));
 
-    while (!m_xml.atEnd())
+    while (!xml_.atEnd())
     {
-        if (m_xml.readNextStartElement())
+        if (xml_.readNextStartElement())
         {
             // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
-            if (m_xml.name() != QLatin1String("hasMember"))
+            if (xml_.name() != QLatin1String("hasMember"))
             {
-                m_xml.skipCurrentElement();
+                xml_.skipCurrentElement();
                 continue;
             }
 
             // TODO: Consider reading an appropriate AIXM field to fill up the empty "name".
             QString name = QString();  // Using an empty string as a temporary placeholder.
-            if (m_xml.readNextStartElement())
+            if (xml_.readNextStartElement())
             {
-                if (m_xml.name() == QLatin1String("AirportHeliport"))
+                if (xml_.name() == QLatin1String("AirportHeliport"))
                 {
-                    m_arp = posListToCoord(getPosList(arpPosXmlPath()));
+                    arp_ = posListToCoord(getPosList(arpPosXmlPath()));
                 }
-                else if (m_xml.name() == QLatin1String("RunwayElement"))
+                else if (xml_.name() == QLatin1String("RunwayElement"))
                 {
-                    m_runwayElements[name] << posListToCoordVector(getPosList(runwayPosListXmlPath()));
+                    runwayElements_[name] << posListToCoordVector(getPosList(runwayPosListXmlPath()));
                 }
-                else if (m_xml.name() == QLatin1String("TaxiwayElement"))
+                else if (xml_.name() == QLatin1String("TaxiwayElement"))
                 {
-                    m_taxiwayElements[name] << posListToCoordVector(getPosList(taxiwayPosListXmlPath()));
+                    taxiwayElements_[name] << posListToCoordVector(getPosList(taxiwayPosListXmlPath()));
                 }
-                else if (m_xml.name() == QLatin1String("ApronElement"))
+                else if (xml_.name() == QLatin1String("ApronElement"))
                 {
-                    m_apronLaneElements[name] << posListToCoordVector(getPosList(apronPosListXmlPath()));
+                    apronLaneElements_[name] << posListToCoordVector(getPosList(apronPosListXmlPath()));
                 }
-                else if (m_xml.name() == QLatin1String("AircraftStand"))
+                else if (xml_.name() == QLatin1String("AircraftStand"))
                 {
-                    m_standElements[name] << posListToCoordVector(getPosList(standPosListXmlPath()));
+                    standElements_[name] << posListToCoordVector(getPosList(standPosListXmlPath()));
                 }
                 else
                 {
-                    m_xml.skipCurrentElement();
+                    xml_.skipCurrentElement();
                 }
             }
         }
@@ -229,15 +231,15 @@ void AixmReader::readAixm()
 QStringList AixmReader::getPosList(const QStringList &tokens)
 {
     int level = 0;
-    while (!m_xml.atEnd())
+    while (!xml_.atEnd())
     {
-        if (m_xml.readNextStartElement())
+        if (xml_.readNextStartElement())
         {
             // If the element start that we are in right now is not the one we want,
             // skip it entirely. Otherwise, "drill down" till the end.
-            if (m_xml.name() != tokens[level])
+            if (xml_.name() != tokens[level])
             {
-                m_xml.skipCurrentElement();
+                xml_.skipCurrentElement();
                 continue;
             }
             ++level;
@@ -245,13 +247,13 @@ QStringList AixmReader::getPosList(const QStringList &tokens)
             // We are at the wanted DocFileRef element.
             if (level >= tokens.size())
             {
-                QStringList list = m_xml.readElementText().split(QLatin1String(" "));
+                QStringList list = xml_.readElementText().split(QLatin1String(" "));
                 list.removeAll(QLatin1String(""));
                 return list;
             }
         }
 
-        if (m_xml.hasError())
+        if (xml_.hasError())
         {
             break;
         }

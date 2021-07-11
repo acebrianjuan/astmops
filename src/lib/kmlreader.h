@@ -23,6 +23,7 @@
 #include "aerodrome.h"
 #include <QGeoCoordinate>
 #include <QXmlStreamReader>
+#include <optional>
 
 /*!
  * \brief The KmlReader class reads the description of an aerodrome in
@@ -42,7 +43,7 @@ public:
     KmlReader() = default;
 
     bool read(QIODevice *device);
-    Aerodrome makeAerodrome() const;
+    std::optional<Aerodrome> makeAerodrome() const;
 
 private:
     void readKml();

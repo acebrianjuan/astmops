@@ -21,7 +21,7 @@
 #include "astmops.h"
 #include <QVector2D>
 
-Aerodrome::Aerodrome()
+Aerodrome::Aerodrome(const QGeoCoordinate &arp) : arp_(arp)
 {
 }
 
@@ -47,7 +47,7 @@ bool Aerodrome::hasAllElements() const
     return false;
 }
 
-void Aerodrome::setArp(QVector3D point)
+void Aerodrome::setArp(const QGeoCoordinate &point)
 {
     arp_ = point;
 }

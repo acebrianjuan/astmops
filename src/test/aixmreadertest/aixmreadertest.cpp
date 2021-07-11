@@ -72,19 +72,19 @@ void AixmReaderTest::test()
     //QFETCH(QGeoCoordinate, standCoordinates);
 
     reader.read(&file);
-    //Aerodrome aerodrome = reader.aerodrome();
+    //Aerodrome aerodrome = reader.makeAerodrome();
 
     // Check number of elements of each collection.
-    QCOMPARE(reader.m_runwayElements.size(), runwayElements);
-    QCOMPARE(reader.m_taxiwayElements.size(), taxiwayElements);
-    QCOMPARE(reader.m_apronLaneElements.size(), apronLaneElements);
+    QCOMPARE(reader.runwayElements_.size(), runwayElements);
+    QCOMPARE(reader.taxiwayElements_.size(), taxiwayElements);
+    QCOMPARE(reader.apronLaneElements_.size(), apronLaneElements);
     //QCOMPARE(reader.m_standElements.size(), aircraftStands);
 
     // Check first coordinates of each collection.
-    QCOMPARE(reader.m_arp, arpCoordinates);
-    QCOMPARE(reader.m_runwayElements.value({}).first().first(), runwayCoordinates);
-    QCOMPARE(reader.m_taxiwayElements.value({}).first().first(), taxiwayCoordinates);
-    QCOMPARE(reader.m_apronLaneElements.value({}).first().first(), apronLaneCoordinates);
+    QCOMPARE(reader.arp_, arpCoordinates);
+    QCOMPARE(reader.runwayElements_.value({}).first().first(), runwayCoordinates);
+    QCOMPARE(reader.taxiwayElements_.value({}).first().first(), taxiwayCoordinates);
+    QCOMPARE(reader.apronLaneElements_.value({}).first().first(), apronLaneCoordinates);
     //QCOMPARE(reader.m_standElements.value({}).first().first(), standCoordinates);
 }
 

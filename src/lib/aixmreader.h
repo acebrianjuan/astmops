@@ -23,6 +23,7 @@
 #include "aerodrome.h"
 #include <QGeoCoordinate>
 #include <QXmlStreamReader>
+#include <optional>
 
 /*!
  * \brief The AixmReader class reads the description of an aerodrome in
@@ -42,7 +43,7 @@ public:
     AixmReader() = default;
 
     bool read(QIODevice *device);
-    Aerodrome makeAerodrome() const;
+    std::optional<Aerodrome> makeAerodrome() const;
 
 private:
     void readAixm();
@@ -57,15 +58,15 @@ private:
     static QStringList apronPosListXmlPath();
     static QStringList standPosListXmlPath();
 
-    QXmlStreamReader m_xml;
+    QXmlStreamReader xml_;
 
-    QGeoCoordinate m_arp;
-    QHash<QString, Collection> m_runwayElements;
-    QHash<QString, Collection> m_taxiwayElements;
-    QHash<QString, Collection> m_apronLaneElements;
-    QHash<QString, Collection> m_standElements;
-    QHash<QString, Collection> m_airborne1Elements;
-    QHash<QString, Collection> m_airborne2Elements;
+    QGeoCoordinate arp_;
+    QHash<QString, Collection> runwayElements_;
+    QHash<QString, Collection> taxiwayElements_;
+    QHash<QString, Collection> apronLaneElements_;
+    QHash<QString, Collection> standElements_;
+    QHash<QString, Collection> airborne1Elements_;
+    QHash<QString, Collection> airborne2Elements_;
 };
 
 #endif  // ASTMOPS_AIXMREADER_H

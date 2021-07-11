@@ -21,6 +21,7 @@
 #define ASTMOPS_AERODROME_H
 
 #include "astmops.h"
+#include <QGeoCoordinate>
 #include <QHash>
 #include <QPolygonF>
 #include <QVector3D>
@@ -28,7 +29,8 @@
 #include <optional>
 
 /*!
- * \brief The Aerodrome class contains the assets of an aerodrome.
+ * \brief The Aerodrome class contains the geometric assets that define an
+ * aerodrome expressed in cartesian coordinates relative to the ARP.
  *
  * Contains all the assets related to an aerodrome, among which are the
  * coordinates of the different physical elements that form it such as
@@ -75,9 +77,10 @@ public:
         All = 0b0011'0011'0000'0111,
         //    All               = Airborne|Ground,
     };
-    //Q_ENUM(Area)
-    Q_DECLARE_FLAGS(Areas, Area)
-    Q_FLAG(Areas)
+
+    Q_ENUM(Area);
+    Q_DECLARE_FLAGS(Areas, Area);
+    Q_FLAG(Areas);
 
     struct NamedArea
     {
@@ -97,12 +100,14 @@ public:
         QString name_;
     };
 
-    Aerodrome();
+    Aerodrome() = default;
+    Aerodrome(const QGeoCoordinate &arp);
 
     bool hasAnyElements() const;
     bool hasAllElements() const;
 
-    void setArp(QVector3D point);
+    void setArp(const QGeoCoordinate &point);
+
     void addSmr(Sic sic, QVector3D point);
     void addRunwayElement(const QString &name, const QPolygonF &polygon);
     void addTaxiwayElement(const QString &name, const QPolygonF &polygon);
@@ -118,7 +123,8 @@ private:
     bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
     std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
 
-    QVector3D arp_;
+    QGeoCoordinate arp_;
+
     QHash<Sic, QVector3D> smr_;
 
     QHash<QString, QVector<QPolygonF>> runwayElements_;
@@ -130,6 +136,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(Aerodrome);
+Q_DECLARE_METATYPE(Aerodrome::Area);
 Q_DECLARE_METATYPE(Aerodrome::NamedArea);
 
 
