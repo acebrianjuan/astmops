@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com> -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>lemd_test</name>
+	<open>1</open>
+	<StyleMap id="m_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="stylemap_id0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#style00</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#style</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="sh_placemark_square_highlight0">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square_highlight.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<StyleMap id="msn_placemark_square0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_placemark_square</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_placemark_square_highlight0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="s_ylw-pushpin0">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="style">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<Style id="style0">
+		<LineStyle>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_placemark_square_highlight">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square_highlight.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<StyleMap id="msn_placemark_square">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_placemark_square0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_placemark_square_highlight</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="style00">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<Style id="sn_placemark_square0">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin_hl">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin_hl0">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<StyleMap id="stylemap_id00">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#style1</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#style0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="sn_placemark_square">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="style1">
+		<LineStyle>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="m_ylw-pushpin0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>LEMD_ARP</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>ARP</description>
+		<styleUrl>#stylemap_id0</styleUrl>
+		<Point>
+			<coordinates>-3.56094539038218,40.4722303900746,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>LEMD_SMR-N</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>SMR_4</description>
+		<styleUrl>#msn_placemark_square</styleUrl>
+		<Point>
+			<gx:drawOrder>1</gx:drawOrder>
+			<coordinates>-3.569062527777778,40.49188877777778,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>LEMD_SMR-S</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>SMR_3</description>
+		<styleUrl>#msn_placemark_square0</styleUrl>
+		<Point>
+			<gx:drawOrder>1</gx:drawOrder>
+			<coordinates>-3.568730277777777,40.46814966666667,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>9CF49981-FA47-407C-9D27-D0B41B135AEA</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>RunwayElement_14R/32L</description>
+		<styleUrl>#stylemap_id00</styleUrl>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-3.55361404980395,40.4632489601465,0 -3.55499599018929,40.4646102402898,0 -3.55637797998195,40.4659714901115,0 -3.5577600299617,40.4673327396818,0 -3.559142140128631,40.4686939602959,0 -3.560524299702871,40.4700551697219,0 -3.56190652036254,40.471416359758,0 -3.56328879042959,40.4727775399706,0 -3.56467111978541,40.4741386898579,0 -3.56605351022667,40.4754998299199,0 -3.5674359500753,40.4768609601554,0 -3.56881844022957,40.4782220600639,0 -3.57020099955411,40.479583150144,0 -3.57158361008262,40.4809442297113,0 -3.57296627001848,40.4823052803163,0 -3.574348990141469,40.4836663197234,0 -3.57573176955327,40.4850273499812,0 -3.57629089985073,40.4846961501566,0 -3.57490812043893,40.4833351398299,0 -3.57352540031594,40.4819740998571,0 -3.57214272960032,40.4806130500534,0 -3.57076011008863,40.4792519897367,0 -3.56937755974723,40.4778908997756,0 -3.567995059711489,40.4765297999867,0 -3.56661260998143,40.4751686896878,0 -3.56523022043846,40.4738075497464,0 -3.56384789018431,40.4724463999802,0 -3.56246561023583,40.4710852301396,0 -3.56108338957613,40.4697240497931,0 -3.55970122012042,40.4683628500573,0 -3.55831910995353,40.4670016302498,0 -3.55693705997373,40.4656403896876,0 -3.55555506029962,40.4642791399901,0 -3.55417311003284,40.4629178702232,0 -3.55361404980395,40.4632489601465,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>3EC09407-4CAC-4A01-BDEF-1FBA63FE87CE</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>TaxiwayElement</description>
+		<Style>
+			<LineStyle>
+				<color>ffffffff</color>
+			</LineStyle>
+			<PolyStyle>
+				<color>8000ff00</color>
+				<fill>1</fill>
+				<outline>1</outline>
+			</PolyStyle>
+		</Style>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-3.56518013217484,40.4955384683338,0 -3.56599870131626,40.4955353860524,0 -3.56599262062011,40.4944487698811,0 -3.56598860604908,40.4937298190636,0 -3.56598796644861,40.4935295627678,0 -3.565987283728981,40.4933783882938,0 -3.56598697470855,40.4933326690325,0 -3.56598602429095,40.4931479860996,0 -3.565984224965431,40.4927976712947,0 -3.56598320268267,40.4926035490399,0 -3.56598249570852,40.4925223739166,0 -3.56598123716882,40.4923167409442,0 -3.56598030920912,40.4921693587141,0 -3.5659803370569,40.4921638797384,0 -3.56598010708817,40.4921197698684,0 -3.56597899587216,40.4919716480201,0 -3.565978276321621,40.4918176663165,0 -3.56597792687698,40.4917731756943,0 -3.56597701508696,40.4916112223115,0 -3.565976420402249,40.4914561303107,0 -3.56597621558638,40.4914145873349,0 -3.5659750531664,40.4912556609109,0 -3.56597421144499,40.4910902043241,0 -3.56597392039083,40.4910596458987,0 -3.56597281995458,40.4908504798324,0 -3.56597133503945,40.4906133457855,0 -3.56597013758515,40.4903767888729,0 -3.56596912877711,40.4901772897864,0 -3.56596903355569,40.4901366232281,0 -3.56596808134146,40.4899443809201,0 -3.565966262253041,40.4895740920342,0 -3.56596548970187,40.4892550228892,0 -3.565967359096,40.4892467405314,0 -3.56596993995579,40.4892386508333,0 -3.56597321162005,40.4892308152825,0 -3.56597714983426,40.4892232933167,0 -3.56598603866401,40.4892125494067,0 -3.56599578179159,40.4892025734052,0 -3.56600631274167,40.4891934336322,0 -3.56601756144565,40.4891851922585,0 -3.56602944885181,40.4891779046233,0 -3.56604189680669,40.489171619917,0 -3.56606901694513,40.4891613781467,0 -3.56609687819364,40.4891533663225,0 -3.56612529639765,40.4891476370513,0 -3.56614199248554,40.4891459126676,0 -3.56615872989592,40.4891446439748,0 -3.56617549605238,40.489143830973,0 -3.56497059474494,40.4891556980662,0 -3.56502278865956,40.4951117342801,0 -3.56517520671215,40.4951108578191,0 -3.56518013217484,40.4955384683338,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>2AD6BA68-9D64-48C6-929C-6DD127B56652</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>AircraftStand</description>
+		<Style>
+			<LineStyle>
+				<color>ffffffff</color>
+			</LineStyle>
+			<PolyStyle>
+				<color>80ffff00</color>
+				<fill>1</fill>
+				<outline>1</outline>
+			</PolyStyle>
+		</Style>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-3.568028714195321,40.4987262748599,0 -3.56803160138062,40.4997535120862,0 -3.56850675716531,40.4997521991933,0 -3.56919973913505,40.4997497981431,0 -3.56922505635471,40.4997495597458,0 -3.5692502639799,40.4997471873851,0 -3.56927518055092,40.4997426974549,0 -3.56929963089636,40.4997361227429,0 -3.56931521846316,40.4997303547562,0 -3.5693302787189,40.4997233237408,0 -3.5693447092556,40.4997150775127,0 -3.56935841215696,40.4997056720843,0 -3.56937129579477,40.4996951709824,0 -3.56938327123581,40.4996836459308,0 -3.569391083883831,40.4996755916453,0 -3.56939816440492,40.4996668856932,0 -3.56940445710349,40.4996575950169,0 -3.56940991616545,40.4996477906571,0 -3.56941449757341,40.4996375470704,0 -3.56941816719135,40.4996269428116,0 -3.5694208980698,40.499616059168,0 -3.56942266775091,40.4996049781101,0 -3.56942063306679,40.499205157126,0 -3.56942056928643,40.4991975898281,0 -3.56941906281169,40.4989364861029,0 -3.56941784469616,40.4986773951339,0 -3.56941687182071,40.4984714900238,0 -3.56941505183392,40.4981213409997,0 -3.56941364686883,40.4979213047917,0 -3.56941278987606,40.4977655668111,0 -3.56941259943321,40.4977212051413,0 -3.56941168674489,40.4975674470295,0 -3.56940936998978,40.4972156278584,0 -3.56940856959083,40.4970686081924,0 -3.56940816265401,40.4970189232327,0 -3.56940526828216,40.4965120140389,0 -3.56940424510107,40.4963161311951,0 -3.5694041238285,40.4962949721768,0 -3.56940299374788,40.4960143498436,0 -3.5694029775782,40.4960107456766,0 -3.56940186726052,40.4957742398982,0 -3.56940164088505,40.4957278022527,0 -3.56939980472862,40.4954121062933,0 -3.56939863691876,40.4952109389369,0 -3.56939753827914,40.4950560977688,0 -3.56939731370033,40.4950126756676,0 -3.56939632914678,40.4948275731306,0 -3.5693933512316,40.4942957277175,0 -3.56939264515582,40.4942265082801,0 -3.56939215377734,40.4940989646616,0 -3.56938890097772,40.4935637892663,0 -3.56938782120274,40.4933922562723,0 -3.56938702799033,40.4932216020582,0 -3.56938671178336,40.4931742417547,0 -3.56938608475928,40.4930252518941,0 -3.569382656788159,40.4924347462366,0 -3.56938258761788,40.4924209163173,0 -3.56921927389923,40.492459357119,0 -3.56879276727705,40.4924634232936,0 -3.56848409087408,40.492464044287,0 -3.568480354780819,40.4924640914251,0 -3.56847662048419,40.4924642068793,0 -3.56847288888248,40.4924643913328,0 -3.56799150328128,40.4924682757862,0 -3.568028714195321,40.4987262748599,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>NULL</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>Approach1Element</description>
+		<Style>
+			<LineStyle>
+				<color>ffffffff</color>
+			</LineStyle>
+			<PolyStyle>
+				<color>80ff00ff</color>
+				<fill>1</fill>
+				<outline>1</outline>
+			</PolyStyle>
+		</Style>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-3.535915761470541,40.4737353699986,0 -3.53647499138694,40.4734043700575,0 -3.51065416077014,40.4359454555003,0 -3.494880933245279,40.4452787156093,0 -3.535915761470541,40.4737353699986,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>NULL</name>
+		<Snippet maxLines="0"></Snippet>
+		<description>Approach2Element</description>
+		<Style>
+			<LineStyle>
+				<color>ffffffff</color>
+			</LineStyle>
+			<PolyStyle>
+				<color>80ff00ff</color>
+				<fill>1</fill>
+				<outline>1</outline>
+			</PolyStyle>
+		</Style>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-3.494880933245279,40.4452787156093,0 -3.51065416077014,40.4359454555003,0 -3.48486200830645,40.3984805851604,0 -3.45388076836991,40.4168074078382,0 -3.494880933245279,40.4452787156093,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>RANDOM_PLACEMARK</name>
+		<LookAt>
+			<longitude>-3.556233106272619</longitude>
+			<latitude>40.48320778660913</latitude>
+			<altitude>0</altitude>
+			<heading>0.01310230383895514</heading>
+			<tilt>0.7749320144396046</tilt>
+			<range>6562.820470449819</range>
+			<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+		</LookAt>
+		<styleUrl>#m_ylw-pushpin</styleUrl>
+		<Point>
+			<gx:drawOrder>1</gx:drawOrder>
+			<coordinates>-3.562919808433204,40.48172451976748,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>RANDOM_POLYGON</name>
+		<styleUrl>#m_ylw-pushpin0</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-3.562967910296516,40.47789912314117,0 -3.55799595664152,40.48415754018463,0 -3.568056004734274,40.48407098146055,0 -3.562967910296516,40.47789912314117,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+</Document>
+</kml>
