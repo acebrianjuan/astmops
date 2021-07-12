@@ -43,7 +43,8 @@ public:
     AixmReader() = default;
 
     bool read(QIODevice *device);
-    std::optional<Aerodrome> makeAerodrome() const;
+    bool canMakeAerodrome() const;
+    Aerodrome makeAerodrome() const;
 
 private:
     void readAixm();
@@ -61,6 +62,7 @@ private:
     QXmlStreamReader xml_;
 
     QGeoCoordinate arp_;
+
     QHash<QString, Collection> runwayElements_;
     QHash<QString, Collection> taxiwayElements_;
     QHash<QString, Collection> apronLaneElements_;

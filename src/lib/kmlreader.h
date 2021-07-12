@@ -43,7 +43,8 @@ public:
     KmlReader() = default;
 
     bool read(QIODevice *device);
-    std::optional<Aerodrome> makeAerodrome() const;
+    bool canMakeAerodrome() const;
+    Aerodrome makeAerodrome() const;
 
 private:
     void readKml();

@@ -36,9 +36,6 @@ int main(int argc, char *argv[])
     qDebug() << "args" << args;
 
 
-    QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
-    QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
-
     QString kmlFilePath = Configuration::kmlFile();
     QFile kmlFile(kmlFilePath);
     kmlFile.open(QIODevice::ReadOnly);
@@ -46,14 +43,7 @@ int main(int argc, char *argv[])
     KmlReader kmlReader;
     kmlReader.read(&kmlFile);
 
-    std::optional<Aerodrome> ad_opt = kmlReader.makeAerodrome();
-
-    if (!ad_opt.has_value())
-    {
-        qFatal("Error creating Aerodrome!");
-    }
-
-    Aerodrome aerodrome = ad_opt.value();
+    Aerodrome aerodrome = kmlReader.makeAerodrome();
 
     auto leblCallback = [&aerodrome](const QVector3D cartPos, const bool gndBit) {
         return aerodrome.locatePoint(cartPos, gndBit);
@@ -61,7 +51,7 @@ int main(int argc, char *argv[])
 
     AsterixXmlReader astXmlReader;
 
-    TargetReportExtractor tgtRepExtr(leblArpGeo, leblSmrGeo);
+    TargetReportExtractor tgtRepExtr(aerodrome.arp(), aerodrome.smr());
     tgtRepExtr.setLocatePointCallback(leblCallback);
 
     TrackExtractor trackExtr;

@@ -20,21 +20,14 @@
 #include "targetreportextractor.h"
 #include "geofunctions.h"
 
-TargetReportExtractor::TargetReportExtractor(const QGeoCoordinate &arp, const QGeoCoordinate &smr)
+TargetReportExtractor::TargetReportExtractor(const QGeoCoordinate &arp,
+    const QHash<Sic, QVector3D> &smr)
     : arp_(arp), smr_(smr)
 {
     // Initialize counters.
     counters_.insert(SystemType::Smr, Counters::InOutCounter());
     counters_.insert(SystemType::Mlat, Counters::InOutCounter());
     counters_.insert(SystemType::Adsb, Counters::InOutCounter());
-
-    // Cartesian offset from SMR origin to ARP.
-    QVector3D arpCart = geoToLocalEnu(arp_, arp_);
-    QVector3D smrCart = geoToLocalEnu(smr_, arp_);
-
-    smrToArp_ = {smrCart.x() - arpCart.x(),
-        smrCart.y() - arpCart.y(),
-        smrCart.z() - arpCart.z()};
 }
 
 void TargetReportExtractor::addData(const Asterix::Record &rec)
@@ -64,42 +57,6 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
     }
 }
 
-QQueue<TargetReport> TargetReportExtractor::targetReports(SystemType st) const
-{
-    return tgt_reports_.value(st);
-}
-
-Counters::InOutCounter TargetReportExtractor::counters(SystemType st) const
-{
-    return counters_.value(st);
-}
-
-bool TargetReportExtractor::hasPendingData() const
-{
-    for (const QQueue<TargetReport> &q : tgt_reports_)
-    {
-        if (!q.isEmpty())
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-std::optional<TargetReport> TargetReportExtractor::takeData()
-{
-    for (QQueue<TargetReport> &q : tgt_reports_)
-    {
-        if (!q.isEmpty())
-        {
-            return q.dequeue();
-        }
-    }
-
-    return std::nullopt;
-}
-
 void TargetReportExtractor::loadExcludedAddresses(QIODevice *device)
 {
     const QByteArray data = device->readAll();
@@ -123,19 +80,45 @@ void TargetReportExtractor::loadExcludedAddresses(QIODevice *device)
     }
 }
 
-void TargetReportExtractor::setArp(const QGeoCoordinate &arp)
-{
-    arp_ = arp;
-}
-
-void TargetReportExtractor::setSmr(const QGeoCoordinate &smr)
-{
-    smr_ = smr;
-}
-
-void TargetReportExtractor::setLocatePointCallback(const std::function<Aerodrome::NamedArea(const QVector3D &, const bool)> &cb)
+void TargetReportExtractor::setLocatePointCallback(const LocatePointCb &cb)
 {
     locatePoint_cb_ = cb;
+}
+
+std::optional<TargetReport> TargetReportExtractor::takeData()
+{
+    for (QQueue<TargetReport> &q : tgt_reports_)
+    {
+        if (!q.isEmpty())
+        {
+            return q.dequeue();
+        }
+    }
+
+    return std::nullopt;
+}
+
+QQueue<TargetReport> TargetReportExtractor::targetReports(SystemType st) const
+{
+    return tgt_reports_.value(st);
+}
+
+Counters::InOutCounter TargetReportExtractor::counters(SystemType st) const
+{
+    return counters_.value(st);
+}
+
+bool TargetReportExtractor::hasPendingData() const
+{
+    for (const QQueue<TargetReport> &q : tgt_reports_)
+    {
+        if (!q.isEmpty())
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
@@ -252,7 +235,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_ecat)
             {
-                qWarning("Skipping ADS-B TgtRep without ECAT");
+                qWarning("Skipping ADS-B TgtRep %x without ECAT", rec.crc_);
                 return false;
             }
 
@@ -409,7 +392,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             return std::nullopt;
         }
 
-        tr.x_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? x + smrToArp_.x()
+        tr.x_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? x + smr_[sic].x()
                                                          : x;
 
         // Y
@@ -426,7 +409,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             return std::nullopt;
         }
 
-        tr.y_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? y + smrToArp_.y()
+        tr.y_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? y + smr_[sic].y()
                                                          : y;
 
         // Z

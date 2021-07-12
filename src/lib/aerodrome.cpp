@@ -25,27 +25,6 @@ Aerodrome::Aerodrome(const QGeoCoordinate &arp) : arp_(arp)
 {
 }
 
-bool Aerodrome::hasAnyElements() const
-{
-    if (!runwayElements_.isEmpty() || !taxiwayElements_.isEmpty() ||
-        !apronLaneElements_.isEmpty() || !standElements_.isEmpty() ||
-        !airborne1Elements_.isEmpty() || !airborne2Elements_.isEmpty())
-    {
-        return true;
-    }
-    return false;
-}
-
-bool Aerodrome::hasAllElements() const
-{
-    if (!runwayElements_.isEmpty() && !taxiwayElements_.isEmpty() &&
-        !apronLaneElements_.isEmpty() && !standElements_.isEmpty() &&
-        !airborne1Elements_.isEmpty() && !airborne2Elements_.isEmpty())
-    {
-        return true;
-    }
-    return false;
-}
 
 void Aerodrome::setArp(const QGeoCoordinate &point)
 {
@@ -93,7 +72,39 @@ void Aerodrome::addAirborne2Element(const QString &name, const QPolygonF &polygo
     airborne2Elements_[name] << polygon;
 }
 
-Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool gndBit)
+QGeoCoordinate Aerodrome::arp() const
+{
+    return arp_;
+}
+
+QHash<Sic, QVector3D> Aerodrome::smr() const
+{
+    return smr_;
+}
+
+bool Aerodrome::hasAnyElements() const
+{
+    if (!runwayElements_.isEmpty() || !taxiwayElements_.isEmpty() ||
+        !apronLaneElements_.isEmpty() || !standElements_.isEmpty() ||
+        !airborne1Elements_.isEmpty() || !airborne2Elements_.isEmpty())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Aerodrome::hasAllElements() const
+{
+    if (!runwayElements_.isEmpty() && !taxiwayElements_.isEmpty() &&
+        !apronLaneElements_.isEmpty() && !standElements_.isEmpty() &&
+        !airborne1Elements_.isEmpty() && !airborne2Elements_.isEmpty())
+    {
+        return true;
+    }
+    return false;
+}
+
+Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool gndBit) const
 {
     Q_ASSERT(hasAnyElements());  // Asserting for "any" elements is enough.
     // It should not be mandatory for an aerodrome to have "all" elements.

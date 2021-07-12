@@ -40,15 +40,20 @@ bool KmlReader::read(QIODevice *device)
     return !xml_.error();
 }
 
+bool KmlReader::canMakeAerodrome() const
+{
+    return arp_.isValid() && !qIsNaN(arp_.altitude());
+}
+
 /*!
  * Generates an Aerodrome projected in local tangent plane coordinates
  * centered at the ARP.
  */
-std::optional<Aerodrome> KmlReader::makeAerodrome() const
+Aerodrome KmlReader::makeAerodrome() const
 {
-    if (!arp_.isValid() || qIsNaN(arp_.altitude()))
+    if (!canMakeAerodrome())
     {
-        return std::nullopt;
+        qFatal("Error creating Aerodrome!");
     }
 
     Aerodrome aerodrome(arp_);

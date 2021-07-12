@@ -18,6 +18,7 @@
  */
 
 #include "targetreportextractor.h"
+#include "geofunctions.h"
 #include <QObject>
 #include <QtTest>
 
@@ -63,6 +64,7 @@ void TargetReportExtractorTest::initTestCase()
 void TargetReportExtractorTest::test_data()
 {
     using namespace Literals;
+
 
     // TARGET REPORTS.
 
@@ -473,14 +475,17 @@ void TargetReportExtractorTest::test()
     QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
     QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
 
-    auto runwayCallback = [](const QVector3D cartPos, const bool gndBit) {
+    QHash<Sic, QVector3D> smrHashEnu;
+    smrHashEnu.insert(7, geoToLocalEnu(leblSmrGeo, leblArpGeo));
+
+    auto runwayCb = [](const QVector3D cartPos, const bool gndBit) {
         Q_UNUSED(cartPos);
         Q_UNUSED(gndBit);
         return Aerodrome::NamedArea(Aerodrome::Area::Runway);
     };
 
-    TargetReportExtractor tgtRepExtr(leblArpGeo, leblSmrGeo);
-    tgtRepExtr.setLocatePointCallback(runwayCallback);
+    TargetReportExtractor tgtRepExtr(leblArpGeo, smrHashEnu);
+    tgtRepExtr.setLocatePointCallback(runwayCb);
 
     // Feed Records.
     for (Asterix::Record &rin : recsIn)

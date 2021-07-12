@@ -40,14 +40,19 @@ bool AixmReader::read(QIODevice *device)
     return !xml_.error();
 }
 
+bool AixmReader::canMakeAerodrome() const
+{
+    return arp_.isValid() && !qIsNaN(arp_.altitude());
+}
+
 /*!
  * Generates an Aerodrome projected in local tangent plane coordinates.
  */
-std::optional<Aerodrome> AixmReader::makeAerodrome() const
+Aerodrome AixmReader::makeAerodrome() const
 {
-    if (!arp_.isValid() || qIsNaN(arp_.altitude()))
+    if (!canMakeAerodrome())
     {
-        return std::nullopt;
+        qFatal("Error creating Aerodrome!");
     }
 
     Aerodrome aerodrome(arp_);

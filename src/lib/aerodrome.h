@@ -103,9 +103,6 @@ public:
     Aerodrome() = default;
     Aerodrome(const QGeoCoordinate &arp);
 
-    bool hasAnyElements() const;
-    bool hasAllElements() const;
-
     void setArp(const QGeoCoordinate &point);
 
     void addSmr(Sic sic, QVector3D point);
@@ -116,7 +113,12 @@ public:
     void addAirborne1Element(const QString &name, const QPolygonF &polygon);
     void addAirborne2Element(const QString &name, const QPolygonF &polygon);
 
-    NamedArea locatePoint(const QVector3D cartPos, const bool gndBit);
+    QGeoCoordinate arp() const;
+    QHash<Sic, QVector3D> smr() const;
+
+    bool hasAnyElements() const;
+    bool hasAllElements() const;
+    NamedArea locatePoint(const QVector3D cartPos, const bool gndBit) const;
 
 private:
     bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point) const;
@@ -124,7 +126,6 @@ private:
     std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
 
     QGeoCoordinate arp_;
-
     QHash<Sic, QVector3D> smr_;
 
     QHash<QString, QVector<QPolygonF>> runwayElements_;
