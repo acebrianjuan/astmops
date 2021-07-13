@@ -111,11 +111,10 @@ void AsterixXmlReader::readRecord()
     }
 
     Asterix::Record record;
-    bool catOk, tstampOk;
+    bool catOk, tstampOk, crcOk;
     quint8 cat = xml_.attributes().value(QLatin1String("cat")).toUInt(&catOk);
     quint64 tstamp = xml_.attributes().value(QLatin1String("timestamp")).toUInt(&tstampOk);
-    quint32 crc = xml_.attributes().value(QLatin1String("crc")).toUInt(nullptr, 16);
-    Q_UNUSED(crc);
+    quint32 crc = xml_.attributes().value(QLatin1String("crc")).toUInt(&crcOk, 16);
 
     if (!catOk || !tstampOk)
     {
@@ -134,6 +133,11 @@ void AsterixXmlReader::readRecord()
     }
 
     record.cat_ = cat;
+
+    if (crcOk)
+    {
+        record.crc_ = crc;
+    }
 
     // Read Data Items.
     while (xml_.readNextStartElement())
