@@ -337,7 +337,7 @@ void PerfEvaluator::evalED116UR(const Track &trk_ref, const TrackCollection &col
 
             Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            double dur = sub_trk_tst.duration();
+            double dur = sub_trk_ref.duration();
             double freq = 1.0;
             int n_etrp = qFloor(dur * freq);
 
@@ -465,7 +465,7 @@ void PerfEvaluator::evalED117UR(const Track &trk_ref, const TrackCollection &col
 
             Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            double dur = sub_trk_tst.duration();
+            double dur = sub_trk_ref.duration();
             double freq = 1.0;
             int n_etrp = qFloor(dur * freq);
 
