@@ -704,6 +704,16 @@ QVector<TrackCollection> TrackCollectionSet::matchesForRefTrack(TrackNum ref_tn)
     return vec;
 }
 
+std::optional<TrackCollection> TrackCollectionSet::matchesForRefTrackAndSystem(TrackNum ref_tn, SystemType st) const
+{
+    if (matches_.contains(st) && matches_[st].contains(ref_tn))
+    {
+        return tst_cols_[st].makeSubColForTracks(matches_[st][ref_tn]);
+    }
+
+    return std::nullopt;
+}
+
 bool TrackCollectionSet::containsTrack(SystemType st, TrackNum tn) const
 {
     if (st == SystemType::Unknown)

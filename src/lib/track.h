@@ -188,6 +188,7 @@ public:
 
     MatchHash matches() const;
     QVector<TrackCollection> matchesForRefTrack(TrackNum ref_tn) const;
+    std::optional<TrackCollection> matchesForRefTrackAndSystem(TrackNum ref_tn, SystemType st) const;
 
     std::optional<TrackCollection> collection(SystemType st) const;
     bool hasCollection(SystemType st) const;

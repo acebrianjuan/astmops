@@ -39,6 +39,12 @@ void PerfEvaluator::run()
     // Iterate through each target set.
     for (const TrackCollectionSet &s : qAsConst(trkAssoc.sets()))
     {
+        // SMR ED-116.
+        evalED116UR(s);
+
+        // MLAT ED-117.
+        evalED117UR(s);
+
         //ModeS mode_s = s.mode_s();
         TrackCollection c_ref = s.refTrackCol();
 
@@ -57,7 +63,7 @@ void PerfEvaluator::run()
                     // SMR ED-116.
 
                     evalED116RPA(t_ref, c_tst_i);
-                    evalED116UR(t_ref, c_tst_i);
+
                     evalED116PD(t_ref, c_tst_i);
                 }
                 else if (c_tst_i.system_type() == SystemType::Mlat)
@@ -65,7 +71,7 @@ void PerfEvaluator::run()
                     // MLAT ED-117.
 
                     evalED117RPA(t_ref, c_tst_i);
-                    evalED117UR(t_ref, c_tst_i);
+
                     evalED117PD(t_ref, c_tst_i);
                     evalED117PFD(t_ref, c_tst_i);
                     evalED117PID(t_ref, c_tst_i);
@@ -312,37 +318,77 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &co
     }
 }
 
-void PerfEvaluator::evalED116UR(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED116UR(const TrackCollectionSet &s)
 {
-    QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+    //ModeS mode_s = s.mode_s();
+    TrackCollection col_ref = s.refTrackCol();
 
-    for (const Track &sub_trk_ref : sub_trk_vec)
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (sub_trk_ref.size() < 2)
-        {
-            continue;
-        }
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-        // Iterate through each test track in the collection.
-        for (const Track &trk_tst : col_tst)
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Smr);
+
+        if (col_tst_opt.has_value())
         {
-            if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+            TrackCollection col_tst = col_tst_opt.value();
+
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
             {
-                return;
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
+
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+                double dur = sub_trk_ref.duration();
+                double freq = 1.0;
+                int n_etrp = qFloor(dur * freq);
+
+                smrUr_[narea].n_etrp_ += n_etrp;
+
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        continue;
+                    }
+
+                    // Extract TST track portion that matches in time with the
+                    // REF track.
+                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                    smrUr_[narea].n_trp_ += sub_trk_tst.size();
+                }
             }
+        }
+        else
+        {
+            // If reference track has no matching collection of test tracks
+            // then just count the expected target reports for each reference
+            // sub-track and jump to the next reference track.
 
-            // Extract TST track portion that matches in time with the
-            // reference track.
-            Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
 
-            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            double dur = sub_trk_ref.duration();
-            double freq = 1.0;
-            int n_etrp = qFloor(dur * freq);
+                double dur = sub_trk_ref.duration();
+                double freq = 1.0;
+                int n_etrp = qFloor(dur * freq);
 
-            smrUr_[narea].n_trp_ += sub_trk_tst.size();
-            smrUr_[narea].n_etrp_ += n_etrp;
+                smrUr_[narea].n_etrp_ += n_etrp;
+            }
         }
     }
 }
@@ -440,37 +486,77 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &co
     }
 }
 
-void PerfEvaluator::evalED117UR(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED117UR(const TrackCollectionSet &s)
 {
-    QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+    //ModeS mode_s = s.mode_s();
+    TrackCollection col_ref = s.refTrackCol();
 
-    for (const Track &sub_trk_ref : sub_trk_vec)
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (sub_trk_ref.size() < 2)
-        {
-            continue;
-        }
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-        // Iterate through each test track in the collection.
-        for (const Track &trk_tst : col_tst)
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Mlat);
+
+        if (col_tst_opt.has_value())
         {
-            if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+            TrackCollection col_tst = col_tst_opt.value();
+
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
             {
-                return;
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
+
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+                double dur = sub_trk_ref.duration();
+                double freq = 1.0;
+                int n_etrp = qFloor(dur * freq);
+
+                mlatUr_[narea].n_etrp_ += n_etrp;
+
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        continue;
+                    }
+
+                    // Extract TST track portion that matches in time with the
+                    // REF track.
+                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                    mlatUr_[narea].n_trp_ += sub_trk_tst.size();
+                }
             }
+        }
+        else
+        {
+            // If reference track has no matching collection of test tracks
+            // then just count the expected target reports for each reference
+            // sub-track and jump to the next reference track.
 
-            // Extract TST track portion that matches in time with the
-            // reference track.
-            Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
 
-            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            double dur = sub_trk_ref.duration();
-            double freq = 1.0;
-            int n_etrp = qFloor(dur * freq);
+                double dur = sub_trk_ref.duration();
+                double freq = 1.0;
+                int n_etrp = qFloor(dur * freq);
 
-            mlatUr_[narea].n_trp_ += sub_trk_tst.size();
-            mlatUr_[narea].n_etrp_ += n_etrp;
+                mlatUr_[narea].n_etrp_ += n_etrp;
+            }
         }
     }
 }
