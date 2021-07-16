@@ -26,6 +26,49 @@
 
 namespace Counters
 {
+struct UrCounter
+{
+    quint32 n_trp_ = 0;
+    quint32 n_etrp_ = 0;
+};
+
+struct PdCounter
+{
+    quint32 n_trp_ = 0;
+    quint32 n_up_ = 0;
+};
+
+struct PfdCounter
+{
+    quint32 n_ftr_ = 0;
+    quint32 n_tr_ = 0;
+};
+
+struct PfdCounter2
+{
+    quint32 n_tr_ = 0;
+    quint32 n_etr_ = 0;
+    quint32 n_u_ = 0;
+};
+
+struct PidCounter
+{
+    quint32 n_citr_ = 0;
+    quint32 n_itr_ = 0;
+};
+
+struct PfidCounter
+{
+    quint32 n_eitr_ = 0;
+    quint32 n_itr_ = 0;
+};
+
+struct PlgCounter
+{
+    quint32 n_g_ = 0;
+    quint32 n_tr_ = 0;
+};
+
 struct InOutCounter
 {
     quint32 in_ = 0;
@@ -72,5 +115,14 @@ private:
 };
 
 }  // namespace Counters
+
+Q_DECLARE_METATYPE(Counters::UrCounter);
+Q_DECLARE_METATYPE(Counters::PdCounter);
+Q_DECLARE_METATYPE(Counters::PfdCounter);
+Q_DECLARE_METATYPE(Counters::PfdCounter2);
+Q_DECLARE_METATYPE(Counters::PidCounter);
+Q_DECLARE_METATYPE(Counters::PfidCounter);
+Q_DECLARE_METATYPE(Counters::PlgCounter);
+
 
 #endif  // ASTMOPS_COUNTERS_H
