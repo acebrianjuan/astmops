@@ -41,9 +41,11 @@ void PerfEvaluator::run()
     {
         // SMR ED-116.
         evalED116UR(s);
+        evalED116PD(s);
 
         // MLAT ED-117.
         evalED117UR(s);
+        evalED117PD(s);
 
         //ModeS mode_s = s.mode_s();
         TrackCollection c_ref = s.refTrackCol();
@@ -63,8 +65,6 @@ void PerfEvaluator::run()
                     // SMR ED-116.
 
                     evalED116RPA(t_ref, c_tst_i);
-
-                    evalED116PD(t_ref, c_tst_i);
                 }
                 else if (c_tst_i.system_type() == SystemType::Mlat)
                 {
@@ -72,7 +72,6 @@ void PerfEvaluator::run()
 
                     evalED117RPA(t_ref, c_tst_i);
 
-                    evalED117PD(t_ref, c_tst_i);
                     evalED117PFD(t_ref, c_tst_i);
                     evalED117PID(t_ref, c_tst_i);
                     evalED117PFID(t_ref, c_tst_i);
@@ -393,50 +392,96 @@ void PerfEvaluator::evalED116UR(const TrackCollectionSet &s)
     }
 }
 
-void PerfEvaluator::evalED116PD(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED116PD(const TrackCollectionSet &s)
 {
     auto hasPosition = [](const TargetReport &tr) {
         return !qIsNaN(tr.x_) && !qIsNaN(tr.y_);
     };
 
-    QVector<Track> trk_ref_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+    TrackCollection col_ref = s.refTrackCol();
 
-    for (const Track &trk_ref_i : trk_ref_vec)
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (trk_ref_i.duration() < 1.0)
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Smr);
+
+        if (col_tst_opt.has_value())
         {
-            return;
-        }
+            TrackCollection col_tst = col_tst_opt.value();
 
-        Aerodrome::NamedArea narea = trk_ref_i.begin()->narea_;
-
-        double period = 1.0;
-
-        Counters::IntervalCounter intervalCtr(period, trk_ref_i.beginTimestamp());
-
-        for (const Track &trk_tst : col_tst)
-        {
-            if (!haveTimeIntersection(trk_tst, trk_ref_i))
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
             {
-                return;
-            }
-
-            Track trk_tst_i = intersect(trk_tst, trk_ref_i).value();
-
-            for (const TargetReport &tr : trk_tst_i)
-            {
-                if (hasPosition(tr))
+                if (sub_trk_ref.duration() < 1)
                 {
-                    intervalCtr.update(tr.tod_);
+                    continue;
                 }
+
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+                double period = 1.0;
+                Counters::IntervalCounter intervalCtr(period, sub_trk_ref.beginTimestamp());
+
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        return;
+                    }
+
+                    // Extract TST track portion that matches in time with the
+                    // REF track.
+                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                    // Iterate through every target report in the test sub-track.
+                    for (const TargetReport &tr_tst : sub_trk_tst)
+                    {
+                        if (hasPosition(tr_tst))
+                        {
+                            intervalCtr.update(tr_tst.tod_);
+                        }
+                    }
+                }
+
+                intervalCtr.finish(sub_trk_ref.endTimestamp());
+
+                Counters::BasicCounter ctr = intervalCtr.read();
+
+                smrPd_[narea].n_trp_ += ctr.valid_;
+                smrPd_[narea].n_up_ += ctr.total_;
             }
+        }
+        else
+        {
+            // If reference track has no matching collection of test tracks
+            // then just count the expected target reports for each reference
+            // sub-track and jump to the next reference track.
 
-            intervalCtr.finish(trk_ref_i.endTimestamp());
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
 
-            Counters::BasicCounter ctr = intervalCtr.read();
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            smrPd_[narea].n_trp_ += ctr.valid_;
-            smrPd_[narea].n_up_ += ctr.total_;
+                double period = 1.0;
+                Counters::IntervalCounter intervalCtr(period, sub_trk_ref.beginTimestamp());
+                intervalCtr.finish(sub_trk_ref.endTimestamp());
+
+                Counters::BasicCounter ctr = intervalCtr.read();
+
+                Q_ASSERT(ctr.valid_ == 0);
+
+                smrPd_[narea].n_trp_ += ctr.valid_;
+                smrPd_[narea].n_up_ += ctr.total_;
+            }
         }
     }
 }
@@ -561,62 +606,109 @@ void PerfEvaluator::evalED117UR(const TrackCollectionSet &s)
     }
 }
 
-void PerfEvaluator::evalED117PD(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
 {
     auto hasPosition = [](const TargetReport &tr) {
         return !qIsNaN(tr.x_) && !qIsNaN(tr.y_);
     };
 
-    QVector<Track> trk_ref_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+    TrackCollection col_ref = s.refTrackCol();
 
-    for (const Track &trk_ref_i : trk_ref_vec)
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (trk_ref_i.duration() < 1.0)
-        {
-            return;
-        }
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-        Aerodrome::NamedArea narea = trk_ref_i.begin()->narea_;
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Mlat);
 
-        double period = 1.0;
-        if (narea.area_ == Aerodrome::Area::Runway)
+        if (col_tst_opt.has_value())
         {
-            period = 1.0;
-        }
-        else if (narea.area_ == Aerodrome::Area::Taxiway)
-        {
-            period = 2.0;
-        }
-        else if (narea.area_ == Aerodrome::Area::Stand)
-        {
-            period = 5.0;
-        }
+            TrackCollection col_tst = col_tst_opt.value();
 
-        Counters::IntervalCounter intervalCtr(period, trk_ref_i.beginTimestamp());
-
-        for (const Track &trk_tst : col_tst)
-        {
-            if (!haveTimeIntersection(trk_tst, trk_ref_i))
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
             {
-                return;
-            }
-
-            Track trk_tst_i = intersect(trk_tst, trk_ref_i).value();
-
-            for (const TargetReport &tr : trk_tst_i)
-            {
-                if (hasPosition(tr))
+                if (sub_trk_ref.duration() < 1)
                 {
-                    intervalCtr.update(tr.tod_);
+                    continue;
                 }
+
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+                double period = 1.0;
+                if (narea.area_ == Aerodrome::Area::Runway)
+                {
+                    period = 1.0;
+                }
+                else if (narea.area_ == Aerodrome::Area::Taxiway)
+                {
+                    period = 2.0;
+                }
+                else if (narea.area_ == Aerodrome::Area::Stand)
+                {
+                    period = 5.0;
+                }
+
+                Counters::IntervalCounter intervalCtr(period, sub_trk_ref.beginTimestamp());
+
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        return;
+                    }
+
+                    // Extract TST track portion that matches in time with the
+                    // REF track.
+                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                    // Iterate through every target report in the test sub-track.
+                    for (const TargetReport &tr_tst : sub_trk_tst)
+                    {
+                        if (hasPosition(tr_tst))
+                        {
+                            intervalCtr.update(tr_tst.tod_);
+                        }
+                    }
+                }
+
+                intervalCtr.finish(sub_trk_ref.endTimestamp());
+
+                Counters::BasicCounter ctr = intervalCtr.read();
+
+                mlatPd_[narea].n_trp_ += ctr.valid_;
+                mlatPd_[narea].n_up_ += ctr.total_;
             }
+        }
+        else
+        {
+            // If reference track has no matching collection of test tracks
+            // then just count the expected target reports for each reference
+            // sub-track and jump to the next reference track.
 
-            intervalCtr.finish(trk_ref_i.endTimestamp());
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
 
-            Counters::BasicCounter ctr = intervalCtr.read();
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            mlatPd_[narea].n_trp_ += ctr.valid_;
-            mlatPd_[narea].n_up_ += ctr.total_;
+                double period = 1.0;
+                Counters::IntervalCounter intervalCtr(period, sub_trk_ref.beginTimestamp());
+                intervalCtr.finish(sub_trk_ref.endTimestamp());
+
+                Counters::BasicCounter ctr = intervalCtr.read();
+
+                Q_ASSERT(ctr.valid_ == 0);
+
+                mlatPd_[narea].n_trp_ += ctr.valid_;
+                mlatPd_[narea].n_up_ += ctr.total_;
+            }
         }
     }
 }

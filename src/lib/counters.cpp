@@ -129,7 +129,7 @@ Counters::BasicCounter Counters::IntervalCounter::read()
 
 bool Counters::IntervalCounter::contains(const QDateTime &tod) const
 {
-    if (intervalStart() <= tod && tod <= intervalEnd())
+    if (intervalStart() <= tod && tod < intervalEnd())
     {
         return true;
     }
