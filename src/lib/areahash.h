@@ -45,4 +45,13 @@ struct AreaHash : public QHash<Aerodrome::NamedArea, T>
     }
 };
 
+template <typename T>
+bool operator==(const AreaHash<T> &lhs, const AreaHash<T> &rhs)
+{
+    auto lhs_h = static_cast<QHash<Aerodrome::NamedArea, T>>(lhs);
+    auto rhs_h = static_cast<QHash<Aerodrome::NamedArea, T>>(rhs);
+
+    return lhs_h == rhs_h;
+}
+
 #endif  // ASTMOPS_AREAHASH_H

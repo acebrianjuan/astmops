@@ -142,3 +142,17 @@ void Counters::IntervalCounter::advance()
     intervalStart_ = intervalEnd();
     ++counter_.total_;
 }
+
+/* ---------------------------- Free functions ---------------------------- */
+
+bool Counters::operator==(Counters::UrCounter lhs, Counters::UrCounter rhs)
+{
+    return lhs.n_etrp_ == rhs.n_etrp_ &&
+           lhs.n_trp_ == rhs.n_trp_;
+}
+
+bool Counters::operator==(Counters::PdCounter lhs, Counters::PdCounter rhs)
+{
+    return lhs.n_trp_ == rhs.n_trp_ &&
+           lhs.n_up_ == rhs.n_up_;
+}

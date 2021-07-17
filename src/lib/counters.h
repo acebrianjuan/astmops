@@ -114,6 +114,10 @@ private:
     BasicCounter counter_;
 };
 
+// FREE OPERATORS.
+bool operator==(Counters::UrCounter lhs, Counters::UrCounter rhs);
+bool operator==(Counters::PdCounter lhs, Counters::PdCounter rhs);
+
 }  // namespace Counters
 
 Q_DECLARE_METATYPE(Counters::UrCounter);
