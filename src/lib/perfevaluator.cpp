@@ -612,6 +612,24 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
         return !qIsNaN(tr.x_) && !qIsNaN(tr.y_);
     };
 
+    auto getPeriodForArea = [](const Aerodrome::NamedArea &narea) {
+        double period = 1.0;
+        if (narea.area_ == Aerodrome::Area::Runway)
+        {
+            period = 1.0;
+        }
+        else if (narea.area_ == Aerodrome::Area::Taxiway)
+        {
+            period = 2.0;
+        }
+        else if (narea.area_ == Aerodrome::Area::Stand)
+        {
+            period = 5.0;
+        }
+
+        return period;
+    };
+
     TrackCollection col_ref = s.refTrackCol();
 
     // Iterate through each track in the reference data collection.
@@ -637,19 +655,7 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
 
                 Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-                double period = 1.0;
-                if (narea.area_ == Aerodrome::Area::Runway)
-                {
-                    period = 1.0;
-                }
-                else if (narea.area_ == Aerodrome::Area::Taxiway)
-                {
-                    period = 2.0;
-                }
-                else if (narea.area_ == Aerodrome::Area::Stand)
-                {
-                    period = 5.0;
-                }
+                double period = getPeriodForArea(narea);
 
                 Counters::IntervalCounter intervalCtr(period, sub_trk_ref.beginTimestamp());
 
@@ -698,7 +704,8 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
 
                 Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-                double period = 1.0;
+                double period = getPeriodForArea(narea);
+
                 Counters::IntervalCounter intervalCtr(period, sub_trk_ref.beginTimestamp());
                 intervalCtr.finish(sub_trk_ref.endTimestamp());
 
