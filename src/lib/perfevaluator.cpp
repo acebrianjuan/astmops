@@ -46,6 +46,7 @@ void PerfEvaluator::run()
         // MLAT ED-117.
         evalED117UR(s);
         evalED117PD(s);
+        evalED117PID(s);
 
         //ModeS mode_s = s.mode_s();
         TrackCollection c_ref = s.refTrackCol();
@@ -73,7 +74,7 @@ void PerfEvaluator::run()
                     evalED117RPA(t_ref, c_tst_i);
 
                     evalED117PFD(t_ref, c_tst_i);
-                    evalED117PID(t_ref, c_tst_i);
+
                     evalED117PFID(t_ref, c_tst_i);
                     evalED117PLG(t_ref, c_tst_i);
                 }
@@ -757,115 +758,150 @@ void PerfEvaluator::evalED117PFD(const Track &trk_ref, const TrackCollection &co
     }
 }
 
-void PerfEvaluator::evalED117PID(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED117PID(const TrackCollectionSet &s)
 {
-    // Iterate through each test track in the collection.
-    for (const Track &trk_tst : col_tst)
+    TrackCollection col_ref = s.refTrackCol();
+
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (!haveTimeIntersection(trk_tst, trk_ref))
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Mlat);
+
+        if (!col_tst_opt.has_value())
         {
             return;
         }
 
-        const QMultiMap<QDateTime, TargetReport> &ref_data = trk_ref.data();
+        TrackCollection col_tst = col_tst_opt.value();
 
-        for (const TargetReport &tr_tst : trk_tst)
+        // Iterate through each reference sub-track.
+        for (const Track &sub_trk_ref : sub_trk_vec)
         {
-            if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
+            if (sub_trk_ref.duration() < 1)
             {
-                // Skip if target report has no identification and no mode 3/A code.
                 continue;
             }
 
-            QDateTime tod = tr_tst.tod_;
+            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            TgtRepMap::const_iterator it_u = ref_data.end();  // Upper.
-            TgtRepMap::const_iterator it_l = ref_data.end();  // Lower.
+            const TgtRepMap &sub_trk_ref_data = sub_trk_ref.data();
 
-            TgtRepMap::const_iterator it = ref_data.lowerBound(tod);
-            if (it != ref_data.end())  // Upper TOD found.
+            // Iterate through each track in the test data collection.
+            for (const Track &trk_tst : col_tst)
             {
-                Q_ASSERT(it.key() >= tod);
-
-                // Save upper value.
-                it_u = it;
-
-                // Search lower values by decrementing iterator.
-                while (it != ref_data.end() && tod < it.key())
+                if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                 {
-                    if (it == ref_data.begin())  // Exit condition on first value.
-                    {
-                        if (tod < it.key())  // Set as not found.
-                        {
-                            it = ref_data.end();
-                        }
-
-                        break;
-                    }
-
-                    it--;
+                    continue;
                 }
 
-                if (it != ref_data.end())  // Lower TOD found.
+                // Extract TST track portion that matches in time with the
+                // REF track.
+                Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                // Iterate through every target report in the test sub-track.
+                for (const TargetReport &tr_tst : sub_trk_tst)
                 {
-                    Q_ASSERT(tod >= it.key());
-
-                    // Save lower value.
-                    it_l = it;
-                }
-
-                if (it_l != ref_data.end() && it_u != ref_data.end())
-                {
-                    TargetReport tr_l = it_l.value();
-                    TargetReport tr_u = it_u.value();
-
-                    if (!tr_l.ident_.has_value() &&
-                        !tr_u.ident_.has_value())
+                    if (!tr_tst.ident_.has_value() && !tr_tst.mode_3a_.has_value())
                     {
+                        // Skip if target report has no identification and no mode 3/A code.
                         continue;
                     }
 
-                    Aerodrome::NamedArea narea = tr_tst.narea_;
+                    QDateTime tod = tr_tst.tod_;
 
-                    if (tr_tst.ident_.has_value())
+                    TgtRepMap::const_iterator it_u = sub_trk_ref_data.end();  // Upper.
+                    TgtRepMap::const_iterator it_l = sub_trk_ref_data.end();  // Lower.
+
+                    TgtRepMap::const_iterator it = sub_trk_ref_data.lowerBound(tod);
+                    if (it != sub_trk_ref_data.end())  // Upper TOD found.
                     {
-                        bool ident_ok = false;
+                        Q_ASSERT(it.key() >= tod);
 
-                        if (tr_l.ident_.has_value())
+                        // Save upper value.
+                        it_u = it;
+
+                        // Search lower values by decrementing iterator.
+                        while (it != sub_trk_ref_data.end() && tod < it.key())
                         {
-                            ident_ok = tr_tst.ident_.value() == tr_l.ident_.value();
+                            if (it == sub_trk_ref_data.begin())  // Exit condition on first value.
+                            {
+                                if (tod < it.key())  // Set as not found.
+                                {
+                                    it = sub_trk_ref_data.end();
+                                }
+
+                                break;
+                            }
+
+                            it--;
                         }
 
-                        if (!ident_ok && tr_u.ident_.has_value())
+                        if (it != sub_trk_ref_data.end())  // Lower TOD found.
                         {
-                            ident_ok = tr_tst.ident_.value() == tr_u.ident_.value();
+                            Q_ASSERT(tod >= it.key());
+
+                            // Save lower value.
+                            it_l = it;
                         }
 
-                        ++mlatPidIdent_[narea].n_itr_;
-                        if (ident_ok)
+                        if (it_l != sub_trk_ref_data.end() && it_u != sub_trk_ref_data.end())
                         {
-                            ++mlatPidIdent_[narea].n_citr_;
-                        }
-                    }
+                            TargetReport tr_l = it_l.value();
+                            TargetReport tr_u = it_u.value();
 
-                    if (tr_tst.mode_3a_.has_value())
-                    {
-                        bool mode_3a_ok = false;
+                            if (!tr_l.ident_.has_value() &&
+                                !tr_u.ident_.has_value())
+                            {
+                                continue;
+                            }
 
-                        if (tr_l.mode_3a_.has_value())
-                        {
-                            mode_3a_ok = tr_tst.mode_3a_.value() == tr_l.mode_3a_.value();
-                        }
+                            Aerodrome::NamedArea narea = tr_tst.narea_;
 
-                        if (!mode_3a_ok && tr_u.mode_3a_.has_value())
-                        {
-                            mode_3a_ok = tr_tst.mode_3a_.value() == tr_u.mode_3a_.value();
-                        }
+                            if (tr_tst.ident_.has_value())
+                            {
+                                bool ident_ok = false;
 
-                        ++mlatPidMode3A_[narea].n_itr_;
-                        if (mode_3a_ok)
-                        {
-                            ++mlatPidMode3A_[narea].n_citr_;
+                                if (tr_l.ident_.has_value())
+                                {
+                                    ident_ok = tr_tst.ident_.value() == tr_l.ident_.value();
+                                }
+
+                                if (!ident_ok && tr_u.ident_.has_value())
+                                {
+                                    ident_ok = tr_tst.ident_.value() == tr_u.ident_.value();
+                                }
+
+                                ++mlatPidIdent_[narea].n_itr_;
+                                if (ident_ok)
+                                {
+                                    ++mlatPidIdent_[narea].n_citr_;
+                                }
+                            }
+
+                            if (tr_tst.mode_3a_.has_value())
+                            {
+                                bool mode_3a_ok = false;
+
+                                if (tr_l.mode_3a_.has_value())
+                                {
+                                    mode_3a_ok = tr_tst.mode_3a_.value() == tr_l.mode_3a_.value();
+                                }
+
+                                if (!mode_3a_ok && tr_u.mode_3a_.has_value())
+                                {
+                                    mode_3a_ok = tr_tst.mode_3a_.value() == tr_u.mode_3a_.value();
+                                }
+
+                                ++mlatPidMode3A_[narea].n_itr_;
+                                if (mode_3a_ok)
+                                {
+                                    ++mlatPidMode3A_[narea].n_citr_;
+                                }
+                            }
                         }
                     }
                 }

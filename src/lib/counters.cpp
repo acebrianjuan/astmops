@@ -156,3 +156,9 @@ bool Counters::operator==(Counters::PdCounter lhs, Counters::PdCounter rhs)
     return lhs.n_trp_ == rhs.n_trp_ &&
            lhs.n_up_ == rhs.n_up_;
 }
+
+bool Counters::operator==(Counters::PidCounter lhs, Counters::PidCounter rhs)
+{
+    return lhs.n_itr_ == rhs.n_itr_ &&
+           lhs.n_citr_ == rhs.n_citr_;
+}
