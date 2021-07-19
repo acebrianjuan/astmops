@@ -63,10 +63,10 @@ private slots:
     void testED117PID_data();
     void testED117PID();
 
-    /*
     void testED117PFID_data();
     void testED117PFID();
 
+    /*
     void testED117PLG_data();
     void testED117PLG();
     */
@@ -1640,6 +1640,331 @@ void PerfEvaluatorTest::testED117PID()
     perfEval.run();
 
     QCOMPARE(perfEval.mlatPidIdent_, countersOut);
+}
+
+void PerfEvaluatorTest::testED117PFID_data()
+{
+    QTest::addColumn<QVector<Track>>("tracksIn");
+    QTest::addColumn<QHash<Aerodrome::NamedArea, Counters::PfidCounter>>("countersOut");
+
+
+    // ADS-B track 101.
+    Track trk_adsb_101(SystemType::Adsb, 101);
+
+    TargetReport tr_adsb_101_1;
+    tr_adsb_101_1.ds_id_.sac_ = 0;
+    tr_adsb_101_1.ds_id_.sic_ = 219;
+    tr_adsb_101_1.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_1.tod_ = "2020-05-05T10:00:00.000Z"_ts;
+    tr_adsb_101_1.trk_nb_ = 101;
+    tr_adsb_101_1.mode_s_ = 0x000001;
+    tr_adsb_101_1.mode_3a_ = 0001;
+    tr_adsb_101_1.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_1.on_gnd_ = true;
+    tr_adsb_101_1.x_ = 0.0;
+    tr_adsb_101_1.y_ = 0.0;
+    tr_adsb_101_1.z_ = 0.0;
+    tr_adsb_101_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_adsb_101_2;
+    tr_adsb_101_2.ds_id_.sac_ = 0;
+    tr_adsb_101_2.ds_id_.sic_ = 219;
+    tr_adsb_101_2.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_2.tod_ = "2020-05-05T10:00:01.000Z"_ts;
+    tr_adsb_101_2.trk_nb_ = 101;
+    tr_adsb_101_2.mode_s_ = 0x000001;
+    tr_adsb_101_2.mode_3a_ = 0001;
+    tr_adsb_101_2.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_2.on_gnd_ = true;
+    tr_adsb_101_2.x_ = 50.0;
+    tr_adsb_101_2.y_ = 0.0;
+    tr_adsb_101_2.z_ = 0.0;
+    tr_adsb_101_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_adsb_101_3;
+    tr_adsb_101_3.ds_id_.sac_ = 0;
+    tr_adsb_101_3.ds_id_.sic_ = 219;
+    tr_adsb_101_3.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_3.tod_ = "2020-05-05T10:00:02.000Z"_ts;
+    tr_adsb_101_3.trk_nb_ = 101;
+    tr_adsb_101_3.mode_s_ = 0x000001;
+    tr_adsb_101_3.mode_3a_ = 0001;
+    tr_adsb_101_3.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_3.on_gnd_ = true;
+    tr_adsb_101_3.x_ = 100.0;
+    tr_adsb_101_3.y_ = 0.0;
+    tr_adsb_101_3.z_ = 0.0;
+    tr_adsb_101_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_adsb_101_4;
+    tr_adsb_101_4.ds_id_.sac_ = 0;
+    tr_adsb_101_4.ds_id_.sic_ = 219;
+    tr_adsb_101_4.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_4.tod_ = "2020-05-05T10:00:03.000Z"_ts;
+    tr_adsb_101_4.trk_nb_ = 101;
+    tr_adsb_101_4.mode_s_ = 0x000001;
+    tr_adsb_101_4.mode_3a_ = 0001;
+    tr_adsb_101_4.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_4.on_gnd_ = true;
+    tr_adsb_101_4.x_ = 150.0;
+    tr_adsb_101_4.y_ = 0.0;
+    tr_adsb_101_4.z_ = 0.0;
+    tr_adsb_101_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_adsb_101_5;
+    tr_adsb_101_5.ds_id_.sac_ = 0;
+    tr_adsb_101_5.ds_id_.sic_ = 219;
+    tr_adsb_101_5.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_5.tod_ = "2020-05-05T10:00:04.000Z"_ts;
+    tr_adsb_101_5.trk_nb_ = 101;
+    tr_adsb_101_5.mode_s_ = 0x000001;
+    tr_adsb_101_5.mode_3a_ = 0001;
+    tr_adsb_101_5.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_5.on_gnd_ = true;
+    tr_adsb_101_5.x_ = 200.0;
+    tr_adsb_101_5.y_ = 0.0;
+    tr_adsb_101_5.z_ = 0.0;
+    tr_adsb_101_5.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_adsb_101_6;
+    tr_adsb_101_6.ds_id_.sac_ = 0;
+    tr_adsb_101_6.ds_id_.sic_ = 219;
+    tr_adsb_101_6.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_6.tod_ = "2020-05-05T10:00:05.000Z"_ts;
+    tr_adsb_101_6.trk_nb_ = 101;
+    tr_adsb_101_6.mode_s_ = 0x000001;
+    tr_adsb_101_6.mode_3a_ = 0001;
+    tr_adsb_101_6.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_6.on_gnd_ = true;
+    tr_adsb_101_6.x_ = 250.0;
+    tr_adsb_101_6.y_ = 0.0;
+    tr_adsb_101_6.z_ = 0.0;
+    tr_adsb_101_6.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_adsb_101_7;
+    tr_adsb_101_7.ds_id_.sac_ = 0;
+    tr_adsb_101_7.ds_id_.sic_ = 219;
+    tr_adsb_101_7.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_7.tod_ = "2020-05-05T10:00:06.000Z"_ts;
+    tr_adsb_101_7.trk_nb_ = 101;
+    tr_adsb_101_7.mode_s_ = 0x000001;
+    tr_adsb_101_7.mode_3a_ = 0001;
+    tr_adsb_101_7.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_7.on_gnd_ = true;
+    tr_adsb_101_7.x_ = 300.0;
+    tr_adsb_101_7.y_ = 0.0;
+    tr_adsb_101_7.z_ = 0.0;
+    tr_adsb_101_7.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+
+    TargetReport tr_adsb_101_8;
+    tr_adsb_101_8.ds_id_.sac_ = 0;
+    tr_adsb_101_8.ds_id_.sic_ = 219;
+    tr_adsb_101_8.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_8.tod_ = "2020-05-05T10:00:07.000Z"_ts;
+    tr_adsb_101_8.trk_nb_ = 101;
+    tr_adsb_101_8.mode_s_ = 0x000001;
+    tr_adsb_101_8.mode_3a_ = 0001;
+    tr_adsb_101_8.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_8.on_gnd_ = true;
+    tr_adsb_101_8.x_ = 350.0;
+    tr_adsb_101_8.y_ = 0.0;
+    tr_adsb_101_8.z_ = 0.0;
+    tr_adsb_101_8.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+
+    TargetReport tr_adsb_101_9;
+    tr_adsb_101_9.ds_id_.sac_ = 0;
+    tr_adsb_101_9.ds_id_.sic_ = 219;
+    tr_adsb_101_9.sys_typ_ = SystemType::Adsb;
+    tr_adsb_101_9.tod_ = "2020-05-05T10:00:08.000Z"_ts;
+    tr_adsb_101_9.trk_nb_ = 101;
+    tr_adsb_101_9.mode_s_ = 0x000001;
+    tr_adsb_101_9.mode_3a_ = 0001;
+    tr_adsb_101_9.ident_ = QLatin1String("FOO1234 ");
+    tr_adsb_101_9.on_gnd_ = true;
+    tr_adsb_101_9.x_ = 400.0;
+    tr_adsb_101_9.y_ = 0.0;
+    tr_adsb_101_9.z_ = 0.0;
+    tr_adsb_101_9.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+
+    trk_adsb_101 << tr_adsb_101_1 << tr_adsb_101_2 << tr_adsb_101_3
+                 << tr_adsb_101_4 << tr_adsb_101_5 << tr_adsb_101_6
+                 << tr_adsb_101_7 << tr_adsb_101_8 << tr_adsb_101_9;
+
+
+    // MLAT track 201.
+    Track trk_mlat_201_1(SystemType::Mlat, 201);
+
+    TargetReport tr_mlat_201_1;
+    tr_mlat_201_1.ds_id_.sac_ = 0;
+    tr_mlat_201_1.ds_id_.sic_ = 107;
+    tr_mlat_201_1.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_1.tod_ = "2020-05-05T10:00:00.100Z"_ts;
+    tr_mlat_201_1.trk_nb_ = 201;
+    tr_mlat_201_1.mode_s_ = 0x000001;
+    tr_mlat_201_1.on_gnd_ = true;
+    tr_mlat_201_1.x_ = 0.0;
+    tr_mlat_201_1.y_ = 0.0;
+    tr_mlat_201_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_mlat_201_2;
+    tr_mlat_201_2.ds_id_.sac_ = 0;
+    tr_mlat_201_2.ds_id_.sic_ = 107;
+    tr_mlat_201_2.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_2.tod_ = "2020-05-05T10:00:01.100Z"_ts;
+    tr_mlat_201_2.trk_nb_ = 201;
+    tr_mlat_201_2.mode_s_ = 0x000001;
+    tr_mlat_201_2.on_gnd_ = true;
+    tr_mlat_201_2.x_ = 50.0;
+    tr_mlat_201_2.y_ = 0.0;
+    tr_mlat_201_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_mlat_201_3;
+    tr_mlat_201_3.ds_id_.sac_ = 0;
+    tr_mlat_201_3.ds_id_.sic_ = 107;
+    tr_mlat_201_3.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_3.tod_ = "2020-05-05T10:00:02.100Z"_ts;
+    tr_mlat_201_3.trk_nb_ = 201;
+    tr_mlat_201_3.mode_s_ = 0x000001;
+    tr_mlat_201_3.on_gnd_ = true;
+    tr_mlat_201_3.x_ = 100.0;
+    tr_mlat_201_3.y_ = 0.0;
+    tr_mlat_201_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_mlat_201_4;
+    tr_mlat_201_4.ds_id_.sac_ = 0;
+    tr_mlat_201_4.ds_id_.sic_ = 107;
+    tr_mlat_201_4.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_4.tod_ = "2020-05-05T10:00:03.100Z"_ts;
+    tr_mlat_201_4.trk_nb_ = 201;
+    tr_mlat_201_4.mode_s_ = 0x000001;
+    tr_mlat_201_4.on_gnd_ = true;
+    tr_mlat_201_4.x_ = 150.0;
+    tr_mlat_201_4.y_ = 0.0;
+    tr_mlat_201_4.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_mlat_201_5;
+    tr_mlat_201_5.ds_id_.sac_ = 0;
+    tr_mlat_201_5.ds_id_.sic_ = 107;
+    tr_mlat_201_5.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_5.tod_ = "2020-05-05T10:00:04.100Z"_ts;
+    tr_mlat_201_5.trk_nb_ = 201;
+    tr_mlat_201_5.mode_s_ = 0x000001;
+    tr_mlat_201_5.on_gnd_ = true;
+    tr_mlat_201_5.x_ = 200.0;
+    tr_mlat_201_5.y_ = 0.0;
+    tr_mlat_201_5.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_mlat_201_6;
+    tr_mlat_201_6.ds_id_.sac_ = 0;
+    tr_mlat_201_6.ds_id_.sic_ = 107;
+    tr_mlat_201_6.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_6.tod_ = "2020-05-05T10:00:05.100Z"_ts;
+    tr_mlat_201_6.trk_nb_ = 201;
+    tr_mlat_201_6.mode_s_ = 0x000001;
+    tr_mlat_201_6.on_gnd_ = true;
+    tr_mlat_201_6.x_ = 250.0;
+    tr_mlat_201_6.y_ = 0.0;
+    tr_mlat_201_6.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
+
+    TargetReport tr_mlat_201_7;
+    tr_mlat_201_7.ds_id_.sac_ = 0;
+    tr_mlat_201_7.ds_id_.sic_ = 107;
+    tr_mlat_201_7.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_7.tod_ = "2020-05-05T10:00:06.100Z"_ts;
+    tr_mlat_201_7.trk_nb_ = 201;
+    tr_mlat_201_7.mode_s_ = 0x000001;
+    tr_mlat_201_7.on_gnd_ = true;
+    tr_mlat_201_7.x_ = 300.0;
+    tr_mlat_201_7.y_ = 0.0;
+    tr_mlat_201_7.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+
+    TargetReport tr_mlat_201_8;
+    tr_mlat_201_8.ds_id_.sac_ = 0;
+    tr_mlat_201_8.ds_id_.sic_ = 107;
+    tr_mlat_201_8.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_8.tod_ = "2020-05-05T10:00:07.100Z"_ts;
+    tr_mlat_201_8.trk_nb_ = 201;
+    tr_mlat_201_8.mode_s_ = 0x000001;
+    tr_mlat_201_8.on_gnd_ = true;
+    tr_mlat_201_8.x_ = 350.0;
+    tr_mlat_201_8.y_ = 0.0;
+    tr_mlat_201_8.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+
+    TargetReport tr_mlat_201_9;
+    tr_mlat_201_9.ds_id_.sac_ = 0;
+    tr_mlat_201_9.ds_id_.sic_ = 107;
+    tr_mlat_201_9.sys_typ_ = SystemType::Mlat;
+    tr_mlat_201_9.tod_ = "2020-05-05T10:00:08.100Z"_ts;
+    tr_mlat_201_9.trk_nb_ = 201;
+    tr_mlat_201_9.mode_s_ = 0x000001;
+    tr_mlat_201_9.on_gnd_ = true;
+    tr_mlat_201_9.x_ = 400.0;
+    tr_mlat_201_9.y_ = 0.0;
+    tr_mlat_201_9.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Taxiway);
+
+    trk_mlat_201_1 << tr_mlat_201_1 << tr_mlat_201_2 << tr_mlat_201_3
+                   << tr_mlat_201_4 << tr_mlat_201_5 << tr_mlat_201_6
+                   << tr_mlat_201_7 << tr_mlat_201_8 << tr_mlat_201_9;
+
+
+    QVector<Track> tracksIn_1;
+    tracksIn_1 << trk_adsb_101 << trk_mlat_201_1;
+
+
+    Track trk_mlat_201_2 = trk_mlat_201_1;
+    for (TargetReport &tr : trk_mlat_201_2)
+    {
+        //tr.mode_3a_ = 0001;
+        tr.ident_ = QLatin1String("FOO5678 ");
+    }
+    QVector<Track> tracksIn_2;
+    tracksIn_2 << trk_adsb_101 << trk_mlat_201_2;
+
+
+    Track trk_mlat_201_3 = trk_mlat_201_1;
+    for (TargetReport &tr : trk_mlat_201_3)
+    {
+        //tr.mode_3a_ = 0001;
+        tr.ident_ = QLatin1String("FOO1234 ");
+    }
+    QVector<Track> tracksIn_3;
+    tracksIn_3 << trk_adsb_101 << trk_mlat_201_3;
+
+
+    QHash<Aerodrome::NamedArea, Counters::PfidCounter> pidCtr_1;
+
+    QHash<Aerodrome::NamedArea, Counters::PfidCounter> pidCtr_2;
+    pidCtr_2[Aerodrome::NamedArea(Aerodrome::Runway)].n_itr_ = 5;
+    pidCtr_2[Aerodrome::NamedArea(Aerodrome::Runway)].n_eitr_ = 5;
+    pidCtr_2[Aerodrome::NamedArea(Aerodrome::Taxiway)].n_itr_ = 2;
+    pidCtr_2[Aerodrome::NamedArea(Aerodrome::Taxiway)].n_eitr_ = 2;
+
+    QHash<Aerodrome::NamedArea, Counters::PfidCounter> pidCtr_3;
+    pidCtr_3[Aerodrome::NamedArea(Aerodrome::Runway)].n_itr_ = 5;
+    pidCtr_3[Aerodrome::NamedArea(Aerodrome::Runway)].n_eitr_ = 0;
+    pidCtr_3[Aerodrome::NamedArea(Aerodrome::Taxiway)].n_itr_ = 2;
+    pidCtr_3[Aerodrome::NamedArea(Aerodrome::Taxiway)].n_eitr_ = 0;
+
+    QTest::newRow("PID NO DATA") << tracksIn_1 << pidCtr_1;
+    QTest::newRow("PFID 100 %") << tracksIn_2 << pidCtr_2;
+    QTest::newRow("PFID 0 %") << tracksIn_3 << pidCtr_3;
+}
+
+void PerfEvaluatorTest::testED117PFID()
+{
+    using PfidHash = QHash<Aerodrome::NamedArea, Counters::PfidCounter>;
+
+    QFETCH(QVector<Track>, tracksIn);
+    QFETCH(PfidHash, countersOut);
+
+    PerfEvaluator perfEval;
+    for (const Track &trk : tracksIn)
+    {
+        perfEval.addData(trk);
+    }
+    perfEval.run();
+
+    QCOMPARE(perfEval.mlatPfidIdent_, countersOut);
 }
 
 QTEST_GUILESS_MAIN(PerfEvaluatorTest);
