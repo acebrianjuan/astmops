@@ -118,6 +118,7 @@ private:
 bool operator==(Counters::UrCounter lhs, Counters::UrCounter rhs);
 bool operator==(Counters::PdCounter lhs, Counters::PdCounter rhs);
 bool operator==(Counters::PidCounter lhs, Counters::PidCounter rhs);
+bool operator==(Counters::PfidCounter lhs, Counters::PfidCounter rhs);
 
 }  // namespace Counters
 
