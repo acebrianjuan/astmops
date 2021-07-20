@@ -54,7 +54,7 @@ private:
     void evalED117RPA(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117UR(const TrackCollectionSet &s);
     void evalED117PD(const TrackCollectionSet &s);
-    void evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED117PFD(const TrackCollectionSet &s);
     void evalED117PID(const TrackCollectionSet &s);
     void evalED117PFID(const TrackCollectionSet &s);
     void evalED117PLG(const Track &trk_ref, const TrackCollection &col_tst);

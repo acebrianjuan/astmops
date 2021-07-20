@@ -46,6 +46,7 @@ void PerfEvaluator::run()
         // MLAT ED-117.
         evalED117UR(s);
         evalED117PD(s);
+        evalED117PFD(s);
         evalED117PID(s);
         evalED117PFID(s);
 
@@ -74,7 +75,6 @@ void PerfEvaluator::run()
 
                     evalED117RPA(t_ref, c_tst_i);
 
-                    evalED117PFD(t_ref, c_tst_i);
                     evalED117PLG(t_ref, c_tst_i);
                 }
             }
@@ -720,38 +720,60 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
     }
 }
 
-void PerfEvaluator::evalED117PFD(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED117PFD(const TrackCollectionSet &s)
 {
-    QVector<Track> trk_ref_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+    TrackCollection col_ref = s.refTrackCol();
 
-    for (const Track &trk_ref_i : trk_ref_vec)
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        Aerodrome::NamedArea narea = trk_ref_i.begin()->narea_;
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
 
-        for (const Track &trk_tst : col_tst)
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Mlat);
+
+        if (!col_tst_opt.has_value())
         {
-            if (!haveTimeIntersection(trk_tst, trk_ref_i))
+            return;
+        }
+
+        TrackCollection col_tst = col_tst_opt.value();
+
+        // Iterate through each reference sub-track.
+        for (const Track &sub_trk_ref : sub_trk_vec)
+        {
+            if (sub_trk_ref.duration() < 1)
             {
-                return;
+                continue;
             }
 
-            //Track trk_tst_i = intersect(trk_tst, trk_ref_i).value();
+            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            // Interpolate the REF track at the times of the TST track plots.
-            const Track t_r = resample(trk_ref_i, trk_tst.timestamps());
-
-            // Calculate Euclidean distance between TST-REF pairs.
-            QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.data(), trk_tst.data());
-
-            for (const QPair<TargetReport, double> &p : dists)
+            // Iterate through each track in the test data collection.
+            for (const Track &trk_tst : col_tst)
             {
-                double dist = p.second;
-
-                if (dist >= 50.0)
+                if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                 {
-                    ++mlatPfd_[narea].n_ftr_;
+                    continue;
                 }
-                ++mlatPfd_[narea].n_tr_;
+
+                // Interpolate the REF track at the times of the TST track plots.
+                const Track sub_trk_ref_i = resample(sub_trk_ref, trk_tst.timestamps());
+
+                // Calculate Euclidean distance between TST-REF pairs.
+                QVector<QPair<TargetReport, double>> dists = euclideanDistance(sub_trk_ref_i.data(), trk_tst.data());
+
+                for (const QPair<TargetReport, double> &p : dists)
+                {
+                    double dist = p.second;
+
+                    if (dist >= 50.0)
+                    {
+                        ++mlatPfd_[narea].n_ftr_;
+                    }
+                    ++mlatPfd_[narea].n_tr_;
+                }
             }
         }
     }
