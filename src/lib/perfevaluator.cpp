@@ -25,19 +25,19 @@ PerfEvaluator::PerfEvaluator()
 
 void PerfEvaluator::addData(const Track &t)
 {
-    trkAssoc.addData(t);
+    trkAssoc_.addData(t);
 }
 
 void PerfEvaluator::run()
 {
     // Run track association.
-    trkAssoc.run();
+    trkAssoc_.run();
 
     // Set PIC threshold value.
     computePicThreshold(95);
 
     // Iterate through each target set.
-    for (const TrackCollectionSet &s : qAsConst(trkAssoc.sets()))
+    for (const TrackCollectionSet &s : qAsConst(trkAssoc_.sets()))
     {
         // SMR ED-116.
         evalED116UR(s);
@@ -200,7 +200,7 @@ void PerfEvaluator::printPosAccResultsMlat() const
 void PerfEvaluator::computePicThreshold(double prctl)
 {
     QVector<double> vec;
-    for (const TrackCollectionSet &s : qAsConst(trkAssoc.sets()))
+    for (const TrackCollectionSet &s : qAsConst(trkAssoc_.sets()))
     {
         for (const Track &t : s.refTrackCol())
         {
@@ -217,7 +217,20 @@ void PerfEvaluator::computePicThreshold(double prctl)
         }
     }
 
-    pic_p95 = percentile(vec, prctl);
+    if (vec.isEmpty())
+    {
+        // qWarning() or qFatal();
+        return;
+    }
+
+    double pctl = percentile(vec, prctl);
+    if (qIsNaN(pctl))
+    {
+        // qWarning() or qFatal();
+        return;
+    }
+
+    pic_p95_ = pctl;
 }
 
 QVector<QPair<TargetReport, double>> PerfEvaluator::euclideanDistance(const TgtRepMap &ref, const TgtRepMap &tst) const
@@ -289,20 +302,10 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &co
 
         // Only keep target reports with MOPS version 2 and PIC above the
         // 95th percentile threshold.
-        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95);
-
-        // Extract TST track portion that matches in time with the
-        // reference track.
-        //Track t_t = intersect(t_tst, t_r).value();
+        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95_);
 
         // Interpolate the TST track at the times of the REF track points.
         Track t_t = resample(trk_tst, t_r.timestamps());
-
-        // TST and REF trajectories should match in size.
-        //Q_ASSERT(t_t.size() == t_r.size());
-
-        // TST and REF pairs should have exact same times.
-        //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
 
         // Calculate Euclidean distance between TST-REF pairs.
         QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
@@ -318,7 +321,6 @@ void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &co
 
 void PerfEvaluator::evalED116UR(const TrackCollectionSet &s)
 {
-    //ModeS mode_s = s.mode_s();
     TrackCollection col_ref = s.refTrackCol();
 
     // Iterate through each track in the reference data collection.
@@ -503,20 +505,10 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &co
 
         // Only keep target reports with MOPS version 2 and PIC above the
         // 95th percentile threshold.
-        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95);
-
-        // Extract TST track portion that matches in time with the
-        // reference track.
-        //Track t_t = intersect(t_tst, t_r).value();
+        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95_);
 
         // Interpolate the TST track at the times of the REF track points.
         Track t_t = resample(trk_tst, t_r.timestamps());
-
-        // TST and REF trajectories should match in size.
-        //Q_ASSERT(t_t.size() == t_r.size());
-
-        // TST and REF pairs should have exact same times.
-        //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
 
         // Calculate Euclidean distance between TST-REF pairs.
         QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
@@ -532,7 +524,6 @@ void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &co
 
 void PerfEvaluator::evalED117UR(const TrackCollectionSet &s)
 {
-    //ModeS mode_s = s.mode_s();
     TrackCollection col_ref = s.refTrackCol();
 
     // Iterate through each track in the reference data collection.

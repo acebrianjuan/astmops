@@ -50,7 +50,6 @@ private:
     void evalED116PD(const TrackCollectionSet &s);
     void evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst);
 
-
     void evalED117RPA(const Track &trk_ref, const TrackCollection &col_tst);
     void evalED117UR(const TrackCollectionSet &s);
     void evalED117PD(const TrackCollectionSet &s);
@@ -59,9 +58,9 @@ private:
     void evalED117PFID(const TrackCollectionSet &s);
     void evalED117PLG(const TrackCollectionSet &s);
 
-    TrackAssociator trkAssoc;
+    TrackAssociator trkAssoc_;
 
-    quint8 pic_p95 = 0;
+    quint8 pic_p95_ = 0;
 
     AreaHash<QVector<double>> smrRpaErrors_;
     AreaHash<QVector<double>> mlatRpaErrors_;
