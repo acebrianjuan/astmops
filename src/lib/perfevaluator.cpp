@@ -40,6 +40,7 @@ void PerfEvaluator::run()
     for (const TrackCollectionSet &s : qAsConst(trkAssoc_.sets()))
     {
         // SMR ED-116.
+        evalED116RPA(s);
         evalED116UR(s);
         evalED116PD(s);
 
@@ -67,8 +68,6 @@ void PerfEvaluator::run()
                 if (c_tst_i.system_type() == SystemType::Smr)
                 {
                     // SMR ED-116.
-
-                    evalED116RPA(t_ref, c_tst_i);
                 }
                 else if (c_tst_i.system_type() == SystemType::Mlat)
                 {
@@ -290,31 +289,59 @@ Track PerfEvaluator::filterTrackByQuality(const Track &trk, quint8 ver, quint8 p
     return trk_out;
 }
 
-void PerfEvaluator::evalED116RPA(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED116RPA(const TrackCollectionSet &s)
 {
-    // Iterate through each test track in the collection.
-    for (const Track &trk_tst : col_tst)
+    TrackCollection col_ref = s.refTrackCol();
+
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (!haveSpaceTimeIntersection(trk_tst, trk_ref))
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Smr);
+
+        if (col_tst_opt.has_value())
         {
-            return;
-        }
+            TrackCollection col_tst = col_tst_opt.value();
 
-        // Only keep target reports with MOPS version 2 and PIC above the
-        // 95th percentile threshold.
-        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95_);
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
 
-        // Interpolate the TST track at the times of the REF track points.
-        Track t_t = resample(trk_tst, t_r.timestamps());
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-        // Calculate Euclidean distance between TST-REF pairs.
-        QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        return;
+                    }
 
-        for (const QPair<TargetReport, double> &p : dists)
-        {
-            Aerodrome::NamedArea narea = p.first.narea_;
-            double dist = p.second;
-            smrRpaErrors_[narea] << dist;
+                    // Only keep target reports with MOPS version 2 and PIC above the
+                    // 95th percentile threshold.
+                    Track t_r = filterTrackByQuality(sub_trk_ref, 2, pic_p95_);
+
+                    // Interpolate the TST track at the times of the REF track points.
+                    Track t_t = resample(trk_tst, t_r.timestamps());
+
+                    // Calculate Euclidean distance between TST-REF pairs.
+                    QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
+
+                    for (const QPair<TargetReport, double> &p : dists)
+                    {
+                        Aerodrome::NamedArea narea = p.first.narea_;
+                        double dist = p.second;
+                        smrRpaErrors_[narea] << dist;
+                    }
+                }
+            }
         }
     }
 }

@@ -54,4 +54,6 @@ bool operator==(const AreaHash<T> &lhs, const AreaHash<T> &rhs)
     return lhs_h == rhs_h;
 }
 
+Q_DECLARE_METATYPE(AreaHash<QVector<double>>);
+
 #endif  // ASTMOPS_AREAHASH_H

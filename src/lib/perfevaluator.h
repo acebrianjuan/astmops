@@ -45,7 +45,7 @@ private:
     QVector<QPair<TargetReport, double>> euclideanDistance(const TgtRepMap &ref, const TgtRepMap &tst) const;
     Track filterTrackByQuality(const Track &trk, quint8 ver, quint8 pic) const;
 
-    void evalED116RPA(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED116RPA(const TrackCollectionSet &s);
     void evalED116UR(const TrackCollectionSet &s);
     void evalED116PD(const TrackCollectionSet &s);
     void evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst);
