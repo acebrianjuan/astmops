@@ -45,154 +45,13 @@ void PerfEvaluator::run()
         evalED116PD(s);
 
         // MLAT ED-117.
+        evalED117RPA(s);
         evalED117UR(s);
         evalED117PD(s);
         evalED117PFD(s);
         evalED117PID(s);
         evalED117PFID(s);
         evalED117PLG(s);
-
-        //ModeS mode_s = s.mode_s();
-        TrackCollection c_ref = s.refTrackCol();
-
-        // Iterate through each track in the reference collection.
-        for (const Track &t_ref : c_ref)
-        {
-            TrackNum ref_tn = t_ref.track_number();
-            QVector<TrackCollection> c_tst = s.matchesForRefTrack(ref_tn);
-
-            // Iterate through each test collection that matches with the
-            // reference track.
-            for (const TrackCollection &c_tst_i : c_tst)
-            {
-                if (c_tst_i.system_type() == SystemType::Smr)
-                {
-                    // SMR ED-116.
-                }
-                else if (c_tst_i.system_type() == SystemType::Mlat)
-                {
-                    // MLAT ED-117.
-
-                    evalED117RPA(t_ref, c_tst_i);
-                }
-            }
-        }
-    }
-}
-
-void PerfEvaluator::printPosAccResultsSmr() const
-{
-    QVector<Aerodrome::Area> areas;
-    areas << Aerodrome::Area::All;
-
-    auto printStats = [](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
-        qDebug() << it.key().area_ << it.key().name_
-                 << "\t"
-                 << "P95:"
-                 << "\t" << percentile(errors, 95) << "m"
-                 << "\t"
-                 << "P99:"
-                 << "\t" << percentile(errors, 99) << "m"
-                 << "\t"
-                 << "Mean:"
-                 << "\t" << mean(errors) << "m"
-                 << "\t"
-                 << "StdDev:"
-                 << "\t" << stdDev(errors) << "m"
-                 << "\t"
-                 << "N:"
-                 << "\t" << errors.size();
-    };
-
-    qDebug() << "--------------- SMR ---------------";
-    for (const Aerodrome::Area area : qAsConst(areas))
-    {
-        const auto subAreas = smrRpaErrors_.findByArea(area);
-
-        QVector<double> errorsTotal;
-        for (const auto &it : subAreas)
-        {
-            QVector<double> errors = it.value();
-            errorsTotal.append(errors);
-
-            printStats(it, errors);
-        }
-
-        qDebug() << area
-                 << "\t"
-                 << "P95:"
-                 << "\t" << percentile(errorsTotal, 95) << "m"
-                 << "\t"
-                 << "P99:"
-                 << "\t" << percentile(errorsTotal, 99) << "m"
-                 << "\t"
-                 << "Mean:"
-                 << "\t" << mean(errorsTotal) << "m"
-                 << "\t"
-                 << "StdDev:"
-                 << "\t" << stdDev(errorsTotal) << "m"
-                 << "\t"
-                 << "N:"
-                 << "\t" << errorsTotal.size();
-    }
-}
-
-void PerfEvaluator::printPosAccResultsMlat() const
-{
-    QVector<Aerodrome::Area> areas;
-    areas << Aerodrome::Area::Manoeuvering
-          << Aerodrome::Area::Apron
-          << Aerodrome::Area::Airborne;
-
-    auto printStats = [](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
-        qDebug() << it.key().area_ << it.key().name_
-                 << "\t"
-                 << "P95:"
-                 << "\t" << percentile(errors, 95) << "m"
-                 << "\t"
-                 << "P99:"
-                 << "\t" << percentile(errors, 99) << "m"
-                 << "\t"
-                 << "Mean:"
-                 << "\t" << mean(errors) << "m"
-                 << "\t"
-                 << "StdDev:"
-                 << "\t" << stdDev(errors) << "m"
-                 << "\t"
-                 << "N:"
-                 << "\t" << errors.size();
-    };
-
-    qDebug() << "--------------- MLAT ---------------";
-    for (const Aerodrome::Area area : qAsConst(areas))
-    {
-        const auto subAreas = mlatRpaErrors_.findByArea(area);
-
-        QVector<double> errorsTotal;
-        for (const auto &it : subAreas)
-        {
-            QVector<double> errors = it.value();
-            errorsTotal.append(errors);
-
-            printStats(it, errors);
-        }
-
-        qDebug() << area
-                 << "\t"
-                 << "P95:"
-                 << "\t" << percentile(errorsTotal, 95) << "m"
-                 << "\t"
-                 << "P99:"
-                 << "\t" << percentile(errorsTotal, 99) << "m"
-                 << "\t"
-                 << "Mean:"
-                 << "\t" << mean(errorsTotal) << "m"
-                 << "\t"
-                 << "StdDev:"
-                 << "\t" << stdDev(errorsTotal) << "m"
-                 << "\t"
-                 << "N:"
-                 << "\t" << errorsTotal.size();
     }
 }
 
@@ -520,31 +379,59 @@ void PerfEvaluator::evalED116PFD(const Track &trk_ref, const TrackCollection &co
     Q_UNUSED(col_tst);
 }
 
-void PerfEvaluator::evalED117RPA(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED117RPA(const TrackCollectionSet &s)
 {
-    // Iterate through each test track in the collection.
-    for (const Track &trk_tst : col_tst)
+    TrackCollection col_ref = s.refTrackCol();
+
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (!haveSpaceTimeIntersection(trk_tst, trk_ref))
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Mlat);
+
+        if (col_tst_opt.has_value())
         {
-            return;
-        }
+            TrackCollection col_tst = col_tst_opt.value();
 
-        // Only keep target reports with MOPS version 2 and PIC above the
-        // 95th percentile threshold.
-        Track t_r = filterTrackByQuality(trk_ref, 2, pic_p95_);
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
 
-        // Interpolate the TST track at the times of the REF track points.
-        Track t_t = resample(trk_tst, t_r.timestamps());
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-        // Calculate Euclidean distance between TST-REF pairs.
-        QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        return;
+                    }
 
-        for (const QPair<TargetReport, double> &p : dists)
-        {
-            Aerodrome::NamedArea narea = p.first.narea_;
-            double dist = p.second;
-            mlatRpaErrors_[narea] << dist;
+                    // Only keep target reports with MOPS version 2 and PIC above the
+                    // 95th percentile threshold.
+                    Track t_r = filterTrackByQuality(sub_trk_ref, 2, pic_p95_);
+
+                    // Interpolate the TST track at the times of the REF track points.
+                    Track t_t = resample(trk_tst, t_r.timestamps());
+
+                    // Calculate Euclidean distance between TST-REF pairs.
+                    QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
+
+                    for (const QPair<TargetReport, double> &p : dists)
+                    {
+                        Aerodrome::NamedArea narea = p.first.narea_;
+                        double dist = p.second;
+                        mlatRpaErrors_[narea] << dist;
+                    }
+                }
+            }
         }
     }
 }
