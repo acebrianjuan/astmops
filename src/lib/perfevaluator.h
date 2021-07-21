@@ -57,7 +57,7 @@ private:
     void evalED117PFD(const TrackCollectionSet &s);
     void evalED117PID(const TrackCollectionSet &s);
     void evalED117PFID(const TrackCollectionSet &s);
-    void evalED117PLG(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED117PLG(const TrackCollectionSet &s);
 
     TrackAssociator trkAssoc;
 

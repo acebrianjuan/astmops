@@ -120,6 +120,7 @@ bool operator==(Counters::PdCounter lhs, Counters::PdCounter rhs);
 bool operator==(Counters::PfdCounter lhs, Counters::PfdCounter rhs);
 bool operator==(Counters::PidCounter lhs, Counters::PidCounter rhs);
 bool operator==(Counters::PfidCounter lhs, Counters::PfidCounter rhs);
+bool operator==(Counters::PlgCounter lhs, Counters::PlgCounter rhs);
 
 }  // namespace Counters
 

@@ -49,6 +49,7 @@ void PerfEvaluator::run()
         evalED117PFD(s);
         evalED117PID(s);
         evalED117PFID(s);
+        evalED117PLG(s);
 
         //ModeS mode_s = s.mode_s();
         TrackCollection c_ref = s.refTrackCol();
@@ -74,8 +75,6 @@ void PerfEvaluator::run()
                     // MLAT ED-117.
 
                     evalED117RPA(t_ref, c_tst_i);
-
-                    evalED117PLG(t_ref, c_tst_i);
                 }
             }
         }
@@ -1083,62 +1082,79 @@ void PerfEvaluator::evalED117PFID(const TrackCollectionSet &s)
     }
 }
 
-void PerfEvaluator::evalED117PLG(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED117PLG(const TrackCollectionSet &s)
 {
-    QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+    TrackCollection col_ref = s.refTrackCol();
 
-    // Iterate through each REF sub track.
-    for (const Track &sub_trk_ref : sub_trk_vec)
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
     {
-        if (sub_trk_ref.size() < 2)
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Mlat);
+
+        if (!col_tst_opt.has_value())
         {
-            continue;
+            return;
         }
 
-        Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+        TrackCollection col_tst = col_tst_opt.value();
 
-        double threshold = 3.0;
-        if (narea.area_ == Aerodrome::Area::Stand)
+        // Iterate through each reference sub-track.
+        for (const Track &sub_trk_ref : sub_trk_vec)
         {
-            threshold = 15.0;
-        }
-
-        QDateTime last_tod;
-        bool first = true;
-
-        // Iterate through each TST track in the collection.
-        for (const Track &trk_tst : col_tst)
-        {
-            if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+            if (sub_trk_ref.duration() < 1)
             {
-                return;
+                continue;
             }
 
-            // Extract TST sub track that matches in time with the REF sub track.
-            Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+            Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
-            // Iterate through each target report in the TST sub track.
-            for (const TargetReport &tr : sub_trk_tst)
+            double threshold = 3.0;
+            if (narea.area_ == Aerodrome::Area::Stand)
             {
-                QDateTime new_tod = tr.tod_;
+                threshold = 15.0;
+            }
 
-                if (first)
+            QDateTime last_tod;
+            bool first = true;
+
+            // Iterate through each track in the test data collection.
+            for (const Track &trk_tst : col_tst)
+            {
+                if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                 {
+                    return;
+                }
+
+                // Extract TST sub track that matches in time with the REF sub track.
+                Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                // Iterate through each target report in the TST sub track.
+                for (const TargetReport &tr : sub_trk_tst)
+                {
+                    QDateTime new_tod = tr.tod_;
+
+                    if (first)
+                    {
+                        last_tod = new_tod;
+                        ++mlatPlg_[narea].n_tr_;
+
+                        first = false;
+                        continue;
+                    }
+
+                    double tdiff = last_tod.msecsTo(new_tod) / 1000.0;
+                    if (tdiff >= threshold)
+                    {
+                        ++mlatPlg_[narea].n_g_;
+                    }
+
                     last_tod = new_tod;
                     ++mlatPlg_[narea].n_tr_;
-
-                    first = false;
-                    continue;
                 }
-
-                double tdiff = last_tod.msecsTo(new_tod) / 1000.0;
-                if (tdiff >= threshold)
-                {
-                    ++mlatPlg_[narea].n_g_;
-                }
-
-                last_tod = new_tod;
-                ++mlatPlg_[narea].n_tr_;
             }
         }
     }
