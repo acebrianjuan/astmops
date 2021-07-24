@@ -29,6 +29,7 @@ add_library(lib
     track.cpp
     trackassociator.cpp
     trackextractor.cpp
+    trafficperiod.cpp
     )
 
 target_include_directories(lib PUBLIC .)
