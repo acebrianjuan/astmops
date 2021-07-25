@@ -32,7 +32,7 @@ class TrafficPeriod
 public:
     TrafficPeriod() = default;
     TrafficPeriod(const QDateTime &begin, const QDateTime &end);
-    TrafficPeriod(const QDateTime &begin, const QDateTime &end, QSet<ModeS> s);
+    TrafficPeriod(const QDateTime &begin, const QDateTime &end, const QSet<ModeS> &s);
     TrafficPeriod(const Track &trk);
 
     TrafficPeriod &operator<<(ModeS addr);

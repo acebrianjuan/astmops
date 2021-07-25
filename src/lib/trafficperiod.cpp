@@ -44,7 +44,7 @@ TrafficPeriod::TrafficPeriod(const QDateTime &begin, const QDateTime &end)
     }
 }
 
-TrafficPeriod::TrafficPeriod(const QDateTime &begin, const QDateTime &end, QSet<ModeS> s)
+TrafficPeriod::TrafficPeriod(const QDateTime &begin, const QDateTime &end, const QSet<ModeS> &s)
     : traffic_(s)
 {
     if (begin.isValid() && end.isValid() && begin < end)
