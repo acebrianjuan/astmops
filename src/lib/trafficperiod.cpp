@@ -316,11 +316,95 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
         // Simply add the traffic contents of the new period to the old one.
         oldtp << newtp.traffic();
     }
-    else if (oldtp < newtp)
+    else if (oldtp.begin() == newtp.begin())
+    {
+        if (newtp.end() < oldtp.end())
+        {
+            // CASE 1: Old period and new period start at the same time.
+            //         New period ends before old period.
+
+            // Create intersection period.
+            TrafficPeriod itp(newtp.begin(), newtp.end());
+            itp << oldtp.traffic() << newtp.traffic();
+
+            // Shrink old period from the front to match the end of the
+            // intersection period.
+            oldtp.shrinkFront(itp.end());
+
+            if (itp.isValid())
+            {
+                // Insert intersection period.
+                *this << itp;
+            }
+        }
+        else
+        {
+            // CASE 2: Old period and new period start at the same time.
+            //         New period ends after old period.
+
+            // Add the traffic contents of the new period to the old one.
+            oldtp << newtp.traffic();
+
+            // Create remainder of the new period by copying the new period
+            // and shrinking it from the front to match the end of the
+            // intersection period.
+            TrafficPeriod rnewtp(newtp);
+            rnewtp.shrinkFront(oldtp.end());
+
+            if (rnewtp.isValid())
+            {
+                // Insert remainder of the new period.
+                *this << rnewtp;
+            }
+        }
+    }
+    else if (oldtp.end() == newtp.end())
+    {
+        if (oldtp.begin() < newtp.begin())
+        {
+            // CASE 3: Old period and new period end at the same time.
+            //         New period starts after old period.
+
+            // Create intersection period.
+            TrafficPeriod itp(newtp.begin(), newtp.end());
+            itp << oldtp.traffic() << newtp.traffic();
+
+            // Shrink old period from the back to match the beginning of the
+            // intersection period.
+            oldtp.shrinkBack(itp.begin());
+
+            if (itp.isValid())
+            {
+                // Insert intersection period.
+                *this << itp;
+            }
+        }
+        else
+        {
+            // CASE 4: Old period and new period end at the same time.
+            //         New period starts before old period.
+
+            // Add the traffic contents of the new period to the old one.
+            oldtp << newtp.traffic();
+
+            // Create remainder of the new period by copying the new period
+            // and shrinking it from the back to match the beginning of the
+            // intersection period.
+            TrafficPeriod rnewtp(newtp);
+            rnewtp.shrinkBack(oldtp.begin());
+
+            if (rnewtp.isValid())
+            {
+                // Insert remainder of the new period.
+                *this << rnewtp;
+            }
+        }
+    }
+    else if (oldtp.begin() < newtp.begin())
     {
         if (newtp.end() > oldtp.end())
         {
-            // CASE 1: Old period starts before new period.
+            // CASE 5: Old period starts before new period.
             //         New period ends after old period.
 
             // Create intersection period.
@@ -343,7 +427,7 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
         }
         else
         {
-            // CASE 2: Old period starts before and ends after new period.
+            // CASE 6: Old period starts before and ends after new period.
 
             // Create intersection period by copying the new period and adding
             // the traffic contents of the old period.
@@ -367,11 +451,11 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             }
         }
     }
-    else
+    else if (newtp.begin() < oldtp.begin())
     {
         if (newtp.end() < oldtp.end())
         {
-            // CASE 3: New period starts before old period.
+            // CASE 7: New period starts before old period.
             //         Old period ends after new period.
 
             // Create intersection period.
@@ -394,7 +478,7 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
         }
         else
         {
-            // CASE 4: New period starts before and ends after old period.
+            // CASE 8: New period starts before and ends after old period.
 
             // Add the traffic contents of the new period to the old one.
             oldtp << newtp.traffic();
@@ -415,6 +499,11 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
                 *this << newtp << rnewtp;
             }
         }
+    }
+    else
+    {
+        // This should not happen.
+        // qWarning();
     }
 }
 
