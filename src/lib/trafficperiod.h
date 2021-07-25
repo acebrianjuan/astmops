@@ -48,6 +48,7 @@ public:
     bool isValid() const;
     bool coversTimestamp(const QDateTime &dt) const;
     bool overlaps(const TrafficPeriod &other) const;
+    bool hasTarget(ModeS addr);
     QSet<ModeS> traffic() const;
 
 private:

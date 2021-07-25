@@ -140,6 +140,11 @@ bool TrafficPeriod::overlaps(const TrafficPeriod &other) const
            other.begin() < end_;
 }
 
+bool TrafficPeriod::hasTarget(ModeS addr)
+{
+    return traffic_.contains(addr);
+}
+
 QSet<ModeS> TrafficPeriod::traffic() const
 {
     return traffic_;
