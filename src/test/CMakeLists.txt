@@ -20,3 +20,5 @@ add_subdirectory(targetreportextractortest)
 add_subdirectory(trackassociatortest)
 add_subdirectory(trackextractortest)
 add_subdirectory(tracktest)
+add_subdirectory(trafficperiodtest)
+
