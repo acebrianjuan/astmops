@@ -26,6 +26,7 @@
 #include "functions.h"
 #include "track.h"
 #include "trackassociator.h"
+#include "trafficperiod.h"
 
 class PerfEvaluator
 {
@@ -45,7 +46,7 @@ private:
     void evalED116RPA(const TrackCollectionSet &s);
     void evalED116UR(const TrackCollectionSet &s);
     void evalED116PD(const TrackCollectionSet &s);
-    void evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst);
+    void evalED116PFD(const TrackCollectionSet &s);
 
     void evalED117RPA(const TrackCollectionSet &s);
     void evalED117UR(const TrackCollectionSet &s);
@@ -59,6 +60,8 @@ private:
 
     quint8 pic_p95_ = 0;
 
+    AreaHash<TrafficPeriodCollection> trafficPeriods_;
+
     AreaHash<QVector<double>> smrRpaErrors_;
     AreaHash<QVector<double>> mlatRpaErrors_;
 
@@ -68,7 +71,7 @@ private:
     AreaHash<Counters::PdCounter> smrPd_;
     AreaHash<Counters::PdCounter> mlatPd_;
 
-    Counters::PfdCounter2 smrPfd_;
+    AreaHash<Counters::PfdCounter2> smrPfd_;
     AreaHash<Counters::PfdCounter> mlatPfd_;
 
     AreaHash<Counters::PidCounter> mlatPidIdent_;

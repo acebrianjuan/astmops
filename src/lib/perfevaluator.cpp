@@ -43,6 +43,7 @@ void PerfEvaluator::run()
         evalED116RPA(s);
         evalED116UR(s);
         evalED116PD(s);
+        evalED116PFD(s);
 
         // MLAT ED-117.
         evalED117RPA(s);
@@ -373,10 +374,73 @@ void PerfEvaluator::evalED116PD(const TrackCollectionSet &s)
     }
 }
 
-void PerfEvaluator::evalED116PFD(const Track &trk_ref, const TrackCollection &col_tst)
+void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
 {
-    Q_UNUSED(trk_ref);
-    Q_UNUSED(col_tst);
+    TrackCollection col_ref = s.refTrackCol();
+    double freq = 1.0;
+
+    // Iterate through each track in the reference data collection.
+    for (const Track &trk_ref : col_ref)
+    {
+        TrackNum ref_tn = trk_ref.track_number();
+        QVector<Track> sub_trk_vec = splitTrackByArea(trk_ref, TrackSplitMode::SplitByNamedArea);
+
+        // Get collection of test tracks that match with the reference track.
+        std::optional<TrackCollection> col_tst_opt = s.matchesForRefTrackAndSystem(ref_tn, SystemType::Smr);
+
+        if (col_tst_opt.has_value())
+        {
+            TrackCollection col_tst = col_tst_opt.value();
+
+            // Iterate through each reference sub-track.
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
+
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+                trafficPeriods_[narea] << sub_trk_ref;
+                smrPfd_[narea].n_u_ = trafficPeriods_[narea].expectedUpdates(freq);
+                smrPfd_[narea].n_etr_ = trafficPeriods_[narea].expectedTgtReps(freq);
+
+                // Iterate through each track in the test data collection.
+                for (const Track &trk_tst : col_tst)
+                {
+                    if (!haveTimeIntersection(trk_tst, sub_trk_ref))
+                    {
+                        return;
+                    }
+
+                    // Extract TST track portion that matches in time with the
+                    // REF track.
+                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+
+                    smrPfd_[narea].n_tr_ += sub_trk_tst.size();
+                }
+            }
+        }
+        /*
+        else
+        {
+            for (const Track &sub_trk_ref : sub_trk_vec)
+            {
+                if (sub_trk_ref.duration() < 1)
+                {
+                    continue;
+                }
+
+                Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
+
+                trafficPeriods_[narea] << sub_trk_ref;
+                smrPfd_[narea].n_u_ = trafficPeriods_[narea].expectedUpdates(freq);
+                smrPfd_[narea].n_etr_ = trafficPeriods_[narea].expectedTgtReps(freq);
+            }
+        }
+        */
+    }
 }
 
 void PerfEvaluator::evalED117RPA(const TrackCollectionSet &s)
