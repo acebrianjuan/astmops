@@ -182,7 +182,7 @@ void PerfEvaluator::evalED116RPA(const TrackCollectionSet &s)
                 {
                     if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                     {
-                        return;
+                        continue;
                     }
 
                     // Only keep target reports with MOPS version 2 and PIC above the
@@ -320,7 +320,7 @@ void PerfEvaluator::evalED116PD(const TrackCollectionSet &s)
                 {
                     if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                     {
-                        return;
+                        continue;
                     }
 
                     // Extract TST track portion that matches in time with the
@@ -412,7 +412,7 @@ void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
                 {
                     if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                     {
-                        return;
+                        continue;
                     }
 
                     // Extract TST track portion that matches in time with the
@@ -476,7 +476,7 @@ void PerfEvaluator::evalED117RPA(const TrackCollectionSet &s)
                 {
                     if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                     {
-                        return;
+                        continue;
                     }
 
                     // Only keep target reports with MOPS version 2 and PIC above the
@@ -633,7 +633,7 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
                 {
                     if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                     {
-                        return;
+                        continue;
                     }
 
                     // Extract TST track portion that matches in time with the
@@ -1096,7 +1096,7 @@ void PerfEvaluator::evalED117PLG(const TrackCollectionSet &s)
             {
                 if (!haveTimeIntersection(trk_tst, sub_trk_ref))
                 {
-                    return;
+                    continue;
                 }
 
                 // Extract TST sub track that matches in time with the REF sub track.
