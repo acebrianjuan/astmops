@@ -65,7 +65,8 @@ void PerfEvaluator::computePicThreshold(double prctl)
         {
             for (const TargetReport &tr : t)
             {
-                if (tr.ver_.has_value() && tr.pic_.has_value())
+                if (tr.narea_.area_ != Aerodrome::Area::None &&
+                    tr.ver_.has_value() && tr.pic_.has_value())
                 {
                     if (tr.ver_ == 2)
                     {
