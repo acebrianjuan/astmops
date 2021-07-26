@@ -42,9 +42,12 @@ public:
     void shrinkFront(const QDateTime &dt);
     void shrinkBack(const QDateTime &dt);
 
-    QDateTime begin() const;
-    QDateTime end() const;
+    QDateTime beginTimestamp() const;
+    QDateTime endTimestamp() const;
     double duration() const;
+    quint32 trafficCount() const;
+    quint32 expectedUpdates(double freq = 1.0) const;
+    quint32 expectedTgtReps(double freq = 1.0) const;
     bool isValid() const;
     bool coversTimestamp(const QDateTime &dt) const;
     bool overlaps(const TrafficPeriod &other) const;
@@ -52,8 +55,8 @@ public:
     QSet<ModeS> traffic() const;
 
 private:
-    QDateTime begin_;
-    QDateTime end_;
+    QDateTime beginTimestamp_;
+    QDateTime endTimestamp_;
 
     QSet<ModeS> traffic_;
 };
@@ -82,6 +85,9 @@ public:
     QVector<TrafficPeriod>::const_iterator begin() const { return periods_.constBegin(); }
     QVector<TrafficPeriod>::const_iterator end() const { return periods_.constEnd(); }
 
+    double duration() const;
+    quint32 expectedUpdates(double freq = 1.0) const;
+    quint32 expectedTgtReps(double freq = 1.0) const;
     bool coversTimestamp(const QDateTime &dt) const;
     bool overlaps(const TrafficPeriod &tp) const;
     bool isEmpty() const;

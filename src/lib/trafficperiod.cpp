@@ -28,8 +28,8 @@ TrafficPeriod::TrafficPeriod(const Track &trk)
         trk.endTimestamp().isValid() &&
         trk.mode_s().has_value())
     {
-        begin_ = trk.beginTimestamp();
-        end_ = trk.endTimestamp();
+        beginTimestamp_ = trk.beginTimestamp();
+        endTimestamp_ = trk.endTimestamp();
 
         traffic_ << trk.mode_s().value();
     }
@@ -39,8 +39,8 @@ TrafficPeriod::TrafficPeriod(const QDateTime &begin, const QDateTime &end)
 {
     if (begin.isValid() && end.isValid() && begin < end)
     {
-        begin_ = begin;
-        end_ = end;
+        beginTimestamp_ = begin;
+        endTimestamp_ = end;
     }
 }
 
@@ -49,8 +49,8 @@ TrafficPeriod::TrafficPeriod(const QDateTime &begin, const QDateTime &end, const
 {
     if (begin.isValid() && end.isValid() && begin < end)
     {
-        begin_ = begin;
-        end_ = end;
+        beginTimestamp_ = begin;
+        endTimestamp_ = end;
     }
 }
 
@@ -83,40 +83,55 @@ TrafficPeriod &TrafficPeriod::operator<<(const QSet<ModeS> &l)
 
 void TrafficPeriod::shrinkFront(const QDateTime &dt)
 {
-    if (begin_.isValid() && end_.isValid() && dt.isValid() &&
-        dt > begin_ && dt < end_)
+    if (beginTimestamp_.isValid() && endTimestamp_.isValid() && dt.isValid() &&
+        dt > beginTimestamp_ && dt < endTimestamp_)
     {
-        begin_ = dt;
+        beginTimestamp_ = dt;
     }
 }
 
 void TrafficPeriod::shrinkBack(const QDateTime &dt)
 {
-    if (begin_.isValid() && end_.isValid() && dt.isValid() &&
-        dt > begin_ && dt < end_)
+    if (beginTimestamp_.isValid() && endTimestamp_.isValid() && dt.isValid() &&
+        dt > beginTimestamp_ && dt < endTimestamp_)
     {
-        end_ = dt;
+        endTimestamp_ = dt;
     }
 }
 
-QDateTime TrafficPeriod::begin() const
+QDateTime TrafficPeriod::beginTimestamp() const
 {
-    return begin_;
+    return beginTimestamp_;
 }
 
-QDateTime TrafficPeriod::end() const
+QDateTime TrafficPeriod::endTimestamp() const
 {
-    return end_;
+    return endTimestamp_;
 }
 
 double TrafficPeriod::duration() const
 {
-    return begin_.msecsTo(end_) / 1000.0;
+    return beginTimestamp_.msecsTo(endTimestamp_) / 1000.0;
+}
+
+quint32 TrafficPeriod::trafficCount() const
+{
+    return traffic_.count();
+}
+
+quint32 TrafficPeriod::expectedUpdates(double freq) const
+{
+    return freq * duration();
+}
+
+quint32 TrafficPeriod::expectedTgtReps(double freq) const
+{
+    return freq * duration() * trafficCount();
 }
 
 bool TrafficPeriod::isValid() const
 {
-    return begin_.isValid() && end_.isValid() && !traffic_.isEmpty();
+    return beginTimestamp_.isValid() && endTimestamp_.isValid() && !traffic_.isEmpty();
 }
 
 bool TrafficPeriod::coversTimestamp(const QDateTime &dt) const
@@ -126,7 +141,7 @@ bool TrafficPeriod::coversTimestamp(const QDateTime &dt) const
         return false;
     }
 
-    if (dt >= begin_ && dt <= end_)
+    if (dt >= beginTimestamp_ && dt <= endTimestamp_)
     {
         return true;
     }
@@ -136,8 +151,8 @@ bool TrafficPeriod::coversTimestamp(const QDateTime &dt) const
 
 bool TrafficPeriod::overlaps(const TrafficPeriod &other) const
 {
-    return begin_ < other.end() &&
-           other.begin() < end_;
+    return beginTimestamp_ < other.endTimestamp() &&
+           other.beginTimestamp() < endTimestamp_;
 }
 
 bool TrafficPeriod::hasTarget(ModeS addr)
@@ -231,6 +246,33 @@ TrafficPeriodCollection &TrafficPeriodCollection::operator<<(const TrackCollecti
     return *this;
 }
 
+double TrafficPeriodCollection::duration() const
+{
+    double dur = 0;
+    for (const TrafficPeriod &tp : periods_)
+    {
+        dur += tp.duration();
+    }
+
+    return dur;
+}
+
+quint32 TrafficPeriodCollection::expectedUpdates(double freq) const
+{
+    return freq * duration();
+}
+
+quint32 TrafficPeriodCollection::expectedTgtReps(double freq) const
+{
+    quint32 etr = 0;
+    for (const TrafficPeriod &tp : periods_)
+    {
+        etr += tp.expectedTgtReps(freq);
+    }
+
+    return etr;
+}
+
 bool TrafficPeriodCollection::coversTimestamp(const QDateTime &dt) const
 {
     if (!dt.isValid())
@@ -279,7 +321,7 @@ QDateTime TrafficPeriodCollection::beginTimestamp() const
         return QDateTime();
     }
 
-    return periods_.first().begin();
+    return periods_.first().beginTimestamp();
 }
 
 QDateTime TrafficPeriodCollection::endTimestamp() const
@@ -289,7 +331,7 @@ QDateTime TrafficPeriodCollection::endTimestamp() const
         return QDateTime();
     }
 
-    return periods_.last().end();
+    return periods_.last().endTimestamp();
 }
 
 void TrafficPeriodCollection::removeSmallPeriods(double min_duration)
@@ -313,28 +355,28 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
 {
     Q_ASSERT(newtp.overlaps(oldtp));
 
-    if (oldtp.begin() == newtp.begin() &&
-        oldtp.end() == newtp.end())
+    if (oldtp.beginTimestamp() == newtp.beginTimestamp() &&
+        oldtp.endTimestamp() == newtp.endTimestamp())
     {
         // CASE 0: Old period and new period have identical times.
 
         // Simply add the traffic contents of the new period to the old one.
         oldtp << newtp.traffic();
     }
-    else if (oldtp.begin() == newtp.begin())
+    else if (oldtp.beginTimestamp() == newtp.beginTimestamp())
     {
-        if (newtp.end() < oldtp.end())
+        if (newtp.endTimestamp() < oldtp.endTimestamp())
         {
             // CASE 1: Old period and new period start at the same time.
             //         New period ends before old period.
 
             // Create intersection period.
-            TrafficPeriod itp(newtp.begin(), newtp.end());
+            TrafficPeriod itp(newtp.beginTimestamp(), newtp.endTimestamp());
             itp << oldtp.traffic() << newtp.traffic();
 
             // Shrink old period from the front to match the end of the
             // intersection period.
-            oldtp.shrinkFront(itp.end());
+            oldtp.shrinkFront(itp.endTimestamp());
 
             if (itp.isValid())
             {
@@ -354,7 +396,7 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             // and shrinking it from the front to match the end of the
             // intersection period.
             TrafficPeriod rnewtp(newtp);
-            rnewtp.shrinkFront(oldtp.end());
+            rnewtp.shrinkFront(oldtp.endTimestamp());
 
             if (rnewtp.isValid())
             {
@@ -363,20 +405,20 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             }
         }
     }
-    else if (oldtp.end() == newtp.end())
+    else if (oldtp.endTimestamp() == newtp.endTimestamp())
     {
-        if (oldtp.begin() < newtp.begin())
+        if (oldtp.beginTimestamp() < newtp.beginTimestamp())
         {
             // CASE 3: Old period and new period end at the same time.
             //         New period starts after old period.
 
             // Create intersection period.
-            TrafficPeriod itp(newtp.begin(), newtp.end());
+            TrafficPeriod itp(newtp.beginTimestamp(), newtp.endTimestamp());
             itp << oldtp.traffic() << newtp.traffic();
 
             // Shrink old period from the back to match the beginning of the
             // intersection period.
-            oldtp.shrinkBack(itp.begin());
+            oldtp.shrinkBack(itp.beginTimestamp());
 
             if (itp.isValid())
             {
@@ -396,7 +438,7 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             // and shrinking it from the back to match the beginning of the
             // intersection period.
             TrafficPeriod rnewtp(newtp);
-            rnewtp.shrinkBack(oldtp.begin());
+            rnewtp.shrinkBack(oldtp.beginTimestamp());
 
             if (rnewtp.isValid())
             {
@@ -405,24 +447,24 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             }
         }
     }
-    else if (oldtp.begin() < newtp.begin())
+    else if (oldtp.beginTimestamp() < newtp.beginTimestamp())
     {
-        if (newtp.end() > oldtp.end())
+        if (newtp.endTimestamp() > oldtp.endTimestamp())
         {
             // CASE 5: Old period starts before new period.
             //         New period ends after old period.
 
             // Create intersection period.
-            TrafficPeriod itp(newtp.begin(), oldtp.end());
+            TrafficPeriod itp(newtp.beginTimestamp(), oldtp.endTimestamp());
             itp << oldtp.traffic() << newtp.traffic();
 
             // Shrink old period from the back to match the beginning of the
             // intersection period.
-            oldtp.shrinkBack(itp.begin());
+            oldtp.shrinkBack(itp.beginTimestamp());
 
             // Shrink new period from the front to match the end of the
             // intersection period.
-            newtp.shrinkFront(itp.end());
+            newtp.shrinkFront(itp.endTimestamp());
 
             if (itp.isValid() && newtp.isValid())
             {
@@ -443,11 +485,11 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             // and shrinking it from the front to match the end of the
             // intersection period.
             TrafficPeriod roldtp(oldtp);
-            roldtp.shrinkFront(itp.end());
+            roldtp.shrinkFront(itp.endTimestamp());
 
             // Shrink old period from the front to match the beginning of the
             // intersection period.
-            oldtp.shrinkBack(newtp.begin());
+            oldtp.shrinkBack(newtp.beginTimestamp());
 
             if (itp.isValid() && roldtp.isValid())
             {
@@ -456,24 +498,24 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             }
         }
     }
-    else if (newtp.begin() < oldtp.begin())
+    else if (newtp.beginTimestamp() < oldtp.beginTimestamp())
     {
-        if (newtp.end() < oldtp.end())
+        if (newtp.endTimestamp() < oldtp.endTimestamp())
         {
             // CASE 7: New period starts before old period.
             //         Old period ends after new period.
 
             // Create intersection period.
-            TrafficPeriod itp(oldtp.begin(), newtp.end());
+            TrafficPeriod itp(oldtp.beginTimestamp(), newtp.endTimestamp());
             itp << oldtp.traffic() << newtp.traffic();
 
             // Shrink old period from the back to match the beginning of the
             // intersection period.
-            oldtp.shrinkFront(itp.end());
+            oldtp.shrinkFront(itp.endTimestamp());
 
             // Shrink new period from the front to match the beginning of the
             // intersection period.
-            newtp.shrinkBack(itp.begin());
+            newtp.shrinkBack(itp.beginTimestamp());
 
             if (itp.isValid() && newtp.isValid())
             {
@@ -492,11 +534,11 @@ void TrafficPeriodCollection::dealOverlap(TrafficPeriod &oldtp, TrafficPeriod &n
             // and shrinking it from the front to match the end of the
             // intersection period.
             TrafficPeriod rnewtp(newtp);
-            rnewtp.shrinkFront(oldtp.end());
+            rnewtp.shrinkFront(oldtp.endTimestamp());
 
             // Shrink new period from the back to match the beginning of the
             // old period.
-            newtp.shrinkBack(oldtp.begin());
+            newtp.shrinkBack(oldtp.beginTimestamp());
 
             if (newtp.isValid() && rnewtp.isValid())
             {
@@ -521,12 +563,12 @@ void TrafficPeriodCollection::sort()
 
 bool operator==(const TrafficPeriod &lhs, const TrafficPeriod &rhs)
 {
-    return lhs.begin() == rhs.begin() &&
-           lhs.end() == rhs.end() &&
+    return lhs.beginTimestamp() == rhs.beginTimestamp() &&
+           lhs.endTimestamp() == rhs.endTimestamp() &&
            lhs.traffic() == rhs.traffic();
 }
 
 bool operator<(const TrafficPeriod &lhs, const TrafficPeriod &rhs)
 {
-    return lhs.begin() < rhs.begin();
+    return lhs.beginTimestamp() < rhs.beginTimestamp();
 }
