@@ -76,6 +76,7 @@ public:
 
     TrafficPeriodCollection &operator<<(const TrafficPeriod &tp);
     TrafficPeriodCollection &operator<<(const QVector<TrafficPeriod> &l);
+    TrafficPeriodCollection &operator<<(const TrafficPeriodCollection &col);
 
     TrafficPeriodCollection &operator<<(const Track &trk);
     TrafficPeriodCollection &operator<<(const TrackCollection &col);

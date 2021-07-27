@@ -229,6 +229,16 @@ TrafficPeriodCollection &TrafficPeriodCollection::operator<<(const QVector<Traff
     return *this;
 }
 
+TrafficPeriodCollection &TrafficPeriodCollection::operator<<(const TrafficPeriodCollection &col)
+{
+    for (const TrafficPeriod &tp : col)
+    {
+        *this << tp;
+    }
+
+    return *this;
+}
+
 TrafficPeriodCollection &TrafficPeriodCollection::operator<<(const Track &trk)
 {
     *this << TrafficPeriod(trk);
