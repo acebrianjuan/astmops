@@ -423,7 +423,6 @@ void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
                 }
             }
         }
-        /*
         else
         {
             for (const Track &sub_trk_ref : sub_trk_vec)
@@ -440,7 +439,6 @@ void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
                 smrPfd_[narea].n_etr_ = trafficPeriods_[narea].expectedTgtReps(freq);
             }
         }
-        */
     }
 }
 
