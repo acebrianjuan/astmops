@@ -52,7 +52,7 @@ void TrackAssociatorTest::test_data()
     QTest::addColumn<QVector<Track>>("tracksIn");
     QTest::addColumn<QVector<TrackCollectionSet>>("setsOut");
 
-    // ADS-B track 101
+    // ADS-B track 101.
     Track trk_adsb_101(SystemType::Adsb, 101);
 
     TargetReport tr_adsb_101_1;
@@ -130,10 +130,11 @@ void TrackAssociatorTest::test_data()
     tr_adsb_101_5.z_ = 0.0;
     tr_adsb_101_5.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
-    trk_adsb_101 << tr_adsb_101_1 << tr_adsb_101_2 << tr_adsb_101_3 << tr_adsb_101_4 << tr_adsb_101_5;
+    trk_adsb_101 << tr_adsb_101_1 << tr_adsb_101_2 << tr_adsb_101_3
+                 << tr_adsb_101_4 << tr_adsb_101_5;
 
 
-    // ADS-B track 102
+    // ADS-B track 102.
     Track trk_adsb_102(SystemType::Adsb, 102);
 
     TargetReport tr_adsb_102_1;
