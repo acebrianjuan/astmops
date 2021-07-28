@@ -144,18 +144,19 @@ int TrackAssociator::run()
                             sets_[mode_s] << t_tst;
                             tn2ms_[t_tst.system_type()][t_tst.track_number()] << mode_s;
 
-                            // Only register a match if a space-time intersection
+                            // Only register a match if a time intersection
                             // exists between TST and REF tracks.
-                            if (haveSpaceTimeIntersection(t_tst, t_ref))
+                            if (haveTimeIntersection(t_tst, t_ref))
                             {
                                 sets_[mode_s].addMatch(t_ref, t_tst);
                             }
                         }
                     }
-                    else if (haveSpaceTimeIntersection(t_tst, t_ref))
+                    else if (haveTimeIntersection(t_tst, t_ref))
                     {
-                        // Otherwise check if there is space-time overlap between
-                        // reference track and test track.
+                        // Otherwise check if there is a time overlap between
+                        // reference track and test track and calculate a
+                        // track similarity score.
 
                         // Extract TST track portion that matches in time with the
                         // reference track.
