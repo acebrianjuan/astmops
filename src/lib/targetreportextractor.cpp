@@ -413,6 +413,8 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
                                                          : y;
 
         // Z
+        // TODO: ASSIGN Z VALUES!
+
 
         if (rec.rec_typ_.sys_typ_ == SystemType::Mlat)
         {
@@ -564,18 +566,18 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
         // Height.
         double h = 0.0;
 
-        bool mh_ok = false;
-        bool has_mh = Asterix::containsElement(rec, QLatin1String("I091"), QLatin1String("MHeight"));
-        if (has_mh)
+        bool gh_ok = false;
+        bool has_gh = Asterix::containsElement(rec, QLatin1String("I140"), QLatin1String("geometric_height"));
+        if (has_gh)
         {
-            double mh = Asterix::getElementValue(rec, QLatin1String("I091"), QLatin1String("MHeight")).value().toDouble(&mh_ok);
-            if (mh_ok)
+            double gh_ft = Asterix::getElementValue(rec, QLatin1String("I140"), QLatin1String("geometric_height")).value().toDouble(&gh_ok);
+            if (gh_ok)
             {
-                h = mh;
+                h = gh_ft * ft_to_m;
             }
         }
 
-        if (!has_mh || !mh_ok)
+        if (!has_gh || !gh_ok)
         {
             bool fl_ok = false;
             bool has_fl = Asterix::containsElement(rec, QLatin1String("I145"), QLatin1String("FL"));
