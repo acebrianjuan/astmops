@@ -114,12 +114,6 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
 
     Layer layer = gndBit ? Layer::SurfaceLayer    // GBS = 1
                          : Layer::AirborneLayer;  // GBS = 0
-    /*
-    else
-    {
-        layer = alt > 0 ? Layer::AirborneLayer
-                        : Layer::GroundLayer;
-    }*/
 
     if (layer == Layer::SurfaceLayer)
     {

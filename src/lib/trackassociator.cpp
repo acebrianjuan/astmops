@@ -166,12 +166,6 @@ int TrackAssociator::run()
                         // TST track points.
                         Track t_r = resample(t_ref, t_t.timestamps());
 
-                        // TST and REF trajectories should match in size.
-                        //Q_ASSERT(t_t.size() == t_r.size());
-
-                        // TST and REF pairs should have exact same times.
-                        //Q_ASSERT(t_t.data().keys() == t_r.data().keys());
-
                         // Calculate Euclidean distance between TST-REF pairs.
                         QVector<double> dist = euclideanDistance(t_t.rdata(), t_r.rdata());
 
