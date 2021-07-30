@@ -33,32 +33,22 @@ QDate asterixDate();
 bool useXmlTimestamp();
 
 Sic smrSic();
-
 Sic mlatSic();
-
 Sic adsbSic();
 
 QString kmlFile();
 
 double ed116TgtRepUpdateRate();
-
 double ed116SrvMsgUpdateRate();
-
 double ed117TgtRepUpdateRate();
-
 double ed117SrvMsgUpdateRate();
-
 double silencePeriod();
-
 double probDetectionPeriod(Aerodrome::Area area);
 
-qint32 dgpsTimeOfDayOffset();
-
-//Mode3A dgpsMode3ACode();
-
-ModeS dgpsTargetAddress();
-
-//Ident dgpsIdentification();
+qint32 dgpsTodOffset();
+Mode3A dgpsMode3A();
+ModeS dgpsModeS();
+Ident dgpsIdent();
 
 QGeoShape evalSector();
 

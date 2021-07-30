@@ -223,7 +223,7 @@ QMultiMap<QDateTime, TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo
     QMultiMap<QDateTime, TargetReport> mmap;
 
     // Read from configuration.
-    ModeS mode_s = Configuration::dgpsTargetAddress();
+    ModeS mode_s = Configuration::dgpsModeS();
 
     // TODO: HARDOCODED VALUE! READ ARP COORDINATES FROM CONFIGURATION INSTEAD!
     QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);

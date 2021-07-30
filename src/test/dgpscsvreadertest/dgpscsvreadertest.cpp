@@ -47,7 +47,7 @@ void DgpsCsvReaderTest::initTestCase()
     settings.clear();
 
     settings.beginGroup(QLatin1String("DGPS"));
-    settings.setValue(QLatin1String("TargetAddress"), 0x34304F);
+    settings.setValue(QLatin1String("ModeS"), 0x34304F);
     settings.endGroup();
 }
 

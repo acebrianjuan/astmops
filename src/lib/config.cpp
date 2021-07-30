@@ -273,7 +273,7 @@ double Configuration::probDetectionPeriod(Aerodrome::Area area)
         MOPS::ED117::defaultProbDetectionPeriodOther);
 }
 
-qint32 Configuration::dgpsTimeOfDayOffset()
+qint32 Configuration::dgpsTodOffset()
 {
     QString key = QLatin1String("TimeOfDayOffset");
 
@@ -298,31 +298,31 @@ qint32 Configuration::dgpsTimeOfDayOffset()
     return var;
 }
 
-//Mode3A Configuration::dgpsMode3ACode()
-//{
-//    QString key = QLatin1String("Mode3ACode");
-
-//    QSettings settings;
-//    settings.beginGroup(QLatin1String("DGPS"));
-
-//    if (!settings.contains(key))
-//    {
-//        qFatal("%s is mandatory.", qPrintable(key));
-//    }
-
-//    quint16 val = settings.value(key).toUInt();
-
-//    if (val > 07777)
-//    {
-//        qFatal("Invalid %s value.", qPrintable(key));
-//    }
-
-//    return val;
-//}
-
-ModeS Configuration::dgpsTargetAddress()
+Mode3A Configuration::dgpsMode3A()
 {
-    QString key = QLatin1String("TargetAddress");
+    QString key = QLatin1String("Mode3A");
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("DGPS"));
+
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
+
+    quint16 val = settings.value(key).toUInt();
+
+    if (val > 07777)
+    {
+        qFatal("Invalid %s value.", qPrintable(key));
+    }
+
+    return val;
+}
+
+ModeS Configuration::dgpsModeS()
+{
+    QString key = QLatin1String("ModeS");
 
     QSettings settings;
     settings.beginGroup(QLatin1String("DGPS"));
@@ -343,27 +343,27 @@ ModeS Configuration::dgpsTargetAddress()
     return val;
 }
 
-//Ident Configuration::dgpsIdentification()
-//{
-//    QString key = QLatin1String("Identification");
+Ident Configuration::dgpsIdent()
+{
+    QString key = QLatin1String("Ident");
 
-//    QSettings settings;
-//    settings.beginGroup(QLatin1String("DGPS"));
+    QSettings settings;
+    settings.beginGroup(QLatin1String("DGPS"));
 
-//    if (!settings.contains(key))
-//    {
-//        qFatal("%s is mandatory.", qPrintable(key));
-//    }
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
 
-//    QString val = settings.value(key).toString();
+    QString val = settings.value(key).toString();
 
-//    if (val.size() > 8)  // Maximum 8 characters.
-//    {
-//        qFatal("Invalid %s value.", qPrintable(key));
-//    }
+    if (val.size() > 8)  // Maximum 8 characters.
+    {
+        qFatal("Invalid %s value.", qPrintable(key));
+    }
 
-//    return val;
-//}
+    return val;
+}
 
 QGeoShape Configuration::evalSector()
 {
