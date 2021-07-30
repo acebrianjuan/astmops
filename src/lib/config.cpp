@@ -125,7 +125,9 @@ double Configuration::ed116TgtRepUpdateRate()
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Update Rate, using default value: " << MOPS::ED116::defaultTgtRepUpdateRateHz;
+        qWarning() << "Invalid Update Rate, using default value: "
+                   << MOPS::ED116::defaultTgtRepUpdateRateHz;
+
         return MOPS::ED116::defaultTgtRepUpdateRateHz;
     }
 
@@ -148,7 +150,9 @@ double Configuration::ed116SrvMsgUpdateRate()
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Update Rate, using default value: " << MOPS::ED116::defaultSrvMsgUpdateRateHz;
+        qWarning() << "Invalid Update Rate, using default value: "
+                   << MOPS::ED116::defaultSrvMsgUpdateRateHz;
+
         return MOPS::ED116::defaultSrvMsgUpdateRateHz;
     }
 
@@ -171,7 +175,9 @@ double Configuration::ed117TgtRepUpdateRate()
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Update Rate, using default value: " << MOPS::ED117::defaultTgtRepUpdateRateHz;
+        qWarning() << "Invalid Update Rate, using default value: "
+                   << MOPS::ED117::defaultTgtRepUpdateRateHz;
+
         return MOPS::ED117::defaultTgtRepUpdateRateHz;
     }
 
@@ -194,7 +200,9 @@ double Configuration::ed117SrvMsgUpdateRate()
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Update Rate, using default value: " << MOPS::ED117::defaultSrvMsgUpdateRateHz;
+        qWarning() << "Invalid Update Rate, using default value: "
+                   << MOPS::ED117::defaultSrvMsgUpdateRateHz;
+
         return MOPS::ED117::defaultSrvMsgUpdateRateHz;
     }
 
@@ -216,7 +224,9 @@ double Configuration::silencePeriod()
 
     if (var <= 0)
     {
-        qWarning() << "Invalid Silence Period, using default value: " << MOPS::defaultSilencePeriodSeconds;
+        qWarning() << "Invalid Silence Period, using default value: "
+                   << MOPS::defaultSilencePeriodSeconds;
+
         return MOPS::defaultSilencePeriodSeconds;
     }
 
@@ -238,7 +248,8 @@ double Configuration::probDetectionPeriod(Aerodrome::Area area)
 
         if (var <= 0)
         {
-            qWarning() << "Invalid value for" << key << "using default value: " << period;
+            qWarning() << "Invalid value for" << key
+                       << "using default value: " << period;
             var = period;
         }
 
@@ -249,14 +260,17 @@ double Configuration::probDetectionPeriod(Aerodrome::Area area)
     switch (area)
     {
     case Aerodrome::Area::Runway:
-        return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodRunway"), MOPS::ED117::defaultProbDetectionPeriodRunway);
+        return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodRunway"),
+            MOPS::ED117::defaultProbDetectionPeriodRunway);
     case Aerodrome::Area::Apron:
-        return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodApron"), MOPS::ED117::defaultProbDetectionPeriodApron);
+        return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodApron"),
+            MOPS::ED117::defaultProbDetectionPeriodApron);
     default:
         break;
     }
 
-    return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodOther"), MOPS::ED117::defaultProbDetectionPeriodOther);
+    return readConfig(QStringLiteral("MOPS.ProbDetectionPeriodOther"),
+        MOPS::ED117::defaultProbDetectionPeriodOther);
 }
 
 qint32 Configuration::dgpsTimeOfDayOffset()
@@ -275,7 +289,9 @@ qint32 Configuration::dgpsTimeOfDayOffset()
 
     if (qFabs(var) > 86400)  // Maximum TOD.
     {
-        qWarning() << "Invalid Time of Day Offset, using default value: " << MOPS::defaultDgpsTimeOfDayOffset;
+        qWarning() << "Invalid Time of Day Offset, using default value: "
+                   << MOPS::defaultDgpsTimeOfDayOffset;
+
         return MOPS::defaultDgpsTimeOfDayOffset;
     }
 
