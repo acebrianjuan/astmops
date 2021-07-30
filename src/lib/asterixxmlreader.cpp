@@ -106,7 +106,8 @@ void AsterixXmlReader::readRecord()
 
     if (!hasMinimumAttributes())
     {
-        // qWarning();
+        qDebug() << "Record" << xml_.text()
+                 << "missing minimum XML attributes";
         return;
     }
 
@@ -121,14 +122,16 @@ void AsterixXmlReader::readRecord()
         /* Invalid ASTERIX category and/or date and time information is not
          * allowed. Do not continue parsing this record.
          */
-        // qWarning();
+        qDebug() << "Record" << xml_.text()
+                 << "has invalid ASTERIX category and/or date and time information";
         return;
     }
 
     // Skip unsupported categories.
     if (!Asterix::isCategorySupported(cat))
     {
-        // qWarning();
+        qDebug() << "Skipping record" << hex << crc
+                 << "of unsupported category" << dec << cat;
         return;
     }
 
@@ -159,7 +162,7 @@ void AsterixXmlReader::readRecord()
     if (xml_.hasError())
     {
         // Discard corrupt record.
-        // qWarning();
+        qDebug() << "Skipping corrupt record" << hex << record.crc_;
         return;
     }
 
@@ -168,7 +171,8 @@ void AsterixXmlReader::readRecord()
     if (rt.isUnknown())
     {
         // Skip unknown record types.
-        // qWarning();
+        qDebug() << "Skipping record" << hex << record.crc_
+                 << "of unknown record type";
         return;
     }
 
@@ -193,7 +197,8 @@ void AsterixXmlReader::readRecord()
     // Skip invalid timestamps.
     if (!datetime.isValid())
     {
-        // qWarning();
+        qDebug() << "Skipping record" << hex << record.crc_
+                 << "with invalid timestamp";
         return;
     }
 
@@ -233,9 +238,10 @@ void AsterixXmlReader::readRecord()
                 if (isCloseToMidnight(lastTod))
                 {
                     // MIDNIGHT TOD ROLLOVER! Increase day by one.
+                    qInfo() << "Detected MIDNIGHT TOD ROLLOVER event";
+
                     ++day_count_[rt];
                     record.timestamp_ = record.timestamp_.addDays(day_count_.value(rt));
-                    // qWarning();
                 }
                 else
                 {
@@ -263,7 +269,7 @@ void AsterixXmlReader::readRecord()
             if (tdiff < 0)
             {
                 // This is OK. Only issues a warning.
-                // qWarning();
+                qDebug() << "Found backjump of" << tdiff << "s";
             }
         }
         else
@@ -277,7 +283,7 @@ void AsterixXmlReader::readRecord()
         // First timestamp insertion.
         last_times_.insert(rt, record.timestamp_);
         day_count_.insert(rt, 0);
-        // qWarning();
+        // qDebug();
     }
 
     // Save most recent TOD.
@@ -331,5 +337,6 @@ bool AsterixXmlReader::isValidDataItem(const QString& di)
     // Making it static solves the performance cost.
     static QRegularExpression re(QLatin1String("I(\\d{3}|RE|SP)\\b"));
     QRegularExpressionMatch match = re.match(di);
+
     return match.hasMatch();
 }

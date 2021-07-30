@@ -157,7 +157,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_tgt_addr)
             {
-                qWarning("Skipping MLAT TgtRep without target address");
+                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                         << "without target address";
                 return false;
             }
 
@@ -165,7 +166,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qWarning("Skipping MLAT TgtRep with invalid target address");
+                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                         << "with invalid target address";
                 return false;
             }
 
@@ -180,7 +182,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_tot)
             {
-                qWarning("Skipping MLAT TgtRep without TOT");
+                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                         << "without TOT information";
                 return false;
             }
 
@@ -188,7 +191,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qWarning("Skipping MLAT TgtRep with invalid TOT");
+                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                         << "with invalid TOT information";
                 return false;
             }
 
@@ -212,7 +216,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_tgt_addr)
             {
-                qWarning("Skipping ADS-B TgtRep without target address");
+                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                         << "without target address";
                 return false;
             }
 
@@ -220,13 +225,16 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qWarning("Skipping ADS-B TgtRep with invalid target address");
+                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                         << "with invalid target address";
                 return false;
             }
 
             // Do not continue if Target Address is an excluded address.
             if (excluded_addresses_.contains(tgt_addr))
             {
+                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                         << "with excluded target address" << tgt_addr;
                 return false;
             }
 
@@ -235,7 +243,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_ecat)
             {
-                qWarning("Skipping ADS-B TgtRep %x without ECAT", rec.crc_);
+                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                         << "without ECAT information";
                 return false;
             }
 
@@ -243,7 +252,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qWarning("Skipping ADS-B TgtRep with invalid ECAT");
+                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                         << "with invalid ECAT information";
                 return false;
             }
 
