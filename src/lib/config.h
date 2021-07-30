@@ -22,7 +22,6 @@
 
 #include "aerodrome.h"
 #include "astmops.h"
-#include <QGeoShape>
 
 Sic readSic(const QString& key);
 
@@ -49,8 +48,6 @@ qint32 dgpsTodOffset();
 Mode3A dgpsMode3A();
 ModeS dgpsModeS();
 Ident dgpsIdent();
-
-QGeoShape evalSector();
 
 };  // namespace Configuration
 

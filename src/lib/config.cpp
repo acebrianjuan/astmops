@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-#include <QGeoCircle>
-#include <QGeoPolygon>
 
 Sic readSic(const QString &key)
 {
@@ -363,47 +361,4 @@ Ident Configuration::dgpsIdent()
     }
 
     return val;
-}
-
-QGeoShape Configuration::evalSector()
-{
-    // TODO: Allow defining more than one sector.
-
-    QString keyPolygon = QLatin1String("Polygon");
-    QString keyCenter = QLatin1String("Center");
-    QString keyRadius = QLatin1String("Radius");
-
-    QSettings settings;
-    settings.beginGroup(QLatin1String("EvalSector"));
-
-    int polygonSize = settings.beginReadArray(keyPolygon);
-
-    if (!polygonSize)
-    {
-        if (!settings.contains(keyCenter) && !settings.contains(keyRadius))
-        {
-            // No keys found. Return empty QGeoShape.
-            return QGeoShape();
-        }
-
-        // Circular sector case.
-        QGeoCoordinate center = settings.value(keyCenter).value<QGeoCoordinate>();
-        double radius = settings.value(keyRadius).toDouble();
-
-        return QGeoCircle(center, radius);
-    }
-
-    // Polygon sector case.
-    QList<QGeoCoordinate> list;
-    list.reserve(polygonSize);
-
-    for (int i = 0; i < polygonSize; ++i)
-    {
-        settings.setArrayIndex(i);
-        QStringList strList = settings.value(QLatin1String("Coordinates")).toStringList();
-        QGeoCoordinate coord = QGeoCoordinate(strList.at(0).toDouble(), strList.at(1).toDouble(), 0);
-        list.append(coord);
-    }
-
-    return QGeoPolygon(list);
 }
