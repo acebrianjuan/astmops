@@ -138,7 +138,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!has_sic)
         {
-            qWarning("CAT010 record without SIC information");
+            qDebug() << "CAT010 record" << rec.crc_
+                     << "without SIC information";
             break;
         }
 
@@ -146,7 +147,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!ok)
         {
-            qWarning("CAT010 record with invalid SIC");
+            qDebug() << "CAT010 record" << rec.crc_
+                     << "with invalid SIC";
             break;
         }
 
@@ -164,7 +166,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!has_msg_typ)
         {
-            qWarning("CAT010 record without message type information");
+            qDebug() << "CAT010 record" << rec.crc_
+                     << "without message type information";
             break;
         }
 
@@ -172,7 +175,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!ok)
         {
-            qWarning("CAT010 record with invalid message type");
+            qDebug() << "CAT010 record" << rec.crc_
+                     << "with invalid message type";
             break;
         }
 
@@ -192,7 +196,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
         }
         else
         {
-            qWarning("CAT010 record of unknown message type: %03d", msg_typ);
+            qDebug() << "CAT010 record" << rec.crc_
+                     << "of unknown message type:" << msg_typ;
             break;
         }
 
@@ -204,7 +209,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
             if (!has_sys_typ)
             {
-                qWarning("CAT010 TgtRep without system type information");
+                qDebug() << "CAT010 TgtRep" << rec.crc_
+                         << "without system type information";
                 break;
             }
 
@@ -222,7 +228,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
             if (!ok)
             {
-                qWarning("CAT010 TgtRep with invalid system type");
+                qDebug() << "CAT010 TgtRep" << rec.crc_
+                         << "with invalid system type";
                 break;
             }
 
@@ -230,7 +237,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             {
                 if (sys_typ != 1)
                 {
-                    qWarning("CAT010 TgtRep with disagreeing system type");
+                    qDebug() << "CAT010 TgtRep" << rec.crc_
+                             << "with disagreeing system type";
                     break;
                 }
             }
@@ -238,7 +246,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             {
                 if (sys_typ != 3)
                 {
-                    qWarning("CAT010 TgtRep with disagreeing system type");
+                    qDebug() << "CAT010 TgtRep" << rec.crc_
+                             << "with disagreeing system type ";
                     break;
                 }
             }
@@ -256,7 +265,8 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!has_sic)
         {
-            qWarning("CAT010 TgtRep without SIC information");
+            qDebug() << "CAT021 TgtRep" << rec.crc_
+                     << "without SIC information";
             break;
         }
 
@@ -264,20 +274,22 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
 
         if (!ok)
         {
-            qWarning("CAT021 TgtRep with invalid SIC");
+            qDebug() << "CAT021 TgtRep" << rec.crc_
+                     << "with invalid SIC";
             break;
         }
 
         if (sic != adsbSic)
         {
-            qWarning("CAT021 TgtRep with disagreeing SIC");
+            qDebug() << "CAT021 TgtRep" << rec.crc_
+                     << "with disagreeing SIC";
             break;
         }
         break;
     }
     default:
     {
-        qWarning("ASTERIX category %03d not supported", rec.cat_);
+        qDebug("ASTERIX category %03d not supported", rec.cat_);
     }
     }
 

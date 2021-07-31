@@ -175,7 +175,7 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
         // Data must contain 4 elements.
         if (lineParts.size() != 4)
         {
-            qWarning() << "Ignoring line:" << line;
+            qDebug() << "Ignoring line:" << line;
             continue;
         }
 
@@ -209,7 +209,7 @@ QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error)
 
         if (!timeValue.isValid() || !position.isValid())
         {
-            qWarning() << "Ignoring invalid reference data:" << line;
+            qDebug() << "Ignoring invalid reference data:" << line;
         }
 
         result.append(QGeoPositionInfo(position, timeValue));

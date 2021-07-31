@@ -141,20 +141,20 @@ double dmsToDeg(const double deg, const double min, const double sec, const QStr
 {
     if (hemisphere.size() != 1)
     {
-        qWarning() << "Invalid hemisphere indicator:" << hemisphere;
+        qDebug() << "Invalid hemisphere indicator:" << hemisphere;
         return qQNaN();
     }
 
     if (!hemisphere.at(0).isLetter())
     {
-        qWarning() << "Invalid hemisphere indicator:" << hemisphere;
+        qDebug() << "Invalid hemisphere indicator:" << hemisphere;
         return qQNaN();
     }
 
     QRegularExpression regEx(QLatin1String("[NSEW]"), QRegularExpression::CaseInsensitiveOption);
     if (!regEx.match(hemisphere).hasMatch())
     {
-        qWarning() << "Invalid hemisphere indicator:" << hemisphere;
+        qDebug() << "Invalid hemisphere indicator:" << hemisphere;
         return qQNaN();
     }
 
