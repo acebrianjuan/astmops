@@ -49,6 +49,9 @@ Mode3A dgpsMode3A();
 ModeS dgpsModeS();
 Ident dgpsIdent();
 
+QString logRules();
+QString logPattern();
+
 };  // namespace Configuration
 
 #endif  // ASTMOPS_CONFIG_H

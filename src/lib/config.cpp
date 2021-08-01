@@ -362,3 +362,37 @@ Ident Configuration::dgpsIdent()
 
     return val;
 }
+
+QString Configuration::logRules()
+{
+    QString key = QLatin1String("rules");
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("LOG"));
+
+    if (!settings.contains(key))
+    {
+        return QString();
+    }
+
+    QString rules = settings.value(key).toString();
+
+    return rules;
+}
+
+QString Configuration::logPattern()
+{
+    QString key = QLatin1String("pattern");
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("LOG"));
+
+    if (!settings.contains(key))
+    {
+        return QString();
+    }
+
+    QString pattern = settings.value(key).toString();
+
+    return pattern;
+}

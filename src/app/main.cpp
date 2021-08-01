@@ -24,11 +24,31 @@
 #include "trackextractor.h"
 #include <QCoreApplication>
 #include <QFile>
+#include <QLoggingCategory>
+
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops"));
+
+
+    QString logRules = Configuration::logRules();
+    if (!logRules.isEmpty())
+    {
+        QLoggingCategory::setFilterRules(Configuration::logRules());
+    }
+    else
+    {
+        QLoggingCategory::setFilterRules(QLatin1String("*.debug=false"));
+    }
+
+    QString logPattern = Configuration::logPattern();
+    if (!logPattern.isEmpty())
+    {
+        qSetMessagePattern(Configuration::logPattern());
+    }
+
 
     QCoreApplication application(argc, argv);
     const QStringList args = application.arguments();
