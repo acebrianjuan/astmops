@@ -38,6 +38,19 @@ public:
     void addData(const Track &t);
     void run();
 
+    void printED116RPA() const;
+    void printED116UR() const;
+    void printED116PD() const;
+    void printED116PFD() const;
+
+    void printED117RPA() const;
+    void printED117UR() const;
+    void printED117PD() const;
+    void printED117PFD() const;
+    void printED117PID() const;
+    void printED117PFID() const;
+    void printED117PLG() const;
+
 private:
     void computePicThreshold(double prctl);
     QVector<QPair<TargetReport, double>> euclideanDistance(const TgtRepMap &ref, const TgtRepMap &tst) const;
