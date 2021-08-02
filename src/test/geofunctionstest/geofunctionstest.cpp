@@ -38,8 +38,8 @@ private slots:
     void ecefToLocalEnuTest_data();
     void ecefToLocalEnuTest();
 
-    void geoToLocalEcef_data();
-    void geoToLocalEcef();
+    void geoToLocalEcefTest_data();
+    void geoToLocalEcefTest();
 };
 
 void GeoFunctionsTest::wgs84TransverseRadiusTest_data()
@@ -127,7 +127,7 @@ void GeoFunctionsTest::ecefToLocalEnuTest()
     QVERIFY(std::fabs(enuOut.z() - enuOutValid.z() < 1));
 }
 
-void GeoFunctionsTest::geoToLocalEcef_data()
+void GeoFunctionsTest::geoToLocalEcefTest_data()
 {
     QTest::addColumn<QGeoCoordinate>("geoRef");
     QTest::addColumn<QGeoCoordinate>("geoIn");
@@ -143,7 +143,7 @@ void GeoFunctionsTest::geoToLocalEcef_data()
     QTest::newRow("LEBL_SMR") << leblArpGeo << leblSmrGeo << leblSmrEnu;
 }
 
-void GeoFunctionsTest::geoToLocalEcef()
+void GeoFunctionsTest::geoToLocalEcefTest()
 {
     QFETCH(QGeoCoordinate, geoRef);
     QFETCH(QGeoCoordinate, geoIn);
