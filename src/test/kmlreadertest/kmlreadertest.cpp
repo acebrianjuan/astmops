@@ -42,6 +42,8 @@ void KmlReaderTest::test_data()
     QTest::addColumn<KmlReader::Collection>("taxiwayCoordinates");
     QTest::addColumn<KmlReader::Collection>("apronCoordinates");
     QTest::addColumn<KmlReader::Collection>("standCoordinates");
+    QTest::addColumn<KmlReader::Collection>("airborne1Coordinates");
+    QTest::addColumn<KmlReader::Collection>("airborne2Coordinates");
 
 
     // ARP.
@@ -234,13 +236,41 @@ void KmlReaderTest::test_data()
     standCol << standEl;
 
 
+    // AIRBORNE1.
+    KmlReader::Collection airborne1Col;
+
+    QVector<QGeoCoordinate> airborne1El;
+    airborne1El.append({40.4737353699986, -3.535915761470541, 0});
+    airborne1El.append({40.4734043700575, -3.53647499138694, 0});
+    airborne1El.append({40.4359454555003, -3.51065416077014, 0});
+    airborne1El.append({40.4452787156093, -3.494880933245279, 0});
+    airborne1El.append({40.4737353699986, -3.535915761470541, 0});
+
+    airborne1Col << airborne1El;
+
+
+    // AIRBORNE2.
+    KmlReader::Collection airborne2Col;
+
+    QVector<QGeoCoordinate> airborne2El;
+    airborne2El.append({40.4452787156093, -3.494880933245279, 0});
+    airborne2El.append({40.4359454555003, -3.51065416077014, 0});
+    airborne2El.append({40.3984805851604, -3.48486200830645, 0});
+    airborne2El.append({40.4168074078382, -3.45388076836991, 0});
+    airborne2El.append({40.4452787156093, -3.494880933245279, 0});
+
+    airborne2Col << airborne2El;
+
+
     QTest::newRow("LEMD") << "lemd_test.kml"
                           << arpCoordinates
                           << smrCoordinates
                           << runwayCol
                           << taxiwayCol
                           << apronCol
-                          << standCol;
+                          << standCol
+                          << airborne1Col
+                          << airborne2Col;
 }
 
 void KmlReaderTest::test()
@@ -257,6 +287,8 @@ void KmlReaderTest::test()
     QFETCH(KmlReader::Collection, taxiwayCoordinates);
     QFETCH(KmlReader::Collection, apronCoordinates);
     QFETCH(KmlReader::Collection, standCoordinates);
+    QFETCH(KmlReader::Collection, airborne1Coordinates);
+    QFETCH(KmlReader::Collection, airborne2Coordinates);
 
     reader.read(&file);
     //Aerodrome aerodrome = reader.makeAerodrome();
@@ -268,6 +300,8 @@ void KmlReaderTest::test()
     QCOMPARE(reader.taxiwayElements_.value({}), taxiwayCoordinates);
     QCOMPARE(reader.apronLaneElements_.value({}), apronCoordinates);
     QCOMPARE(reader.standElements_.value({}), standCoordinates);
+    QCOMPARE(reader.airborne1Elements_.value({}), airborne1Coordinates);
+    QCOMPARE(reader.airborne2Elements_.value({}), airborne2Coordinates);
 }
 
 QTEST_APPLESS_MAIN(KmlReaderTest)
