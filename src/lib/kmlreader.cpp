@@ -53,7 +53,7 @@ Aerodrome KmlReader::makeAerodrome() const
 {
     if (!canMakeAerodrome())
     {
-        qFatal("Error creating Aerodrome!");
+        qFatal("Fatal error: No ARP coordinates found in the KML file!");
     }
 
     Aerodrome aerodrome(arp_);
@@ -62,131 +62,187 @@ Aerodrome KmlReader::makeAerodrome() const
     QGeoCoordinate originGeo = arp_;
 
     // SMR origins.
-    for (auto it = smr_.begin(); it != smr_.end(); ++it)
+    if (smr_.isEmpty())
     {
-        Sic sic = it.key();
-        QGeoCoordinate smrGeo = it.value();
+        qWarning() << "No SMR coordinates found in the KML file!"
+                   << "Results for SMR sensors will be disabled";
+    }
+    else
+    {
+        for (auto it = smr_.begin(); it != smr_.end(); ++it)
+        {
+            Sic sic = it.key();
+            QGeoCoordinate smrGeo = it.value();
 
-        aerodrome.addSmr(sic, geoToLocalEnu(smrGeo, originGeo));
+            aerodrome.addSmr(sic, geoToLocalEnu(smrGeo, originGeo));
+        }
     }
 
     // Runway elements.
-    for (auto it = runwayElements_.begin(); it != runwayElements_.end(); ++it)
+    if (runwayElements_.isEmpty())
     {
-        QString idStr = it.key();
-        Collection rwyElements = it.value();
-
-        for (const QVector<QGeoCoordinate> &rwyEleGeo : rwyElements)
+        qWarning() << "No Runway elements found in the KML file!"
+                   << "Results for Runway areas will be disabled";
+    }
+    else
+    {
+        for (auto it = runwayElements_.begin(); it != runwayElements_.end(); ++it)
         {
-            QPolygonF polygon;
-            polygon.reserve(rwyEleGeo.size());
+            QString idStr = it.key();
+            Collection rwyElements = it.value();
 
-            for (const QGeoCoordinate &coord : rwyEleGeo)
+            for (const QVector<QGeoCoordinate> &rwyEleGeo : rwyElements)
             {
-                polygon << geoToLocalEnu(coord, originGeo).toPointF();
-            }
+                QPolygonF polygon;
+                polygon.reserve(rwyEleGeo.size());
 
-            aerodrome.addRunwayElement(idStr, polygon);
+                for (const QGeoCoordinate &coord : rwyEleGeo)
+                {
+                    polygon << geoToLocalEnu(coord, originGeo).toPointF();
+                }
+
+                aerodrome.addRunwayElement(idStr, polygon);
+            }
         }
     }
 
     // Taxiway elements.
-    for (auto it = taxiwayElements_.begin(); it != taxiwayElements_.end(); ++it)
+    if (taxiwayElements_.isEmpty())
     {
-        QString idStr = it.key();
-        Collection twyElements = it.value();
-
-        for (const QVector<QGeoCoordinate> &twyEleGeo : twyElements)
+        qWarning() << "No Taxiway elements found in the KML file!"
+                   << "Results for Taxiway areas will be disabled";
+    }
+    else
+    {
+        for (auto it = taxiwayElements_.begin(); it != taxiwayElements_.end(); ++it)
         {
-            QPolygonF polygon;
-            polygon.reserve(twyEleGeo.size());
+            QString idStr = it.key();
+            Collection twyElements = it.value();
 
-            for (const QGeoCoordinate &coord : twyEleGeo)
+            for (const QVector<QGeoCoordinate> &twyEleGeo : twyElements)
             {
-                polygon << geoToLocalEnu(coord, originGeo).toPointF();
-            }
+                QPolygonF polygon;
+                polygon.reserve(twyEleGeo.size());
 
-            aerodrome.addTaxiwayElement(idStr, polygon);
+                for (const QGeoCoordinate &coord : twyEleGeo)
+                {
+                    polygon << geoToLocalEnu(coord, originGeo).toPointF();
+                }
+
+                aerodrome.addTaxiwayElement(idStr, polygon);
+            }
         }
     }
 
     // ApronLane elements.
-    for (auto it = apronLaneElements_.begin(); it != apronLaneElements_.end(); ++it)
+    if (apronLaneElements_.isEmpty())
     {
-        QString idStr = it.key();
-        Collection apronLaneElements = it.value();
-
-        for (const QVector<QGeoCoordinate> &apronLaneEleGeo : apronLaneElements)
+        qWarning() << "No ApronLane elements found in the KML file!"
+                   << "Results for ApronLane areas will be disabled";
+    }
+    else
+    {
+        for (auto it = apronLaneElements_.begin(); it != apronLaneElements_.end(); ++it)
         {
-            QPolygonF polygon;
-            polygon.reserve(apronLaneEleGeo.size());
+            QString idStr = it.key();
+            Collection apronLaneElements = it.value();
 
-            for (const QGeoCoordinate &coord : apronLaneEleGeo)
+            for (const QVector<QGeoCoordinate> &apronLaneEleGeo : apronLaneElements)
             {
-                polygon << geoToLocalEnu(coord, originGeo).toPointF();
-            }
+                QPolygonF polygon;
+                polygon.reserve(apronLaneEleGeo.size());
 
-            aerodrome.addApronLaneElement(idStr, polygon);
+                for (const QGeoCoordinate &coord : apronLaneEleGeo)
+                {
+                    polygon << geoToLocalEnu(coord, originGeo).toPointF();
+                }
+
+                aerodrome.addApronLaneElement(idStr, polygon);
+            }
         }
     }
 
     // Stand elements.
-    for (auto it = standElements_.begin(); it != standElements_.end(); ++it)
+    if (standElements_.isEmpty())
     {
-        QString idStr = it.key();
-        Collection standElements = it.value();
-
-        for (const QVector<QGeoCoordinate> &standEleGeo : standElements)
+        qWarning() << "No Stand elements found in the KML file!"
+                   << "Results for Stand areas will be disabled";
+    }
+    else
+    {
+        for (auto it = standElements_.begin(); it != standElements_.end(); ++it)
         {
-            QPolygonF polygon;
-            polygon.reserve(standEleGeo.size());
+            QString idStr = it.key();
+            Collection standElements = it.value();
 
-            for (const QGeoCoordinate &coord : standEleGeo)
+            for (const QVector<QGeoCoordinate> &standEleGeo : standElements)
             {
-                polygon << geoToLocalEnu(coord, originGeo).toPointF();
-            }
+                QPolygonF polygon;
+                polygon.reserve(standEleGeo.size());
 
-            aerodrome.addStandElement(idStr, polygon);
+                for (const QGeoCoordinate &coord : standEleGeo)
+                {
+                    polygon << geoToLocalEnu(coord, originGeo).toPointF();
+                }
+
+                aerodrome.addStandElement(idStr, polygon);
+            }
         }
     }
 
-    // Airborne 1 elements.
-    for (auto it = airborne1Elements_.begin(); it != airborne1Elements_.end(); ++it)
+    // Airborne1 elements.
+    if (airborne1Elements_.isEmpty())
     {
-        QString idStr = it.key();
-        Collection airborne1Elements = it.value();
-
-        for (const QVector<QGeoCoordinate> &airborne1EleGeo : airborne1Elements)
+        qWarning() << "No Airborne1 elements found in the KML file!"
+                   << "Results for Airborne1 areas will be disabled";
+    }
+    else
+    {
+        for (auto it = airborne1Elements_.begin(); it != airborne1Elements_.end(); ++it)
         {
-            QPolygonF polygon;
-            polygon.reserve(airborne1EleGeo.size());
+            QString idStr = it.key();
+            Collection airborne1Elements = it.value();
 
-            for (const QGeoCoordinate &coord : airborne1EleGeo)
+            for (const QVector<QGeoCoordinate> &airborne1EleGeo : airborne1Elements)
             {
-                polygon << geoToLocalEnu(coord, originGeo).toPointF();
-            }
+                QPolygonF polygon;
+                polygon.reserve(airborne1EleGeo.size());
 
-            aerodrome.addAirborne1Element(idStr, polygon);
+                for (const QGeoCoordinate &coord : airborne1EleGeo)
+                {
+                    polygon << geoToLocalEnu(coord, originGeo).toPointF();
+                }
+
+                aerodrome.addAirborne1Element(idStr, polygon);
+            }
         }
     }
 
-    // Airborne 2 elements.
-    for (auto it = airborne2Elements_.begin(); it != airborne2Elements_.end(); ++it)
+    // Airborne2 elements.
+    if (airborne2Elements_.isEmpty())
     {
-        QString idStr = it.key();
-        Collection airborne2Elements = it.value();
-
-        for (const QVector<QGeoCoordinate> &airborne2EleGeo : airborne2Elements)
+        qWarning() << "No Airborne2 elements found in the KML file!"
+                   << "Results for Airborne2 areas will be disabled";
+    }
+    else
+    {
+        for (auto it = airborne2Elements_.begin(); it != airborne2Elements_.end(); ++it)
         {
-            QPolygonF polygon;
-            polygon.reserve(airborne2EleGeo.size());
+            QString idStr = it.key();
+            Collection airborne2Elements = it.value();
 
-            for (const QGeoCoordinate &coord : airborne2EleGeo)
+            for (const QVector<QGeoCoordinate> &airborne2EleGeo : airborne2Elements)
             {
-                polygon << geoToLocalEnu(coord, originGeo).toPointF();
-            }
+                QPolygonF polygon;
+                polygon.reserve(airborne2EleGeo.size());
 
-            aerodrome.addAirborne2Element(idStr, polygon);
+                for (const QGeoCoordinate &coord : airborne2EleGeo)
+                {
+                    polygon << geoToLocalEnu(coord, originGeo).toPointF();
+                }
+
+                aerodrome.addAirborne2Element(idStr, polygon);
+            }
         }
     }
 
