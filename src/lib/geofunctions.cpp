@@ -151,6 +151,7 @@ double dmsToDeg(const double deg, const double min, const double sec, const QStr
         return qQNaN();
     }
 
+    // TODO: Consider making regEx object static for performance.
     QRegularExpression regEx(QLatin1String("[NSEW]"), QRegularExpression::CaseInsensitiveOption);
     if (!regEx.match(hemisphere).hasMatch())
     {

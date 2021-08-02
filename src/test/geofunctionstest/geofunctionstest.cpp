@@ -40,6 +40,10 @@ private slots:
 
     void geoToLocalEcefTest_data();
     void geoToLocalEcefTest();
+
+    // TODO: Implement missing tests.
+    //void dmsToDegTest_data();
+    //void dmsToDegTest();
 };
 
 void GeoFunctionsTest::wgs84TransverseRadiusTest_data()

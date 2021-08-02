@@ -72,6 +72,7 @@ bool Configuration::useXmlTimestamp()
     return b;
 }
 
+// TODO: This function should allow reading more than one SIC value.
 Sic Configuration::smrSic()
 {
     QString key = QLatin1String("SMR.SIC");
