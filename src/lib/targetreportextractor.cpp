@@ -20,6 +20,14 @@
 #include "targetreportextractor.h"
 #include "geofunctions.h"
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+#include <QTextStream>
+namespace Qt
+{
+static const auto &hex = &::hex;
+}  // namespace Qt
+#endif
+
 TargetReportExtractor::TargetReportExtractor(const QGeoCoordinate &arp,
     const QHash<Sic, QVector3D> &smr)
     : arp_(arp), smr_(smr)
@@ -157,7 +165,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_tgt_addr)
             {
-                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping MLAT TgtRep" << Qt::hex << rec.crc_
                          << "without target address";
                 return false;
             }
@@ -166,7 +174,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping MLAT TgtRep" << Qt::hex << rec.crc_
                          << "with invalid target address";
                 return false;
             }
@@ -182,7 +190,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_tot)
             {
-                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping MLAT TgtRep" << Qt::hex << rec.crc_
                          << "without TOT information";
                 return false;
             }
@@ -191,7 +199,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qDebug() << "Skipping MLAT TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping MLAT TgtRep" << Qt::hex << rec.crc_
                          << "with invalid TOT information";
                 return false;
             }
@@ -216,7 +224,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_tgt_addr)
             {
-                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping ADS-B TgtRep" << Qt::hex << rec.crc_
                          << "without target address";
                 return false;
             }
@@ -225,7 +233,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping ADS-B TgtRep" << Qt::hex << rec.crc_
                          << "with invalid target address";
                 return false;
             }
@@ -233,7 +241,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
             // Do not continue if Target Address is an excluded address.
             if (excluded_addresses_.contains(tgt_addr))
             {
-                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping ADS-B TgtRep" << Qt::hex << rec.crc_
                          << "with excluded target address" << tgt_addr;
                 return false;
             }
@@ -243,7 +251,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!has_ecat)
             {
-                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping ADS-B TgtRep" << Qt::hex << rec.crc_
                          << "without ECAT information";
                 return false;
             }
@@ -252,7 +260,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
 
             if (!ok)
             {
-                qDebug() << "Skipping ADS-B TgtRep" << hex << rec.crc_
+                qDebug() << "Skipping ADS-B TgtRep" << Qt::hex << rec.crc_
                          << "with invalid ECAT information";
                 return false;
             }

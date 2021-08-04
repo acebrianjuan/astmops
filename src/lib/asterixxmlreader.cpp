@@ -20,6 +20,15 @@
 #include "asterixxmlreader.h"
 #include <QRegularExpression>
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+#include <QTextStream>
+namespace Qt
+{
+static const auto& hex = &::hex;
+static const auto& dec = &::dec;
+}  // namespace Qt
+#endif
+
 AsterixXmlReader::AsterixXmlReader(QObject* parent) : QObject(parent)
 {
 }
@@ -130,8 +139,8 @@ void AsterixXmlReader::readRecord()
     // Skip unsupported categories.
     if (!Asterix::isCategorySupported(cat))
     {
-        qDebug() << "Skipping record" << hex << crc
-                 << "of unsupported category" << dec << cat;
+        qDebug() << "Skipping record" << Qt::hex << crc
+                 << "of unsupported category" << Qt::dec << cat;
         return;
     }
 
@@ -162,7 +171,7 @@ void AsterixXmlReader::readRecord()
     if (xml_.hasError())
     {
         // Discard corrupt record.
-        qDebug() << "Skipping corrupt record" << hex << record.crc_;
+        qDebug() << "Skipping corrupt record" << Qt::hex << record.crc_;
         return;
     }
 
@@ -171,7 +180,7 @@ void AsterixXmlReader::readRecord()
     if (rt.isUnknown())
     {
         // Skip unknown record types.
-        qDebug() << "Skipping record" << hex << record.crc_
+        qDebug() << "Skipping record" << Qt::hex << record.crc_
                  << "of unknown record type";
         return;
     }
@@ -197,7 +206,7 @@ void AsterixXmlReader::readRecord()
     // Skip invalid timestamps.
     if (!datetime.isValid())
     {
-        qDebug() << "Skipping record" << hex << record.crc_
+        qDebug() << "Skipping record" << Qt::hex << record.crc_
                  << "with invalid timestamp";
         return;
     }
