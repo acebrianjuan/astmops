@@ -9,6 +9,8 @@
 #
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Positioning)
+find_package(GeographicLib REQUIRED)
+
 set(CMAKE_AUTOMOC ON)
 
 add_library(lib
@@ -33,4 +35,4 @@ add_library(lib
     )
 
 target_include_directories(lib PUBLIC .)
-target_link_libraries(lib Qt5::Core Qt5::Gui Qt5::Positioning)
+target_link_libraries(lib Qt5::Core Qt5::Gui Qt5::Positioning ${GeographicLib_LIBRARIES})
