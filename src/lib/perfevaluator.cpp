@@ -1115,7 +1115,14 @@ void PerfEvaluator::evalED116UR(const TrackCollectionSet &s)
 
                     // Extract TST track portion that matches in time with the
                     // REF track.
-                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                    std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                    if (!sub_trk_tst_opt.has_value())
+                    {
+                        continue;
+                    }
+
+                    Track sub_trk_tst = sub_trk_tst_opt.value();
 
                     smrUr_[narea].n_trp_ += sub_trk_tst.size();
                 }
@@ -1190,7 +1197,14 @@ void PerfEvaluator::evalED116PD(const TrackCollectionSet &s)
 
                     // Extract TST track portion that matches in time with the
                     // REF track.
-                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                    std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                    if (!sub_trk_tst_opt.has_value())
+                    {
+                        continue;
+                    }
+
+                    Track sub_trk_tst = sub_trk_tst_opt.value();
 
                     // Iterate through every target report in the test sub-track.
                     for (const TargetReport &tr_tst : sub_trk_tst)
@@ -1282,7 +1296,14 @@ void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
 
                     // Extract TST track portion that matches in time with the
                     // REF track.
-                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                    std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                    if (!sub_trk_tst_opt.has_value())
+                    {
+                        continue;
+                    }
+
+                    Track sub_trk_tst = sub_trk_tst_opt.value();
 
                     smrPfd_[narea].n_tr_ += sub_trk_tst.size();
                 }
@@ -1407,7 +1428,14 @@ void PerfEvaluator::evalED117UR(const TrackCollectionSet &s)
 
                     // Extract TST track portion that matches in time with the
                     // REF track.
-                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                    std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                    if (!sub_trk_tst_opt.has_value())
+                    {
+                        continue;
+                    }
+
+                    Track sub_trk_tst = sub_trk_tst_opt.value();
 
                     mlatUr_[narea].n_trp_ += sub_trk_tst.size();
                 }
@@ -1501,7 +1529,14 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
 
                     // Extract TST track portion that matches in time with the
                     // REF track.
-                    Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                    std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                    if (!sub_trk_tst_opt.has_value())
+                    {
+                        continue;
+                    }
+
+                    Track sub_trk_tst = sub_trk_tst_opt.value();
 
                     // Iterate through every target report in the test sub-track.
                     for (const TargetReport &tr_tst : sub_trk_tst)
@@ -1653,7 +1688,14 @@ void PerfEvaluator::evalED117PID(const TrackCollectionSet &s)
 
                 // Extract TST track portion that matches in time with the
                 // REF track.
-                Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                if (!sub_trk_tst_opt.has_value())
+                {
+                    continue;
+                }
+
+                Track sub_trk_tst = sub_trk_tst_opt.value();
 
                 // Iterate through every target report in the test sub-track.
                 for (const TargetReport &tr_tst : sub_trk_tst)
@@ -1805,7 +1847,14 @@ void PerfEvaluator::evalED117PFID(const TrackCollectionSet &s)
 
                 // Extract TST track portion that matches in time with the
                 // REF track.
-                Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                if (!sub_trk_tst_opt.has_value())
+                {
+                    continue;
+                }
+
+                Track sub_trk_tst = sub_trk_tst_opt.value();
 
                 // Iterate through every target report in the test sub-track.
                 for (const TargetReport &tr_tst : sub_trk_tst)
@@ -1963,7 +2012,14 @@ void PerfEvaluator::evalED117PLG(const TrackCollectionSet &s)
                 }
 
                 // Extract TST sub track that matches in time with the REF sub track.
-                Track sub_trk_tst = intersect(trk_tst, sub_trk_ref).value();
+                std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
+
+                if (!sub_trk_tst_opt.has_value())
+                {
+                    continue;
+                }
+
+                Track sub_trk_tst = sub_trk_tst_opt.value();
 
                 // Iterate through each target report in the TST sub track.
                 for (const TargetReport &tr : sub_trk_tst)
