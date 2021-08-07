@@ -49,7 +49,8 @@ public:
     void printED117PFD() const;
     void printED117PID_Ident() const;
     void printED117PID_Mode3A() const;
-    void printED117PFID() const;
+    void printED117PFID_Ident() const;
+    void printED117PFID_Mode3A() const;
     void printED117PLG() const;
 
 private:

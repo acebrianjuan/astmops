@@ -79,7 +79,8 @@ void PerfEvaluator::run()
     printED117PFD();
     printED117PID_Ident();
     printED117PID_Mode3A();
-    printED117PFID();
+    printED117PFID_Ident();
+    printED117PFID_Mode3A();
     printED117PLG();
 }
 
@@ -846,7 +847,7 @@ void PerfEvaluator::printED117PID_Mode3A() const
     }
 }
 
-void PerfEvaluator::printED117PFID() const
+void PerfEvaluator::printED117PFID_Ident() const
 {
     QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
 
@@ -858,7 +859,7 @@ void PerfEvaluator::printED117PFID() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PFID ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(84) << "[ ED-117 PFID (IDENT) ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
@@ -895,6 +896,82 @@ void PerfEvaluator::printED117PFID() const
     for (const Aerodrome::Area area : qAsConst(areas))
     {
         const auto subAreas = mlatPfidIdent_.findByArea(area);
+
+        Counters::PfidCounter ctrTotal;
+        for (const auto &it : subAreas)
+        {
+            Counters::PfidCounter ctr = it.value();
+            ctrTotal.n_eitr_ += ctr.n_eitr_;
+            ctrTotal.n_itr_ += ctr.n_itr_;
+
+            printStats(it, ctr);
+        }
+
+        double pfid = ctrTotal.n_eitr_ / static_cast<double>(ctrTotal.n_itr_);
+        if (pfid > 1)
+        {
+            pfid = 1;
+        }
+
+        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(12) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_itr_
+            << qSetFieldWidth(0) << Qt::endl;
+
+        out << Qt::endl;
+    }
+}
+
+void PerfEvaluator::printED117PFID_Mode3A() const
+{
+    QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
+
+    QTextStream out(stdout);
+    out.setRealNumberPrecision(2);
+    out.setRealNumberNotation(QTextStream::FixedNotation);
+
+    out << Qt::endl;
+
+    out.setFieldAlignment(QTextStream::AlignCenter);
+    out.setPadChar(QLatin1Char('-'));
+    out << qSetFieldWidth(84) << "[ ED-117 PFID (MODE3A) ]" << qSetFieldWidth(0) << Qt::endl;
+    out.setPadChar(QLatin1Char(' '));
+
+    out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(12) << "PFID [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(0) << Qt::endl;
+
+    out.setFieldAlignment(QTextStream::AlignRight);
+
+    out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(0) << Qt::endl;
+
+    QVector<Aerodrome::Area> areas;
+    areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
+
+    auto printStats = [&out, &e](AreaHash<Counters::PfidCounter>::const_iterator it, Counters::PfidCounter ctr) {
+        double pfid = ctr.n_eitr_ / static_cast<double>(ctr.n_itr_);
+        if (pfid > 1)
+        {
+            pfid = 1;
+        }
+
+        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(12) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(5) << Qt::right << ctr.n_itr_
+            << qSetFieldWidth(0) << Qt::endl;
+    };
+
+    for (const Aerodrome::Area area : qAsConst(areas))
+    {
+        const auto subAreas = mlatPfidMode3A_.findByArea(area);
 
         Counters::PfidCounter ctrTotal;
         for (const auto &it : subAreas)
