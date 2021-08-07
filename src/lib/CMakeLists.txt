@@ -9,6 +9,11 @@
 #
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Positioning)
+
+# Workaround for bug: https://bugs.launchpad.net/ubuntu/+source/geographiclib/+bug/1805173
+if(UNIX AND NOT APPLE)
+    set(CMAKE_MODULE_PATH "/usr/share/cmake/geographiclib/")
+endif()
 find_package(GeographicLib REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
