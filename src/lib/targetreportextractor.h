@@ -24,6 +24,7 @@
 #include "astmops.h"
 #include "counters.h"
 #include "targetreport.h"
+#include <GeographicLib/Geoid.hpp>
 #include <QGeoCoordinate>
 #include <QObject>
 #include <QQueue>
@@ -57,6 +58,8 @@ private:
     bool isRecordToBeKept(const Asterix::Record& rec) const;
     std::optional<TargetReport> makeTargetReport(const Asterix::Record& rec) const;
     Aerodrome::NamedArea locatePoint(const QVector3D pos, const bool gbs) const;
+
+    GeographicLib::Geoid geoid_ = GeographicLib::Geoid("egm96-5");
 
     LocatePointCb locatePoint_cb_;
 
