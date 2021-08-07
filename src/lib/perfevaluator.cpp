@@ -77,7 +77,8 @@ void PerfEvaluator::run()
     printED117UR();
     printED117PD();
     printED117PFD();
-    printED117PID();
+    printED117PID_Ident();
+    printED117PID_Mode3A();
     printED117PFID();
     printED117PLG();
 }
@@ -693,7 +694,7 @@ void PerfEvaluator::printED117PFD() const
     }
 }
 
-void PerfEvaluator::printED117PID() const
+void PerfEvaluator::printED117PID_Ident() const
 {
     QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
 
@@ -705,7 +706,7 @@ void PerfEvaluator::printED117PID() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PID ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(84) << "[ ED-117 PID (IDENT) ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
@@ -742,6 +743,82 @@ void PerfEvaluator::printED117PID() const
     for (const Aerodrome::Area area : qAsConst(areas))
     {
         const auto subAreas = mlatPidIdent_.findByArea(area);
+
+        Counters::PidCounter ctrTotal;
+        for (const auto &it : subAreas)
+        {
+            Counters::PidCounter ctr = it.value();
+            ctrTotal.n_citr_ += ctr.n_citr_;
+            ctrTotal.n_itr_ += ctr.n_itr_;
+
+            printStats(it, ctr);
+        }
+
+        double pid = ctrTotal.n_citr_ / static_cast<double>(ctrTotal.n_itr_);
+        if (pid > 1)
+        {
+            pid = 1;
+        }
+
+        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(12) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_itr_
+            << qSetFieldWidth(0) << Qt::endl;
+
+        out << Qt::endl;
+    }
+}
+
+void PerfEvaluator::printED117PID_Mode3A() const
+{
+    QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
+
+    QTextStream out(stdout);
+    out.setRealNumberPrecision(2);
+    out.setRealNumberNotation(QTextStream::FixedNotation);
+
+    out << Qt::endl;
+
+    out.setFieldAlignment(QTextStream::AlignCenter);
+    out.setPadChar(QLatin1Char('-'));
+    out << qSetFieldWidth(84) << "[ ED-117 PID (MODE3A) ]" << qSetFieldWidth(0) << Qt::endl;
+    out.setPadChar(QLatin1Char(' '));
+
+    out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(12) << "PID [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(0) << Qt::endl;
+
+    out.setFieldAlignment(QTextStream::AlignRight);
+
+    out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(0) << Qt::endl;
+
+    QVector<Aerodrome::Area> areas;
+    areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
+
+    auto printStats = [&out, &e](AreaHash<Counters::PidCounter>::const_iterator it, Counters::PidCounter ctr) {
+        double pid = ctr.n_citr_ / static_cast<double>(ctr.n_itr_);
+        if (pid > 1)
+        {
+            pid = 1;
+        }
+
+        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(12) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(5) << Qt::right << ctr.n_itr_
+            << qSetFieldWidth(0) << Qt::endl;
+    };
+
+    for (const Aerodrome::Area area : qAsConst(areas))
+    {
+        const auto subAreas = mlatPidMode3A_.findByArea(area);
 
         Counters::PidCounter ctrTotal;
         for (const auto &it : subAreas)
