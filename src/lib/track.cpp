@@ -930,7 +930,10 @@ std::optional<Track> intersect(const Track &intersectee, const Track &intersecto
         t << it.value();
     }
 
-    Q_ASSERT(!t.isEmpty());
+    if (t.isEmpty())
+    {
+        return std::nullopt;
+    }
 
     return t;
 }
