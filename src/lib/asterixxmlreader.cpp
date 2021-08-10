@@ -31,6 +31,17 @@ static const auto& dec = &::dec;
 
 AsterixXmlReader::AsterixXmlReader(QObject* parent) : QObject(parent)
 {
+    // Read date from configuration. If no date is provided by the user then
+    // use the current system date.
+    QDate date = Configuration::asterixDate();
+    if (date.isValid())
+    {
+        startDate_ = date;
+    }
+    else
+    {
+        startDate_ = QDate::currentDate();
+    }
 }
 
 void AsterixXmlReader::addData(const QByteArray& data)

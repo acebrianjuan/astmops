@@ -47,7 +47,7 @@ QDate Configuration::asterixDate()
 
     if (!settings.contains(key))
     {
-        qFatal("%s is mandatory.", qPrintable(key));
+        return QDate();
     }
 
     QString timeStr = settings.value(key).toString();

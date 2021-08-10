@@ -61,7 +61,7 @@ private:
 
     bool useXmlTimestamp_ = Configuration::useXmlTimestamp();
 
-    QDate startDate_ = Configuration::asterixDate();
+    QDate startDate_;
     QHash<RecordType, QDateTime> last_times_;
     QHash<RecordType, qint64> day_count_;
     QXmlStreamReader xml_;
