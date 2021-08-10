@@ -18,10 +18,46 @@
  */
 
 #include "config.h"
+#include <QCoreApplication>
+#include <QStandardPaths>
 
-Sic readSic(const QString &key)
+Settings::Settings() : QSettings(configFilePath(), QSettings::IniFormat)
 {
-    QSettings settings;
+}
+
+QString Settings::configFilePath()
+{
+    static QString path;
+    if (!path.isEmpty())
+    {
+        return path;
+    }
+
+    const QStringList args = QCoreApplication::arguments();
+    const int idx = args.indexOf(QLatin1String("--config"));
+
+    if (idx != -1 && args.size() > idx + 1)
+    {
+        // Use user-defined config location.
+        path = args.at(idx + 1);
+    }
+    else
+    {
+        // Use default config location.
+        path = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+        path.append(QLatin1String("/"));
+        path.append(QCoreApplication::organizationName());
+        path.append(QLatin1String("/"));
+        path.append(QCoreApplication::applicationName());
+        path.append(QLatin1String(".conf"));
+    }
+
+    return path;
+}
+
+Sic Configuration::readSic(const QString &key)
+{
+    Settings settings;
 
     if (!settings.contains(key))
     {
@@ -42,7 +78,7 @@ QDate Configuration::asterixDate()
 {
     QString key = QLatin1String("Date");
 
-    QSettings settings;
+    Settings settings;
     //settings.beginGroup(QLatin1String("General"));
 
     if (!settings.contains(key))
@@ -60,7 +96,7 @@ bool Configuration::useXmlTimestamp()
 {
     QString key = QLatin1String("useXmlTimestamp");
 
-    QSettings settings;
+    Settings settings;
     //settings.beginGroup(QLatin1String("Global"));
 
     if (!settings.contains(key))
@@ -95,7 +131,7 @@ QString Configuration::kmlFile()
 {
     QString key = QLatin1String("filepath");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("KML"));
 
     if (!settings.contains(key))
@@ -112,7 +148,7 @@ double Configuration::ed116TgtRepUpdateRate()
 {
     QString key = QLatin1String("TgtRepUpdateRate");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("MOPS/ED116"));
 
     if (!settings.contains(key))
@@ -137,7 +173,7 @@ double Configuration::ed116SrvMsgUpdateRate()
 {
     QString key = QLatin1String("SrvMsgUpdateRate");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("MOPS/ED116"));
 
     if (!settings.contains(key))
@@ -162,7 +198,7 @@ double Configuration::ed117TgtRepUpdateRate()
 {
     QString key = QLatin1String("TgtRepUpdateRate");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("MOPS/ED117"));
 
     if (!settings.contains(key))
@@ -187,7 +223,7 @@ double Configuration::ed117SrvMsgUpdateRate()
 {
     QString key = QLatin1String("SrvMsgUpdateRate");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("MOPS/ED117"));
 
     if (!settings.contains(key))
@@ -212,7 +248,7 @@ double Configuration::silencePeriod()
 {
     QString key = QLatin1String("TimeOutPeriod");
 
-    QSettings settings;
+    Settings settings;
 
     if (!settings.contains(key))
     {
@@ -242,7 +278,7 @@ double Configuration::probDetectionPeriod(Aerodrome::Area area)
     }
 
     auto readConfig = [area](const QString &key, double period) {
-        QSettings settings;
+        Settings settings;
         double var = settings.value(key, period).toDouble();
 
         if (var <= 0)
@@ -276,7 +312,7 @@ qint32 Configuration::dgpsTodOffset()
 {
     QString key = QLatin1String("TimeOfDayOffset");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("DGPS"));
 
     if (!settings.contains(key))
@@ -301,7 +337,7 @@ Mode3A Configuration::dgpsMode3A()
 {
     QString key = QLatin1String("Mode3A");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("DGPS"));
 
     if (!settings.contains(key))
@@ -323,7 +359,7 @@ ModeS Configuration::dgpsModeS()
 {
     QString key = QLatin1String("ModeS");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("DGPS"));
 
     if (!settings.contains(key))
@@ -346,7 +382,7 @@ Ident Configuration::dgpsIdent()
 {
     QString key = QLatin1String("Ident");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("DGPS"));
 
     if (!settings.contains(key))
@@ -368,7 +404,7 @@ QString Configuration::logRules()
 {
     QString key = QLatin1String("rules");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("LOG"));
 
     if (!settings.contains(key))
@@ -385,7 +421,7 @@ QString Configuration::logPattern()
 {
     QString key = QLatin1String("pattern");
 
-    QSettings settings;
+    Settings settings;
     settings.beginGroup(QLatin1String("LOG"));
 
     if (!settings.contains(key))

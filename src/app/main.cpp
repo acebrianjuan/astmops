@@ -26,17 +26,16 @@
 #include <QFile>
 #include <QLoggingCategory>
 
-
 int main(int argc, char *argv[])
 {
+    QCoreApplication application(argc, argv);
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops"));
-
 
     QString logRules = Configuration::logRules();
     if (!logRules.isEmpty())
     {
-        QLoggingCategory::setFilterRules(Configuration::logRules());
+        QLoggingCategory::setFilterRules(logRules);
     }
     else
     {
@@ -46,15 +45,14 @@ int main(int argc, char *argv[])
     QString logPattern = Configuration::logPattern();
     if (!logPattern.isEmpty())
     {
-        qSetMessagePattern(Configuration::logPattern());
+        qSetMessagePattern(logPattern);
     }
 
-
-    QCoreApplication application(argc, argv);
     const QStringList args = application.arguments();
-
     qDebug() << "args" << args;
 
+    Settings s;
+    qInfo() << "Configuration file:" << s.fileName();
 
     QString kmlFilePath = Configuration::kmlFile();
     QFile kmlFile(kmlFilePath);

@@ -23,10 +23,21 @@
 #include "aerodrome.h"
 #include "astmops.h"
 
-Sic readSic(const QString& key);
+class Settings : public QSettings
+{
+    Q_OBJECT
+
+public:
+    Settings();
+
+private:
+    QString configFilePath();
+};
 
 namespace Configuration
 {
+Sic readSic(const QString& key);
+
 QDate asterixDate();
 
 bool useXmlTimestamp();
