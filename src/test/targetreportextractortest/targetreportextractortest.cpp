@@ -18,6 +18,7 @@
  */
 
 #include "targetreportextractor.h"
+#include "config.h"
 #include "geofunctions.h"
 #include <QObject>
 #include <QtTest>
@@ -53,7 +54,7 @@ void TargetReportExtractorTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-targetreportextractortest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("SMR.SIC"), 7);

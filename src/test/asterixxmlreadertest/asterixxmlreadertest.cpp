@@ -18,6 +18,7 @@
  */
 
 #include "asterixxmlreader.h"
+#include "config.h"
 #include <QObject>
 #include <QtTest>
 
@@ -36,7 +37,7 @@ void AsterixXmlReaderTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-asterixxmlreadertest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("SMR.SIC"), 7);

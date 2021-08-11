@@ -18,6 +18,7 @@
  */
 
 #include "dgpscsvreader.h"
+#include "config.h"
 #include <QGeoCoordinate>
 #include <QObject>
 #include <QtTest>
@@ -43,7 +44,7 @@ void DgpsCsvReaderTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-dgpscsvreadertest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.beginGroup(QLatin1String("DGPS"));

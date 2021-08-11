@@ -18,6 +18,7 @@
  */
 
 #include "trackassociator.h"
+#include "config.h"
 #include <QObject>
 #include <QtTest>
 
@@ -36,7 +37,7 @@ void TrackAssociatorTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-trackassociatortest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));

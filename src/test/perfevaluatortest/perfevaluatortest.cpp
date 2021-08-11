@@ -18,6 +18,7 @@
  */
 
 #include "perfevaluator.h"
+#include "config.h"
 #include <QObject>
 #include <QtTest>
 
@@ -69,7 +70,7 @@ void PerfEvaluatorTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-perfevaluatortest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));

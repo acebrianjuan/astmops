@@ -18,6 +18,7 @@
  */
 
 #include "trackextractor.h"
+#include "config.h"
 #include <QObject>
 #include <QtTest>
 
@@ -36,7 +37,7 @@ void TrackExtractorTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-trackextractortest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("SMR.SIC"), 7);

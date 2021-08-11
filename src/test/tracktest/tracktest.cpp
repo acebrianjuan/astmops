@@ -18,6 +18,7 @@
  */
 
 #include "track.h"
+#include "config.h"
 #include <QObject>
 #include <QtTest>
 #include <algorithm>
@@ -41,7 +42,7 @@ void TrackTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-tracktest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));

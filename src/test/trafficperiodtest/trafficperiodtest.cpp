@@ -19,6 +19,7 @@
  */
 
 #include "trafficperiod.h"
+#include "config.h"
 #include <QObject>
 #include <QtTest>
 
@@ -43,7 +44,7 @@ void TrafficPeriodTest::initTestCase()
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops-trafficperiodtest"));
 
-    QSettings settings;
+    Settings settings;
     settings.clear();
 
     settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));
