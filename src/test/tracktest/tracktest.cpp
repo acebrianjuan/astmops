@@ -133,7 +133,7 @@ void TrackTest::testTrack()
     // For a default-constructed track the system type must be unknown and the
     // track number set to 0.
     QCOMPARE(trk_dflt.system_type(), SystemType::Unknown);
-    QCOMPARE(trk_dflt.track_number(), 0);
+    QCOMPARE(trk_dflt.track_number(), static_cast<TrackNum>(0));
 
     // A default-constructed track must be empty.
     QVERIFY(trk_dflt.isEmpty() == true);
@@ -171,7 +171,7 @@ void TrackTest::testTrack()
     trk_dflt << tr_adsb_101_1;
 
     QCOMPARE(trk_dflt.system_type(), SystemType::Unknown);
-    QCOMPARE(trk_dflt.track_number(), 0);
+    QCOMPARE(trk_dflt.track_number(), static_cast<TrackNum>(0));
 
     QVERIFY(trk_dflt.isEmpty() == true);
     QCOMPARE(trk_dflt.size(), 0);
@@ -209,7 +209,7 @@ void TrackTest::testTrack()
     // to the constructor. These properties must remain constant during the
     // lifetime of the track.
     QCOMPARE(trk_adsb_101.system_type(), SystemType::Adsb);
-    QCOMPARE(trk_adsb_101.track_number(), 101);
+    QCOMPARE(trk_adsb_101.track_number(), static_cast<TrackNum>(101));
 
     // No target reports have been added yet so the track must be empty.
     QVERIFY(trk_adsb_101.isEmpty() == true);
@@ -253,7 +253,7 @@ void TrackTest::testTrack()
     trk_adsb_101 << tr_mlat_201_1;
 
     QCOMPARE(trk_adsb_101.system_type(), SystemType::Adsb);
-    QCOMPARE(trk_adsb_101.track_number(), 101);
+    QCOMPARE(trk_adsb_101.track_number(), static_cast<TrackNum>(101));
 
     QVERIFY(trk_adsb_101.isEmpty() == true);
     QCOMPARE(trk_adsb_101.size(), 0);
@@ -287,7 +287,7 @@ void TrackTest::testTrack()
     trk_adsb_101 << tr_adsb_102_1;
 
     QCOMPARE(trk_adsb_101.system_type(), SystemType::Adsb);
-    QCOMPARE(trk_adsb_101.track_number(), 101);
+    QCOMPARE(trk_adsb_101.track_number(), static_cast<TrackNum>(101));
 
     QVERIFY(trk_adsb_101.isEmpty() == true);
     QCOMPARE(trk_adsb_101.size(), 0);
@@ -321,7 +321,7 @@ void TrackTest::testTrack()
     trk_adsb_101 << tr_adsb_101_2;
 
     QCOMPARE(trk_adsb_101.system_type(), SystemType::Adsb);
-    QCOMPARE(trk_adsb_101.track_number(), 101);
+    QCOMPARE(trk_adsb_101.track_number(), static_cast<TrackNum>(101));
 
     // The track must contain one target report now.
     QVERIFY(trk_adsb_101.isEmpty() == false);
@@ -367,7 +367,7 @@ void TrackTest::testTrack()
     trk_adsb_101 << tr_adsb_101_3;
 
     QCOMPARE(trk_adsb_101.system_type(), SystemType::Adsb);
-    QCOMPARE(trk_adsb_101.track_number(), 101);
+    QCOMPARE(trk_adsb_101.track_number(), static_cast<TrackNum>(101));
 
     // The track must contain two target reports now.
     QVERIFY(trk_adsb_101.isEmpty() == false);
@@ -420,7 +420,7 @@ void TrackTest::testTrack()
     trk_adsb_101 << tr_adsb_101_1;
 
     QCOMPARE(trk_adsb_101.system_type(), SystemType::Adsb);
-    QCOMPARE(trk_adsb_101.track_number(), 101);
+    QCOMPARE(trk_adsb_101.track_number(), static_cast<TrackNum>(101));
 
     // The track must contain three target reports now.
     QVERIFY(trk_adsb_101.isEmpty() == false);
@@ -463,7 +463,7 @@ void TrackTest::testTrack()
     // The track must have the taken the ModeS address of the newly inserted
     // target report.
     QVERIFY(trk_adsb_101.mode_s().has_value() == true);
-    QCOMPARE(trk_adsb_101.mode_s().value(), 0x000001);
+    QCOMPARE(trk_adsb_101.mode_s().value(), static_cast<quint32>(0x000001));
 
 
     /* -------------------------------------------------------------------- */
@@ -731,7 +731,7 @@ void TrackTest::testTrackCollection()
     QCOMPARE(col_adsb.tracks(), QVector<Track>({trk_adsb_101, trk_adsb_102, trk_adsb_103}));
 
     QVERIFY(col_adsb.mode_s().has_value() == true);
-    QCOMPARE(col_adsb.mode_s().value(), 0x000001);
+    QCOMPARE(col_adsb.mode_s().value(), static_cast<quint32>(0x000001));
 
 
     /* -------------------------------------------------------------------- */
@@ -831,7 +831,7 @@ void TrackTest::testTrackCollectionSet()
     TrackCollectionSet set_dflt;
 
     QCOMPARE(set_dflt.ref_sys_type(), SystemType::Unknown);
-    QCOMPARE(set_dflt.mode_s(), 0xFFFFFF);
+    QCOMPARE(set_dflt.mode_s(), static_cast<quint32>(0xFFFFFF));
 
     QVERIFY(set_dflt.hasRefData() == false);
     QVERIFY(set_dflt.hasTestData() == false);
@@ -856,7 +856,7 @@ void TrackTest::testTrackCollectionSet()
     set_dflt << Track(SystemType::Adsb, 100);
 
     QCOMPARE(set_dflt.ref_sys_type(), SystemType::Unknown);
-    QCOMPARE(set_dflt.mode_s(), 0xFFFFFF);
+    QCOMPARE(set_dflt.mode_s(), static_cast<quint32>(0xFFFFFF));
 
     QVERIFY(set_dflt.hasRefData() == false);
     QVERIFY(set_dflt.hasTestData() == false);
@@ -882,7 +882,7 @@ void TrackTest::testTrackCollectionSet()
     TrackCollectionSet set_0x000001(0x000001, SystemType::Adsb);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == false);
     QVERIFY(set_0x000001.hasTestData() == false);
@@ -907,7 +907,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001 << Track(SystemType::Adsb, 100);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == false);
     QVERIFY(set_0x000001.hasTestData() == false);
@@ -931,7 +931,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001 << trk_adsb_101;
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == false);
@@ -957,7 +957,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001 << trk_adsb_101;
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == false);
@@ -983,7 +983,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001.addMatch(trk_adsb_101, trk_adsb_101);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == false);
@@ -1009,7 +1009,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001.addMatch(trk_mlat_201, trk_adsb_101);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == false);
@@ -1033,7 +1033,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001.addMatch(trk_adsb_101, trk_mlat_201);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == true);
@@ -1066,7 +1066,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001.addMatch(trk_adsb_102, trk_mlat_201);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == true);
@@ -1104,7 +1104,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001.addMatch(trk_adsb_102, trk_smr_301);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == true);
@@ -1148,7 +1148,7 @@ void TrackTest::testTrackCollectionSet()
     set_0x000001.addMatch(trk_adsb_102, trk_smr_301);
 
     QCOMPARE(set_0x000001.ref_sys_type(), SystemType::Adsb);
-    QCOMPARE(set_0x000001.mode_s(), 0x000001);
+    QCOMPARE(set_0x000001.mode_s(), static_cast<quint32>(0x000001));
 
     QVERIFY(set_0x000001.hasRefData() == true);
     QVERIFY(set_0x000001.hasTestData() == true);

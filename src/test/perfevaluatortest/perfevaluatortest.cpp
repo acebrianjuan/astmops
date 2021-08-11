@@ -384,7 +384,7 @@ void PerfEvaluatorTest::testED116RPA()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.smrRpaErrors_, countersOut);
+    QCOMPARE(static_cast<RpaHash>(perfEval.smrRpaErrors_), countersOut);
 }
 
 void PerfEvaluatorTest::testED116UR_data()
@@ -678,7 +678,7 @@ void PerfEvaluatorTest::testED116UR()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.smrUr_, countersOut);
+    QCOMPARE(static_cast<UrHash>(perfEval.smrUr_), countersOut);
 }
 
 void PerfEvaluatorTest::testED116PD_data()
@@ -973,7 +973,7 @@ void PerfEvaluatorTest::testED116PD()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.smrPd_, countersOut);
+    QCOMPARE(static_cast<PdHash>(perfEval.smrPd_), countersOut);
 }
 
 void PerfEvaluatorTest::testED116PFD_data()
@@ -1815,7 +1815,7 @@ void PerfEvaluatorTest::testED116PFD()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.smrPfd_, countersOut);
+    QCOMPARE(static_cast<PfdHash>(perfEval.smrPfd_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117RPA_data()
@@ -2151,7 +2151,7 @@ void PerfEvaluatorTest::testED117RPA()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatRpaErrors_, countersOut);
+    QCOMPARE(static_cast<RpaHash>(perfEval.mlatRpaErrors_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117UR_data()
@@ -2472,7 +2472,7 @@ void PerfEvaluatorTest::testED117UR()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatUr_, countersOut);
+    QCOMPARE(static_cast<UrHash>(perfEval.mlatUr_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117PD_data()
@@ -2793,7 +2793,7 @@ void PerfEvaluatorTest::testED117PD()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatPd_, countersOut);
+    QCOMPARE(static_cast<PdHash>(perfEval.mlatPd_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117PFD_data()
@@ -3130,7 +3130,7 @@ void PerfEvaluatorTest::testED117PFD()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatPfd_, countersOut);
+    QCOMPARE(static_cast<PfdHash>(perfEval.mlatPfd_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117PID_data()
@@ -3455,7 +3455,7 @@ void PerfEvaluatorTest::testED117PID()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatPidIdent_, countersOut);
+    QCOMPARE(static_cast<PidHash>(perfEval.mlatPidIdent_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117PFID_data()
@@ -3780,7 +3780,7 @@ void PerfEvaluatorTest::testED117PFID()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatPfidIdent_, countersOut);
+    QCOMPARE(static_cast<PfidHash>(perfEval.mlatPfidIdent_), countersOut);
 }
 
 void PerfEvaluatorTest::testED117PLG_data()
@@ -4017,7 +4017,7 @@ void PerfEvaluatorTest::testED117PLG()
     }
     perfEval.run();
 
-    QCOMPARE(perfEval.mlatPlg_, countersOut);
+    QCOMPARE(static_cast<PlgHash>(perfEval.mlatPlg_), countersOut);
 }
 
 QTEST_GUILESS_MAIN(PerfEvaluatorTest);

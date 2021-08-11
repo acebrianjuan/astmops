@@ -260,8 +260,8 @@ void AerodromeTest::testLocatePoint()
     auto it = result.begin();
     for (QPair<QVector3D, uint> pair : points)
     {
-        Aerodrome::NamedArea area = aerodrome.locatePoint(pair.first, pair.second);
-        QCOMPARE(area, it->area_);
+        Aerodrome::NamedArea narea = aerodrome.locatePoint(pair.first, pair.second);
+        QCOMPARE(narea, *it);
         ++it;
     }
 }

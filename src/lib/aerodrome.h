@@ -86,7 +86,7 @@ public:
     {
         NamedArea() = default;
 
-        NamedArea(const Aerodrome::Area area)
+        explicit NamedArea(const Aerodrome::Area area)
             : area_(area)
         {
         }

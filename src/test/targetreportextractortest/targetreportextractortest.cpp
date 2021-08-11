@@ -499,8 +499,8 @@ void TargetReportExtractorTest::test()
 
     QVERIFY(trqueue.size() == tgtRepsOut.size());
 
-    QCOMPARE(counter.in_, recsIn.size());
-    QCOMPARE(counter.out_, tgtRepsOut.size());
+    QCOMPARE(counter.in_, static_cast<quint32>(recsIn.size()));
+    QCOMPARE(counter.out_, static_cast<quint32>(tgtRepsOut.size()));
 
     for (int i = 0; i < tgtRepsOut.size(); ++i)
     {
