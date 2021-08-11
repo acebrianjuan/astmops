@@ -20,8 +20,8 @@
 #ifndef ASTMOPS_CONFIG_H
 #define ASTMOPS_CONFIG_H
 
-#include "aerodrome.h"
 #include "astmops.h"
+#include <QSettings>
 
 class Settings : public QSettings
 {

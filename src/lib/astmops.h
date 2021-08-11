@@ -24,7 +24,6 @@
 #include <QDate>
 #include <QDebug>
 #include <QPair>
-#include <QSettings>
 #include <QtGlobal>
 #include <QtMath>
 
