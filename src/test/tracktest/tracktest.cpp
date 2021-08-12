@@ -149,17 +149,17 @@ void TrackTest::testTrack()
 
     QVERIFY(trk_dflt.timestamps().isEmpty() == true);
 
-    QCOMPARE(trk_dflt.duration(), qSNaN());
+    QVERIFY(qIsNaN(trk_dflt.duration()));
 
     QVERIFY(trk_dflt.coversTimestamp(QDateTime()) == false);
 
     // XYZ bounds must be in the default NaN-valued state.
-    QCOMPARE(trk_dflt.x_bounds().first, qSNaN());
-    QCOMPARE(trk_dflt.x_bounds().second, qSNaN());
-    QCOMPARE(trk_dflt.y_bounds().first, qSNaN());
-    QCOMPARE(trk_dflt.y_bounds().second, qSNaN());
-    QCOMPARE(trk_dflt.z_bounds().first, qSNaN());
-    QCOMPARE(trk_dflt.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_dflt.x_bounds().first));
+    QVERIFY(qIsNaN(trk_dflt.x_bounds().second));
+    QVERIFY(qIsNaN(trk_dflt.y_bounds().first));
+    QVERIFY(qIsNaN(trk_dflt.y_bounds().second));
+    QVERIFY(qIsNaN(trk_dflt.z_bounds().first));
+    QVERIFY(qIsNaN(trk_dflt.z_bounds().second));
 
     // ModeS address must have no value assigned.
     QVERIFY(trk_dflt.mode_s().has_value() == false);
@@ -184,16 +184,16 @@ void TrackTest::testTrack()
 
     QVERIFY(trk_dflt.timestamps().isEmpty() == true);
 
-    QCOMPARE(trk_dflt.duration(), qSNaN());
+    QVERIFY(qIsNaN(trk_dflt.duration()));
 
     QVERIFY(trk_dflt.coversTimestamp(QDateTime()) == false);
 
-    QCOMPARE(trk_dflt.x_bounds().first, qSNaN());
-    QCOMPARE(trk_dflt.x_bounds().second, qSNaN());
-    QCOMPARE(trk_dflt.y_bounds().first, qSNaN());
-    QCOMPARE(trk_dflt.y_bounds().second, qSNaN());
-    QCOMPARE(trk_dflt.z_bounds().first, qSNaN());
-    QCOMPARE(trk_dflt.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_dflt.x_bounds().first));
+    QVERIFY(qIsNaN(trk_dflt.x_bounds().second));
+    QVERIFY(qIsNaN(trk_dflt.y_bounds().first));
+    QVERIFY(qIsNaN(trk_dflt.y_bounds().second));
+    QVERIFY(qIsNaN(trk_dflt.z_bounds().first));
+    QVERIFY(qIsNaN(trk_dflt.z_bounds().second));
 
     QVERIFY(trk_dflt.mode_s().has_value() == false);
 
@@ -228,18 +228,18 @@ void TrackTest::testTrack()
     QVERIFY(trk_adsb_101.timestamps().isEmpty() == true);
 
     // No target reports have been added yet so duration must be NaN-valued.
-    QCOMPARE(trk_adsb_101.duration(), qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.duration()));
 
     QVERIFY(trk_adsb_101.coversTimestamp(QDateTime()) == false);
 
     // No target reports have been added yet so XYZ bounds must be in the
     // default NaN-valued state.
-    QCOMPARE(trk_adsb_101.x_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.x_bounds().second, qSNaN());
-    QCOMPARE(trk_adsb_101.y_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.y_bounds().second, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.x_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.x_bounds().second));
+    QVERIFY(qIsNaN(trk_adsb_101.y_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.y_bounds().second));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
 
     // No target reports with ModeS address have been added yet so ModeS
     // address must have no value assigned.
@@ -266,16 +266,16 @@ void TrackTest::testTrack()
 
     QVERIFY(trk_adsb_101.timestamps().isEmpty() == true);
 
-    QCOMPARE(trk_adsb_101.duration(), qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.duration()));
 
     QVERIFY(trk_adsb_101.coversTimestamp(QDateTime()) == false);
 
-    QCOMPARE(trk_adsb_101.x_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.x_bounds().second, qSNaN());
-    QCOMPARE(trk_adsb_101.y_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.y_bounds().second, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.x_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.x_bounds().second));
+    QVERIFY(qIsNaN(trk_adsb_101.y_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.y_bounds().second));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
 
     QVERIFY(trk_adsb_101.mode_s().has_value() == false);
 
@@ -300,16 +300,16 @@ void TrackTest::testTrack()
 
     QVERIFY(trk_adsb_101.timestamps().isEmpty() == true);
 
-    QCOMPARE(trk_adsb_101.duration(), qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.duration()));
 
     QVERIFY(trk_adsb_101.coversTimestamp(QDateTime()) == false);
 
-    QCOMPARE(trk_adsb_101.x_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.x_bounds().second, qSNaN());
-    QCOMPARE(trk_adsb_101.y_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.y_bounds().second, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.x_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.x_bounds().second));
+    QVERIFY(qIsNaN(trk_adsb_101.y_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.y_bounds().second));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
 
     QVERIFY(trk_adsb_101.mode_s().has_value() == false);
 
@@ -352,8 +352,8 @@ void TrackTest::testTrack()
     QCOMPARE(trk_adsb_101.x_bounds().second, 0.0);
     QCOMPARE(trk_adsb_101.y_bounds().first, 0.0);
     QCOMPARE(trk_adsb_101.y_bounds().second, 0.0);
-    QCOMPARE(trk_adsb_101.z_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
 
     // No target reports with ModeS address have been added yet so ModeS
     // address must have no value assigned.
@@ -404,8 +404,8 @@ void TrackTest::testTrack()
     QCOMPARE(trk_adsb_101.x_bounds().second, 50.0);
     QCOMPARE(trk_adsb_101.y_bounds().first, 0.0);
     QCOMPARE(trk_adsb_101.y_bounds().second, 25.0);
-    QCOMPARE(trk_adsb_101.z_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
 
     // No target reports with ModeS address have been added yet so ModeS
     // address must have no value assigned.
@@ -457,8 +457,8 @@ void TrackTest::testTrack()
     QCOMPARE(trk_adsb_101.x_bounds().second, 50.0);
     QCOMPARE(trk_adsb_101.y_bounds().first, -25.0);
     QCOMPARE(trk_adsb_101.y_bounds().second, 25.0);
-    QCOMPARE(trk_adsb_101.z_bounds().first, qSNaN());
-    QCOMPARE(trk_adsb_101.z_bounds().second, qSNaN());
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
+    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
 
     // The track must have the taken the ModeS address of the newly inserted
     // target report.
