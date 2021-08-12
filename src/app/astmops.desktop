@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=astmops
+Exec=astmops
+Icon=icon
+Categories=Education;
+Terminal=true
+X-AppImage-Version=1

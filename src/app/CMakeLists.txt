@@ -28,3 +28,11 @@ set(SOURCES
 add_executable(astmops ${SOURCES})
 target_link_libraries(astmops PUBLIC ${QT5_LIBRARIES} lib)
 install(TARGETS astmops RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+install(FILES astmops.desktop
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications/
+)
+
+install(FILES icon.png
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/128x128/
+)
