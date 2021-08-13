@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Use Ubuntu 18.04 Bionic.
 FROM ubuntu:bionic
 
