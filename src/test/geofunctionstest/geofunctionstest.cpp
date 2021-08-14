@@ -38,8 +38,8 @@ private slots:
     void ecefToLocalEnuTest_data();
     void ecefToLocalEnuTest();
 
-    void geoToLocalEcefTest_data();
-    void geoToLocalEcefTest();
+    void geoToLocalEnuTest_data();
+    void geoToLocalEnuTest();
 
     // TODO: Implement missing tests.
     //void dmsToDegTest_data();
@@ -131,7 +131,7 @@ void GeoFunctionsTest::ecefToLocalEnuTest()
     QVERIFY(std::fabs(enuOut.z() - enuOutValid.z() < 1));
 }
 
-void GeoFunctionsTest::geoToLocalEcefTest_data()
+void GeoFunctionsTest::geoToLocalEnuTest_data()
 {
     QTest::addColumn<QGeoCoordinate>("geoRef");
     QTest::addColumn<QGeoCoordinate>("geoIn");
@@ -147,7 +147,7 @@ void GeoFunctionsTest::geoToLocalEcefTest_data()
     QTest::newRow("LEBL_SMR") << leblArpGeo << leblSmrGeo << leblSmrEnu;
 }
 
-void GeoFunctionsTest::geoToLocalEcefTest()
+void GeoFunctionsTest::geoToLocalEnuTest()
 {
     QFETCH(QGeoCoordinate, geoRef);
     QFETCH(QGeoCoordinate, geoIn);
