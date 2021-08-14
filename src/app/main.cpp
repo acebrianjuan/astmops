@@ -54,6 +54,17 @@ int main(int argc, char *argv[])
     Settings s;
     qInfo() << "Configuration file:" << s.fileName();
 
+    if (qEnvironmentVariableIsSet("APPDIR"))
+    {
+        // When running from an AppImage, we need to find out the location of
+        // the GeographicLib assets at runtime.
+
+        QByteArray arr(qgetenv("APPDIR"));
+        arr.append("/usr/share/GeographicLib/");
+
+        setenv("GEOGRAPHICLIB_DATA", arr.constData(), 1);
+    }
+
     QString kmlFilePath = Configuration::kmlFile();
     QFile kmlFile(kmlFilePath);
     kmlFile.open(QIODevice::ReadOnly);

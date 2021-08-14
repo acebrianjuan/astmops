@@ -6,8 +6,8 @@ FROM ubuntu:bionic
 
 # Install dependencies.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates build-essential ninja-build cmake qtbase5-dev qtpositioning5-dev \
-    libgeographic-dev geographiclib-tools
+    file ca-certificates build-essential ninja-build cmake \
+    qtbase5-dev qtpositioning5-dev libgeographic-dev geographiclib-tools
 
 # Install EGM96 geoid.
 RUN geographiclib-get-geoids egm96-5
@@ -22,7 +22,7 @@ COPY . /app
 WORKDIR /app/build
 
 # Run configure step.
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/ -GNinja ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_BUILD_TYPE=Release -GNinja ..
 
 # Run build step.
 RUN ninja
@@ -30,17 +30,17 @@ RUN ninja
 # Run check step.
 RUN ctest --output-on-failure
 
-# Install.
+# Run install step.
 RUN DESTDIR=./AppDir ninja install
 
-# Download linuxdeploy and its Qt plugin.
+# Copy GeographicLib data into AppDir.
+RUN cp -r /usr/share/GeographicLib ./AppDir/usr/share/
+
+# Download linuxdeploy and its Qt plugin and make them executable.
 RUN wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
 RUN wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-
-# Make them executable.
 RUN chmod +x linuxdeploy*.AppImage
 
-# Initialize AppDir, bundle shared libraries, use Qt plugin 
-# to bundle additional resources, and build AppImage.
-RUN ./linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir --plugin qt --output appimage
+# Build AppImage.
+RUN APPIMAGE_EXTRACT_AND_RUN=1 QMAKE=/usr/lib/qt5/bin/qmake ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
 
