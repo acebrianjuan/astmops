@@ -6,6 +6,6 @@ Type=Application
 Name=astmops
 Exec=astmops
 Icon=icon
-Categories=Education;
+Categories=Science;NumericalAnalysis;
 Terminal=true
 X-AppImage-Version=1
