@@ -19,6 +19,7 @@
 
 #include "kmlreader.h"
 #include "geofunctions.h"
+#include <GeographicLib/Geoid.hpp>
 #include <QRegularExpression>
 
 bool KmlReader::read(QIODevice *device)
@@ -282,6 +283,82 @@ void KmlReader::readKml()
             readPlacemark();
         }
     }
+
+    // Once we have finished reading the KML file, we apply the geometric
+    // altitude of the ARP to all aerodrome elements.
+
+    double alt = arp_.altitude();
+
+    for (QGeoCoordinate &c : smr_)
+    {
+        c.setAltitude(alt);
+    }
+
+    for (Collection &col : runwayElements_)
+    {
+        for (QVector<QGeoCoordinate> &ele : col)
+        {
+            for (QGeoCoordinate &c : ele)
+            {
+                c.setAltitude(alt);
+            }
+        }
+    }
+
+    for (Collection &col : taxiwayElements_)
+    {
+        for (QVector<QGeoCoordinate> &ele : col)
+        {
+            for (QGeoCoordinate &c : ele)
+            {
+                c.setAltitude(alt);
+            }
+        }
+    }
+
+    for (Collection &col : apronLaneElements_)
+    {
+        for (QVector<QGeoCoordinate> &ele : col)
+        {
+            for (QGeoCoordinate &c : ele)
+            {
+                c.setAltitude(alt);
+            }
+        }
+    }
+
+    for (Collection &col : standElements_)
+    {
+        for (QVector<QGeoCoordinate> &ele : col)
+        {
+            for (QGeoCoordinate &c : ele)
+            {
+                c.setAltitude(alt);
+            }
+        }
+    }
+
+    for (Collection &col : airborne1Elements_)
+    {
+        for (QVector<QGeoCoordinate> &ele : col)
+        {
+            for (QGeoCoordinate &c : ele)
+            {
+                c.setAltitude(alt);
+            }
+        }
+    }
+
+    for (Collection &col : airborne2Elements_)
+    {
+        for (QVector<QGeoCoordinate> &ele : col)
+        {
+            for (QGeoCoordinate &c : ele)
+            {
+                c.setAltitude(alt);
+            }
+        }
+    }
 }
 
 void KmlReader::readPlacemark()
@@ -349,8 +426,31 @@ void KmlReader::readPlacemark()
 
         if (token == QLatin1String("ARP"))
         {
+            // ARP is required to have the ELEV as suffix.
+            if (suffix.isEmpty())
+            {
+                //qWarning();
+                return;
+            }
+
             Q_ASSERT(coords.size() == 1);
-            arp_ = coords.first();
+
+            bool ok = false;
+            double elev = suffix.toDouble(&ok);
+
+            if (ok)
+            {
+                QGeoCoordinate c = coords.first();
+
+                GeographicLib::Geoid geoid("egm96-5");
+                double H = elev;
+                double N = geoid(c.latitude(), c.longitude());
+                double h = H + N;
+
+                c.setAltitude(h);
+
+                arp_ = c;
+            }
         }
         else if (token == QLatin1String("SMR"))
         {

@@ -117,7 +117,7 @@
 		<Placemark>
 			<name>LEBL_ARP</name>
 			<Snippet maxLines="0"></Snippet>
-			<description>ARP</description>
+			<description>ARP_4.3200000000000003</description>
 			<LookAt>
 				<longitude>2.090781858596769</longitude>
 				<latitude>41.29172140343582</latitude>

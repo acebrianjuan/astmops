@@ -582,7 +582,7 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
         }
 
         // Height.
-        double H = 0.0;
+        double h = 0.0;
 
         bool gh_ok = false;
         bool has_gh = Asterix::containsElement(rec, QLatin1String("I140"), QLatin1String("geometric_height"));
@@ -591,12 +591,11 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
             double gh_ft = Asterix::getElementValue(rec, QLatin1String("I140"), QLatin1String("geometric_height")).value().toDouble(&gh_ok);
             if (gh_ok)
             {
-                double h = gh_ft * ft_to_m;
-                double N = geoid_(lat, lon);
-                H = -N + h;
+                h = gh_ft * ft_to_m;
             }
         }
 
+        // TODO: Consider dropping the FL as it is not QNH corrected!
         if (!has_gh || !gh_ok)
         {
             bool fl_ok = false;
@@ -606,12 +605,12 @@ std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asteri
                 double fl = Asterix::getElementValue(rec, QLatin1String("I145"), QLatin1String("FL")).value().toDouble(&fl_ok);
                 if (fl_ok)
                 {
-                    H = fl * FL_to_m;
+                    h = fl * FL_to_m;
                 }
             }
         }
 
-        QVector3D cart = geoToLocalEnu(QGeoCoordinate(lat, lon, H), arp_);
+        QVector3D cart = geoToLocalEnu(QGeoCoordinate(lat, lon, h), arp_);
 
         tr.x_ = cart.x();
         tr.y_ = cart.y();
