@@ -23,6 +23,7 @@
 
 #include <QDate>
 #include <QDebug>
+#include <QGeoPositionInfo>
 #include <QPair>
 #include <QtGlobal>
 #include <QtMath>
@@ -115,6 +116,18 @@ enum class Layer
     AirborneLayer
 };
 
+
+struct DgpsTargetData
+{
+    ModeS mode_s_;
+    Mode3A mode_3a_;
+    Ident ident_;
+    quint32 tod_offset_;
+    QVector<QGeoPositionInfo> data_;
+};
+Q_DECLARE_METATYPE(DgpsTargetData);
+
+
 namespace MOPS
 {
 const double defaultSilencePeriodSeconds = 60.0;  // s
@@ -139,7 +152,7 @@ const double defaultProbDetectionPeriodOther = 2.0;
 
 namespace Literals
 {
-QDateTime operator"" _ts(const char* text, size_t size);
+QDateTime operator"" _ts(const char *text, size_t size);
 }  // namespace Literals
 
 #endif  // ASTMOPS_ASTMOPS_H

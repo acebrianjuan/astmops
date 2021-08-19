@@ -37,6 +37,7 @@ public:
 
     void addData(const Track &t);
     void run();
+    void setDgpsOnly(bool b);
 
     void printED116RPA() const;
     void printED116UR() const;
@@ -73,6 +74,7 @@ private:
 
     TrackAssociator trkAssoc_;
 
+    bool dgps_only_ = false;
     quint8 pic_p95_ = 0;
 
     AreaHash<TrafficPeriodCollection> trafficPeriods_;

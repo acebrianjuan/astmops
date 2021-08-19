@@ -29,8 +29,7 @@ static const auto &hex = &::hex;
 #endif
 
 TargetReportExtractor::TargetReportExtractor(const QGeoCoordinate &arp,
-    const QHash<Sic, QVector3D> &smr)
-    : arp_(arp), smr_(smr)
+    const QHash<Sic, QVector3D> &smr) : arp_(arp), smr_(smr)
 {
     // Initialize counters.
     counters_.insert(SystemType::Smr, Counters::InOutCounter());
@@ -48,7 +47,7 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
     ++counters_[rec.rec_typ_.sys_typ_].in_;
     if (Asterix::hasMinimumDataItems(rec) && isRecordToBeKept(rec))
     {
-        std::optional<TargetReport> tr_opt = makeTargetReport(rec);
+        std::optional<TargetReport> tr_opt = makeAsterixTargetReport(rec);
         if (!tr_opt.has_value())
         {
             return;
@@ -60,6 +59,47 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
 
         tgt_reports_[tr.sys_typ_].enqueue(tr);
         ++counters_[rec.rec_typ_.sys_typ_].out_;
+
+        emit readyRead();
+    }
+}
+
+void TargetReportExtractor::addDgpsData(const DgpsTargetData &tgt)
+{
+    if (isExcludedAddr(tgt.mode_s_))
+    {
+        // qWarning();
+        return;
+    }
+
+    for (const QGeoPositionInfo &pi : tgt.data_)
+    {
+        QGeoCoordinate coords = pi.coordinate();
+        QVector3D cart = geoToLocalEnu(coords, arp_);
+
+        TargetReport tr;
+        tr.sys_typ_ = SystemType::Dgps;
+        tr.tod_ = pi.timestamp();
+        tr.trk_nb_ = 5000;
+        tr.mode_s_ = tgt.mode_s_;
+        tr.mode_3a_ = tgt.mode_3a_;
+        tr.ident_ = tgt.ident_;
+
+        tr.on_gnd_ = cart.z() < 5;
+
+        tr.x_ = cart.x();
+        tr.y_ = cart.y();
+        tr.z_ = cart.z();
+
+        QVector3D pos(tr.x_, tr.y_, tr.z_.value());
+        tr.narea_ = locatePoint(pos, tr.on_gnd_);
+
+        tr.ver_ = 2;
+        tr.pic_ = 14;
+
+        tgt_reports_[tr.sys_typ_].enqueue(tr);
+        ++counters_[tr.sys_typ_].in_;
+        ++counters_[tr.sys_typ_].out_;
 
         emit readyRead();
     }
@@ -127,6 +167,11 @@ bool TargetReportExtractor::hasPendingData() const
     }
 
     return false;
+}
+
+bool TargetReportExtractor::isExcludedAddr(ModeS addr) const
+{
+    return excluded_addresses_.contains(addr);
 }
 
 bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
@@ -302,7 +347,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
     return false;
 }
 
-std::optional<TargetReport> TargetReportExtractor::makeTargetReport(const Asterix::Record &rec) const
+std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const Asterix::Record &rec) const
 {
     if (!Asterix::isCategorySupported(rec.cat_) ||
         rec.rec_typ_.isUnknown() ||

@@ -51,6 +51,11 @@ void PerfEvaluator::run()
     // Iterate through each target set.
     for (const TrackCollectionSet &s : qAsConst(trkAssoc_.sets()))
     {
+        if (dgps_only_ && s.ref_sys_type() != SystemType::Dgps)
+        {
+            continue;
+        }
+
         // SMR ED-116.
         evalED116RPA(s);
         evalED116UR(s);
@@ -82,6 +87,11 @@ void PerfEvaluator::run()
     printED117PFID_Ident();
     printED117PFID_Mode3A();
     printED117PLG();
+}
+
+void PerfEvaluator::setDgpsOnly(bool b)
+{
+    dgps_only_ = b;
 }
 
 void PerfEvaluator::printED116RPA() const
@@ -1268,7 +1278,7 @@ void PerfEvaluator::evalED116UR(const TrackCollectionSet &s)
                     }
 
                     // Extract TST track portion that matches in time with the
-                    // REF track.
+                    // REF sub-track.
                     std::optional<Track> sub_trk_tst_opt = intersect(trk_tst, sub_trk_ref);
 
                     if (!sub_trk_tst_opt.has_value())

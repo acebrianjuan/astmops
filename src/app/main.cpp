@@ -18,6 +18,7 @@
  */
 
 #include "asterixxmlreader.h"
+#include "dgpscsvreader.h"
 #include "kmlreader.h"
 #include "perfevaluator.h"
 #include "targetreportextractor.h"
@@ -32,20 +33,21 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops"));
 
-    QString logRules = Configuration::logRules();
-    if (!logRules.isEmpty())
+    std::optional<QString> logRules_opt = Configuration::logRules();
+    if (logRules_opt.has_value())
     {
-        QLoggingCategory::setFilterRules(logRules);
+        QLoggingCategory::setFilterRules(logRules_opt.value());
     }
     else
     {
+        // Debug log messages are turned off by default.
         QLoggingCategory::setFilterRules(QLatin1String("*.debug=false"));
     }
 
-    QString logPattern = Configuration::logPattern();
-    if (!logPattern.isEmpty())
+    std::optional<QString> logPattern_opt = Configuration::logPattern();
+    if (logPattern_opt.has_value())
     {
-        qSetMessagePattern(logPattern);
+        qSetMessagePattern(logPattern_opt.value());
     }
 
     const QStringList args = application.arguments();
@@ -99,6 +101,33 @@ int main(int argc, char *argv[])
         }
     });
 
+    PerfEvaluator perfEval;
+
+    // DGPS CSV reference.
+    if (s.childGroups().contains(QLatin1String("DGPS")))
+    {
+        QString dgpsPath = Configuration::dgpsFile();
+        ModeS mode_s = Configuration::dgpsModeS();
+        Mode3A mode_3a = Configuration::dgpsMode3A();
+        Ident ident = Configuration::dgpsIdent();
+        qint32 tod_offset = Configuration::dgpsTodOffset();
+
+        QFile dgpsFile(dgpsPath);
+        dgpsFile.open(QIODevice::ReadOnly);
+
+        DgpsTargetData dgps;
+        dgps.mode_s_ = mode_s;
+        dgps.mode_3a_ = mode_3a;
+        dgps.ident_ = ident;
+        dgps.tod_offset_ = tod_offset;
+        dgps.data_ = readDgpsCsv(&dgpsFile);
+
+        tgtRepExtr.addDgpsData(dgps);
+        perfEval.setDgpsOnly(true);
+    }
+
+
+    // ASTERIX XML.
     QFile astXmlFile;
     if (args.size() > 1)
     {
@@ -116,8 +145,6 @@ int main(int argc, char *argv[])
         astXmlReader.addData(line);
     }
 
-
-    PerfEvaluator perfEval;
     while (trackExtr.hasPendingData())
     {
         perfEval.addData(trackExtr.takeData().value());

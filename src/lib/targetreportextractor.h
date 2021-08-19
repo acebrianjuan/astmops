@@ -40,6 +40,7 @@ public:
         const QHash<Sic, QVector3D>& smr);
 
     void addData(const Asterix::Record& rec);
+    void addDgpsData(const DgpsTargetData& tgt);
     void loadExcludedAddresses(QIODevice* device);
     void setLocatePointCallback(const LocatePointCb& cb);
     std::optional<TargetReport> takeData();
@@ -54,8 +55,9 @@ signals:
     void readyRead();
 
 private:
+    bool isExcludedAddr(ModeS addr) const;
     bool isRecordToBeKept(const Asterix::Record& rec) const;
-    std::optional<TargetReport> makeTargetReport(const Asterix::Record& rec) const;
+    std::optional<TargetReport> makeAsterixTargetReport(const Asterix::Record& rec) const;
     Aerodrome::NamedArea locatePoint(const QVector3D pos, const bool gbs) const;
 
     LocatePointCb locatePoint_cb_;

@@ -22,6 +22,7 @@
 
 #include "astmops.h"
 #include <QSettings>
+#include <optional>
 
 class Settings : public QSettings
 {
@@ -48,13 +49,14 @@ Sic adsbSic();
 
 QString kmlFile();
 
-qint32 dgpsTodOffset();
-Mode3A dgpsMode3A();
+QString dgpsFile();
 ModeS dgpsModeS();
+Mode3A dgpsMode3A();
 Ident dgpsIdent();
+qint32 dgpsTodOffset();
 
-QString logRules();
-QString logPattern();
+std::optional<QString> logRules();
+std::optional<QString> logPattern();
 
 };  // namespace Configuration
 

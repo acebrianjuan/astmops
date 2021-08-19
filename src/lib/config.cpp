@@ -64,6 +64,7 @@ Sic Configuration::readSic(const QString &key)
         qFatal("%s is mandatory.", qPrintable(key));
     }
 
+    //QStringList str = settings.value(key).toStringList();
     quint32 val = settings.value(key).toUInt();
 
     if (val > 255)
@@ -144,35 +145,9 @@ QString Configuration::kmlFile()
     return pathStr;
 }
 
-
-qint32 Configuration::dgpsTodOffset()
+QString Configuration::dgpsFile()
 {
-    QString key = QLatin1String("TimeOfDayOffset");
-
-    Settings settings;
-    settings.beginGroup(QLatin1String("DGPS"));
-
-    if (!settings.contains(key))
-    {
-        return MOPS::defaultDgpsTimeOfDayOffset;
-    }
-
-    qint32 var = settings.value(key).toInt();
-
-    if (qFabs(var) > 86400)  // Maximum TOD.
-    {
-        qWarning() << "Invalid Time of Day Offset, using default value: "
-                   << MOPS::defaultDgpsTimeOfDayOffset;
-
-        return MOPS::defaultDgpsTimeOfDayOffset;
-    }
-
-    return var;
-}
-
-Mode3A Configuration::dgpsMode3A()
-{
-    QString key = QLatin1String("Mode3A");
+    QString key = QLatin1String("filepath");
 
     Settings settings;
     settings.beginGroup(QLatin1String("DGPS"));
@@ -182,14 +157,9 @@ Mode3A Configuration::dgpsMode3A()
         qFatal("%s is mandatory.", qPrintable(key));
     }
 
-    quint16 val = settings.value(key).toUInt();
+    QString pathStr = settings.value(key).toString();
 
-    if (val > 07777)
-    {
-        qFatal("Invalid %s value.", qPrintable(key));
-    }
-
-    return val;
+    return pathStr;
 }
 
 ModeS Configuration::dgpsModeS()
@@ -205,9 +175,34 @@ ModeS Configuration::dgpsModeS()
     }
 
     bool ok;
-    quint32 val = settings.value(key).toUInt(&ok);
+    QString val_str = settings.value(key).toString();
+    quint32 val = val_str.toUInt(&ok, 16);
 
     if (!ok || val > 0xFFFFFF)
+    {
+        qFatal("Invalid %s value.", qPrintable(key));
+    }
+
+    return val;
+}
+
+Mode3A Configuration::dgpsMode3A()
+{
+    QString key = QLatin1String("Mode3A");
+
+    Settings settings;
+    settings.beginGroup(QLatin1String("DGPS"));
+
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
+
+    bool ok;
+    QString val_str = settings.value(key).toString();
+    quint16 val = val_str.toUInt(&ok, 8);
+
+    if (val > 07777)
     {
         qFatal("Invalid %s value.", qPrintable(key));
     }
@@ -237,7 +232,34 @@ Ident Configuration::dgpsIdent()
     return val;
 }
 
-QString Configuration::logRules()
+qint32 Configuration::dgpsTodOffset()
+{
+    QString key = QLatin1String("TodOffset");
+
+    Settings settings;
+    settings.beginGroup(QLatin1String("DGPS"));
+
+    if (!settings.contains(key))
+    {
+        return MOPS::defaultDgpsTimeOfDayOffset;
+    }
+
+    bool ok;
+    QString val_str = settings.value(key).toString();
+    quint16 val = val_str.toUInt(&ok);
+
+    if (!ok || qFabs(val) > 86400)  // Maximum TOD.
+    {
+        qWarning() << "Invalid Time of Day Offset, using default value: "
+                   << MOPS::defaultDgpsTimeOfDayOffset;
+
+        return MOPS::defaultDgpsTimeOfDayOffset;
+    }
+
+    return val;
+}
+
+std::optional<QString> Configuration::logRules()
 {
     QString key = QLatin1String("rules");
 
@@ -246,7 +268,7 @@ QString Configuration::logRules()
 
     if (!settings.contains(key))
     {
-        return QString();
+        return std::nullopt;
     }
 
     QString rules = settings.value(key).toString();
@@ -254,7 +276,7 @@ QString Configuration::logRules()
     return rules;
 }
 
-QString Configuration::logPattern()
+std::optional<QString> Configuration::logPattern()
 {
     QString key = QLatin1String("pattern");
 
@@ -263,7 +285,7 @@ QString Configuration::logPattern()
 
     if (!settings.contains(key))
     {
-        return QString();
+        return std::nullopt;
     }
 
     QString pattern = settings.value(key).toString();
