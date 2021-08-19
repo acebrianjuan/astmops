@@ -34,7 +34,5 @@ enum ErrorType
 Q_DECLARE_METATYPE(ErrorType);
 
 QVector<QGeoPositionInfo> readDgpsCsv(QIODevice *file, ErrorType *error = nullptr);
-QMultiMap<QDateTime, TargetReport> makeDgpsTgtRep(const QVector<QGeoPositionInfo> &posInfo);
-QMultiMap<QDateTime, TargetReport> dgpsTgtRep(QIODevice *file, ErrorType *error = nullptr);
 
 #endif  // ASTMOPS_DGPSCSVREADER_H
