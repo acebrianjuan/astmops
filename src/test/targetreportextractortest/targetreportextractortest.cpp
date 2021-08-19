@@ -39,8 +39,12 @@ public:
 
 private slots:
     void initTestCase();
-    void test_data();
-    void test();
+
+    void addDataTest_data();
+    void addDataTest();
+
+    void addDgpsDataTest_data();
+    void addDgpsDataTest();
 
     /* TODO: Consider adding a test that takes as input a sequence of
      * records of different nature (resembling a real stream of data).
@@ -62,7 +66,7 @@ void TargetReportExtractorTest::initTestCase()
     settings.setValue(QLatin1String("ADSB.SIC"), 219);
 }
 
-void TargetReportExtractorTest::test_data()
+void TargetReportExtractorTest::addDataTest_data()
 {
     using namespace Literals;
 
@@ -467,7 +471,7 @@ void TargetReportExtractorTest::test_data()
     //QTest::newRow("ADS-B") << SystemType::Adsb << adsbRecsIn << adsbTgtRepsOut;
 }
 
-void TargetReportExtractorTest::test()
+void TargetReportExtractorTest::addDataTest()
 {
     QFETCH(SystemType, sysType);
     QFETCH(QVector<Asterix::Record>, recsIn);
@@ -500,6 +504,172 @@ void TargetReportExtractorTest::test()
     QVERIFY(trqueue.size() == tgtRepsOut.size());
 
     QCOMPARE(counter.in_, static_cast<quint32>(recsIn.size()));
+    QCOMPARE(counter.out_, static_cast<quint32>(tgtRepsOut.size()));
+
+    for (int i = 0; i < tgtRepsOut.size(); ++i)
+    {
+        QCOMPARE(trqueue.at(i), tgtRepsOut.at(i));
+    }
+}
+
+void TargetReportExtractorTest::addDgpsDataTest_data()
+{
+    using namespace Literals;
+
+    QTest::addColumn<DgpsTargetData>("dgpsIn");
+    QTest::addColumn<QVector<TargetReport>>("tgtRepsOut");
+
+    // DGPS input.
+    DgpsTargetData dgps;
+    dgps.mode_s_ = 0x000001;
+    dgps.mode_3a_ = 0001;
+    dgps.ident_ = QLatin1String("FOO1234 ");
+    dgps.data_ << QGeoPositionInfo(QGeoCoordinate(41.2854687222, 2.0835099167, 188.6163796653 * ft_to_m),
+                      "2020-05-05T08:06:05.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2857005833, 2.0841903056, 189.9052917801 * ft_to_m),
+                      "2020-05-05T08:06:06.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2859409167, 2.0848886667, 193.4340869974 * ft_to_m),
+                      "2020-05-05T08:06:07.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2861901389, 2.0856012778, 198.6026889070 * ft_to_m),
+                      "2020-05-05T08:06:08.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2864456111, 2.0863271389, 206.4554209471 * ft_to_m),
+                      "2020-05-05T08:06:09.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2867038333, 2.0870648056, 218.5923658957 * ft_to_m),
+                      "2020-05-05T08:06:10.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2869634167, 2.0878136667, 232.5341582611 * ft_to_m),
+                      "2020-05-05T08:06:11.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2872252778, 2.0885727222, 246.6456595994 * ft_to_m),
+                      "2020-05-05T08:06:12.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2874895278, 2.0893413889, 261.7956146481 * ft_to_m),
+                      "2020-05-05T08:06:13.351Z"_ts)
+               << QGeoPositionInfo(QGeoCoordinate(41.2877548889, 2.0901189722, 278.9660826756 * ft_to_m),
+                      "2020-05-05T08:06:14.351Z"_ts);
+
+    // Expected output.
+    QVector<TargetReport> tgtRep;
+
+    TargetReport tr;
+    tr.sys_typ_ = SystemType::Dgps;
+    tr.mode_s_ = 0x000001;
+    tr.mode_3a_ = 0001;
+    tr.trk_nb_ = 5000;
+    tr.ident_ = QLatin1String("FOO1234 ");
+    tr.ver_ = 2;
+    tr.pic_ = 14;
+    tr.tod_ = "2020-05-05T08:06:05.351Z"_ts;
+    tr.x_ = 422.796423;
+    tr.y_ = -1289.162720;
+    tr.z_ = 53.025692;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:06.351Z"_ts;
+    tr.x_ = 479.792215;
+    tr.y_ = -1263.408667;
+    tr.z_ = 53.419691;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:07.351Z"_ts;
+    tr.x_ = 538.293154;
+    tr.y_ = -1236.713247;
+    tr.z_ = 54.495850;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:08.351Z"_ts;
+    tr.x_ = 597.987385;
+    tr.y_ = -1209.030149;
+    tr.z_ = 56.071250;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:09.351Z"_ts;
+    tr.x_ = 658.791174;
+    tr.y_ = -1180.652468;
+    tr.z_ = 58.464110;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:10.351Z"_ts;
+    tr.x_ = 720.583612;
+    tr.y_ = -1151.968979;
+    tr.z_ = 62.162036;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:11.351Z"_ts;
+    tr.x_ = 783.313441;
+    tr.y_ = -1123.133751;
+    tr.z_ = 66.409265;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:12.351Z"_ts;
+    tr.x_ = 846.896818;
+    tr.y_ = -1094.044887;
+    tr.z_ = 70.707404;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:13.351Z"_ts;
+    tr.x_ = 911.284910;
+    tr.y_ = -1064.690067;
+    tr.z_ = 75.321228;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+    tr.tod_ = "2020-05-05T08:06:14.351Z"_ts;
+    tr.x_ = 976.419590;
+    tr.y_ = -1035.211232;
+    tr.z_ = 80.550027;
+    tr.on_gnd_ = false;
+    tr.narea_ = Aerodrome::NamedArea(Aerodrome::Runway);
+    tgtRep << tr;
+
+
+    QTest::newRow("DGPS") << dgps << tgtRep;
+}
+
+void TargetReportExtractorTest::addDgpsDataTest()
+{
+    QFETCH(DgpsTargetData, dgpsIn);
+    QFETCH(QVector<TargetReport>, tgtRepsOut);
+
+    QGeoCoordinate leblArpGeo(41.297076579982225, 2.0784629201158662, 4.3200000000000003);
+    QGeoCoordinate leblSmrGeo(41.29561944, 2.095113889, 4.3200000000000003);
+
+    QHash<Sic, QVector3D> smrHashEnu;
+    smrHashEnu.insert(7, geoToLocalEnu(leblSmrGeo, leblArpGeo));
+
+    auto runwayCb = [](const QVector3D cartPos, const bool gndBit) {
+        Q_UNUSED(cartPos);
+        Q_UNUSED(gndBit);
+        return Aerodrome::NamedArea(Aerodrome::Area::Runway);
+    };
+
+    TargetReportExtractor tgtRepExtr(leblArpGeo, smrHashEnu);
+    tgtRepExtr.setLocatePointCallback(runwayCb);
+
+    // Feed data.
+    tgtRepExtr.addDgpsData(dgpsIn);
+
+    QQueue<TargetReport> trqueue = tgtRepExtr.targetReports(SystemType::Dgps);
+    Counters::InOutCounter counter = tgtRepExtr.counters(SystemType::Dgps);
+
+    QVERIFY(trqueue.size() == tgtRepsOut.size());
+
+    QCOMPARE(counter.in_, static_cast<quint32>(dgpsIn.data_.size()));
     QCOMPARE(counter.out_, static_cast<quint32>(tgtRepsOut.size()));
 
     for (int i = 0; i < tgtRepsOut.size(); ++i)
