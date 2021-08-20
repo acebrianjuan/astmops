@@ -234,6 +234,7 @@ bool haveSpaceIntersection(const Track &lhs, const Track &rhs);
 bool haveSpaceTimeIntersection(const Track &lhs, const Track &rhs);
 std::optional<Track> intersect(const Track &intersectee, const Track &intersector);
 Track resample(const Track &track, const QVector<QDateTime> &dtimes);
+Track average(const Track &track, double tw);
 
 enum class TrackSplitMode
 {

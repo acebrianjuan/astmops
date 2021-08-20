@@ -1047,6 +1047,67 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
     return t;
 }
 
+Track average(const Track &track, double tw)
+{
+    auto averagePos = [](const QVector<TargetReport> &vec) {
+        double sum_x = 0.0;
+        double sum_y = 0.0;
+        //double sum_z = 0.0;
+
+        quint32 N = 0;
+        for (const TargetReport &tr : vec)
+        {
+            if (!qIsNaN(tr.x_) && !qIsNaN(tr.y_))
+            {
+                sum_x += tr.x_;
+                sum_y += tr.y_;
+                //sum_z += tr.z_;
+                ++N;
+            }
+        }
+
+        double x = sum_x / N;
+        double y = sum_y / N;
+        //double z = sum_z / N;
+
+        return QPointF(x, y);
+    };
+
+
+    // Copy input track.
+    Track trk = track;
+
+    // Half time window.
+    double h_tw = tw / 2;
+
+    TgtRepMap::iterator it;
+    for (it = trk.begin(); it != trk.end(); ++it)
+    {
+        QDateTime ts_pivot = it.key();
+        QDateTime ts_from = ts_pivot.addMSecs(-h_tw * 1000);
+        QDateTime ts_to = ts_pivot.addMSecs(h_tw * 1000);
+
+        TgtRepMap::const_iterator cit_from = track.data().lowerBound(ts_from);
+        TgtRepMap::const_iterator cit = cit_from;
+        QVector<TargetReport> vec;
+        while (cit != track.end() && cit.key() <= ts_to)
+        {
+            vec << cit.value();
+            ++cit;
+        }
+
+        if (vec.size() >= 2)
+        {
+            QPointF pos = averagePos(vec);
+
+            it->x_ = pos.x();
+            it->y_ = pos.y();
+            //it->z_ = pos.z();
+        }
+    }
+
+    return trk;
+}
 
 QVector<Track> splitTrackByArea(const Track &trk, TrackSplitMode mode)
 {

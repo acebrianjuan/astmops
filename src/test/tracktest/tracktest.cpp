@@ -35,6 +35,8 @@ private slots:
     void testTrack();
     void testTrackCollection();
     void testTrackCollectionSet();
+
+    // TODO: Add tests for intersect(), resample() and average() functions.
 };
 
 void TrackTest::initTestCase()

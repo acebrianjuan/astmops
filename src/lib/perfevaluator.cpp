@@ -1218,6 +1218,11 @@ void PerfEvaluator::evalED116RPA(const TrackCollectionSet &s)
                     // 95th percentile threshold.
                     Track t_r = filterTrackByQuality(sub_trk_ref, 2, pic_p95_);
 
+                    if (t_r.isEmpty())
+                    {
+                        continue;
+                    }
+
                     // Interpolate the TST track at the times of the REF track points.
                     Track t_t = resample(trk_tst, t_r.timestamps());
 
@@ -1531,8 +1536,19 @@ void PerfEvaluator::evalED117RPA(const TrackCollectionSet &s)
                     // 95th percentile threshold.
                     Track t_r = filterTrackByQuality(sub_trk_ref, 2, pic_p95_);
 
+                    if (t_r.isEmpty())
+                    {
+                        continue;
+                    }
+
                     // Interpolate the TST track at the times of the REF track points.
                     Track t_t = resample(trk_tst, t_r.timestamps());
+
+                    // On Stand, average TST track positions over a period of 5 s.
+                    if (narea.area_ == Aerodrome::Stand)
+                    {
+                        t_t = average(t_t, 5.0);
+                    }
 
                     // Calculate Euclidean distance between TST-REF pairs.
                     QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
