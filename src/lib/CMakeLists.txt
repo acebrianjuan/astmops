@@ -37,7 +37,7 @@ add_library(lib
     trackassociator.cpp
     trackextractor.cpp
     trafficperiod.cpp
-    )
+)
 
 target_include_directories(lib PUBLIC .)
-target_link_libraries(lib Qt5::Core Qt5::Gui Qt5::Positioning ${GeographicLib_LIBRARIES})
+target_link_libraries(lib Qt5::Core Qt5::Gui Qt5::Positioning ${GeographicLib_LIBRARIES} coverage_config)
