@@ -1214,6 +1214,10 @@ void PerfEvaluator::evalED116RPA(const TrackCollectionSet &s)
                         continue;
                     }
 
+                    // Local copy of the TST track.
+                    Track t_t = trk_tst;
+
+                    // Local copy of the REF sub-track.
                     // Only keep target reports with MOPS version 2 and PIC above the
                     // 95th percentile threshold.
                     Track t_r = filterTrackByQuality(sub_trk_ref, 2, pic_p95_);
@@ -1223,8 +1227,8 @@ void PerfEvaluator::evalED116RPA(const TrackCollectionSet &s)
                         continue;
                     }
 
-                    // Interpolate the TST track at the times of the REF track points.
-                    Track t_t = resample(trk_tst, t_r.timestamps());
+                    // Resample the REF sub-track at the times of the TST track.
+                    t_r = resample(t_r, t_t.timestamps());
 
                     // Calculate Euclidean distance between TST-REF pairs.
                     QVector<QPair<TargetReport, double>> dists = euclideanDistance(t_r.rdata(), t_t.rdata());
@@ -1532,6 +1536,10 @@ void PerfEvaluator::evalED117RPA(const TrackCollectionSet &s)
                         continue;
                     }
 
+                    // Local copy of the TST track.
+                    Track t_t = trk_tst;
+
+                    // Local copy of the REF sub-track.
                     // Only keep target reports with MOPS version 2 and PIC above the
                     // 95th percentile threshold.
                     Track t_r = filterTrackByQuality(sub_trk_ref, 2, pic_p95_);
@@ -1541,8 +1549,8 @@ void PerfEvaluator::evalED117RPA(const TrackCollectionSet &s)
                         continue;
                     }
 
-                    // Interpolate the TST track at the times of the REF track points.
-                    Track t_t = resample(trk_tst, t_r.timestamps());
+                    // Resample the REF sub-track at the times of the TST track.
+                    t_r = resample(t_r, t_t.timestamps());
 
                     // On Stand, average TST track positions over a period of 5 s.
                     if (narea.area_ == Aerodrome::Stand)
@@ -1805,7 +1813,7 @@ void PerfEvaluator::evalED117PFD(const TrackCollectionSet &s)
                     continue;
                 }
 
-                // Interpolate the REF track at the times of the TST track plots.
+                // Resample the REF sub-track at the times of the TST track.
                 const Track sub_trk_ref_i = resample(sub_trk_ref, trk_tst.timestamps());
 
                 // Calculate Euclidean distance between TST-REF pairs.
