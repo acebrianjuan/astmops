@@ -998,15 +998,11 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
                         TargetReport tr_u = it_u.value();  // Upper.
                         TargetReport tr_l = it_l.value();  // Lower.
 
-                        TargetReport tr_i;  // Interpolated.
-                        tr_i.ds_id_ = tr_l.ds_id_;
-                        tr_i.sys_typ_ = tr_l.sys_typ_;
+                        // Create interpolated TgtRep as a copy of the
+                        // TgtRep that precedes it with a new timestamp and
+                        // position.
+                        TargetReport tr_i = tr_l;
                         tr_i.tod_ = tod;
-                        tr_i.trk_nb_ = tr_l.trk_nb_;
-                        tr_i.mode_s_ = tr_l.mode_s_;
-                        tr_i.mode_3a_ = tr_l.mode_3a_;
-                        tr_i.ident_ = tr_l.ident_;
-                        tr_i.on_gnd_ = tr_l.on_gnd_;
 
                         double dt_t = tr_l.tod_.msecsTo(tr_u.tod_) / 1000.0;
                         double dt_i = tr_l.tod_.msecsTo(tod) / 1000.0;
@@ -1038,9 +1034,6 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
                     }
                 }
             }
-        }
-        else  // Linear extrapolation.
-        {
         }
     }
 
@@ -1104,6 +1097,8 @@ Track average(const Track &track, double tw)
             it->y_ = pos.y();
             //it->z_ = pos.z();
         }
+
+        // TODO: Update the X, Y and Z track bounds.
     }
 
     return trk;
