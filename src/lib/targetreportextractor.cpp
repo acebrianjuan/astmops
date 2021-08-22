@@ -54,8 +54,17 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
         }
 
         TargetReport tr = tr_opt.value();
-
         Q_ASSERT(rec.rec_typ_.sys_typ_ == tr.sys_typ_);
+
+        // Filter out target reports from reference system types that fall
+        // outside the aerodrome areas.
+        if (tr.sys_typ_ == SystemType::Adsb || tr.sys_typ_ == SystemType::Dgps)
+        {
+            if (tr.narea_.area_ == Aerodrome::None)
+            {
+                return;
+            }
+        }
 
         tgt_reports_[tr.sys_typ_].enqueue(tr);
         ++counters_[rec.rec_typ_.sys_typ_].out_;
