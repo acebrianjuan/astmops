@@ -1661,18 +1661,29 @@ void PerfEvaluator::evalED117PD(const TrackCollectionSet &s)
     };
 
     auto getPeriodForArea = [](const Aerodrome::NamedArea &narea) {
-        double period = 1.0;
-        if (narea.area_ == Aerodrome::Area::Runway)
+        Aerodrome::Area area = narea.area_;
+
+        double period = 2.0;
+        if (area == Aerodrome::Area::Stand)
         {
-            period = 1.0;
+            period = 5.0;
         }
-        else if (narea.area_ == Aerodrome::Area::Taxiway)
+        else if (area == Aerodrome::Area::ApronLane)
         {
             period = 2.0;
         }
-        else if (narea.area_ == Aerodrome::Area::Stand)
+        else if (area == Aerodrome::Area::Taxiway)
         {
-            period = 5.0;
+            period = 2.0;
+        }
+        else if (area == Aerodrome::Area::Runway)
+        {
+            period = 1.0;
+        }
+        else if (area == Aerodrome::Area::Airborne1 ||
+                 area == Aerodrome::Area::Airborne2)
+        {
+            period = 1.0;
         }
 
         return period;
@@ -1823,7 +1834,7 @@ void PerfEvaluator::evalED117PFD(const TrackCollectionSet &s)
                 {
                     double dist = p.second;
 
-                    if (dist >= 50.0)
+                    if (dist > 50.0)
                     {
                         ++mlatPfd_[narea].n_ftr_;
                     }
