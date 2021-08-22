@@ -160,7 +160,14 @@ int TrackAssociator::run()
 
                         // Extract TST track portion that matches in time with the
                         // reference track.
-                        Track t_t = intersect(t_tst, t_ref).value();
+                        std::optional<Track> t_t_opt = intersect(t_tst, t_ref);
+
+                        if (!t_t_opt.has_value())
+                        {
+                            continue;
+                        }
+
+                        Track t_t = t_t_opt.value();
 
                         // Interpolate the reference track at the times of the
                         // TST track points.
