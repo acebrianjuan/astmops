@@ -1455,6 +1455,12 @@ void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
 
                 Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
+                // Note to avoid confusion:
+                // Beware that, unlike the actual target reports count, here
+                // we are overwriting the updates count and expected target
+                // reports count with updated values from the traffic periods
+                // counter after each track insertion, so no data is being
+                // duplicated.
                 trafficPeriods_[narea] << sub_trk_ref;
                 smrPfd_[narea].n_u_ = trafficPeriods_[narea].expectedUpdates(freq);
                 smrPfd_[narea].n_etr_ = trafficPeriods_[narea].expectedTgtReps(freq);
@@ -1493,6 +1499,12 @@ void PerfEvaluator::evalED116PFD(const TrackCollectionSet &s)
 
                 Aerodrome::NamedArea narea = sub_trk_ref.begin()->narea_;
 
+                // Note to avoid confusion:
+                // Beware that, unlike the actual target reports count, here
+                // we are overwriting the updates count and expected target
+                // reports count with updated values from the traffic periods
+                // counter after each track insertion, so no data is being
+                // duplicated.
                 trafficPeriods_[narea] << sub_trk_ref;
                 smrPfd_[narea].n_u_ = trafficPeriods_[narea].expectedUpdates(freq);
                 smrPfd_[narea].n_etr_ = trafficPeriods_[narea].expectedTgtReps(freq);
