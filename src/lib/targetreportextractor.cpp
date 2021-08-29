@@ -234,7 +234,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
             }
 
             // Do not keep record if it belongs to an excluded address.
-            if (excluded_addresses_.contains(tgt_addr))
+            if (isExcludedAddr(tgt_addr))
             {
                 return false;
             }
@@ -293,7 +293,7 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
             }
 
             // Do not continue if Target Address is an excluded address.
-            if (excluded_addresses_.contains(tgt_addr))
+            if (isExcludedAddr(tgt_addr))
             {
                 qDebug() << "Skipping ADS-B TgtRep" << Qt::hex << rec.crc_
                          << "with excluded target address" << tgt_addr;
@@ -450,39 +450,36 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
             tr.on_gnd_ = gbs;
         }
 
-        // X
+        // X and Y
         bool has_x = Asterix::containsElement(rec, QLatin1String("I042"), QLatin1String("X"));
-        if (!has_x)
+        bool has_y = Asterix::containsElement(rec, QLatin1String("I042"), QLatin1String("Y"));
+        if (!has_x || !has_y)
         {
             return std::nullopt;
         }
 
         bool x_ok = false;
-        double x = Asterix::getElementValue(rec, QLatin1String("I042"), QLatin1String("X")).value().toDouble(&x_ok);
-        if (!x_ok)
-        {
-            return std::nullopt;
-        }
-
-        tr.x_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? x + smr_[sic].x()
-                                                         : x;
-
-        // Y
-        bool has_y = Asterix::containsElement(rec, QLatin1String("I042"), QLatin1String("Y"));
-        if (!has_y)
-        {
-            return std::nullopt;
-        }
-
         bool y_ok = false;
+        double x = Asterix::getElementValue(rec, QLatin1String("I042"), QLatin1String("X")).value().toDouble(&x_ok);
         double y = Asterix::getElementValue(rec, QLatin1String("I042"), QLatin1String("Y")).value().toDouble(&y_ok);
-        if (!y_ok)
+        if (!x_ok || !y_ok)
         {
             return std::nullopt;
         }
 
-        tr.y_ = rec.rec_typ_.sys_typ_ == SystemType::Smr ? y + smr_[sic].y()
-                                                         : y;
+        tr.x_ = x;
+        tr.y_ = y;
+
+        if (rec.rec_typ_.sys_typ_ == SystemType::Smr)
+        {
+            if (!smr_.contains(sic))
+            {
+                return std::nullopt;
+            }
+
+            tr.x_ += smr_[sic].x();
+            tr.y_ += smr_[sic].y();
+        }
 
         // Z
         // TODO: ASSIGN Z VALUES!
