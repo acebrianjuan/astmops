@@ -59,7 +59,7 @@ QString Settings::configFilePath()
 QSet<Sic> Configuration::readSic(const QString& key)
 {
     Settings settings;
-    settings.beginGroup(QLatin1String("DataSource"));
+    settings.beginGroup(QLatin1String("Asterix"));
 
     if (!settings.contains(key))
     {
@@ -97,7 +97,7 @@ QDate Configuration::asterixDate()
     QString key = QLatin1String("Date");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("General"));
+    settings.beginGroup(QLatin1String("Asterix"));
 
     if (!settings.contains(key))
     {
@@ -115,7 +115,7 @@ bool Configuration::useXmlTimestamp()
     QString key = QLatin1String("UseXmlTimestamp");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("General"));
+    settings.beginGroup(QLatin1String("Asterix"));
 
     if (!settings.contains(key))
     {

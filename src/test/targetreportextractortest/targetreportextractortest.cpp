@@ -61,7 +61,7 @@ void TargetReportExtractorTest::initTestCase()
     Settings settings;
     settings.clear();
 
-    settings.beginGroup(QLatin1String("DataSource"));
+    settings.beginGroup(QLatin1String("Asterix"));
     settings.setValue(QLatin1String("SmrSic"), 7);
     settings.setValue(QLatin1String("MlatSic"), 107);
     settings.setValue(QLatin1String("AdsbSic"), 219);

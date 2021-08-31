@@ -40,11 +40,8 @@ void TrackAssociatorTest::initTestCase()
     Settings settings;
     settings.clear();
 
-    settings.beginGroup(QLatin1String("General"));
+    settings.beginGroup(QLatin1String("Asterix"));
     settings.setValue(QLatin1String("Date"), QLatin1String("2020-05-05"));
-    settings.endGroup();
-
-    settings.beginGroup(QLatin1String("DataSource"));
     settings.setValue(QLatin1String("SmrSic"), 7);
     settings.setValue(QLatin1String("MlatSic"), 107);
     settings.setValue(QLatin1String("AdsbSic"), 219);

@@ -40,7 +40,7 @@ void TrackExtractorTest::initTestCase()
     Settings settings;
     settings.clear();
 
-    settings.beginGroup(QLatin1String("DataSource"));
+    settings.beginGroup(QLatin1String("Asterix"));
     settings.setValue(QLatin1String("SicSmr"), 7);
     settings.setValue(QLatin1String("SicMlat"), 107);
     settings.setValue(QLatin1String("SicAdsb"), 219);
