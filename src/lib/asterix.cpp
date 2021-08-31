@@ -124,9 +124,12 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
     }
 
     // Read only once.
-    static const quint8 smrSic = Configuration::smrSic();
-    static const quint8 mlatSic = Configuration::mlatSic();
-    static const quint8 adsbSic = Configuration::adsbSic();
+    static const QSet<Sic> smrSic = Configuration::smrSic();
+    static const QSet<Sic> mlatSic = Configuration::mlatSic();
+    static const QSet<Sic> adsbSic = Configuration::adsbSic();
+
+    // SICs assigned to SMR should not be assigned to any other sensors.
+    Q_ASSERT(!mlatSic.intersects(smrSic) && !adsbSic.intersects(smrSic));
 
     bool ok;
     switch (rec.cat_)
@@ -152,11 +155,11 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             break;
         }
 
-        if (sic == smrSic)
+        if (smrSic.contains(sic))
         {
             st = SystemType::Smr;
         }
-        else if (sic == mlatSic)
+        else if (mlatSic.contains(sic))
         {
             st = SystemType::Mlat;
         }
@@ -215,14 +218,14 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             }
 
             /* TYP:
-             * 000 SSR multilateration
-             * 001 Mode S multilateration
-             * 010 ADS-B
-             * 011 PSR
-             * 100 Magnetic Loop System
-             * 101 HF multilateration
-             * 110 Not defined
-             * 111 Other types
+             * 0b000 (0) SSR multilateration
+             * 0b001 (1) Mode S multilateration
+             * 0b010 (2) ADS-B
+             * 0b011 (3) PSR
+             * 0b100 (4) Magnetic Loop System
+             * 0b101 (5) HF multilateration
+             * 0b110 (6) Not defined
+             * 0b111 (7) Other types
              */
             quint8 sys_typ = Asterix::getElementValue(rec, QLatin1String("I020"), QLatin1String("TYP")).value().toUInt(&ok);
 
@@ -279,7 +282,7 @@ RecordType Asterix::getRecordType(const Asterix::Record &rec)
             break;
         }
 
-        if (sic != adsbSic)
+        if (!adsbSic.contains(sic))
         {
             qDebug() << "CAT021 TgtRep" << rec.crc_
                      << "with disagreeing SIC";

@@ -40,9 +40,11 @@ void TrackExtractorTest::initTestCase()
     Settings settings;
     settings.clear();
 
-    settings.setValue(QLatin1String("SMR.SIC"), 7);
-    settings.setValue(QLatin1String("MLAT.SIC"), 107);
-    settings.setValue(QLatin1String("ADSB.SIC"), 219);
+    settings.beginGroup(QLatin1String("DataSource"));
+    settings.setValue(QLatin1String("SicSmr"), 7);
+    settings.setValue(QLatin1String("SicMlat"), 107);
+    settings.setValue(QLatin1String("SicAdsb"), 219);
+    settings.endGroup();
 }
 
 void TrackExtractorTest::test_data()

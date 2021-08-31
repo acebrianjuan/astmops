@@ -37,15 +37,15 @@ private:
 
 namespace Configuration
 {
-Sic readSic(const QString& key);
+QSet<Sic> readSic(const QString& key);
 
 QDate asterixDate();
 
 bool useXmlTimestamp();
 
-Sic smrSic();
-Sic mlatSic();
-Sic adsbSic();
+QSet<Sic> smrSic();
+QSet<Sic> mlatSic();
+QSet<Sic> adsbSic();
 
 QString kmlFile();
 

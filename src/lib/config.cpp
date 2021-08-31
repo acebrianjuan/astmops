@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <QStandardPaths>
 
+
 Settings::Settings() : QSettings(configFilePath(), QSettings::IniFormat)
 {
 }
@@ -55,24 +56,40 @@ QString Settings::configFilePath()
     return path;
 }
 
-Sic Configuration::readSic(const QString &key)
+QSet<Sic> Configuration::readSic(const QString& key)
 {
     Settings settings;
+    settings.beginGroup(QLatin1String("DataSource"));
 
     if (!settings.contains(key))
     {
         qFatal("%s is mandatory.", qPrintable(key));
     }
 
-    //QStringList str = settings.value(key).toStringList();
-    quint32 val = settings.value(key).toUInt();
+    QSet<Sic> sicSet;
 
-    if (val > 255)
+    QString str = settings.value(key).toString();
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+    QStringList strList = str.split(QLatin1Char(','), QString::SkipEmptyParts);
+#else
+    QStringList strList = str.split(QLatin1Char(','), Qt::SkipEmptyParts);
+#endif
+
+    for (const QString& str : qAsConst(strList))
     {
-        qFatal("Invalid %s value.", qPrintable(key));
+        bool ok = false;
+        quint32 val = str.toUInt(&ok);
+
+        if (!ok || val > 255)
+        {
+            qFatal("Invalid %s value.", qPrintable(key));
+        }
+
+        sicSet << val;
     }
 
-    return val;
+    return sicSet;
 }
 
 QDate Configuration::asterixDate()
@@ -80,7 +97,7 @@ QDate Configuration::asterixDate()
     QString key = QLatin1String("Date");
 
     Settings settings;
-    //settings.beginGroup(QLatin1String("General"));
+    settings.beginGroup(QLatin1String("General"));
 
     if (!settings.contains(key))
     {
@@ -95,10 +112,10 @@ QDate Configuration::asterixDate()
 
 bool Configuration::useXmlTimestamp()
 {
-    QString key = QLatin1String("useXmlTimestamp");
+    QString key = QLatin1String("UseXmlTimestamp");
 
     Settings settings;
-    //settings.beginGroup(QLatin1String("Global"));
+    settings.beginGroup(QLatin1String("General"));
 
     if (!settings.contains(key))
     {
@@ -109,31 +126,30 @@ bool Configuration::useXmlTimestamp()
     return b;
 }
 
-// TODO: This function should allow reading more than one SIC value.
-Sic Configuration::smrSic()
+QSet<Sic> Configuration::smrSic()
 {
-    QString key = QLatin1String("SMR.SIC");
+    QString key = QLatin1String("SmrSic");
     return readSic(key);
 }
 
-Sic Configuration::mlatSic()
+QSet<Sic> Configuration::mlatSic()
 {
-    QString key = QLatin1String("MLAT.SIC");
+    QString key = QLatin1String("MlatSic");
     return readSic(key);
 }
 
-Sic Configuration::adsbSic()
+QSet<Sic> Configuration::adsbSic()
 {
-    QString key = QLatin1String("ADSB.SIC");
+    QString key = QLatin1String("AdsbSic");
     return readSic(key);
 }
 
 QString Configuration::kmlFile()
 {
-    QString key = QLatin1String("filepath");
+    QString key = QLatin1String("Filepath");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("KML"));
+    settings.beginGroup(QLatin1String("Kml"));
 
     if (!settings.contains(key))
     {
@@ -147,10 +163,10 @@ QString Configuration::kmlFile()
 
 QString Configuration::dgpsFile()
 {
-    QString key = QLatin1String("filepath");
+    QString key = QLatin1String("Filepath");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("DGPS"));
+    settings.beginGroup(QLatin1String("Dgps"));
 
     if (!settings.contains(key))
     {
@@ -167,7 +183,7 @@ ModeS Configuration::dgpsModeS()
     QString key = QLatin1String("ModeS");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("DGPS"));
+    settings.beginGroup(QLatin1String("Dgps"));
 
     if (!settings.contains(key))
     {
@@ -191,7 +207,7 @@ Mode3A Configuration::dgpsMode3A()
     QString key = QLatin1String("Mode3A");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("DGPS"));
+    settings.beginGroup(QLatin1String("Dgps"));
 
     if (!settings.contains(key))
     {
@@ -215,7 +231,7 @@ Ident Configuration::dgpsIdent()
     QString key = QLatin1String("Ident");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("DGPS"));
+    settings.beginGroup(QLatin1String("Dgps"));
 
     if (!settings.contains(key))
     {
@@ -237,11 +253,11 @@ qint32 Configuration::dgpsTodOffset()
     QString key = QLatin1String("TodOffset");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("DGPS"));
+    settings.beginGroup(QLatin1String("Dgps"));
 
     if (!settings.contains(key))
     {
-        return MOPS::defaultDgpsTimeOfDayOffset;
+        return MOPS::defaultDgpsTodOffset;
     }
 
     bool ok;
@@ -251,9 +267,9 @@ qint32 Configuration::dgpsTodOffset()
     if (!ok || qFabs(val) > 86400)  // Maximum TOD.
     {
         qWarning() << "Invalid Time of Day Offset, using default value: "
-                   << MOPS::defaultDgpsTimeOfDayOffset;
+                   << MOPS::defaultDgpsTodOffset;
 
-        return MOPS::defaultDgpsTimeOfDayOffset;
+        return MOPS::defaultDgpsTodOffset;
     }
 
     return val;
@@ -261,10 +277,10 @@ qint32 Configuration::dgpsTodOffset()
 
 std::optional<QString> Configuration::logRules()
 {
-    QString key = QLatin1String("rules");
+    QString key = QLatin1String("Rules");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("LOG"));
+    settings.beginGroup(QLatin1String("Log"));
 
     if (!settings.contains(key))
     {
@@ -278,10 +294,10 @@ std::optional<QString> Configuration::logRules()
 
 std::optional<QString> Configuration::logPattern()
 {
-    QString key = QLatin1String("pattern");
+    QString key = QLatin1String("Pattern");
 
     Settings settings;
-    settings.beginGroup(QLatin1String("LOG"));
+    settings.beginGroup(QLatin1String("Log"));
 
     if (!settings.contains(key))
     {

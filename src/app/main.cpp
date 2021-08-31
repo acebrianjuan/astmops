@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     PerfEvaluator perfEval;
 
     // DGPS CSV reference.
-    if (s.childGroups().contains(QLatin1String("DGPS")))
+    if (s.childGroups().contains(QLatin1String("Dgps")))
     {
         QString dgpsPath = Configuration::dgpsFile();
         ModeS mode_s = Configuration::dgpsModeS();
