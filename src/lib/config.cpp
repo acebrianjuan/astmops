@@ -71,9 +71,9 @@ QSet<Sic> Configuration::readSic(const QString& key)
     QString str = settings.value(key).toString();
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-    QStringList strList = str.split(QLatin1Char(','), QString::SkipEmptyParts);
+    QStringList strList = str.split(QLatin1Char(' '), QString::SkipEmptyParts);
 #else
-    QStringList strList = str.split(QLatin1Char(','), Qt::SkipEmptyParts);
+    QStringList strList = str.split(QLatin1Char(' '), Qt::SkipEmptyParts);
 #endif
 
     for (const QString& str : qAsConst(strList))
