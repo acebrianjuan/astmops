@@ -327,31 +327,67 @@ QTime Asterix::getTimeOfDay(const Asterix::Record &rec)
     }
     case 21:  // CAT021: ADS-B Messages.
     {
-        std::function<std::optional<QString>()> tod_cb;
-
-        if (Asterix::containsElement(rec, QLatin1String("I071"), QLatin1String("time_applicability_position")))
-        {
-            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I071"), QLatin1String("time_applicability_position")); };
-        }
-        else if (Asterix::containsElement(rec, QLatin1String("I074"), QLatin1String("time_reception_position_highprecision")))
-        {
-            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I074"), QLatin1String("time_reception_position_highprecision")); };
-        }
-        else if (Asterix::containsElement(rec, QLatin1String("I073"), QLatin1String("time_reception_position")))
-        {
-            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I073"), QLatin1String("time_reception_position")); };
-        }
-        else if (Asterix::containsElement(rec, QLatin1String("I077"), QLatin1String("time_report_transmission")))
-        {
-            tod_cb = [rec]() { return Asterix::getElementValue(rec, QLatin1String("I077"), QLatin1String("time_report_transmission")); };
-        }
-        else
-        {
-            return QTime();
-        }
+        // Cascade down through the different time-related Data Items in order
+        // of preference until a valid TOD is read. Otherwise return an
+        // invalid QTime object.
 
         bool tod_ok = false;
-        double tod = tod_cb().value().toDouble(&tod_ok);
+        double tod;
+        if (Asterix::containsElement(rec, QLatin1String("I071"), QLatin1String("time_applicability_position")))
+        {
+            tod = Asterix::getElementValue(rec, QLatin1String("I071"), QLatin1String("time_applicability_position")).value().toDouble(&tod_ok);
+        }
+
+        if (!tod_ok && Asterix::containsElement(rec, QLatin1String("I073"), QLatin1String("time_reception_position")))
+        {
+            tod = Asterix::getElementValue(rec, QLatin1String("I073"), QLatin1String("time_reception_position")).value().toDouble(&tod_ok);
+
+            if (tod_ok && Asterix::containsDataItem(rec, QLatin1String("I074")))
+            {
+                bool fsi_ok = false;
+                quint8 fsi;
+                if (Asterix::containsElement(rec, QLatin1String("I074"), QLatin1String("FSI")))
+                {
+                    fsi = Asterix::getElementValue(rec, QLatin1String("I074"), QLatin1String("FSI")).value().toUInt(&fsi_ok);
+                }
+
+                if (fsi_ok)
+                {
+                    bool frac_ok = false;
+                    double fracPart;
+                    if (Asterix::containsElement(rec, QLatin1String("I074"), QLatin1String("time_reception_position_highprecision")))
+                    {
+                        fracPart = Asterix::getElementValue(rec, QLatin1String("I074"), QLatin1String("time_reception_position_highprecision")).value().toDouble(&frac_ok);
+                    }
+
+                    if (frac_ok)
+                    {
+                        double intPart;
+                        std::modf(tod, &intPart);
+
+                        if (fsi != 3)
+                        {
+                            if (fsi == 1)
+                            {
+                                intPart += 1;
+                            }
+                            else if (fsi == 2)
+                            {
+                                intPart -= 1;
+                            }
+
+                            tod = intPart + (fracPart * qPow(2, -30));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!tod_ok && Asterix::containsElement(rec, QLatin1String("I077"), QLatin1String("time_report_transmission")))
+        {
+            tod = Asterix::getElementValue(rec, QLatin1String("I077"), QLatin1String("time_report_transmission")).value().toDouble(&tod_ok);
+        }
+
         if (!tod_ok)
         {
             return QTime();
