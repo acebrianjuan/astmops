@@ -41,6 +41,23 @@ using Cat = quint8;
 using Sac = quint8;
 using Sic = quint8;
 
+
+enum class ProcessingMode
+{
+    Too,
+    Dgps
+};
+Q_DECLARE_METATYPE(ProcessingMode);
+
+enum class TargetType
+{
+    Unknown,
+    GroundVehicle,
+    Aircraft
+};
+Q_DECLARE_METATYPE(TargetType);
+
+
 struct DataSrcId
 {
     Sac sac_ = 0;
