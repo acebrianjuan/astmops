@@ -61,6 +61,7 @@ Q_DECLARE_METATYPE(Layer);
 enum class TargetType
 {
     Unknown,
+    FixedTransponder,
     GroundVehicle,
     Aircraft
 };

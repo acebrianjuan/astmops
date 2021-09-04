@@ -38,6 +38,8 @@ struct TargetReport
     std::optional<Mode3A> mode_3a_;
     std::optional<Ident> ident_;
 
+    TargetType tgt_typ_ = TargetType::Unknown;
+
     bool on_gnd_ = false;
 
     double x_ = qSNaN();
