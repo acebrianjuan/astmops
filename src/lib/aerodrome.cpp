@@ -112,10 +112,10 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
     QPointF pos2D = cartPos.toPointF();
     double alt = cartPos.z();  // TODO: Revise altitude/height values in local radar cartesian frame.
 
-    Layer layer = gndBit ? Layer::SurfaceLayer    // GBS = 1
-                         : Layer::AirborneLayer;  // GBS = 0
+    Layer layer = gndBit ? Layer::Surface    // GBS = 1
+                         : Layer::Airborne;  // GBS = 0
 
-    if (layer == Layer::SurfaceLayer)
+    if (layer == Layer::Surface)
     {
         if (auto name = areaContainsPoint(runwayElements_, pos2D))
         {
@@ -137,7 +137,7 @@ Aerodrome::NamedArea Aerodrome::locatePoint(const QVector3D cartPos, const bool 
             return NamedArea(Area::Stand, name.value());
         }
     }
-    else if (layer == Layer::AirborneLayer)
+    else if (layer == Layer::Airborne)
     {
         if (auto name = areaContainsPoint(airborne1Elements_, pos2D); name && alt <= 762)
         {

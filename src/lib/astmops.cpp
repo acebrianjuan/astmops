@@ -20,15 +20,10 @@
 
 #include "astmops.h"
 
-bool operator==(DataSrcId lhs, DataSrcId rhs)
-{
-    return lhs.sac_ == rhs.sac_ &&
-           lhs.sic_ == rhs.sic_;
-}
-
 RecordType::RecordType() {}
 
-RecordType::RecordType(SystemType st, MessageType mt) : sys_typ_(st), msg_typ_(mt){};
+RecordType::RecordType(SystemType st, MessageType mt)
+    : sys_typ_(st), msg_typ_(mt){};
 
 bool RecordType::isUnknown() const
 {
@@ -73,6 +68,12 @@ size_t qHash(RecordType rt, size_t seed)
     seed = hash(seed, static_cast<int>(rt.sys_typ_));
     seed = hash(seed, static_cast<int>(rt.msg_typ_));
     return seed;
+}
+
+bool operator==(DataSrcId lhs, DataSrcId rhs)
+{
+    return lhs.sac_ == rhs.sac_ &&
+           lhs.sic_ == rhs.sic_;
 }
 
 namespace Literals
