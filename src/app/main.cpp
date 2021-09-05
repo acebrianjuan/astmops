@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops"));
 
+    ProcessingMode mode = Configuration::processingMode();
+
     std::optional<QString> logRules_opt = Configuration::logRules();
     if (logRules_opt.has_value())
     {
@@ -53,8 +55,7 @@ int main(int argc, char *argv[])
     const QStringList args = application.arguments();
     qDebug() << "args" << args;
 
-    Settings s;
-    qInfo() << "Configuration file:" << s.fileName();
+    qInfo() << "Configuration file:" << Configuration::fileName();
 
     if (qEnvironmentVariableIsSet("APPDIR"))
     {
@@ -104,7 +105,7 @@ int main(int argc, char *argv[])
     PerfEvaluator perfEval;
 
     // DGPS CSV reference.
-    if (s.childGroups().contains(QLatin1String("Dgps")))
+    if (mode == ProcessingMode::Dgps)
     {
         QString dgpsPath = Configuration::dgpsFile();
         ModeS mode_s = Configuration::dgpsModeS();

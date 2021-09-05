@@ -37,24 +37,28 @@ private:
 
 namespace Configuration
 {
-QSet<Sic> readSic(const QString& key);
+QString fileName();
+ProcessingMode processingMode();
 
+// [Kml]
+QString kmlFile();
+
+// [Asterix]
 QDate asterixDate();
-
 bool useXmlTimestamp();
-
+QSet<Sic> readSic(const QString& key);
 QSet<Sic> smrSic();
 QSet<Sic> mlatSic();
 QSet<Sic> adsbSic();
 
-QString kmlFile();
-
+// [Dgps]
 QString dgpsFile();
 ModeS dgpsModeS();
 Mode3A dgpsMode3A();
 Ident dgpsIdent();
 qint32 dgpsTodOffset();
 
+// [Log]
 std::optional<QString> logRules();
 std::optional<QString> logPattern();
 

@@ -56,40 +56,42 @@ QString Settings::configFilePath()
     return path;
 }
 
-QSet<Sic> Configuration::readSic(const QString& key)
+QString Configuration::fileName()
 {
     Settings settings;
-    settings.beginGroup(QLatin1String("Asterix"));
+    return settings.fileName();
+}
+
+ProcessingMode Configuration::processingMode()
+{
+    // Processing traffic of opportunity (TOO) is the default mode.
+    ProcessingMode mode = ProcessingMode::Too;
+
+    // If config file contains [Dgps] group, switch to Dgps processing mode.
+    Settings settings;
+    if (settings.childGroups().contains(QLatin1String("Dgps")))
+    {
+        mode = ProcessingMode::Dgps;
+    }
+
+    return mode;
+}
+
+QString Configuration::kmlFile()
+{
+    QString key = QLatin1String("Filepath");
+
+    Settings settings;
+    settings.beginGroup(QLatin1String("Kml"));
 
     if (!settings.contains(key))
     {
         qFatal("%s is mandatory.", qPrintable(key));
     }
 
-    QSet<Sic> sicSet;
+    QString pathStr = settings.value(key).toString();
 
-    QString str = settings.value(key).toString();
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-    QStringList strList = str.split(QLatin1Char(' '), QString::SkipEmptyParts);
-#else
-    QStringList strList = str.split(QLatin1Char(' '), Qt::SkipEmptyParts);
-#endif
-
-    for (const QString& str : qAsConst(strList))
-    {
-        bool ok = false;
-        quint32 val = str.toUInt(&ok);
-
-        if (!ok || val > 255)
-        {
-            qFatal("Invalid %s value.", qPrintable(key));
-        }
-
-        sicSet << val;
-    }
-
-    return sicSet;
+    return pathStr;
 }
 
 QDate Configuration::asterixDate()
@@ -126,6 +128,42 @@ bool Configuration::useXmlTimestamp()
     return b;
 }
 
+QSet<Sic> Configuration::readSic(const QString& key)
+{
+    Settings settings;
+    settings.beginGroup(QLatin1String("Asterix"));
+
+    if (!settings.contains(key))
+    {
+        qFatal("%s is mandatory.", qPrintable(key));
+    }
+
+    QSet<Sic> sicSet;
+
+    QString str = settings.value(key).toString();
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+    QStringList strList = str.split(QLatin1Char(' '), QString::SkipEmptyParts);
+#else
+    QStringList strList = str.split(QLatin1Char(' '), Qt::SkipEmptyParts);
+#endif
+
+    for (const QString& str : qAsConst(strList))
+    {
+        bool ok = false;
+        quint32 val = str.toUInt(&ok);
+
+        if (!ok || val > 255)
+        {
+            qFatal("Invalid %s value.", qPrintable(key));
+        }
+
+        sicSet << val;
+    }
+
+    return sicSet;
+}
+
 QSet<Sic> Configuration::smrSic()
 {
     QString key = QLatin1String("SmrSic");
@@ -142,23 +180,6 @@ QSet<Sic> Configuration::adsbSic()
 {
     QString key = QLatin1String("AdsbSic");
     return readSic(key);
-}
-
-QString Configuration::kmlFile()
-{
-    QString key = QLatin1String("Filepath");
-
-    Settings settings;
-    settings.beginGroup(QLatin1String("Kml"));
-
-    if (!settings.contains(key))
-    {
-        qFatal("%s is mandatory.", qPrintable(key));
-    }
-
-    QString pathStr = settings.value(key).toString();
-
-    return pathStr;
 }
 
 QString Configuration::dgpsFile()
