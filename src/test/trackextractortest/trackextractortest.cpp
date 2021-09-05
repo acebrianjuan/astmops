@@ -58,6 +58,7 @@ void TrackExtractorTest::test_data()
     smrTgtRep1.trk_nb_ = 1001;
     smrTgtRep1.x_ = 0.0;
     smrTgtRep1.y_ = 0.0;
+    smrTgtRep1.z_ = 0.0;
 
     TargetReport smrTgtRep2;
     smrTgtRep2.sys_typ_ = SystemType::Smr;
@@ -65,6 +66,7 @@ void TrackExtractorTest::test_data()
     smrTgtRep2.trk_nb_ = 1001;
     smrTgtRep2.x_ = 0.0;
     smrTgtRep2.y_ = 0.0;
+    smrTgtRep2.z_ = 0.0;
 
     TargetReport smrTgtRep3;
     smrTgtRep3.sys_typ_ = SystemType::Smr;
@@ -72,6 +74,7 @@ void TrackExtractorTest::test_data()
     smrTgtRep3.trk_nb_ = 1001;
     smrTgtRep3.x_ = 0.0;
     smrTgtRep3.y_ = 0.0;
+    smrTgtRep3.z_ = 0.0;
 
     Track smrTrack1(SystemType::Smr, 1001, {smrTgtRep1, smrTgtRep2, smrTgtRep3});
 
@@ -82,6 +85,7 @@ void TrackExtractorTest::test_data()
     smrTgtRep4.trk_nb_ = 1002;
     smrTgtRep4.x_ = 0.0;
     smrTgtRep4.y_ = 0.0;
+    smrTgtRep4.z_ = 0.0;
 
     TargetReport smrTgtRep5;
     smrTgtRep5.sys_typ_ = SystemType::Smr;
@@ -89,6 +93,7 @@ void TrackExtractorTest::test_data()
     smrTgtRep5.trk_nb_ = 1002;
     smrTgtRep5.x_ = 0.0;
     smrTgtRep5.y_ = 0.0;
+    smrTgtRep5.z_ = 0.0;
 
     TargetReport smrTgtRep6;
     smrTgtRep6.sys_typ_ = SystemType::Smr;
@@ -96,6 +101,7 @@ void TrackExtractorTest::test_data()
     smrTgtRep6.trk_nb_ = 1002;
     smrTgtRep6.x_ = 0.0;
     smrTgtRep6.y_ = 0.0;
+    smrTgtRep6.z_ = 0.0;
 
     Track smrTrack2(SystemType::Smr, 1002, {smrTgtRep4, smrTgtRep5, smrTgtRep6});
 
@@ -114,6 +120,7 @@ void TrackExtractorTest::test_data()
     mlatTgtRep1.trk_nb_ = 2001;
     mlatTgtRep1.x_ = 0.0;
     mlatTgtRep1.y_ = 0.0;
+    mlatTgtRep1.z_ = 0.0;
 
     TargetReport mlatTgtRep2;
     mlatTgtRep2.sys_typ_ = SystemType::Mlat;
@@ -121,6 +128,7 @@ void TrackExtractorTest::test_data()
     mlatTgtRep2.trk_nb_ = 2001;
     mlatTgtRep2.x_ = 0.0;
     mlatTgtRep2.y_ = 0.0;
+    mlatTgtRep2.z_ = 0.0;
 
     TargetReport mlatTgtRep3;
     mlatTgtRep3.sys_typ_ = SystemType::Mlat;
@@ -128,6 +136,7 @@ void TrackExtractorTest::test_data()
     mlatTgtRep3.trk_nb_ = 2001;
     mlatTgtRep3.x_ = 0.0;
     mlatTgtRep3.y_ = 0.0;
+    mlatTgtRep3.z_ = 0.0;
 
     Track mlatTrack1(SystemType::Mlat, 2001, {mlatTgtRep1, mlatTgtRep2, mlatTgtRep3});
 
@@ -138,6 +147,7 @@ void TrackExtractorTest::test_data()
     mlatTgtRep4.trk_nb_ = 2002;
     mlatTgtRep4.x_ = 0.0;
     mlatTgtRep4.y_ = 0.0;
+    mlatTgtRep4.z_ = 0.0;
 
     TargetReport mlatTgtRep5;
     mlatTgtRep5.sys_typ_ = SystemType::Mlat;
@@ -145,6 +155,7 @@ void TrackExtractorTest::test_data()
     mlatTgtRep5.trk_nb_ = 2002;
     mlatTgtRep5.x_ = 0.0;
     mlatTgtRep5.y_ = 0.0;
+    mlatTgtRep5.z_ = 0.0;
 
     TargetReport mlatTgtRep6;
     mlatTgtRep6.sys_typ_ = SystemType::Mlat;
@@ -152,6 +163,7 @@ void TrackExtractorTest::test_data()
     mlatTgtRep6.trk_nb_ = 2002;
     mlatTgtRep6.x_ = 0.0;
     mlatTgtRep6.y_ = 0.0;
+    mlatTgtRep6.z_ = 0.0;
 
     Track mlatTrack2(SystemType::Mlat, 2002, {mlatTgtRep4, mlatTgtRep5, mlatTgtRep6});
 
@@ -170,6 +182,7 @@ void TrackExtractorTest::test_data()
     adsbTgtRep1.trk_nb_ = 3001;
     adsbTgtRep1.x_ = 0.0;
     adsbTgtRep1.y_ = 0.0;
+    adsbTgtRep1.z_ = 0.0;
 
     TargetReport adsbTgtRep2;
     adsbTgtRep2.sys_typ_ = SystemType::Adsb;
@@ -177,6 +190,7 @@ void TrackExtractorTest::test_data()
     adsbTgtRep2.trk_nb_ = 3001;
     adsbTgtRep2.x_ = 0.0;
     adsbTgtRep2.y_ = 0.0;
+    adsbTgtRep2.z_ = 0.0;
 
     TargetReport adsbTgtRep3;
     adsbTgtRep3.sys_typ_ = SystemType::Adsb;
@@ -184,6 +198,7 @@ void TrackExtractorTest::test_data()
     adsbTgtRep3.trk_nb_ = 3001;
     adsbTgtRep3.x_ = 0.0;
     adsbTgtRep3.y_ = 0.0;
+    adsbTgtRep3.z_ = 0.0;
 
     Track adsbTrack1(SystemType::Adsb, 3001, {adsbTgtRep1, adsbTgtRep2, adsbTgtRep3});
 
@@ -194,6 +209,7 @@ void TrackExtractorTest::test_data()
     adsbTgtRep4.trk_nb_ = 3002;
     adsbTgtRep4.x_ = 0.0;
     adsbTgtRep4.y_ = 0.0;
+    adsbTgtRep4.z_ = 0.0;
 
     TargetReport adsbTgtRep5;
     adsbTgtRep5.sys_typ_ = SystemType::Adsb;
@@ -201,6 +217,7 @@ void TrackExtractorTest::test_data()
     adsbTgtRep5.trk_nb_ = 3002;
     adsbTgtRep5.x_ = 0.0;
     adsbTgtRep5.y_ = 0.0;
+    adsbTgtRep5.z_ = 0.0;
 
     TargetReport adsbTgtRep6;
     adsbTgtRep6.sys_typ_ = SystemType::Adsb;
@@ -208,6 +225,7 @@ void TrackExtractorTest::test_data()
     adsbTgtRep6.trk_nb_ = 3002;
     adsbTgtRep6.x_ = 0.0;
     adsbTgtRep6.y_ = 0.0;
+    adsbTgtRep6.z_ = 0.0;
 
     Track adsbTrack2(SystemType::Adsb, 3002, {adsbTgtRep4, adsbTgtRep5, adsbTgtRep6});
 
@@ -226,6 +244,7 @@ void TrackExtractorTest::test_data()
     dgpsTgtRep1.trk_nb_ = 4001;
     dgpsTgtRep1.x_ = 0.0;
     dgpsTgtRep1.y_ = 0.0;
+    dgpsTgtRep1.z_ = 0.0;
 
     TargetReport dgpsTgtRep2;
     dgpsTgtRep2.sys_typ_ = SystemType::Dgps;
@@ -233,6 +252,7 @@ void TrackExtractorTest::test_data()
     dgpsTgtRep2.trk_nb_ = 4001;
     dgpsTgtRep2.x_ = 0.0;
     dgpsTgtRep2.y_ = 0.0;
+    dgpsTgtRep2.z_ = 0.0;
 
     TargetReport dgpsTgtRep3;
     dgpsTgtRep3.sys_typ_ = SystemType::Dgps;
@@ -240,6 +260,7 @@ void TrackExtractorTest::test_data()
     dgpsTgtRep3.trk_nb_ = 4001;
     dgpsTgtRep3.x_ = 0.0;
     dgpsTgtRep3.y_ = 0.0;
+    dgpsTgtRep3.z_ = 0.0;
 
     Track dgpsTrack1(SystemType::Dgps, 4001, {dgpsTgtRep1, dgpsTgtRep2, dgpsTgtRep3});
 

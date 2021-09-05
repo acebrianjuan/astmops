@@ -115,31 +115,28 @@ Track &Track::operator<<(const TargetReport &tr)
             {
                 y_bounds_.second = tr.y_;
             }
+        }
 
+        if (!qIsNaN(tr.z_))
+        {
             // Z min.
-            if (tr.z_.has_value())
+            if (qIsNaN(z_bounds_.first))
             {
-                if (qIsNaN(z_bounds_.first))
-                {
-                    z_bounds_.first = tr.z_.value();
-                }
-                else if (tr.z_.value() < z_bounds_.first)
-                {
-                    z_bounds_.first = tr.z_.value();
-                }
+                z_bounds_.first = tr.z_;
+            }
+            else if (tr.z_ < z_bounds_.first)
+            {
+                z_bounds_.first = tr.z_;
             }
 
             // Z max.
-            if (tr.z_.has_value())
+            if (qIsNaN(z_bounds_.second))
             {
-                if (qIsNaN(z_bounds_.second))
-                {
-                    z_bounds_.second = tr.z_.value();
-                }
-                else if (tr.z_.value() > y_bounds_.second)
-                {
-                    z_bounds_.second = tr.z_.value();
-                }
+                z_bounds_.second = tr.z_;
+            }
+            else if (tr.z_ > z_bounds_.second)
+            {
+                z_bounds_.second = tr.z_;
             }
         }
 
@@ -880,19 +877,12 @@ bool haveTimeIntersection(const Track &lhs, const Track &rhs)
 
 bool haveSpaceIntersection(const Track &lhs, const Track &rhs)
 {
-    /*
     return lhs.x_bounds().first <= rhs.x_bounds().second &&
            rhs.x_bounds().first <= lhs.x_bounds().second &&
            lhs.y_bounds().first <= rhs.y_bounds().second &&
            rhs.y_bounds().first <= lhs.y_bounds().second &&
            lhs.z_bounds().first <= rhs.z_bounds().second &&
            rhs.z_bounds().first <= lhs.z_bounds().second;
-    */
-
-    return lhs.x_bounds().first <= rhs.x_bounds().second &&
-           rhs.x_bounds().first <= lhs.x_bounds().second &&
-           lhs.y_bounds().first <= rhs.y_bounds().second &&
-           rhs.y_bounds().first <= lhs.y_bounds().second;
 }
 
 bool haveSpaceTimeIntersection(const Track &lhs, const Track &rhs)
@@ -1015,19 +1005,15 @@ Track resample(const Track &track, const QVector<QDateTime> &dtimes)
 
                         double dx = tr_u.x_ - tr_l.x_;
                         double dy = tr_u.y_ - tr_l.y_;
+                        double dz = tr_u.z_ - tr_l.z_;
 
                         double x_i = tr_l.x_ + f * dx;
                         double y_i = tr_l.y_ + f * dy;
+                        double z_i = tr_l.z_ + f * dz;
 
                         tr_i.x_ = x_i;
                         tr_i.y_ = y_i;
-
-                        if (tr_u.z_.has_value() && tr_l.z_.has_value())
-                        {
-                            double dz = tr_u.z_.value() - tr_l.z_.value();
-                            double z_i = tr_l.z_.value() + f * dz;
-                            tr_i.z_ = z_i;
-                        }
+                        tr_i.z_ = z_i;
 
                         // Add interpolated TargetReport to track.
                         t << tr_i;

@@ -412,9 +412,11 @@ void TargetReportExtractorTest::addDataTest_data()
     trSmr.sys_typ_ = SystemType::Smr;
     trSmr.tod_ = "2020-05-05T23:59:58.000Z"_ts;
     trSmr.trk_nb_ = 1391;
+    trSmr.tgt_typ_ = TargetType::Unknown;
     trSmr.on_gnd_ = true;
     trSmr.x_ = 565.0000000 + 1394.655251;
     trSmr.y_ = -295.0000000 - 161.695809;
+    trSmr.z_ = 0.0;
     trSmr.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport trMlat;
@@ -426,9 +428,11 @@ void TargetReportExtractorTest::addDataTest_data()
     trMlat.mode_s_ = 0x34304F;
     trMlat.mode_3a_ = 0246;
     trMlat.ident_ = QLatin1String("ECKJQ   ");
+    trMlat.tgt_typ_ = TargetType::Aircraft;
     trMlat.on_gnd_ = true;
     trMlat.x_ = 565.0000000;
     trMlat.y_ = -295.0000000;
+    trMlat.z_ = 0.0;
     trMlat.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport trAdsb;
@@ -440,10 +444,11 @@ void TargetReportExtractorTest::addDataTest_data()
     trAdsb.mode_s_ = 0x70605A;
     trAdsb.mode_3a_ = 4553;
     trAdsb.ident_ = QLatin1String("KAC1412 ");
+    trAdsb.tgt_typ_ = TargetType::Aircraft;
     trAdsb.on_gnd_ = false;
     trAdsb.x_ = 565.0000000;
     trAdsb.y_ = -295.0000000;
-    trAdsb.z_ = 0;
+    trAdsb.z_ = 0.0;
     trAdsb.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     QVector<Asterix::Record> smrRecsIn;

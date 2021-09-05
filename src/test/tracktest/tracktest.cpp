@@ -69,6 +69,7 @@ void TrackTest::testTrack()
     tr_adsb_101_1.on_gnd_ = true;
     tr_adsb_101_1.x_ = -50.0;
     tr_adsb_101_1.y_ = -25.0;
+    tr_adsb_101_1.z_ = 0.0;
     tr_adsb_101_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_101_2;
@@ -83,6 +84,7 @@ void TrackTest::testTrack()
     tr_adsb_101_2.on_gnd_ = true;
     tr_adsb_101_2.x_ = 0.0;
     tr_adsb_101_2.y_ = 0.0;
+    tr_adsb_101_2.z_ = 0.0;
     tr_adsb_101_2.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_101_3;
@@ -97,6 +99,7 @@ void TrackTest::testTrack()
     tr_adsb_101_3.on_gnd_ = true;
     tr_adsb_101_3.x_ = 50.0;
     tr_adsb_101_3.y_ = 25.0;
+    tr_adsb_101_3.z_ = 0.0;
     tr_adsb_101_3.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_adsb_102_1;
@@ -109,8 +112,9 @@ void TrackTest::testTrack()
     tr_adsb_102_1.mode_3a_ = 0002;
     tr_adsb_102_1.ident_ = QLatin1String("FOO5678 ");
     tr_adsb_102_1.on_gnd_ = true;
-    tr_adsb_102_1.x_ = 00.0;
-    tr_adsb_102_1.y_ = 00.0;
+    tr_adsb_102_1.x_ = 0.0;
+    tr_adsb_102_1.y_ = 0.0;
+    tr_adsb_102_1.z_ = 0.0;
     tr_adsb_102_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
     TargetReport tr_mlat_201_1;
@@ -123,8 +127,9 @@ void TrackTest::testTrack()
     tr_mlat_201_1.mode_3a_ = 0002;
     tr_mlat_201_1.ident_ = QLatin1String("FOO5678 ");
     tr_mlat_201_1.on_gnd_ = true;
-    tr_mlat_201_1.x_ = 00.0;
-    tr_mlat_201_1.y_ = 00.0;
+    tr_mlat_201_1.x_ = 0.0;
+    tr_mlat_201_1.y_ = 0.0;
+    tr_mlat_201_1.z_ = 0.0;
     tr_mlat_201_1.narea_ = Aerodrome::NamedArea(Aerodrome::Area::Runway);
 
 
@@ -356,8 +361,8 @@ void TrackTest::testTrack()
     QCOMPARE(trk_adsb_101.x_bounds().second, 0.0);
     QCOMPARE(trk_adsb_101.y_bounds().first, 0.0);
     QCOMPARE(trk_adsb_101.y_bounds().second, 0.0);
-    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
-    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
+    QCOMPARE(trk_adsb_101.z_bounds().first, 0.0);
+    QCOMPARE(trk_adsb_101.z_bounds().second, 0.0);
 
     // No target reports with ModeS address have been added yet so ModeS
     // address must have no value assigned.
@@ -408,8 +413,8 @@ void TrackTest::testTrack()
     QCOMPARE(trk_adsb_101.x_bounds().second, 50.0);
     QCOMPARE(trk_adsb_101.y_bounds().first, 0.0);
     QCOMPARE(trk_adsb_101.y_bounds().second, 25.0);
-    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
-    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
+    QCOMPARE(trk_adsb_101.z_bounds().first, 0.0);
+    QCOMPARE(trk_adsb_101.z_bounds().second, 0.0);
 
     // No target reports with ModeS address have been added yet so ModeS
     // address must have no value assigned.
@@ -461,8 +466,8 @@ void TrackTest::testTrack()
     QCOMPARE(trk_adsb_101.x_bounds().second, 50.0);
     QCOMPARE(trk_adsb_101.y_bounds().first, -25.0);
     QCOMPARE(trk_adsb_101.y_bounds().second, 25.0);
-    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().first));
-    QVERIFY(qIsNaN(trk_adsb_101.z_bounds().second));
+    QCOMPARE(trk_adsb_101.z_bounds().first, 0.0);
+    QCOMPARE(trk_adsb_101.z_bounds().second, 0.0);
 
     // The track must have the taken the ModeS address of the newly inserted
     // target report.

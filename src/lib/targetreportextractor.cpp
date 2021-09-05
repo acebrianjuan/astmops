@@ -100,7 +100,7 @@ void TargetReportExtractor::addDgpsData(const DgpsTargetData &tgt)
         tr.y_ = cart.y();
         tr.z_ = cart.z();
 
-        QVector3D pos(tr.x_, tr.y_, tr.z_.value());
+        QVector3D pos(tr.x_, tr.y_, tr.z_);
         tr.narea_ = locatePoint(pos, tr.on_gnd_);
 
         tr.ver_ = 2;
@@ -427,7 +427,13 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
                 double mhgt = Asterix::getElementValue(rec, QLatin1String("I091"), QLatin1String("MHeight")).value().toUInt(&mhgt_ok);
                 if (mhgt_ok)
                 {
-                    tr.z_ = mhgt * 6.25 * ft_to_m;
+                    double hgt_m = mhgt * 6.25 * ft_to_m;
+                    if (hgt_m < 0)
+                    {
+                        hgt_m = 0;
+                    }
+
+                    tr.z_ = hgt_m;
                 }
             }
 
@@ -442,7 +448,13 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
                     double fl = Asterix::getElementValue(rec, QLatin1String("I090"), QLatin1String("FL")).value().toDouble(&fl_ok);
                     if (fl_ok)
                     {
-                        tr.z_ = fl * FL_to_m;
+                        double hgt_m = fl * FL_to_m;
+                        if (hgt_m < 0)
+                        {
+                            hgt_m = 0;
+                        }
+
+                        tr.z_ = hgt_m;
                     }
                 }
             }
@@ -793,7 +805,7 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
 
     // Area.
     // TODO: Consider moving this to TrackExtractor class.
-    QVector3D pos(tr.x_, tr.y_, tr.z_.value_or(0.0));  // <-- TODO: Beware of criteria for missing altitude information.
+    QVector3D pos(tr.x_, tr.y_, tr.z_);
     tr.narea_ = locatePoint(pos, tr.on_gnd_);
 
     return tr;

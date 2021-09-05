@@ -45,7 +45,7 @@ struct TargetReport
     // Coordinates in local cartesian reference system.
     double x_ = qSNaN();
     double y_ = qSNaN();
-    std::optional<double> z_;  // TODO: Drop the optional for the Z coordinate.
+    double z_ = qSNaN();
 
     Aerodrome::NamedArea narea_;
 
