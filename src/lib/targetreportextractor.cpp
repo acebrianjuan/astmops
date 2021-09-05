@@ -337,6 +337,8 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
     {
     case 10:
     {
+        // Common fields to SMR and MLAT.
+
         // Track Number.
         bool has_trknb = Asterix::containsElement(rec, QLatin1String("I161"), QLatin1String("TrkNb"));
         if (!has_trknb)
@@ -377,7 +379,7 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
             tr.on_gnd_ = gbs;
         }
 
-        // X and Y
+        // X and Y.
         bool has_x = Asterix::containsElement(rec, QLatin1String("I042"), QLatin1String("X"));
         bool has_y = Asterix::containsElement(rec, QLatin1String("I042"), QLatin1String("Y"));
         if (!has_x || !has_y)
@@ -406,14 +408,45 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
 
             tr.x_ += smr_[sic].x();
             tr.y_ += smr_[sic].y();
+
+            // By definition, SMR targets are ALWAYS on the ground.
+            tr.z_ = 0;
         }
 
-        // Z
-        // TODO: ASSIGN Z VALUES!
 
-
+        // Exclusive fields to MLAT.
         if (rec.rec_typ_.sys_typ_ == SystemType::Mlat)
         {
+            // Z.
+
+            // Measured height.
+            bool mhgt_ok = false;
+            bool has_mhgt = Asterix::containsElement(rec, QLatin1String("I091"), QLatin1String("MHeight"));
+            if (has_mhgt)
+            {
+                double mhgt = Asterix::getElementValue(rec, QLatin1String("I091"), QLatin1String("MHeight")).value().toUInt(&mhgt_ok);
+                if (mhgt_ok)
+                {
+                    tr.z_ = mhgt * 6.25 * ft_to_m;
+                }
+            }
+
+            // Flight level.
+            // TODO: Consider dropping the FL as it is not QNH corrected!
+            if (!has_mhgt || !mhgt_ok)
+            {
+                bool fl_ok = false;
+                bool has_fl = Asterix::containsElement(rec, QLatin1String("I090"), QLatin1String("FL"));
+                if (has_fl)
+                {
+                    double fl = Asterix::getElementValue(rec, QLatin1String("I090"), QLatin1String("FL")).value().toDouble(&fl_ok);
+                    if (fl_ok)
+                    {
+                        tr.z_ = fl * FL_to_m;
+                    }
+                }
+            }
+
             // RAB.
             bool rab_ok = false;
             bool rab = false;
@@ -503,11 +536,6 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
                     tr.ident_ = ident;
                 }
             }
-
-            //            if (!has_mode_3a && !has_ident)
-            //            {
-            //                return std::nullopt;
-            //            }
         }
 
         break;
@@ -610,7 +638,7 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
             lon = lon_sp;
         }
 
-        // Height.
+        // Geometric height.
         double h = 0.0;
 
         bool gh_ok = false;
@@ -624,6 +652,7 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
             }
         }
 
+        // Flight level.
         // TODO: Consider dropping the FL as it is not QNH corrected!
         if (!has_gh || !gh_ok)
         {
@@ -763,6 +792,7 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
     }
 
     // Area.
+    // TODO: Consider moving this to TrackExtractor class.
     QVector3D pos(tr.x_, tr.y_, tr.z_.value_or(0.0));  // <-- TODO: Beware of criteria for missing altitude information.
     tr.narea_ = locatePoint(pos, tr.on_gnd_);
 

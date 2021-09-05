@@ -42,9 +42,10 @@ struct TargetReport
 
     bool on_gnd_ = false;
 
+    // Coordinates in local cartesian reference system.
     double x_ = qSNaN();
     double y_ = qSNaN();
-    std::optional<double> z_;
+    std::optional<double> z_;  // TODO: Drop the optional for the Z coordinate.
 
     Aerodrome::NamedArea narea_;
 
