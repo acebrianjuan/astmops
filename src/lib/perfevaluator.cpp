@@ -18,6 +18,7 @@
  */
 
 #include "perfevaluator.h"
+#include "config.h"
 #include <QMetaEnum>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
@@ -46,7 +47,7 @@ void PerfEvaluator::run()
     trkAssoc_.run();
 
     // Set PIC threshold value.
-    computePicThreshold(95);
+    computePicThreshold(Configuration::rpaPicPercentile());
 
     // Iterate through each target set.
     for (const TrackCollectionSet &s : qAsConst(trkAssoc_.sets()))

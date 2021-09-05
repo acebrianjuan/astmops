@@ -287,10 +287,36 @@ qint32 Configuration::dgpsTodOffset()
 
     if (!ok || qFabs(val) > 86400)  // Maximum TOD.
     {
-        qWarning() << "Invalid Time of Day Offset, using default value: "
+        qWarning() << "Invalid Time of Day Offset, using default value:"
                    << MOPS::defaultDgpsTodOffset;
 
         return MOPS::defaultDgpsTodOffset;
+    }
+
+    return val;
+}
+
+double Configuration::rpaPicPercentile()
+{
+    QString key = QLatin1String("RpaPicPercentile");
+
+    Settings settings;
+    settings.beginGroup(QLatin1String("Mops"));
+
+    if (!settings.contains(key))
+    {
+        return MOPS::defaultRpaPicPercentile;
+    }
+
+    bool ok;
+    double val = settings.value(key).toDouble(&ok);
+
+    if (!ok || val < 0 || val > 100)
+    {
+        qWarning() << "Invalid RPA Pic Percentile, using default value:"
+                   << MOPS::defaultRpaPicPercentile;
+
+        return MOPS::defaultRpaPicPercentile;
     }
 
     return val;

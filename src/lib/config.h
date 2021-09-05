@@ -58,6 +58,9 @@ Mode3A dgpsMode3A();
 Ident dgpsIdent();
 qint32 dgpsTodOffset();
 
+// [Mops]
+double rpaPicPercentile();
+
 // [Log]
 std::optional<QString> logRules();
 std::optional<QString> logPattern();

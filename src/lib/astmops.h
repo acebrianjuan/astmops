@@ -147,6 +147,7 @@ Q_DECLARE_METATYPE(DgpsTargetData);
 
 namespace MOPS
 {
+const double defaultRpaPicPercentile = 75;
 const double defaultSilencePeriodSeconds = 60.0;  // s
 const int defaultDgpsTodOffset = 0;               // s
 
