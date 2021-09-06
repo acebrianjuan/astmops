@@ -427,7 +427,7 @@ std::optional<TargetReport> TargetReportExtractor::makeAsterixTargetReport(const
                 double mhgt = Asterix::getElementValue(rec, QLatin1String("I091"), QLatin1String("MHeight")).value().toUInt(&mhgt_ok);
                 if (mhgt_ok)
                 {
-                    double hgt_m = mhgt * 6.25 * ft_to_m;
+                    double hgt_m = mhgt * ft_to_m;
                     if (hgt_m < 0)
                     {
                         hgt_m = 0;
