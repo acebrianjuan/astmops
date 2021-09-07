@@ -42,6 +42,8 @@ class Aerodrome
     Q_GADGET
 
 public:
+    using Polygons = QVector<QPolygonF>;
+
     enum Area
     {
         None = 0,
@@ -63,7 +65,6 @@ public:
 
         All = Airborne | Ground,
     };
-
     Q_ENUM(Area);
     Q_DECLARE_FLAGS(Areas, Area);
     Q_FLAG(Areas);
@@ -89,15 +90,15 @@ public:
     Aerodrome() = default;
     Aerodrome(const QGeoCoordinate &arp);
 
-    void setArp(const QGeoCoordinate &point);
+    void setArp(const QGeoCoordinate &pt);
 
-    void addSmr(Sic sic, QVector3D point);
-    void addRunwayElement(const QString &name, const QPolygonF &polygon);
-    void addTaxiwayElement(const QString &name, const QPolygonF &polygon);
-    void addApronLaneElement(const QString &name, const QPolygonF &polygon);
-    void addStandElement(const QString &name, const QPolygonF &polygon);
-    void addAirborne1Element(const QString &name, const QPolygonF &polygon);
-    void addAirborne2Element(const QString &name, const QPolygonF &polygon);
+    void addSmr(Sic sic, QVector3D pt);
+    void addRunwayElement(const QString &name, const QPolygonF &pgn);
+    void addTaxiwayElement(const QString &name, const QPolygonF &pgn);
+    void addApronLaneElement(const QString &name, const QPolygonF &pgn);
+    void addStandElement(const QString &name, const QPolygonF &pgn);
+    void addAirborne1Element(const QString &name, const QPolygonF &pgn);
+    void addAirborne2Element(const QString &name, const QPolygonF &pgn);
 
     QGeoCoordinate arp() const;
     QHash<Sic, QVector3D> smr() const;
@@ -107,19 +108,20 @@ public:
     NamedArea locatePoint(const QVector3D cartPos, const bool gndBit) const;
 
 private:
-    bool collectionContainsPoint(const QVector<QPolygonF> &collection, QPointF point) const;
-    bool collectionContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
-    std::optional<QString> areaContainsPoint(const QHash<QString, QVector<QPolygonF>> &collection, QPointF point) const;
+    bool collectionContainsPoint(const Polygons &col, QPointF pt) const;
+    bool collectionContainsPoint(const QHash<QString, Polygons> &col, QPointF pt) const;
+    std::optional<QString> areasContainingPoint(const QHash<QString, Polygons> &col, QPointF pt) const;
 
     QGeoCoordinate arp_;
     QHash<Sic, QVector3D> smr_;
 
-    QHash<QString, QVector<QPolygonF>> runwayElements_;
-    QHash<QString, QVector<QPolygonF>> taxiwayElements_;
-    QHash<QString, QVector<QPolygonF>> apronLaneElements_;
-    QHash<QString, QVector<QPolygonF>> standElements_;
-    QHash<QString, QVector<QPolygonF>> airborne1Elements_;
-    QHash<QString, QVector<QPolygonF>> airborne2Elements_;
+    // TODO: Consider merging all the elements into a single AreaHash container.
+    QHash<QString, Polygons> runwayElements_;
+    QHash<QString, Polygons> taxiwayElements_;
+    QHash<QString, Polygons> apronLaneElements_;
+    QHash<QString, Polygons> standElements_;
+    QHash<QString, Polygons> airborne1Elements_;
+    QHash<QString, Polygons> airborne2Elements_;
 };
 
 Q_DECLARE_METATYPE(Aerodrome);
