@@ -49,15 +49,6 @@ enum class ProcessingMode
 Q_DECLARE_METATYPE(ProcessingMode);
 
 
-enum class Layer
-{
-    Unknown,
-    Surface,
-    Airborne
-};
-Q_DECLARE_METATYPE(Layer);
-
-
 enum class TargetType
 {
     Unknown,
