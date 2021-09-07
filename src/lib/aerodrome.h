@@ -42,40 +42,26 @@ class Aerodrome
     Q_GADGET
 
 public:
-    // TODO: Revise enum values.
     enum Area
     {
         None = 0,
 
-        //Enroute = 0b0000'0000'0000'0001,
-        Airborne1 = 0b0000'0000'0000'0010,
-        Airborne2 = 0b0000'0000'0000'0100,
-        //Airborne = 0b0000'0000'0000'0110,
-        //    Airborne          = Airborne1|Airborne2,
-
-        Airborne = 0b0000'0000'0000'0111,
-        //    Airborne          = Airborne|Enroute;
-        //    Airborne          = Airborne1|Airborne2|Enroute;
-
+        Airborne1 = 0b0000'0000'0000'0001,
+        Airborne2 = 0b0000'0000'0000'0010,
+        Airborne = Airborne1 | Airborne2,
 
         Runway = 0b0000'0001'0000'0000,
         Taxiway = 0b0000'0010'0000'0000,
-        Manoeuvering = 0b0000'0011'0000'0000,
-        //    Manoeuvering      = Runway|Taxiway,
+        Manoeuvering = Runway | Taxiway,
 
         Stand = 0b0001'0000'0000'0000,
         ApronLane = 0b0010'0000'0000'0000,
-        Apron = 0b0011'0000'0000'0000,
-        //    Apron             = Stand|ApronLane,
+        Apron = Stand | ApronLane,
 
-        Movement = 0b0011'0011'0000'0000,
-        //    MovementArea      = Manoeuvering|Apron,
+        Movement = Manoeuvering | Apron,
+        Ground = Movement,
 
-        Ground = 0b0011'0011'0000'0000,
-        //    Ground            = MovementArea,
-
-        All = 0b0011'0011'0000'0111,
-        //    All               = Airborne|Ground,
+        All = Airborne | Ground,
     };
 
     Q_ENUM(Area);
