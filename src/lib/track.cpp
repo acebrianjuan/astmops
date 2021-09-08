@@ -146,6 +146,12 @@ Track &Track::operator<<(const TargetReport &tr)
             nareas_ << tr.narea_;
         }
 
+        // Target types.
+        if (!tgt_typs_.contains(tr.tgt_typ_))
+        {
+            tgt_typs_ << tr.tgt_typ_;
+        }
+
         // Asign first detected Mode-S address to Track object.
         if (!mode_s_.has_value() && tr.mode_s_.has_value())
         {
@@ -194,6 +200,11 @@ std::optional<ModeS> Track::mode_s() const
 QSet<Aerodrome::NamedArea> Track::nareas() const
 {
     return nareas_;
+}
+
+const QSet<TargetType> &Track::tgt_typs() const
+{
+    return tgt_typs_;
 }
 
 QPair<double, double> Track::x_bounds() const
@@ -401,6 +412,16 @@ TrackCollection &TrackCollection::operator<<(const Track &t)
             }
         }
 
+        // Target types.
+        QSet<TargetType> types = t.tgt_typs();
+        for (const TargetType &typ : types)
+        {
+            if (!tgt_typs_.contains(typ))
+            {
+                tgt_typs_ << typ;
+            }
+        }
+
         // Asign first detected Mode-S address to Collection object.
         if (!mode_s_.has_value() && t.mode_s().has_value())
         {
@@ -541,6 +562,11 @@ std::optional<Track> TrackCollection::getTrackAtTimestamp(const QDateTime &tod) 
 QSet<Aerodrome::NamedArea> TrackCollection::nareas() const
 {
     return nareas_;
+}
+
+const QSet<TargetType> &TrackCollection::tgt_typs() const
+{
+    return tgt_typs_;
 }
 
 std::optional<ModeS> TrackCollection::mode_s() const

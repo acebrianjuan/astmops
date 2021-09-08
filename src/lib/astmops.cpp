@@ -37,6 +37,17 @@ bool operator==(RecordType lhs, RecordType rhs)
 }
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+uint qHash(TargetType tt, uint seed)
+#else
+size_t qHash(TargetType tt, size_t seed)
+#endif
+{
+    QtPrivate::QHashCombine hash;
+    seed = hash(seed, static_cast<int>(tt));
+    return seed;
+}
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 uint qHash(SystemType st, uint seed)
 #else
 size_t qHash(SystemType st, size_t seed)

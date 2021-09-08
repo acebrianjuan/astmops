@@ -18,6 +18,7 @@
  */
 
 #include "targetreportextractor.h"
+#include "config.h"
 #include "geofunctions.h"
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
@@ -75,12 +76,6 @@ void TargetReportExtractor::addData(const Asterix::Record &rec)
 
 void TargetReportExtractor::addDgpsData(const DgpsTargetData &tgt)
 {
-    if (isExcludedAddr(tgt.mode_s_))
-    {
-        // qWarning();
-        return;
-    }
-
     for (const QGeoPositionInfo &pi : tgt.data_)
     {
         QGeoCoordinate coords = pi.coordinate();
@@ -204,6 +199,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
         return false;
     }
 
+    static ProcessingMode mode = Configuration::processingMode();
+
     bool ok;
     if (rec.rec_typ_.msg_typ_ == MessageType::TargetReport)
     {
@@ -233,15 +230,27 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
                 return false;
             }
 
-            // Do not keep record if it belongs to an excluded address.
-            if (isExcludedAddr(tgt_addr))
+            if (mode == ProcessingMode::Dgps)
             {
-                qDebug() << "Skipping MLAT TgtRep" << Qt::hex << rec.crc_
-                         << "with excluded target address" << tgt_addr;
+                ModeS dgps_mode_s = Configuration::dgpsModeS();
+                if (tgt_addr == dgps_mode_s)
+                {
+                    // Only keep target reports that belong to the DGPS target.
+                    return true;
+                }
+
                 return false;
             }
-            else
+            else  // TOO mode.
             {
+                // Do not keep record if it belongs to an excluded address.
+                if (isExcludedAddr(tgt_addr))
+                {
+                    qDebug() << "Skipping MLAT TgtRep" << Qt::hex << rec.crc_
+                             << "with excluded target address" << tgt_addr;
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -273,10 +282,8 @@ bool TargetReportExtractor::isRecordToBeKept(const Asterix::Record &rec) const
                          << "with excluded target address" << tgt_addr;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
     }
 

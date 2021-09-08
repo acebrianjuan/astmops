@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QLatin1String("astmops"));
     QCoreApplication::setApplicationName(QLatin1String("astmops"));
 
-    ProcessingMode mode = Configuration::processingMode();
+    static ProcessingMode mode = Configuration::processingMode();
 
     std::optional<QString> logRules_opt = Configuration::logRules();
     if (logRules_opt.has_value())
@@ -124,7 +124,6 @@ int main(int argc, char *argv[])
         dgps.data_ = readDgpsCsv(&dgpsFile);
 
         tgtRepExtr.addDgpsData(dgps);
-        perfEval.setDgpsOnly(true);
     }
 
 
@@ -148,7 +147,11 @@ int main(int argc, char *argv[])
 
     while (trackExtr.hasPendingData())
     {
-        perfEval.addData(trackExtr.takeData().value());
+        std::optional<Track> trk_opt = trackExtr.takeData();
+        if (trk_opt.has_value())
+        {
+            perfEval.addData(trk_opt.value());
+        }
     }
 
     perfEval.run();

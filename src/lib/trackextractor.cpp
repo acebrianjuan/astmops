@@ -18,6 +18,7 @@
  */
 
 #include "trackextractor.h"
+#include "config.h"
 
 TrackExtractor::TrackExtractor()
 {
@@ -61,11 +62,32 @@ bool TrackExtractor::hasPendingData() const
 
 std::optional<Track> TrackExtractor::takeData()
 {
+    static ProcessingMode mode = Configuration::processingMode();
+
     for (QMap<TrackNum, Track> &m : tracks_)
     {
-        if (!m.isEmpty())
+        while (!m.isEmpty())
         {
-            return m.take(m.begin().key());
+            Track t = m.take(m.begin().key());
+            SystemType st = t.system_type();
+
+            if (mode == ProcessingMode::Dgps)
+            {
+                return t;
+            }
+            else  // TOO mode.
+            {
+                if (st == SystemType::Mlat || st == SystemType::Adsb)
+                {
+                    QSet<TargetType> types = t.tgt_typs();
+                    if (!types.contains(TargetType::Aircraft))
+                    {
+                        continue;
+                    }
+                }
+
+                return t;
+            }
         }
     }
 

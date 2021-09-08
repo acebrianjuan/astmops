@@ -105,10 +105,12 @@ bool operator==(RecordType lhs, RecordType rhs);
 
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+uint qHash(const TargetType tt, uint seed);
 uint qHash(const SystemType st, uint seed);
 uint qHash(const MessageType mt, uint seed);
 uint qHash(const RecordType rt, uint seed);
 #else
+size_t qHash(const TargetType tt, size_t seed);
 size_t qHash(const SystemType st, size_t seed);
 size_t qHash(const MessageType mt, size_t seed);
 size_t qHash(const RecordType rt, size_t seed);

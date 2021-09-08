@@ -60,6 +60,7 @@ public:
     std::optional<ModeS> mode_s() const;
 
     QSet<Aerodrome::NamedArea> nareas() const;
+    const QSet<TargetType> &tgt_typs() const;
 
     QPair<double, double> x_bounds() const;
     QPair<double, double> y_bounds() const;
@@ -90,6 +91,7 @@ private:
     QDateTime endTimestamp_;
 
     QSet<Aerodrome::NamedArea> nareas_;
+    QSet<TargetType> tgt_typs_;
 
     QPair<double, double> x_bounds_ = {qSNaN(), qSNaN()};
     QPair<double, double> y_bounds_ = {qSNaN(), qSNaN()};
@@ -144,6 +146,7 @@ public:
     std::optional<Track> getTrackAtTimestamp(const QDateTime &tod) const;
 
     QSet<Aerodrome::NamedArea> nareas() const;
+    const QSet<TargetType> &tgt_typs() const;
 
     std::optional<ModeS> mode_s() const;
     void setMode_s(ModeS ms);
@@ -158,6 +161,7 @@ private:
     QDateTime endTimestamp_;
 
     QSet<Aerodrome::NamedArea> nareas_;
+    QSet<TargetType> tgt_typs_;
 
     std::optional<ModeS> mode_s_;
 };

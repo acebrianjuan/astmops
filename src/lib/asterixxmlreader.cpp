@@ -196,6 +196,16 @@ void AsterixXmlReader::readRecord()
         return;
     }
 
+    static ProcessingMode mode = Configuration::processingMode();
+    if (mode == ProcessingMode::Dgps)
+    {
+        if (rt == RecordType(SystemType::Adsb, MessageType::TargetReport))
+        {
+            // Skip ADS-B target reports in DGPS mode.
+            return;
+        }
+    }
+
     record.rec_typ_ = rt;
 
     QDateTime datetime;
