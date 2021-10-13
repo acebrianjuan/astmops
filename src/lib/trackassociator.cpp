@@ -53,6 +53,8 @@ void TrackAssociator::addData(const Track &t)
 
 int TrackAssociator::run()
 {
+    // TODO: Consider adding the functionality to change these parameters
+    // from the configuration.
     double dmax = 30.0;
     double threshold = 0.7;
 
