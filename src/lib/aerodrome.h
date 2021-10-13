@@ -23,6 +23,7 @@
 #include "astmops.h"
 #include <QGeoCoordinate>
 #include <QHash>
+#include <QMetaEnum>
 #include <QPolygonF>
 #include <QVector3D>
 #include <QVector>
@@ -81,6 +82,20 @@ public:
         NamedArea(const Aerodrome::Area area, const QString &name)
             : area_(area), name_(name)
         {
+        }
+
+        QString fullName() const
+        {
+            QMetaEnum e = QMetaEnum::fromType<Aerodrome::Area>();
+
+            QString fn = QLatin1String(e.valueToKey(area_));
+            if (!name_.isEmpty())
+            {
+                fn.append(QLatin1Char('_'));
+                fn.append(name_);
+            }
+
+            return fn;
         }
 
         Aerodrome::Area area_ = Aerodrome::Area::None;
