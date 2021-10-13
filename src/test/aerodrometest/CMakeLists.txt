@@ -1,7 +1,7 @@
-# Copyright (C) 2020 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
+# Copyright (C) 2020-2021 Álvaro Cebrián Juan <acebrianjuan@gmail.com>
 #
-# ASTMOPS is a surveillance performance analyzer
-#      for Air Traffic Control
+# ASTMOPS is a command line tool for evaluating
+# the performance of A-SMGCS sensors at airports
 #
 # This file is part of ASTMOPS.
 #
