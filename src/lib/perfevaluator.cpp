@@ -1304,40 +1304,37 @@ void PerfEvaluator::printED116RPA() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-116 RPA ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(56) << "[ ED-116 RPA ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "P95 [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "P99 [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "Mean [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "StdDev [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "P95 [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(7) << "P99 [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "Mean [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "SDev [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "--------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "--------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Manoeuvering;
 
     auto printStats = [&out, &e](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errors, 95) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errors, 99) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << mean(errors) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << stdDev(errors) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << errors.size()
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << percentile(errors, 95) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << percentile(errors, 99) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << mean(errors) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << stdDev(errors) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << errors.size()
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1355,12 +1352,11 @@ void PerfEvaluator::printED116RPA() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errorsTotal, 95) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errorsTotal, 99) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << mean(errorsTotal) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << stdDev(errorsTotal) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << errorsTotal.size()
+            << qSetFieldWidth(7) << Qt::right << percentile(errorsTotal, 95) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << percentile(errorsTotal, 99) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << mean(errorsTotal) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << stdDev(errorsTotal) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << errorsTotal.size()
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1379,21 +1375,19 @@ void PerfEvaluator::printED116UR() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-116 UR ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-116 UR ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "UR [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "UR [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1406,10 +1400,9 @@ void PerfEvaluator::printED116UR() const
             ur = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_trp_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1434,9 +1427,8 @@ void PerfEvaluator::printED116UR() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_trp_
+            << qSetFieldWidth(7) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1455,21 +1447,19 @@ void PerfEvaluator::printED116PD() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-116 PD ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-116 PD ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PD [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PD [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1482,10 +1472,9 @@ void PerfEvaluator::printED116PD() const
             pd = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_trp_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1510,9 +1499,8 @@ void PerfEvaluator::printED116PD() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_trp_
+            << qSetFieldWidth(7) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1531,21 +1519,19 @@ void PerfEvaluator::printED116PFD() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-116 PFD ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-116 PFD ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PFD [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PFD [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1558,10 +1544,9 @@ void PerfEvaluator::printED116PFD() const
             pfd = 0;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_tr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_tr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1591,9 +1576,8 @@ void PerfEvaluator::printED116PFD() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_tr_
+            << qSetFieldWidth(7) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_tr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1612,40 +1596,37 @@ void PerfEvaluator::printED117RPA() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 RPA ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(56) << "[ ED-117 RPA ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "P95 [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "P99 [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "Mean [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "StdDev [m]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "P95 [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(7) << "P99 [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "Mean [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "SDev [m]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "--------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(8) << "--------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
     auto printStats = [&out, &e](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errors, 95) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errors, 99) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << mean(errors) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << stdDev(errors) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << errors.size()
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << percentile(errors, 95) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << percentile(errors, 99) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << mean(errors) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << stdDev(errors) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << errors.size()
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1663,12 +1644,11 @@ void PerfEvaluator::printED117RPA() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errorsTotal, 95) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << percentile(errorsTotal, 99) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << mean(errorsTotal) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << stdDev(errorsTotal) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << errorsTotal.size()
+            << qSetFieldWidth(7) << Qt::right << percentile(errorsTotal, 95) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << percentile(errorsTotal, 99) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << mean(errorsTotal) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << stdDev(errorsTotal) << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << errorsTotal.size()
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1687,21 +1667,19 @@ void PerfEvaluator::printED117UR() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 UR ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-117 UR ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "UR [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "UR [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1714,10 +1692,9 @@ void PerfEvaluator::printED117UR() const
             ur = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_trp_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1742,9 +1719,8 @@ void PerfEvaluator::printED117UR() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_trp_
+            << qSetFieldWidth(7) << Qt::right << ur * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1763,21 +1739,19 @@ void PerfEvaluator::printED117PD() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PD ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-117 PD ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PD [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PD [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1790,10 +1764,9 @@ void PerfEvaluator::printED117PD() const
             pd = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_trp_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1818,9 +1791,8 @@ void PerfEvaluator::printED117PD() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_trp_
+            << qSetFieldWidth(7) << Qt::right << pd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_trp_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1839,21 +1811,19 @@ void PerfEvaluator::printED117PFD() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PFD ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-117 PFD ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PFD [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PFD [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1866,10 +1836,9 @@ void PerfEvaluator::printED117PFD() const
             pfd = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_tr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_tr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1894,9 +1863,8 @@ void PerfEvaluator::printED117PFD() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_tr_
+            << qSetFieldWidth(7) << Qt::right << pfd * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_tr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1915,21 +1883,19 @@ void PerfEvaluator::printED117PID_Ident() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PID (IDENT) ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-117 PID (IDENT) ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PID [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PID [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -1942,10 +1908,9 @@ void PerfEvaluator::printED117PID_Ident() const
             pid = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_itr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -1970,9 +1935,8 @@ void PerfEvaluator::printED117PID_Ident() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_itr_
+            << qSetFieldWidth(7) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -1991,21 +1955,19 @@ void PerfEvaluator::printED117PID_Mode3A() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PID (MODE3A) ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-117 PID (MODE3A) ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PID [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PID [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -2018,10 +1980,9 @@ void PerfEvaluator::printED117PID_Mode3A() const
             pid = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_itr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -2046,9 +2007,8 @@ void PerfEvaluator::printED117PID_Mode3A() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_itr_
+            << qSetFieldWidth(7) << Qt::right << pid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -2067,21 +2027,19 @@ void PerfEvaluator::printED117PFID_Ident() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PFID (IDENT) ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(31) << "[ ED-117 PFID (IDENT) ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PFID [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(8) << "PFID [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(8) << "--------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -2094,10 +2052,9 @@ void PerfEvaluator::printED117PFID_Ident() const
             pfid = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_itr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -2122,9 +2079,8 @@ void PerfEvaluator::printED117PFID_Ident() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_itr_
+            << qSetFieldWidth(8) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -2143,21 +2099,19 @@ void PerfEvaluator::printED117PFID_Mode3A() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117 PFID (MODE3A) ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(31) << "[ ED-117 PFID (MODE3A) ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PFID [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(8) << "PFID [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(8) << "--------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -2170,10 +2124,9 @@ void PerfEvaluator::printED117PFID_Mode3A() const
             pfid = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_itr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(8) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -2198,9 +2151,8 @@ void PerfEvaluator::printED117PFID_Mode3A() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_itr_
+            << qSetFieldWidth(8) << Qt::right << pfid * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_itr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
@@ -2219,21 +2171,19 @@ void PerfEvaluator::printED117PLG() const
 
     out.setFieldAlignment(QTextStream::AlignCenter);
     out.setPadChar(QLatin1Char('-'));
-    out << qSetFieldWidth(84) << "[ ED-117A PLG ]" << qSetFieldWidth(0) << Qt::endl;
+    out << qSetFieldWidth(30) << "[ ED-117A PLG ]" << qSetFieldWidth(0) << Qt::endl;
     out.setPadChar(QLatin1Char(' '));
 
     out << qSetFieldWidth(15) << "AREA" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "SUFFIX" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "PLG [%]" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "N"
+        << qSetFieldWidth(7) << "PLG [%]" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "N"
         << qSetFieldWidth(0) << Qt::endl;
 
     out.setFieldAlignment(QTextStream::AlignRight);
 
     out << qSetFieldWidth(15) << "---------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(10) << "----------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(12) << "------------" << qSetFieldWidth(1) << ""
-        << qSetFieldWidth(5) << "-----"
+        << qSetFieldWidth(7) << "-------" << qSetFieldWidth(1) << ""
+        << qSetFieldWidth(6) << "------"
         << qSetFieldWidth(0) << Qt::endl;
 
     QVector<Aerodrome::Area> areas;
@@ -2246,10 +2196,9 @@ void PerfEvaluator::printED117PLG() const
             plg = 1;
         }
 
-        out << qSetFieldWidth(15) << Qt::left << e.valueToKey(it.key().area_) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << it.key().name_ << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << plg * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctr.n_tr_
+        out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(7) << Qt::right << plg * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctr.n_tr_
             << qSetFieldWidth(0) << Qt::endl;
     };
 
@@ -2274,9 +2223,8 @@ void PerfEvaluator::printED117PLG() const
         }
 
         out << qSetFieldWidth(15) << Qt::left << e.valueToKey(area) << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(10) << Qt::center << "" << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(12) << Qt::right << plg * 100.0 << qSetFieldWidth(1) << ""
-            << qSetFieldWidth(5) << Qt::right << ctrTotal.n_tr_
+            << qSetFieldWidth(7) << Qt::right << plg * 100.0 << qSetFieldWidth(1) << ""
+            << qSetFieldWidth(6) << Qt::right << ctrTotal.n_tr_
             << qSetFieldWidth(0) << Qt::endl;
 
         out << Qt::endl;
