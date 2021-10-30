@@ -29,7 +29,7 @@ namespace Qt
 {
 static const auto &endl = &::endl;
 static const auto &left = &::left;
-static const auto &center = &::center;
+//static const auto &center = &::center;
 static const auto &right = &::right;
 }  // namespace Qt
 #endif
