@@ -1328,7 +1328,7 @@ void PerfEvaluator::printED116RPA() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Manoeuvering;
 
-    auto printStats = [&out, &e](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
+    auto printStats = [&out](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
         out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
             << qSetFieldWidth(7) << Qt::right << percentile(errors, 95) << qSetFieldWidth(1) << ""
             << qSetFieldWidth(7) << Qt::right << percentile(errors, 99) << qSetFieldWidth(1) << ""
@@ -1393,7 +1393,7 @@ void PerfEvaluator::printED116UR() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Manoeuvering;
 
-    auto printStats = [&out, &e](AreaHash<Counters::UrCounter>::const_iterator it, Counters::UrCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::UrCounter>::const_iterator it, Counters::UrCounter ctr) {
         double ur = ctr.n_trp_ / static_cast<double>(ctr.n_etrp_);
         if (ur > 1)
         {
@@ -1465,7 +1465,7 @@ void PerfEvaluator::printED116PD() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Manoeuvering;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PdCounter>::const_iterator it, Counters::PdCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PdCounter>::const_iterator it, Counters::PdCounter ctr) {
         double pd = ctr.n_trp_ / static_cast<double>(ctr.n_up_);
         if (pd > 1)
         {
@@ -1537,7 +1537,7 @@ void PerfEvaluator::printED116PFD() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Manoeuvering;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PfdCounter2>::const_iterator it, Counters::PfdCounter2 ctr) {
+    auto printStats = [&out](AreaHash<Counters::PfdCounter2>::const_iterator it, Counters::PfdCounter2 ctr) {
         double pfd = (static_cast<double>(ctr.n_tr_) - static_cast<double>(ctr.n_etr_)) / static_cast<double>(ctr.n_u_);
         if (pfd < 0)
         {
@@ -1620,7 +1620,7 @@ void PerfEvaluator::printED117RPA() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
+    auto printStats = [&out](AreaHash<QVector<double>>::const_iterator it, const QVector<double> &errors) {
         out << qSetFieldWidth(15) << Qt::left << it.key().fullName() << qSetFieldWidth(1) << ""
             << qSetFieldWidth(7) << Qt::right << percentile(errors, 95) << qSetFieldWidth(1) << ""
             << qSetFieldWidth(7) << Qt::right << percentile(errors, 99) << qSetFieldWidth(1) << ""
@@ -1685,7 +1685,7 @@ void PerfEvaluator::printED117UR() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::UrCounter>::const_iterator it, Counters::UrCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::UrCounter>::const_iterator it, Counters::UrCounter ctr) {
         double ur = ctr.n_trp_ / static_cast<double>(ctr.n_etrp_);
         if (ur > 1)
         {
@@ -1757,7 +1757,7 @@ void PerfEvaluator::printED117PD() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PdCounter>::const_iterator it, Counters::PdCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PdCounter>::const_iterator it, Counters::PdCounter ctr) {
         double pd = ctr.n_trp_ / static_cast<double>(ctr.n_up_);
         if (pd > 1)
         {
@@ -1829,7 +1829,7 @@ void PerfEvaluator::printED117PFD() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PfdCounter>::const_iterator it, Counters::PfdCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PfdCounter>::const_iterator it, Counters::PfdCounter ctr) {
         double pfd = ctr.n_ftr_ / static_cast<double>(ctr.n_tr_);
         if (pfd > 1)
         {
@@ -1901,7 +1901,7 @@ void PerfEvaluator::printED117PID_Ident() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PidCounter>::const_iterator it, Counters::PidCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PidCounter>::const_iterator it, Counters::PidCounter ctr) {
         double pid = ctr.n_citr_ / static_cast<double>(ctr.n_itr_);
         if (pid > 1)
         {
@@ -1973,7 +1973,7 @@ void PerfEvaluator::printED117PID_Mode3A() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PidCounter>::const_iterator it, Counters::PidCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PidCounter>::const_iterator it, Counters::PidCounter ctr) {
         double pid = ctr.n_citr_ / static_cast<double>(ctr.n_itr_);
         if (pid > 1)
         {
@@ -2045,7 +2045,7 @@ void PerfEvaluator::printED117PFID_Ident() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PfidCounter>::const_iterator it, Counters::PfidCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PfidCounter>::const_iterator it, Counters::PfidCounter ctr) {
         double pfid = ctr.n_eitr_ / static_cast<double>(ctr.n_itr_);
         if (pfid > 1)
         {
@@ -2117,7 +2117,7 @@ void PerfEvaluator::printED117PFID_Mode3A() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PfidCounter>::const_iterator it, Counters::PfidCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PfidCounter>::const_iterator it, Counters::PfidCounter ctr) {
         double pfid = ctr.n_eitr_ / static_cast<double>(ctr.n_itr_);
         if (pfid > 1)
         {
@@ -2189,7 +2189,7 @@ void PerfEvaluator::printED117PLG() const
     QVector<Aerodrome::Area> areas;
     areas << Aerodrome::Area::Movement << Aerodrome::Area::Airborne;
 
-    auto printStats = [&out, &e](AreaHash<Counters::PlgCounter>::const_iterator it, Counters::PlgCounter ctr) {
+    auto printStats = [&out](AreaHash<Counters::PlgCounter>::const_iterator it, Counters::PlgCounter ctr) {
         double plg = ctr.n_g_ / static_cast<double>(ctr.n_tr_);
         if (plg > 1)
         {
